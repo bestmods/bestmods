@@ -14,32 +14,45 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Source {
+  id      Int     @id @default(autoincrement())
+  name    String
+  url     String
+  icon    String?
+  banner  String?
+  classes String?
+  Mod     Mod[]
+}
+
 model Game {
   id         String  @id @default(cuid())
   name       String
   name_short String
   image      String?
   classes    String?
+  Mod        Mod[]
 }
 
 model Mod {
   id                Int       @id @default(autoincrement())
-  seed              BigInt    @unique
+  source            Source?    @relation(fields: [sourceId], references: [id])
   name              String
   description       String
-  description_short String
-  url               String    @unique
+  description_short String?
+  url               String
   custom_url        String?
   image             String?
-  install_help      String
+  install_help      String?
   downloads         String?
   screenshots       String?
   created_at        DateTime?
   updated_at        DateTime?
-  game              BigInt
-  rating            BigInt
-  total_downloads   BigInt
-  total_views       BigInt
+  game              Game?     @relation(fields: [game_id], references: [id])
+  game_id           String?
+  rating            BigInt?   @default(0)
+  total_downloads   BigInt?   @default(0)
+  total_views       BigInt?   @default(0)
+  sourceId          Int?
 }
 
 // Necessary for Next auth
