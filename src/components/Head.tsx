@@ -25,13 +25,16 @@ const HeadInfo = ({
                     author="Best Mods",
                     section="Technology",
                     tags="mod"}) => {
-    // To do: Calculate base and query URL (e.g. https://bestmods.io and /view/modname).
-    const base_url = "/";
-    const url = "/";
+    // Retrieve URLs.
+    let base_url;
+    let full_url;
+    let full_image_url;
 
-    const full_url = base_url + "/" + url;
-
-    const full_image_url = base_url + image;
+    if (typeof window !== "undefined") {
+        base_url = window.location.protocol + "//" + window.location.host;
+        full_url = base_url +  window.location.pathname;
+        full_image_url = base_url + image;
+    }
 
     let article_info;
 
