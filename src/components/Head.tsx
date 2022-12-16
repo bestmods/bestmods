@@ -1,22 +1,30 @@
 import Head from "next/head";
 
-const ArticleInfo = ({ptime="", mtime="", etime="", author="Best Mods", section="Technology", tags="mod"}) => {
+/*
+const ArticleInfo = ({
+                        ptime="",
+                        mtime="",
+                        etime="",
+                        author="Best Mods",
+                        section="Technology",
+                        tags="mod"}) => {
     return (
-        <>
+        <Head>
             <meta property="article:published_time" content={ptime} />
             <meta property="article:modified_time" content={mtime} />
             <meta property="article:expiration_time" content={etime} />
             <meta property="article:author" content={author} />
             <meta property="article:section" content={section} />
             <meta property="article:tag" content={tags} />
-        </>
+        </Head>
     );
 };
+*/
 
 const HeadInfo = ({
-                    title = "Best Mods - Discover The Top Mods On The Internet!", 
-                    description="Browse the best mods in gaming from many sources on the Internet! Project ran by The Modding Community!", 
-                    robots="index, follow", 
+                    title = "Best Mods - Discover The Top Mods On The Internet!",
+                    description="Browse the best mods in gaming from many sources on the Internet! Project ran by The Modding Community!",
+                    robots="index, follow",
                     image="/images/bestmods-filled.png", 
                     webtype="website",
                     ptime="",
@@ -38,15 +46,15 @@ const HeadInfo = ({
 
     let article_info;
 
-    if (webtype == "website") {
-        article_info = <ArticleInfo
-            ptime={ptime}
-            mtime={mtime}
-            etime={etime}
-            author={author}
-            section={section}
-            tags={tags} 
-        />;
+    if (webtype == "article") {
+        article_info = <>
+            <meta property="article:published_time" content={ptime} />
+            <meta property="article:modified_time" content={mtime} />
+            <meta property="article:expiration_time" content={etime} />
+            <meta property="article:author" content={author} />
+            <meta property="article:section" content={section} />
+            <meta property="article:tag" content={tags} />
+        </>;
     }
 
     return (
@@ -77,7 +85,7 @@ const HeadInfo = ({
             <meta property="og:type" content={webtype} />
 
             {article_info}
-            
+
             <meta property="og:url" content={full_url} />
             <meta property="og:image" content={full_image_url} />
 
