@@ -45,7 +45,7 @@ model Mod {
   url               String
   custom_url        String?
   image             String?
-  install_help      String?
+  install           String?
   downloads         String?
   screenshots       String?
   created_at        DateTime?
