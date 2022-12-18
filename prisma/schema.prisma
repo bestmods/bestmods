@@ -15,17 +15,20 @@ datasource db {
 }
 
 model Source {
-  id      Int     @id @default(autoincrement())
-  name    String
-  url     String
-  icon    String?
-  banner  String?
-  classes String?
-  Mod     Mod[]
+  id        Int     @id @default(autoincrement())
+  name      String
+  url       String
+  icon      String?
+  banner    String?
+  classes   String?
+  Mod       Mod[]
 }
 
-model Game {
-  id         String  @id @default(cuid())
+model Category {
+  id         Int        @id @default(autoincrement())
+  parentId   Int?       @map("parentId")
+  children   Category[] @relation("children")
+  parent     Category?  @relation("children", fields: [parentId], references: [id])
   name       String
   name_short String
   image      String?
@@ -35,7 +38,7 @@ model Game {
 
 model Mod {
   id                Int       @id @default(autoincrement())
-  source            Source?    @relation(fields: [sourceId], references: [id])
+  source            Source?   @relation(fields: [sourceId], references: [id])
   name              String
   description       String
   description_short String?
@@ -47,12 +50,12 @@ model Mod {
   screenshots       String?
   created_at        DateTime?
   updated_at        DateTime?
-  game              Game?     @relation(fields: [game_id], references: [id])
-  game_id           String?
+  category          Category  @relation(fields: [categoryId], references: [id])
   rating            BigInt?   @default(0)
   total_downloads   BigInt?   @default(0)
   total_views       BigInt?   @default(0)
   sourceId          Int?
+  categoryId        Int
 }
 
 // Necessary for Next auth
