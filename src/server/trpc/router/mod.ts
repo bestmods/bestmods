@@ -48,9 +48,9 @@ export const modRouter = router({
             // Make sure we have a valid source.
             if (source == null)
             {
-            console.log("Source is invalid! Source ID => " + input.source);
+                console.log("Source is invalid! Source ID => " + input.source);
 
-            return;
+                return;
             }
 
             const category = ctx.prisma.category.findFirst({ where: {

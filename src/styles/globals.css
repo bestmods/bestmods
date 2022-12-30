@@ -1,3 +1,377 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom card styles (dynamic). We must include them now and not rely on Tailwind CSS to compile them into the CSS due to use loading the classes from JavaScript. */
+.card-style-default
+{
+    @apply !bg-black/50;
+}
+
+.card-style-1
+{
+    @apply !bg-red-900/50;
+}
+
+.card-style-2
+{
+    @apply !bg-green-900/50;
+}
+
+.card-style-2
+{
+    @apply !bg-sky-900/50;
+}
+
+.card-style-3
+{
+    @apply !bg-slate-900/50;
+}
+
+.card-style-4
+{
+    @apply !bg-cyan-900/50;
+}
+
+.card-style-5
+{
+    @apply !bg-orange-800/50;
+}
+
+.card-style-6
+{
+    @apply !bg-yellow-700/50;
+}
+
+.card-style-7
+{
+    @apply !bg-blue-900/50;
+}
+
+.card-style-8
+{
+    @apply !bg-green-500/20;
+}
+
+.card-style-9
+{
+    @apply !bg-orange-600/50;
+}
+
+.card-style-10
+{
+    @apply !bg-yellow-600/50;
+}
+
+.card-style-11
+{
+    @apply !bg-green-600/50;
+}
+
+.card-style-12
+{
+    @apply !bg-blue-600/50;
+}
+
+.card-style-13
+{
+    @apply !bg-sky-600/50;
+}
+
+.card-style-14
+{
+    @apply !bg-cyan-600/50;
+}
+
+.card-style-15
+{
+    @apply !bg-purple-600/50;
+}
+
+.card-style-16
+{
+    @apply !bg-lime-600/50;
+}
+
+#bgol
+{
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: -500;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.81);
+}
+
+#bg
+{
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: -600;
+    position: fixed;
+    background: url('/images/bg.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+
+#bestmodsLogo
+{
+    text-align: center;
+    padding: 30px;
+}
+
+#bestmodsLogo img
+{
+    margin: 0 auto;
+}
+
+#searchContainer
+{
+    width: 50%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.card thead 
+{
+    display: none;
+}
+
+.card tbody tr 
+{
+    max-width: 25em;
+    flex: 1 1 25em;
+    margin: 0.5em;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0.25rem 0.25rem 0.5rem rgba(0, 0, 0, 0.25);
+}
+.card tbody tr td 
+{
+	display: block;
+	border: 0;
+}
+
+.card-image-td
+{
+    padding: 0px !important;
+}
+
+.card-image
+{
+    width: 100%;
+    max-width: 100%;
+    height: 224px;
+    border-radius: 15px 15px 0px 0px;
+}
+
+.card-icons
+{
+    display: flex;
+    justify-content: space-between;
+}
+
+.card-icon
+{
+    width: 24px;
+    height: 24px;
+}
+
+.card-icon-text
+{
+    vertical-align: middle;
+}
+
+.card-seed img
+{
+    display: inline-block;
+}
+
+.card-seed a
+{
+    vertical-align: middle;
+}
+
+.boxView
+{
+    border-radius: 0px 0px 5px 5px;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    box-shadow: 0.25rem 0.25rem 0.5rem rgba(0, 0, 0, 0.25);
+}
+
+.hiddenView
+{
+    visibility: hidden !important;
+    opacity: 0 !important;
+    -webkit-transition: visibility 3s, opacity 0.5s linear !important;
+    -moz-transition: visibility 3s, opacity 0.5s linear !important;
+    -o-transition: visibility 3s, opacity 0.5s linear !important;
+    transition: visibility 3s, opacity 0.5s linear !important;
+}
+
+.viewSel
+{
+    background-color: rgba(0, 85, 100, 0.5) !important;
+}
+
+.modDownload
+{
+    padding: 0.5em;
+    border-radius: 5px;
+    background-color: rgba(3, 85, 179, 0.5);
+    display: inline-block;
+    max-width: 48em;
+    margin-top: 1em;
+}
+
+pre
+{
+    padding: 1em;
+    border-radius: 2px;
+    background-color: rgba(0, 88, 81, 0.5);
+    white-space: pre-wrap;
+    max-width: 100%;
+    word-break: break-all;
+}
+
+table 
+{
+    border-color: transparent !important;
+    width: 100% !important;
+}
+
+tbody
+{
+    display: grid;
+    justify-content: center;
+    grid-auto-rows: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(2em, 25em));
+}
+
+tbody tr
+{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+::-webkit-scrollbar
+{
+    width: 8px;
+}
+ 
+::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    border-radius: 10px;
+	background: rgba(0, 0, 0, 0.60);
+}
+ 
+::-webkit-scrollbar-thumb
+{
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+	background-color: #009ae7;
+}
+
+.card-desc-td
+{
+    flex-grow: 1;
+}
+
+#viewContent > strong
+{
+    font-weight: bold;
+}
+
+#viewContent h1, #viewContent h2, #viewContent h3, #viewContent h4, #viewContent h5, #viewContent h6
+{
+    margin-top: 1em;
+    font-weight: bold;
+}
+
+#viewContent pre
+{
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+#viewContent code
+{
+    padding: 0.10em;
+    margin: 3px;
+    background: #00585180;
+    border-radius: 2px;
+    display: inline-block;
+    word-break: break-all;
+}
+
+#viewContent pre code
+{
+    padding: 0 !important;
+    margin: 0px !important;
+    background: none !important;
+    border-radius: none !important;
+}
+
+#viewContent h1
+{
+    font-size: 1.75em;
+    line-height: 1.65;
+}
+
+#viewContent h2
+{
+    font-size: 1.55em;
+    line-height: 1.45;
+}
+
+#viewContent h3
+{
+    font-size: 1.35em;
+    line-height: 1.25;
+}
+
+#viewContent h4
+{
+    font-size: 1.00em;
+    line-height: 0.90;
+}
+
+#viewContent ul, #viewContent ol
+{
+    padding: revert;
+    margin: revert;
+}
+
+#viewContent ul
+{
+    list-style: disc;
+}
+
+#viewContent ol
+{
+    list-style:decimal;
+}
+
+#viewContent p
+{
+    @apply mb-5;
+}
+
+#viewContent a:not(.modDownload)
+{
+    text-decoration: underline;
+}
+
+#modstable td
+{
+    @apply py-2;
+}
+
+.socialIcon
+{
+    @apply mb-4;
+}
