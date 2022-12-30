@@ -33,6 +33,7 @@ model Category {
   name_short String
   image      String?
   classes    String?
+  icon       String?
   Mod        Mod[]
 }
 

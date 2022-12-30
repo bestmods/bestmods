@@ -2,7 +2,7 @@ import { Mod } from "@prisma/client";
 import { Field, Form, Formik } from "formik";
 import { type NextPage } from "next";
 import React, { useContext, useEffect, useMemo } from "react";
-import CreateMod from "../components/forms/CreateMod";
+import SuggestMod from "../components/forms/SuggestMod";
 import HeadInfo from "../components/Head";
 import { trpc } from "../utils/trpc";
 
@@ -48,7 +48,7 @@ const Home: NextPage = () => {
           </h1>
           <DirtyContext.Provider value={{ dirty, setDirty }}>
             <SearchBar />
-            <CreateMod></CreateMod>
+            <SuggestMod></SuggestMod>
             <ModBrowser />
           </DirtyContext.Provider>
         </div>
@@ -59,7 +59,7 @@ const Home: NextPage = () => {
 
 const ModBrowser: React.FC = () => {
   const dirtyContext = useContext(DirtyContext);
-  const mods = trpc.public.getAllMods.useQuery();
+  const mods = trpc.mod.getAllMods.useQuery();
   const maxPerRow = 3;
   const data = mods.data;
   const rows = useMemo(() => {

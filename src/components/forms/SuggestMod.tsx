@@ -3,8 +3,8 @@ import { useContext } from "react";
 import { DirtyContext, FieldStyle } from "../../pages";
 import { trpc } from "../../utils/trpc";
 
-const CreateMod = () => {
-  const mutation = trpc.public.addMod.useMutation();
+const SuggestMod = () => {
+  const mutation = trpc.public.suggestMod.useMutation();
   const dirtyContext = useContext(DirtyContext);
 
   const { handleSubmit, handleChange, values } = useFormik({
@@ -60,4 +60,4 @@ const CreateMod = () => {
   );
 };
 
-export default CreateMod;
+export default SuggestMod;

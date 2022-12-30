@@ -1,9 +1,14 @@
 import { router } from "../trpc";
 import { authRouter } from "./auth";
-import { publicRouter } from "./public";
+
+import  { categoryRouter } from './category';
+import { sourceRouter } from "./source";
+import { modRouter } from "./mod";
 
 export const appRouter = router({
-  public: publicRouter,
+  source: sourceRouter,
+  category: categoryRouter,
+  mod: modRouter,
   auth: authRouter,
 });
 
