@@ -34,18 +34,20 @@ export const sourceRouter = router({
             icon: z.string().nullable(),
             banner: z.string().nullable(),
             classes: z.string().nullable(),
+            iremove: z.number(),
+            bremove: z.number()
         })
         )
         .mutation(async ({ ctx, input }) => {
         try {
             await ctx.prisma.source.create({
-            data: {
-                name: input.name,
-                url: input.url,
-                icon: input.icon ?? null,
-                banner: input.banner ?? null,
-                classes: input.classes ?? null,
-            },
+                data: {
+                    name: input.name,
+                    url: input.url,
+                    icon: input.icon ?? null,
+                    banner: input.banner ?? null,
+                    classes: input.classes ?? null,
+                }
             });
         } catch (error) {
             console.log(error);

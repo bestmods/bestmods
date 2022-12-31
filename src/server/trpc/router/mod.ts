@@ -41,9 +41,11 @@ export const modRouter = router({
     })).mutation(async ({ ctx, input }) => {
         try {
             // First, retrieve source and category.
-            const source = ctx.prisma.source.findFirst({ where: {
-            id: input.source
-            }});
+            const source = ctx.prisma.source.findFirst({ 
+                where: {
+                    id: input.source
+                }
+            });
 
             // Make sure we have a valid source.
             if (source == null)
@@ -53,15 +55,17 @@ export const modRouter = router({
                 return;
             }
 
-            const category = ctx.prisma.category.findFirst({ where: {
-            id: input.category
-            }});
+            const category = ctx.prisma.category.findFirst({ 
+                where: {
+                    id: input.category
+                }
+            });
 
             if (category == null)
             {
-            console.log("Category is invalid! Category ID => " + input.category);
+                console.log("Category is invalid! Category ID => " + input.category);
 
-            return;
+                return;
             }
 
             // Retrieve downloads.
@@ -70,13 +74,13 @@ export const modRouter = router({
 
 
             await ctx.prisma.mod.create({
-            data: {
-                name: input.name,
-                description: input.description,
-                description_short: input.description_short,
-                url: input.url,
-                custom_url: input.custom_url,
-            }
+                data: {
+                    name: input.name,
+                    description: input.description,
+                    description_short: input.description_short,
+                    url: input.url,
+                    custom_url: input.custom_url,
+                }
             })
         } catch (error) {
             console.log(error);
