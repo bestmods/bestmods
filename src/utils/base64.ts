@@ -1,31 +1,31 @@
 const FileType = (str: string): string => {
-    let fileType = 'unknown';
+    let fileType = "unknown";
 
     switch (str[0]) {
         case '/':
-            fileType = 'jpeg';
+            fileType = "jpeg";
 
             break;
 
         case 'i':
-            fileType = 'png';
+            fileType = "png";
 
             break;
 
         case 'R':
-            fileType = 'gif';
+            fileType = "gif";
 
             break;
 
         case 'U':
-            fileType = 'webp';
+            fileType = "webp";
 
             break;
 
         // Not supporting PDF for now.
         /*
         case 'J':
-            fileType = 'pdf';
+            fileType = "pdf";
 
             break;
         */
