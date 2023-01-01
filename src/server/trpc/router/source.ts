@@ -85,7 +85,12 @@ export const sourceRouter = router({
                             const buffer = Buffer.from(base64Data, 'base64');
 
                             // Write file to disk.
-                            fs.writeFileSync("../../../../public/" + iconPath, buffer);
+                            try {
+                                fs.writeFileSync("../../../../public/" + iconPath, buffer);
+                            } catch (error) {
+                                console.error("Error writing icon to disk.");
+                                console.error(error);
+                            }
                         } else {
                             console.error("Icon's file extension is unknown.");
                         }
@@ -113,7 +118,12 @@ export const sourceRouter = router({
                             const buffer = Buffer.from(base64Data, 'base64');
 
                             // Write file to disk.
-                            fs.writeFileSync("../../../../public/" + bannerPath, buffer);
+                            try {
+                                fs.writeFileSync("../../../../public/" + bannerPath, buffer);
+                            } catch (error) {
+                                console.error("Error writing banner to disk.");
+                                console.error(error);
+                            }
                         } else {
                             console.error("Banner's file extension is unknown.");
                         }
