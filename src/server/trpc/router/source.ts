@@ -5,6 +5,8 @@ import fs from 'fs';
 import { router, publicProcedure } from "../trpc";
 import FileType from '../../../utils/base64';
 
+import { TRPCError } from "@trpc/server"
+
 export const sourceRouter = router({
     getSource: publicProcedure.input(z.object({
         id: z.number().nullable(),
@@ -38,31 +40,41 @@ export const sourceRouter = router({
             banner: z.string().nullable(),
             classes: z.string().nullable(),
             iremove: z.number(),
-            bremove: z.number()
+            bremove: z.number(),
+            id: z.number().nullable()
         })
         )
         .mutation(async ({ ctx, input }) => {
             let src = null;
 
             try {
-                src = await ctx.prisma.source.create({
-                    data: {
+                src = await ctx.prisma.source.upsert({
+                    where: {
+                        id: (input.id != null) ? input.id : 0
+                    },
+                    update: {
+                        name: input.name,
+                        url: input.url,
+                        classes: input.classes ?? null,          
+                    },
+                    create: {
                         name: input.name,
                         url: input.url,
                         classes: input.classes ?? null,
                     }
                 });
             } catch (error) {
-                console.error("Error creating source.");
+                console.error("Error creating or updating source.");
                 console.error(error);
 
-                // Ensure source is null.
-                src = null;
+                throw new TRPCError({ 
+                    code: "CONFLICT",
+                    message: error
+                });
             }
 
             if (src != null) {
                 // Let's now handle file uploads.
-
                 let iconPath = null;
                 let bannerPath = null;
 
@@ -90,12 +102,27 @@ export const sourceRouter = router({
                             } catch (error) {
                                 console.error("Error writing icon to disk.");
                                 console.error(error);
+
+                                throw new TRPCError({ 
+                                    code: "PARSE_ERROR",
+                                    message: error
+                                });
                             }
                         } else {
                             console.error("Icon's file extension is unknown.");
+
+                            throw new TRPCError({ 
+                                code: "PARSE_ERROR",
+                                message: error
+                            });
                         }
                     } else {
                         console.error("Parsing base64 data is null.");
+
+                        throw new TRPCError({ 
+                            code: "PARSE_ERROR",
+                            message: "Unable to process banner's Base64 data."
+                        });
                     }
                 }
 
@@ -123,12 +150,27 @@ export const sourceRouter = router({
                             } catch (error) {
                                 console.error("Error writing banner to disk.");
                                 console.error(error);
+
+                                throw new TRPCError({ 
+                                    code: "PARSE_ERROR",
+                                    message: error
+                                });
                             }
                         } else {
                             console.error("Banner's file extension is unknown.");
+
+                            throw new TRPCError({ 
+                                code: "PARSE_ERROR",
+                                message: "Banner's file extension is unknown/not valid."
+                            });
                         }
                     } else {
                         console.error("Parsing base64 data is null.");
+
+                        throw new TRPCError({ 
+                            code: "PARSE_ERROR",
+                            message: "Unable to process banner's Base64 data."
+                        });
                     }
                 }
 
@@ -147,8 +189,13 @@ export const sourceRouter = router({
                     } catch (error) {
                         console.error("Error updating source when adding icon and banner.");
                         console.error(error);
+
+                        throw new TRPCError({ 
+                            code: "BAD_REQUEST",
+                            message: "Error updating source with icon and banner data. " + error
+                        });
                     }
-                }
+                }                
             }
         }),
     getAllSources: publicProcedure.query(({ ctx }) => {

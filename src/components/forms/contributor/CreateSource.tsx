@@ -1,17 +1,9 @@
 
-import { Source } from "@prisma/client";
 import { useFormik, FormikProvider, Field } from "formik";
 import React, { useState } from "react";
 
 import { trpc } from "../../../utils/trpc";
-
-type srcformvals = {
-    name: string,
-    url: string,
-    classes: string,
-    iremove: number,
-    bremove: number
-}
+import { TRPCError } from "@trpc/server"
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -104,6 +96,7 @@ const SourceForm: React.FC<{id: number | null}> = ({ id }) => {
                     }
                     
                     console.debug("Upload progress => " + uploads + "/" + totalUploads);
+
                     await delay(1000);
                 }
         
@@ -111,22 +104,29 @@ const SourceForm: React.FC<{id: number | null}> = ({ id }) => {
             }).then(() => {
                 console.debug("File uploads handled!");
 
-                try {
-                    // Insert into the database via mutation :)
-                    sourceMut.mutate({
-                        name: values.name,
-                        url: values.url,
-                        classes: values.classes,
-                        icon: iconData,
-                        banner: bannerData,
-                        iremove: values.iremove,
-                        bremove: values.bremove
-                    });
-                } catch (error) {
-                    alert("Error adding source! Check developer console for error.");
-                    console.log(error);
-                }
+                // Insert into the database via mutation :)
+                sourceMut.mutate({
+                    name: values.name,
+                    url: values.url,
+                    classes: values.classes,
+                    icon: iconData,
+                    banner: bannerData,
+                    iremove: values.iremove,
+                    bremove: values.bremove,
+                    id: id
+                });
             });
+
+            // Check if we have an error.
+            if (sourceMut.isError) {
+                if (sourceMut.error.message.includes("Unique constraint failed on the field")) {
+                    alert("Error! Source with URL already exists! Please try another.");
+                    console.log(sourceMut.error);
+                } else {
+                    alert("Error adding source! Check developer console for error.");
+                    console.error(sourceMut.error);
+                }
+            }
         }
     });
 
@@ -134,10 +134,6 @@ const SourceForm: React.FC<{id: number | null}> = ({ id }) => {
         <>
             <FormikProvider value={form}>
                 <form method="POST" onSubmit={form.handleSubmit}>
-                    {id != null &&
-                        <Field type="hidden" name="id" value={id.toString()} />
-                    }
-
                     <div className="mb-4">
                         <label className="block text-gray-200 text-sm font-bold mb-2">Image</label>
                         <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image" name="image" type="file" placeholder="Source Image" onChange={(e) => {

@@ -15,13 +15,13 @@ datasource db {
 }
 
 model Source {
-  id        Int     @id @default(autoincrement())
-  name      String
-  url       String
-  icon      String?
-  banner    String?
-  classes   String?
-  Mod       Mod[]
+  id      Int     @id @default(autoincrement())
+  name    String
+  url     String  @unique
+  icon    String?
+  banner  String?
+  classes String?
+  Mod     Mod[]
 }
 
 model Category {
