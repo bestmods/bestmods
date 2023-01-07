@@ -47,6 +47,14 @@ export const sourceRouter = router({
         .mutation(async ({ ctx, input }) => {
             let src = null;
 
+            // Make sure our URL is valid.
+            if (input.url.length < 2) {
+                throw new TRPCError({ 
+                    code: "PARSE_ERROR",
+                    message: "Error parsing URL - URL length is below 2 bytes in size."
+                });
+            }
+
             try {
                 src = await ctx.prisma.source.upsert({
                     where: {
