@@ -1,6 +1,6 @@
 
 import { useFormik, FormikProvider, Field } from "formik";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { trpc } from "../../../utils/trpc";
 
@@ -14,6 +14,19 @@ const SourceForm: React.FC<{id: number | null}> = ({ id }) => {
     let bannerData: string | ArrayBuffer | null = null;
 
     const sourceMut = trpc.source.addSource.useMutation();
+
+    useEffect(() => {
+        // Check if we have an error.
+        if (sourceMut.isError) {
+            if (sourceMut.error.message.includes("Unique constraint failed on the field")) {
+                alert("Error! Source with URL already exists! Please try another.");
+                console.error(sourceMut.error);
+            } else {
+                alert("Error adding source! Check developer console for error.");
+                console.error(sourceMut.error);
+            }
+        }
+    }, [sourceMut.isError]);
 
     // For editing.
     let name = "";
@@ -48,7 +61,7 @@ const SourceForm: React.FC<{id: number | null}> = ({ id }) => {
         },
 
         onSubmit: (values) => {
-            // First, handle file uploads via a promise.
+            // First, handle file uploads via a promise. Not sure of any other way to do it at the moment (though I am new to TypeScript, Next.JS, and React).
             new Promise<void>(async (resolve, reject) => {
                 // We have uploads / total uploads.
                 let uploads: number = 0;
@@ -122,7 +135,7 @@ const SourceForm: React.FC<{id: number | null}> = ({ id }) => {
             }).then(() => {
                 console.debug("File uploads handled!");
 
-                // Insert into the database via mutation :)
+                // Insert into the database via mutation.
                 sourceMut.mutate({
                     name: values.name,
                     url: values.url,
@@ -134,17 +147,6 @@ const SourceForm: React.FC<{id: number | null}> = ({ id }) => {
                     id: id
                 });
             });
-
-            // Check if we have an error.
-            if (sourceMut.isError) {
-                if (sourceMut.error.message.includes("Unique constraint failed on the field")) {
-                    alert("Error! Source with URL already exists! Please try another.");
-                    console.log(sourceMut.error);
-                } else {
-                    alert("Error adding source! Check developer console for error.");
-                    console.error(sourceMut.error);
-                }
-            }
         }
     });
 
