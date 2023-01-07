@@ -58,7 +58,7 @@ export const sourceRouter = router({
             try {
                 src = await ctx.prisma.source.upsert({
                     where: {
-                        id: (input.id != null) ? input.id : 0
+                        url: input.url
                     },
                     update: {
                         name: input.name,
