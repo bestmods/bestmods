@@ -53,9 +53,9 @@ const SourceForm: React.FC<{id: number | null}> = ({ id }) => {
     // Create form using Formik.
     const form = useFormik({
         initialValues: {
-            name: "",
-            url: "",
-            classes: "",
+            name: name,
+            url: url,
+            classes: classes,
             iremove: 0,
             bremove: 0
         },
@@ -143,8 +143,7 @@ const SourceForm: React.FC<{id: number | null}> = ({ id }) => {
                     icon: iconData?.toString() ?? null,
                     banner: bannerData?.toString() ?? null,
                     iremove: values.iremove,
-                    bremove: values.bremove,
-                    id: id
+                    bremove: values.bremove
                 });
             });
         }

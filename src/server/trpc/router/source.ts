@@ -40,8 +40,7 @@ export const sourceRouter = router({
             banner: z.string().nullable(),
             classes: z.string().nullable(),
             iremove: z.number(),
-            bremove: z.number(),
-            id: z.number().nullable()
+            bremove: z.number()
         })
         )
         .mutation(async ({ ctx, input }) => {
