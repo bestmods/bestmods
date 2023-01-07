@@ -49,7 +49,7 @@ const SourceForm: React.FC<{id: number | null}> = ({ id }) => {
 
         onSubmit: (values) => {
             // First, handle file uploads via a promise.
-            new Promise(async (resolve, reject) => {
+            new Promise<void>(async (resolve, reject) => {
                 // We have uploads / total uploads.
                 let uploads: number = 0;
                 let totalUploads: number = 0;
@@ -127,8 +127,8 @@ const SourceForm: React.FC<{id: number | null}> = ({ id }) => {
                     name: values.name,
                     url: values.url,
                     classes: values.classes,
-                    icon: iconData,
-                    banner: bannerData,
+                    icon: iconData?.toString() ?? null,
+                    banner: bannerData?.toString() ?? null,
                     iremove: values.iremove,
                     bremove: values.bremove,
                     id: id
