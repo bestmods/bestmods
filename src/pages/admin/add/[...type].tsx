@@ -1,15 +1,10 @@
-import { Mod } from "@prisma/client";
-import { Field, Form, Formik, useFormik } from "formik";
 import { type NextPage } from "next";
 import React, { useContext, useState, useEffect, useMemo } from "react";
-
 import HeadInfo from "../../../components/Head";
 
 import SourceForm from "../../../components/forms/contributor/CreateSource";
 import CategoryForm from "../../../components/forms/contributor/CreateCategory";
 import ModForm from "../../../components/forms/contributor/CreateMod";
-
-import { trpc } from "../../../utils/trpc";
 
 import { useRouter } from 'next/router'
 
@@ -34,14 +29,16 @@ const Home: NextPage = () => {
 const MainContent: React.FC = () => {
     const { asPath, route, query } = useRouter()
     const typeParam: string | null | undefined = (query.type != null) ? query.type[0] : null;
-    const typeId: Number | null = (query.type != null && query.type[1] != null) ? Number(query.type[1]) : null;
+    const typeId: string | null = (query.type != null && query.type[1] != null) ? query.type[1] : null;
 
-    let formComponent = <ModForm id={typeId} />;
+    const typeIdNum = Number(typeId);
+
+    let formComponent = <ModForm id={typeIdNum} />;
 
     if (typeParam != null && typeParam == 'source') {
-        formComponent = <SourceForm id={typeId} />;
+        formComponent = <SourceForm preUrl={typeId} />;
     } else if (typeParam != null && typeParam == 'category') {
-        formComponent = <CategoryForm id={typeId} />;
+        formComponent = <CategoryForm id={typeIdNum} />;
     }
 
     return (

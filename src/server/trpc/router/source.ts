@@ -9,25 +9,16 @@ import { TRPCError } from "@trpc/server"
 
 export const sourceRouter = router({
     getSource: publicProcedure.input(z.object({
-        id: z.number().nullable(),
-        url: z.string().nullable(),
+        url: z.string()
     })).query(({ ctx, input}) => {
         let src = null;
 
-        // Check URL first and then ID.
-        if (input.url != null) {
-            src = ctx.prisma.source.findFirst({
-                where: {
-                    url: input.url
-                }
-            })
-        } else if (input.id != null) {
-            src = ctx.prisma.source.findFirst({
-                where: {
-                    id: input.id
-                }
-            })
-        }
+
+        src = ctx.prisma.source.findFirst({
+            where: {
+                url: input.url
+            }
+        });
 
         return src;
     }),
@@ -95,7 +86,7 @@ export const sourceRouter = router({
                         // Make sure we don't have an unknown file type.
                         if (fileExt != "unknown") {
                             // Now let's compile our file name.
-                            const fileName = src.id + "." + fileExt;
+                            const fileName = src.url + "." + fileExt;
 
                             // Set icon path.
                             iconPath = "images/source/" + fileName;
@@ -143,7 +134,7 @@ export const sourceRouter = router({
                         // Make sure we don't have an unknown file type.
                         if (fileExt != "unknown") {
                             // Now let's compile our file name.
-                            const fileName = src.id + "_banner." + fileExt;
+                            const fileName = src.url + "_banner." + fileExt;
 
                             // Set banner path.
                             bannerPath = "images/source/" + fileName;
@@ -186,7 +177,7 @@ export const sourceRouter = router({
                     try {
                         await ctx.prisma.source.update({
                             where: {
-                                id: src.id
+                                url: src.url
                             },
                             data: {
                                 icon: iconPath,

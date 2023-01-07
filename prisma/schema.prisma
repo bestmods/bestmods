@@ -15,9 +15,8 @@ datasource db {
 }
 
 model Source {
-  id      Int     @id @default(autoincrement())
   name    String
-  url     String  @unique
+  url     String  @id
   icon    String?
   banner  String?
   classes String?
@@ -38,7 +37,7 @@ model Category {
 
 model Mod {
   id                Int       @id @default(autoincrement())
-  source            Source?   @relation(fields: [sourceId], references: [id])
+  source            Source?   @relation(fields: [sourceUrl], references: [url])
   name              String
   description       String
   description_short String?
@@ -54,7 +53,7 @@ model Mod {
   rating            BigInt?   @default(0)
   total_downloads   BigInt?   @default(0)
   total_views       BigInt?   @default(0)
-  sourceId          Int?
+  sourceUrl          String?
   categoryId        Int
 }
 

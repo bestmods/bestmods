@@ -6,7 +6,7 @@ import { trpc } from "../../../utils/trpc";
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-const SourceForm: React.FC<{id: number | null}> = ({ id }) => {
+const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     const [icon, setIcon] = useState<File | null>(null);
     const [banner, setBanner] = useState<File | null>(null);
 
@@ -33,10 +33,10 @@ const SourceForm: React.FC<{id: number | null}> = ({ id }) => {
     let url = "";
     let classes = "";
 
-    // If we have an ID, that must mean we're editing. Therefore, pull existing source data.
-    if (id != null) {
+    // If we have a pre URL, that must mean we're editing. Therefore, pull existing source data.
+    if (preUrl != null) {
         // Retrieve source.
-        const sourceQuery = trpc.source.getSource.useQuery({id: id, url: null});
+        const sourceQuery = trpc.source.getSource.useQuery({url: preUrl});
         const source = sourceQuery.data;
 
         // Check if our source is null.
@@ -186,7 +186,7 @@ const SourceForm: React.FC<{id: number | null}> = ({ id }) => {
                         <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="classes" name="classes" type="text" placeholder="CSS Classes" />
                     </div>
 
-                    <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{id == null ? "Add!" : "Edit!"}</button>
+                    <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{preUrl == null ? "Add!" : "Edit!"}</button>
                 </form>
             </FormikProvider>
         </>
