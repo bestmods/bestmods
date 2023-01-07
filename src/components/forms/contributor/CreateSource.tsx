@@ -18,13 +18,22 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     useEffect(() => {
         // Check if we have an error.
         if (sourceMut.isError) {
-            if (sourceMut.error.message.includes("Unique constraint failed on the field")) {
-                alert("Error! Source with URL already exists! Please try another.");
-                console.error(sourceMut.error);
+            let errMsg = "";
+
+            // Check if we can simplify the error message for client.
+            if (sourceMut.error.message.includes("Error parsing URL")) {
+                errMsg = "Source URL is too short or empty (<2 bytes).";
+            } else if (sourceMut.error.message.includes("file extension is unknown")) {
+                errMsg = sourceMut.error.message;
+            } else if (sourceMut.error.message.includes("base64 data is null")) {
+                errMsg = "Icon or banner file(s) corrupt/invalid.";
             } else {
-                alert("Error adding source! Check developer console for error.");
-                console.error(sourceMut.error);
+                errMsg = "Unable to create or edit source!"; 
             }
+
+            // Send alert and log full error to client's console.
+            console.error(sourceMut.error);
+            alert("Error! " + errMsg);
         }
     }, [sourceMut.isError]);
 
