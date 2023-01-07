@@ -3,7 +3,6 @@ import { useFormik, FormikProvider, Field } from "formik";
 import React, { useState } from "react";
 
 import { trpc } from "../../../utils/trpc";
-import { TRPCError } from "@trpc/server"
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -51,55 +50,74 @@ const SourceForm: React.FC<{id: number | null}> = ({ id }) => {
         onSubmit: (values) => {
             // First, handle file uploads via a promise.
             new Promise(async (resolve, reject) => {
-                let totalUploads: number = 0;
+                // We have uploads / total uploads.
                 let uploads: number = 0;
+                let totalUploads: number = 0;
                 
+                // Check icon and handle upload.
                 if (icon != null) {
+                    // Increase our total uploads count.
                     totalUploads++;
         
+                    // Create new reader.
                     const reader = new FileReader();
         
+                    // On file uploaded.
                     reader.onload = () => {
                         console.debug("Icon uploaded!");
         
+                        // Set Base64 data to iconData.
                         iconData = reader.result;
         
                         console.debug("Icon data => " + iconData);
         
+                        // We're done; Increment uploads.
                         uploads++;
                     };
         
+                    // Read icon file.
                     reader.readAsDataURL(icon);
                 }
         
+                // Check banner and handle upload.
                 if (banner != null) {
+                    // Increase our total uploads count.
                     totalUploads++;
         
+                    // Create new reader.
                     const reader = new FileReader();
         
+                    // On file uploaded.
                     reader.onload = () => {
                         console.debug("Banner uploaded!");
         
+                        // Set Base64 data to bannerData.
                         bannerData = reader.result;
         
                         console.debug("Banner data => " + bannerData);
         
+                        // We're done; Increment uploads.
                         uploads++;
                     };
         
+                    // Read banner file.
                     reader.readAsDataURL(banner);
                 }
                 
+                // Create a loop for every second that checks if our files are uploaded before continuing.
                 while (true) {
+                    // If we're done, break to get to resolve().
                     if (uploads >= totalUploads) {
                         break;
                     }
                     
                     console.debug("Upload progress => " + uploads + "/" + totalUploads);
 
+                    // Wait 1 second to save CPU cycles.
                     await delay(1000);
                 }
         
+                // We're done uploading files.
                 resolve();
             }).then(() => {
                 console.debug("File uploads handled!");
