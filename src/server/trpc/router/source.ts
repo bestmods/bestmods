@@ -30,8 +30,8 @@ export const sourceRouter = router({
             icon: z.string().nullable(),
             banner: z.string().nullable(),
             classes: z.string().nullable(),
-            iremove: z.number(),
-            bremove: z.number()
+            iremove: z.boolean(),
+            bremove: z.boolean()
         })
         )
         .mutation(async ({ ctx, input }) => {
@@ -173,7 +173,16 @@ export const sourceRouter = router({
                 }
 
                 // If we have a file upload, update database.
-                if (iconPath != null || bannerPath != null) { 
+                if ((iconPath != null || bannerPath != null) || (input.iremove || input.bremove)) {
+                    // If we're removing the icon or banner, make sure our data is null before updating again.
+                    if (input.iremove) {
+                        iconPath = null;
+                    }
+
+                    if (input.bremove) {
+                        bannerPath = null;
+                    }
+
                     try {
                         await ctx.prisma.source.update({
                             where: {
