@@ -1,20 +1,15 @@
 import { z } from "zod";
+import { router, publicProcedure } from "../trpc";
 
 import fs from 'fs';
-
-import { router, publicProcedure } from "../trpc";
 import FileType from '../../../utils/base64';
-
 import { TRPCError } from "@trpc/server"
 
 export const sourceRouter = router({
     getSource: publicProcedure.input(z.object({
         url: z.string()
     })).query(({ ctx, input}) => {
-        let src = null;
-
-
-        src = ctx.prisma.source.findFirst({
+        const src = ctx.prisma.source.findFirst({
             where: {
                 url: input.url
             }
