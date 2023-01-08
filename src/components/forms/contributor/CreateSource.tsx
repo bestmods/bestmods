@@ -11,10 +11,9 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     const [banner, setBanner] = useState<File | null>(null);
 
     // For editing (prefilled fields).
-    const [name, setName] = useState("");
-    const [url, setUrl] = useState("");
-    const [classes, setClasses] = useState("");
-    const [dataRetrieved, setRetrieved] = useState(false);
+    let name = "";
+    let url = "";
+    let classes = "";
 
     let iconData: string | ArrayBuffer | null = null;
     let bannerData: string | ArrayBuffer | null = null;
@@ -43,21 +42,19 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     }, [sourceMut.isError]);
 
     // If we have a pre URL, that must mean we're editing. Therefore, pull existing source data.
-    if (preUrl != null && !dataRetrieved) {
+    if (preUrl != null) {
         // Retrieve source.
         const sourceQuery = trpc.source.getSource.useQuery({url: preUrl});
         const source = sourceQuery.data;
 
         // Check if our source is null.
         if (source != null) {
-            setName(source.name);
-            setUrl(source.url);
+            name = source.name;
+            url = source.url;
 
             // Classes is optional; Check if null.
             if (source.classes != null)
-                setClasses(source.classes);
-
-            setRetrieved(true);
+                classes = source.classes;
         }
     }
 
@@ -70,6 +67,7 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             iremove: false,
             bremove: false
         },
+        enableReinitialize: true,
 
         onSubmit: (values) => {
             // First, handle file uploads via a promise. Not sure of any other way to do it at the moment (though I am new to TypeScript, Next.JS, and React).
