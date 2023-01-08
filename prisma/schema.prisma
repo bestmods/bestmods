@@ -31,6 +31,7 @@ model Category {
   parent     Category?  @relation("children", fields: [parentId], references: [id])
   name       String
   name_short String
+  url        String?
   classes    String?
   icon       String?
   Mod        Mod[]
