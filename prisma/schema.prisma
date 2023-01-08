@@ -15,12 +15,13 @@ datasource db {
 }
 
 model Source {
-  name    String
-  url     String  @id
-  icon    String?
-  banner  String?
-  classes String?
-  Mod     Mod[]
+  name      String
+  url       String      @id
+  icon      String?
+  banner    String?
+  classes   String?
+  Mod       Mod[]
+  ModSource ModSource[]
 }
 
 model Category {
@@ -36,8 +37,8 @@ model Category {
 }
 
 model Mod {
-  id                Int       @id @default(autoincrement())
-  source            Source?   @relation(fields: [sourceUrl], references: [url])
+  id                Int         @id @default(autoincrement())
+  source            Source?     @relation(fields: [sourceUrl], references: [url])
   name              String
   description       String
   description_short String?
@@ -49,12 +50,24 @@ model Mod {
   screenshots       String?
   created_at        DateTime?
   updated_at        DateTime?
-  category          Category  @relation(fields: [categoryId], references: [id])
-  rating            BigInt?   @default(0)
-  total_downloads   BigInt?   @default(0)
-  total_views       BigInt?   @default(0)
-  sourceUrl          String?
+  category          Category    @relation(fields: [categoryId], references: [id])
+  rating            BigInt?     @default(0)
+  total_downloads   BigInt?     @default(0)
+  total_views       BigInt?     @default(0)
+  sourceUrl         String?
   categoryId        Int
+  ModSource         ModSource[]
+}
+
+model ModSource {
+  mod       Mod     @relation(fields: [modid], references: [id])
+  modid     Int
+  source    Source  @relation(fields: [sourceUrl], references: [url])
+  sourceUrl String
+  primary   Boolean @default(false)
+  url       String
+
+  @@unique([modid, sourceUrl])
 }
 
 // Necessary for Next auth
