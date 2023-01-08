@@ -27,8 +27,8 @@ const Home: NextPage = () => {
 };
 
 const MainContent: React.FC = () => {
-    const { asPath, route, query } = useRouter()
-    const typeParam: string | null | undefined = (query.type != null) ? query.type[0] : null;
+    const { query } = useRouter()
+    const typeParam: string | null = (query.type != null && query.type[0] != null) ? query.type[0] : null;
     const typeId: string | null = (query.type != null && query.type[1] != null) ? query.type[1] : null;
 
     const typeIdNum = Number(typeId);
