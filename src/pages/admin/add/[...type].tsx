@@ -35,11 +35,10 @@ const MainContent: React.FC = () => {
 
     let formComponent = <ModForm id={typeIdNum} />;
 
-    if (typeParam != null && typeParam == 'source') {
+    if (typeParam != null && typeParam == 'source')
         formComponent = <SourceForm preUrl={typeId} />;
-    } else if (typeParam != null && typeParam == 'category') {
+    else if (typeParam != null && typeParam == 'category')
         formComponent = <CategoryForm id={typeIdNum} />;
-    }
 
     return (
       <>

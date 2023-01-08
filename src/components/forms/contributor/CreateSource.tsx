@@ -10,6 +10,12 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     const [icon, setIcon] = useState<File | null>(null);
     const [banner, setBanner] = useState<File | null>(null);
 
+    // For editing (prefilled fields).
+    const [name, setName] = useState("");
+    const [url, setUrl] = useState("");
+    const [classes, setClasses] = useState("");
+    const [dataRetrieved, setRetrieved] = useState(false);
+
     let iconData: string | ArrayBuffer | null = null;
     let bannerData: string | ArrayBuffer | null = null;
 
@@ -21,15 +27,14 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             let errMsg = "";
 
             // Check if we can simplify the error message for client.
-            if (sourceMut.error.message.includes("Error parsing URL")) {
+            if (sourceMut.error.message.includes("Error parsing URL"))
                 errMsg = "Source URL is too short or empty (<2 bytes).";
-            } else if (sourceMut.error.message.includes("file extension is unknown")) {
+            else if (sourceMut.error.message.includes("file extension is unknown"))
                 errMsg = sourceMut.error.message;
-            } else if (sourceMut.error.message.includes("base64 data is null")) {
+            else if (sourceMut.error.message.includes("base64 data is null"))
                 errMsg = "Icon or banner file(s) corrupt/invalid.";
-            } else {
+             else
                 errMsg = "Unable to create or edit source!"; 
-            }
 
             // Send alert and log full error to client's console.
             console.error(sourceMut.error);
@@ -37,25 +42,22 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         }
     }, [sourceMut.isError]);
 
-    // For editing.
-    let name = "";
-    let url = "";
-    let classes = "";
-
     // If we have a pre URL, that must mean we're editing. Therefore, pull existing source data.
-    if (preUrl != null) {
+    if (preUrl != null && !dataRetrieved) {
         // Retrieve source.
         const sourceQuery = trpc.source.getSource.useQuery({url: preUrl});
         const source = sourceQuery.data;
 
         // Check if our source is null.
         if (source != null) {
-            name = source.name;
-            url = source.url;
+            setName(source.name);
+            setUrl(source.url);
 
             // Classes is optional; Check if null.
             if (source.classes != null)
-                classes = source.classes;
+                setClasses(source.classes);
+
+            setRetrieved(true);
         }
     }
 
