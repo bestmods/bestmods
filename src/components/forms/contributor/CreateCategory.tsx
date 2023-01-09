@@ -8,9 +8,9 @@ const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
     const [icon, setIcon] = useState<File | null>(null);
+    const [parent_id, setParent] = useState<number | null>(null);
 
     // For editing (prefilled fields).
-    let parent_id = 0;
     let name = "";
     let name_short = "";
     let url = "";
@@ -19,7 +19,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
     let iconData: string | ArrayBuffer | null = null;
 
     const categoryMut = trpc.category.addCategory.useMutation();
-    const categoryParents = trpc.category.getCategoriesByParent.useQuery();
+    const catsWithChildren = trpc.category.getCategoriesMapping.useQuery();
 
     useEffect(() => {
         // Check if we have an error.
@@ -64,7 +64,6 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
         initialValues: {
             name: name,
             name_short: name_short,
-            parent_id: parent_id,
             url: url,
             classes: classes,
             iremove: false
@@ -123,13 +122,14 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
 
                 // Insert into the database via mutation.
                 categoryMut.mutate({
-                    parent_id: values.parent_id,
+                    parent_id: parent_id,
                     name: values.name,
                     name_short: values.name_short,
                     url: values.url,
                     classes: values.classes,
                     icon: iconData?.toString() ?? null,
                     iremove: values.iremove,
+                    id: id
                 });
             });
         }
@@ -149,22 +149,39 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                     </div>
 
                     <div className="mb-4">
-                        <label className="block text-gray-200 text-sm font-bold mb-2">Image Banner</label>
-                        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image_banner" name="image_banner" type="file" placeholder="Source Image Banner" onChange={(e) => {
-                            setBanner(e.currentTarget.files[0]);
-                        }} />
+                        <label className="block text-gray-200 text-sm font-bold mb-2">Parent</label>
+                        <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="parent" name="parent" placeholder="Category Parent" onChange={(e) => {
+                            const val = (e.target.value > 0) ? Number(e.target.value) : null;
+                            setParent(val);
+                        }}>
+                            <option value="0">None</option>
+                            {catsWithChildren?.data?.map((cat) => {
+                                return (
+                                    <React.Fragment key={cat.id}>
+                                        <option value={cat.id}>{cat.name}</option>
 
-                        <input className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="bremove" name="image_banner-remove" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Remove Current</label>
+                                        {cat.children?.map((child) => {
+                                            return <option key={child.id} value={child.id}>-- {child.name}</option>
+                                        })}
+                                    </React.Fragment>
+                                );
+                                })}
+                        </select>
                     </div>
 
                     <div className="mb-4">
                         <label className="block text-gray-200 text-sm font-bold mb-2">Name</label>
-                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="name" name="name" type="text" placeholder="Source Name" />
+                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="name" name="name" type="text" placeholder="Category Name" />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-gray-200 text-sm font-bold mb-2">Short Name</label>
+                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="name_short" name="name_short" type="text" placeholder="Category Short Name" />
                     </div>
 
                     <div className="mb-4">
                         <label className="block text-gray-200 text-sm font-bold mb-2">URL</label>
-                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="url" name="url" type="text" placeholder="moddingcommunity.com" />
+                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="url" name="url" type="text" placeholder="models" />
                     </div>
 
                     <div className="mb-4">
@@ -172,7 +189,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                         <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="classes" name="classes" type="text" placeholder="CSS Classes" />
                     </div>
 
-                    <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{preUrl == null ? "Add!" : "Edit!"}</button>
+                    <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{id == null ? "Add!" : "Edit!"}</button>
                 </form>
             </FormikProvider>
         </>
