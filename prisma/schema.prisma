@@ -26,7 +26,7 @@ model Source {
 
 model Category {
   id         Int        @id @default(autoincrement())
-  parentId   Int?       @map("parentId")
+  parentId   Int       @map("parentId") @default(0)
   children   Category[] @relation("children")
   parent     Category?  @relation("children", fields: [parentId], references: [id])
   name       String
