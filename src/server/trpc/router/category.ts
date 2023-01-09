@@ -21,7 +21,7 @@ export const categoryRouter = router({
         }),
     addCategory: publicProcedure
         .input(z.object({
-            parent_id: z.number(),
+            parent_id: z.number().nullable(),
             name: z.string(),
             name_short: z.string(),
             url: z.string(),
@@ -39,14 +39,14 @@ export const categoryRouter = router({
                         id: input.id ?? 0
                     },
                     update: {
-                        parentId: input.parent_id ?? 0,
+                        parentId: input.parent_id,
                         name: input.name,
                         name_short: input.name_short,
                         url: input.url,
                         classes: input.classes ?? null        
                     },
                     create: {
-                        parentId: input.parent_id ?? 0,
+                        parentId: input.parent_id,
                         name: input.name,
                         name_short: input.name_short,
                         url: input.url,
@@ -155,6 +155,18 @@ export const categoryRouter = router({
             });
 
             return cats;
+        }),
+    getCategoriesMapping: publicProcedure
+        .query(({ ctx }) => {
+            // First retrieve all platform categories (parent ID => 0).
+            return ctx.prisma.category.findMany({
+                where: {
+                    parentId: null
+                },
+                include: {
+                    children: true
+                }
+            });
         }),
     getAllCategories: publicProcedure
         .query(({ ctx }) => {
