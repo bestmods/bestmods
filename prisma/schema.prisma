@@ -39,9 +39,10 @@ model Category {
 }
 
 model Mod {
+  id                Int             @id @default(autoincrement())
   name              String
   banner            String?
-  url               String          @id
+  url               String          @unique
   description       String
   description_short String?
   install           String?

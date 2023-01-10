@@ -9,9 +9,124 @@ const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     const [banner, setBanner] = useState<File | null>(null);
 
-    let downloadsStr = "[]";
-    let screenshotsStr = "[]";
-    let sourcesStr = "[]";
+    // Downloads (this needs to be rewritten for React->Formik).
+    type dlArrType = {
+        name: string,
+        url: string
+    }
+
+    const [dlsArr, setDlsArr] = useState<Array<dlArrType>>([]);
+    const [dlsStr, setDlsStr] = useState("[]");
+
+    const dlsLoop = (): void => {
+        for (let i = 1; i <= 50; i++) {
+            if (typeof window === 'undefined')
+                break
+
+            const dl = document.getElementById("downloads-" + i);
+    
+            if (dl == null)
+                continue
+
+            let dlArr: dlArrType = {name: "", url: ""};
+
+            for (let j = 0; j < dl.children.length; j++) {
+                // Receive child.
+                const child = dl.children.item(j);
+
+                if (child == null)
+                    continue
+
+                // Check name.
+                if (child.id == "downloads-" + i + "-name")
+                    dlArr.name = child.nodeValue ?? "";
+
+                // Check URL.
+                if (child.id == "downloads-" + i + "-url")
+                    dlArr.url = child.nodeValue ?? "";
+
+                // Add to our array.
+                dlsArr.push(dlArr);
+                setDlsArr(dlsArr);
+            }
+        }
+    };
+
+    // Screenshots (this needs to be rewritten for React->Formik).
+    type ssArrType = {
+        url: string
+    }
+
+    const [sssArr, setSssArr] = useState<Array<ssArrType>>([]);
+    const [sssStr, setSssStr] = useState("[]");
+
+    const sssLoop = (): void => {
+        for (let i = 1; i <= 50; i++) {
+            if (typeof window === 'undefined')
+                break
+
+            const ss = document.getElementById("screenshots-" + i);
+
+            if (ss == null)
+                continue
+            
+            let ssArr: ssArrType = {url: ""};
+
+            for (let j = 0; j < ss.children.length; i++) {
+                // Receive child.
+                const child = ss.children.item(j);
+
+                if (child == null)
+                    continue
+                
+                // Check URL.
+                if (child.id == "screenshots-" + i + "-url")
+                    ssArr.url = child.nodeValue ?? "";
+
+                // Add to our array.
+                sssArr.push(ssArr);
+                setSssArr(sssArr);
+            }
+        }
+    };
+
+    // Screenshots (this needs to be rewritten for React->Formik).
+    type srcArrType = {
+        url: string
+    }
+
+    const [srcsArr, setSrcsArr] = useState<Array<srcArrType>>([]);
+    const [srcsStr, setSrcsStr] = useState("[]");
+
+    const srcsLoop = ():void => {
+        for (let i = 1; i <= 50; i++) {
+            if (typeof window === 'undefined')
+                break
+    
+            const src = document.getElementById("screenshots-" + i);
+
+            if (src == null)
+                continue;
+
+            let srcArr: srcArrType = {url: ""};
+
+            for (let j = 0; j < src.children.length; i++) {
+                // Receive child.
+                const child = src.children.item(j);
+
+                if (child == null)
+                    continue
+
+                // Check URL.
+                if (child.id == "screenshots-" + i + "-url")
+                    srcArr.url = child.nodeValue ?? "";
+
+                // Add to our array.
+                srcsArr.push(srcArr);
+                setSrcsArr(srcsArr);
+            }
+        }
+    };
 
     const [category, setCategory] = useState(0);
 
@@ -20,9 +135,9 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     const [screenShotCount, setScreenShotCount] = useState(1);
     const [sourceCount, setSourceCount] = useState(1);
 
-    let downloadForm: JSX.Element= <></>;
-    let screenShotForm: JSX.Element = <></>;
-    let sourceForm: JSX.Element = <></>;
+    const [downloadForm, setDownloadForm] = useState<JSX.Element>(<></>);
+    const [screenShotForm, setScreenshotForm] = useState<JSX.Element>(<></>);
+    const [sourceForm, setSourceForm] = useState<JSX.Element>(<></>);
 
     // For editing (prefilled fields).
     let name = "";
@@ -58,18 +173,62 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
     // Handle dynamic download form.
     useMemo(() => {
-        downloadForm = <></>
+        dlsLoop();
+
+        const range = Array.from({length: downloadCount}, (value, index) => index + 1);
+
+        setDownloadForm(<>
+            {range.map((num) => {
+                const nameId = "downloads-" + num + "-name";
+                const urlId = "downloads-" + num + "-url";
+
+                return (<div key={num} className="mb-4">
+                    <div className="mb-4">
+                        <h3 className="text-gray-200 text-lg font-bold mb-2">Download #{num}</h3>
+
+                        <label className="block text-gray-200 text-sm font-bold mb-2">Name</label>
+                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={nameId} id={nameId} type="text" />
+
+                        <label className="block text-gray-200 text-sm font-bold mb-2">URL</label>
+                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={urlId} id={urlId} type="text" />
+
+                        <button onClick={(e) => {
+                            e.preventDefault();
+
+                            // Subtract count.
+                            setDownloadCount(downloadCount - 1);
+                        }} className="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
+                    </div>
+                </div>);
+            })}
+
+            <button onClick={(e) => {
+                e.preventDefault();
+
+                // Increment downloads count.
+                setDownloadCount(downloadCount + 1);
+            }} className="text-white bg-lime-500 hover:bg-lime-600 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
+        </>);
     }, [downloadCount])
 
     // Handle dynamic dynamic screenshot form.
     useMemo(() => {
-        screenShotForm = <></>;
+        srcsLoop();
+
+        setScreenshotForm(<>
+        
+        </>);
     }, [screenShotCount]);
 
     // Handle dynamic sources.
     useMemo(() => {
-        sourceForm = <></>;
+        dlsLoop();
+
+        setSourceForm(<>
+
+        </>);
     }, [sourceCount]);
+
     // If we have a pre URL, that must mean we're editing. Therefore, pull existing mod data.
     if (preUrl != null) {
         // Retrieve mod.
@@ -146,104 +305,13 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 console.debug("File uploads handled!");
 
                 // Now receive relations and convert them into the scope string via JSON.
+                dlsLoop();
+                sssLoop();
+                srcsLoop();
 
-                // Downloads (this needs to be rewritten for React->Formik).
-                type dlArrType = {
-                    name: string,
-                    url: string
-                }
-
-                let dlsArr: Array<dlArrType> = [];
-
-                for (let i = 1; i <= 50; i++) {
-                    const dl = document.getElementById("downloads-" + i);
-
-                    if (dl != null) {
-                        let dlArr: dlArrType = {name: "", url: ""};
-
-                        for (let j = 0; j < dl.children.length; i++) {
-                            // Receive child.
-                            const child = dl.children.item(j);
-
-                            if (child != null) {
-                                // Check name.
-                                if (child.id == "downloads-" + i + "-name")
-                                    dlArr.name = child.nodeValue ?? "";
-
-                                // Check URL.
-                                if  (child.id == "downloads-" + i + "-url")
-                                    dlArr.url = child.nodeValue ?? "";
-                            }
-
-                            // Add to our array.
-                            dlsArr.push(dlArr);
-                        }
-                    }
-                }
-
-                downloadsStr = JSON.stringify(dlsArr);
-
-                // Screenshots (this needs to be rewritten for React->Formik).
-                type ssArrType = {
-                    url: string
-                }
-
-                let sssArr: Array<ssArrType> = [];
-
-                for (let i = 1; i <= 50; i++) {
-                    const ss = document.getElementById("screenshots-" + i);
-
-                    if (ss != null) {
-                        let ssArr: ssArrType = {url: ""};
-
-                        for (let j = 0; j < ss.children.length; i++) {
-                            // Receive child.
-                            const child = ss.children.item(j);
-
-                            if (child != null) {
-                                // Check URL.
-                                if  (child.id == "screenshots-" + i + "-url")
-                                    ssArr.url = child.nodeValue ?? "";
-                            }
-
-                            // Add to our array.
-                            sssArr.push(ssArr);
-                        }
-                    }
-                }
-
-                downloadsStr = JSON.stringify(dlsArr);
-
-                // Screenshots (this needs to be rewritten for React->Formik).
-                type srcArrType = {
-                    url: string
-                }
-
-                let srcsArr: Array<srcArrType> = [];
-
-                for (let i = 1; i <= 50; i++) {
-                    const src = document.getElementById("screenshots-" + i);
-
-                    if (src != null) {
-                        let srcArr: srcArrType = {url: ""};
-
-                        for (let j = 0; j < src.children.length; i++) {
-                            // Receive child.
-                            const child = src.children.item(j);
-
-                            if (child != null) {
-                                // Check URL.
-                                if  (child.id == "screenshots-" + i + "-url")
-                                    srcArr.url = child.nodeValue ?? "";
-                            }
-
-                            // Add to our array.
-                            srcsArr.push(srcArr);
-                        }
-                    }
-                }
-
-                sourcesStr = JSON.stringify(srcsArr);
+                setDlsStr(JSON.stringify(dlsArr));
+                setSssStr(JSON.stringify(sssArr));
+                setSrcsStr(JSON.stringify(srcsArr));
 
                 // Insert into the database via mutation.
                 modMut.mutate({
@@ -256,9 +324,9 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                     description_short: values.description_short,
                     install: values.install,
 
-                    downloads: downloadsStr,
-                    screenshots: screenshotsStr,
-                    sources: sourcesStr,
+                    downloads: dlsStr,
+                    screenshots: sssStr,
+                    sources: srcsStr,
 
                     bremove: values.bremove
                 });
@@ -270,7 +338,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         <>
             <FormikProvider value={form}>
                 <form method="POST" onSubmit={form.handleSubmit}>
-                    <h2>General Information</h2>
+                    <h2 className="text-white text-2xl font-bold">General Information</h2>
                     <div className="mb-4">
                         <label className="block text-gray-200 text-sm font-bold mb-2">Image Banner</label>
                         <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image_banner" name="image_banner" type="file" placeholder="Mod Image Banner" onChange={(e) => {
@@ -282,12 +350,12 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
                     <div className="mb-4">
                         <label className="block text-gray-200 text-sm font-bold mb-2">Name</label>
-                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="name" name="name" type="text" placeholder="Source Name" />
+                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="name" name="name" type="text" placeholder="Mod Name" />
                     </div>
 
                     <div className="mb-4">
                         <label className="block text-gray-200 text-sm font-bold mb-2">URL</label>
-                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="url" name="url" type="text" placeholder="moddingcommunity.com" />
+                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="url" name="url" type="text" placeholder="bestmods.io/view/value" />
                     </div>
 
                     <div className="mb-4">
@@ -305,13 +373,13 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                         <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="install" name="install" as="textarea" placeholder="Mod Installation" />
                     </div>
                     
-                    <h2>Sources</h2>
+                    <h2 className="text-white text-2xl font-bold">Sources</h2>
                     {sourceForm}
 
-                    <h2>Downloads</h2>
+                    <h2 className="text-white text-2xl font-bold">Downloads</h2>
                     {downloadForm}
 
-                    <h2>Screenshots</h2>
+                    <h2 className="text-white text-2xl font-bold">Screenshots</h2>
                     {screenShotForm}
 
                     <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{preUrl == null ? "Add!" : "Edit!"}</button>
