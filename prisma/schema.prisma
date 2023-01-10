@@ -14,6 +14,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Primary Content Models
 model Source {
   name      String
   url       String      @id
@@ -26,7 +27,7 @@ model Source {
 
 model Category {
   id         Int        @id @default(autoincrement())
-  parentId   Int?       @map("parentId") @default(0)
+  parentId   Int?       @default(0) @map("parentId")
   children   Category[] @relation("children")
   parent     Category?  @relation("children", fields: [parentId], references: [id])
   name       String
@@ -38,40 +39,56 @@ model Category {
 }
 
 model Mod {
-  id                Int         @id @default(autoincrement())
-  source            Source?     @relation(fields: [sourceUrl], references: [url])
   name              String
+  banner            String?
+  url               String          @id
   description       String
   description_short String?
-  url               String
-  custom_url        String?
-  image             String?
   install           String?
-  downloads         String?
-  screenshots       String?
   created_at        DateTime?
   updated_at        DateTime?
-  category          Category    @relation(fields: [categoryId], references: [id])
-  rating            BigInt?     @default(0)
-  total_downloads   BigInt?     @default(0)
-  total_views       BigInt?     @default(0)
+  rating            BigInt          @default(1)
+  total_downloads   BigInt          @default(0)
+  total_views       BigInt          @default(0)
+  source            Source?         @relation(fields: [sourceUrl], references: [url])
   sourceUrl         String?
+  category          Category        @relation(fields: [categoryId], references: [id])
   categoryId        Int
   ModSource         ModSource[]
+  ModDownload       ModDownload[]
+  ModScreenshot     ModScreenshot[]
+}
+
+// Relations
+model ModDownload {
+  mod    Mod     @relation(fields: [modurl], references: [url])
+  modurl String
+  name   String?
+  url    String
+
+  @@unique([modurl, url])
+}
+
+model ModScreenshot {
+  mod    Mod    @relation(fields: [modurl], references: [url])
+  modurl String
+  url    String
+
+  @@unique([modurl, url])
 }
 
 model ModSource {
-  mod       Mod     @relation(fields: [modid], references: [id])
-  modid     Int
+  mod       Mod     @relation(fields: [modurl], references: [url])
+  modurl    String
   source    Source  @relation(fields: [sourceUrl], references: [url])
   sourceUrl String
   primary   Boolean @default(false)
   url       String
 
-  @@unique([modid, sourceUrl])
+  @@unique([modurl, sourceUrl])
 }
 
-// Necessary for Next auth
+// User Accounts & Authentication
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -90,14 +107,6 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -114,4 +123,13 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+// Sessions
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
