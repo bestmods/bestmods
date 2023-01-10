@@ -33,7 +33,7 @@ const MainContent: React.FC = () => {
 
     const typeIdNum = Number(typeId);
 
-    let formComponent = <ModForm id={typeIdNum} />;
+    let formComponent = <ModForm preUrl={typeId} />;
 
     if (typeParam != null && typeParam == 'source')
         formComponent = <SourceForm preUrl={typeId} />;
