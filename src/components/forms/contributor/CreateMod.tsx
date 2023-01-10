@@ -148,8 +148,10 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
     let bannerData: string | ArrayBuffer | null = null;
 
+    // Queries.
     const modMut = trpc.mod.addMod.useMutation();
     const sourceMut = trpc.source.getAllSources.useQuery();
+    const catsWithChildren = trpc.category.getCategoriesMapping.useQuery();
 
     useEffect(() => {
         // Check if we have an error.
@@ -425,6 +427,23 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                     <div className="mb-4">
                         <label className="block text-gray-200 text-sm font-bold mb-2">URL</label>
                         <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="url" name="url" type="text" placeholder="bestmods.io/view/value" />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-gray-200 text-sm font-bold mb-2">Category</label>
+                        <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="url" name="url">
+                            {catsWithChildren?.data?.map((cat) => {
+                                return (
+                                    <React.Fragment key={cat.id}>
+                                        <option value={cat.id}>{cat.name}</option>
+
+                                        {cat.children?.map((child) => {
+                                            return <option key={child.id} value={child.id}>-- {child.name}</option>
+                                        })}
+                                    </React.Fragment>
+                                );
+                            })}
+                        </select>
                     </div>
 
                     <div className="mb-4">
