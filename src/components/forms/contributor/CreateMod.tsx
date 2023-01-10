@@ -136,7 +136,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     const [sourceCount, setSourceCount] = useState(1);
 
     const [downloadForm, setDownloadForm] = useState<JSX.Element>(<></>);
-    const [screenShotForm, setScreenshotForm] = useState<JSX.Element>(<></>);
+    const [screenShotForm, setScreenShotForm] = useState<JSX.Element>(<></>);
     const [sourceForm, setSourceForm] = useState<JSX.Element>(<></>);
 
     // For editing (prefilled fields).
@@ -149,6 +149,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     let bannerData: string | ArrayBuffer | null = null;
 
     const modMut = trpc.mod.addMod.useMutation();
+    const sourceMut = trpc.source.getAllSources.useQuery();
 
     useEffect(() => {
         // Check if we have an error.
@@ -201,31 +202,99 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                     </div>
                 </div>);
             })}
+            <div className="mb-4">
+                <button onClick={(e) => {
+                    e.preventDefault();
 
-            <button onClick={(e) => {
-                e.preventDefault();
-
-                // Increment downloads count.
-                setDownloadCount(downloadCount + 1);
-            }} className="text-white bg-lime-500 hover:bg-lime-600 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
+                    // Increment downloads count.
+                    setDownloadCount(downloadCount + 1);
+                }} className="text-white bg-lime-500 hover:bg-lime-600 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
+            </div>
         </>);
     }, [downloadCount])
 
     // Handle dynamic dynamic screenshot form.
     useMemo(() => {
-        srcsLoop();
+        sssLoop();
 
-        setScreenshotForm(<>
-        
+        const range = Array.from({length: downloadCount}, (value, index) => index + 1);
+
+        setScreenShotForm(<>
+            {range.map((num) => {
+                const urlId = "screenshots-" + num + "-url";
+
+                return (<div key={num} className="mb-4">
+                    <div className="mb-4">
+                        <h3 className="text-gray-200 text-lg font-bold mb-2">Screenshot #{num}</h3>
+
+                        <label className="block text-gray-200 text-sm font-bold mb-2">URL</label>
+                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={urlId} id={urlId} type="text" />
+
+                        <button onClick={(e) => {
+                            e.preventDefault();
+
+                            // Subtract count.
+                            setScreenShotCount(screenShotCount - 1);
+                        }} className="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
+                    </div>
+                </div>);
+            })}
+            <div className="mb-4">
+                <button onClick={(e) => {
+                    e.preventDefault();
+
+                    // Increment downloads count.
+                    setScreenShotCount(screenShotCount + 1);
+                }} className="text-white bg-lime-500 hover:bg-lime-600 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
+            </div>
         </>);
     }, [screenShotCount]);
 
     // Handle dynamic sources.
     useMemo(() => {
-        dlsLoop();
+        srcsLoop();
+        
+        const range = Array.from({length: sourceCount}, (value, index) => index + 1);
+        const sources = sourceMut.data;
 
         setSourceForm(<>
+            {range.map((num) => {
+                const srcUrl = "sources-" + num + "-srcurl";
+                const srcQuery = "sources-" + num + "-srcquery";
 
+                return (<div key={num} className="mb-4">
+                    <div className="mb-4">
+                        <h3 className="text-gray-200 text-lg font-bold mb-2">Source #{num}</h3>
+
+                        <label className="block text-gray-200 text-sm font-bold mb-2">Source</label>
+                        <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcUrl} id={srcUrl}>
+                            {sources?.map((src) => {
+                                return (
+                                    <option key={src.url} value={src.url}>{src.name}</option>
+                                )
+                            })}
+                        </select>
+
+                        <label className="block text-gray-200 text-sm font-bold mb-2">URL</label>
+                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcQuery} id={srcQuery} type="text" />
+
+                        <button onClick={(e) => {
+                            e.preventDefault();
+
+                            // Subtract count.
+                            setSourceCount(sourceCount - 1);
+                        }} className="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
+                    </div>
+                </div>);
+            })}
+            <div className="mb-4">
+                <button onClick={(e) => {
+                    e.preventDefault();
+
+                    // Increment downloads count.
+                    setSourceCount(sourceCount + 1);
+                }} className="text-white bg-lime-500 hover:bg-lime-600 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
+            </div>
         </>);
     }, [sourceCount]);
 
@@ -382,7 +451,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                     <h2 className="text-white text-2xl font-bold">Screenshots</h2>
                     {screenShotForm}
 
-                    <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{preUrl == null ? "Add!" : "Edit!"}</button>
+                    <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{preUrl == null ? "Add Mod!" : "Edit Mod!"}</button>
                 </form>
             </FormikProvider>
         </>
