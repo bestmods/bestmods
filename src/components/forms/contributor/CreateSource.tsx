@@ -1,26 +1,31 @@
 
 import { useFormik, FormikProvider, Field } from "formik";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 import { trpc } from "../../../utils/trpc";
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
+    const [dataReceived, setDataReceived] = useState(false);
+
+    // For editing (prefilled fields).
+    const [name, setName] = useState("");
+    const [url, setUrl] = useState("");
+    const [classes, setClasses] = useState("");
+
+    // File uplaods.
     const [icon, setIcon] = useState<File | null>(null);
     const [banner, setBanner] = useState<File | null>(null);
 
-    // For editing (prefilled fields).
-    let name = "";
-    let url = "";
-    let classes = "";
+    const [iconData, setIconData] = useState<string | ArrayBuffer | null>(null);
+    const [bannerData, setBannerData] = useState<string | ArrayBuffer | null>(null);
 
-    let iconData: string | ArrayBuffer | null = null;
-    let bannerData: string | ArrayBuffer | null = null;
-
+    // Queries.
     const sourceMut = trpc.source.addSource.useMutation();
+    const sourceQuery = trpc.source.getSource.useQuery({url: preUrl ?? ""});
 
-    useEffect(() => {
+    useMemo(() => {
         // Check if we have an error.
         if (sourceMut.isError) {
             let errMsg = "";
@@ -41,22 +46,24 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         }
     }, [sourceMut.isError]);
 
-    // If we have a pre URL, that must mean we're editing. Therefore, pull existing source data.
-    if (preUrl != null) {
-        // Retrieve source.
-        const sourceQuery = trpc.source.getSource.useQuery({url: preUrl});
-        const source = sourceQuery.data;
-
-        // Check if our source is null.
-        if (source != null) {
-            name = source.name;
-            url = source.url;
-
-            // Classes is optional; Check if null.
-            if (source.classes != null)
-                classes = source.classes;
+    useEffect(() => {
+        if (!dataReceived) {
+            // Retrieve source.
+            const source = sourceQuery.data;
+    
+            // Check if our source is null.
+            if (source != null) {
+                setName(source.name);
+                setUrl(source.url);
+    
+                // Classes is optional; Check if null.
+                if (source.classes != null)
+                    setClasses(source.classes);
+                
+                setDataReceived(true);
+            }
         }
-    }
+    }, [sourceQuery.data]);
 
     // Create form using Formik.
     const form = useFormik({
@@ -89,7 +96,7 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                         console.debug("Icon uploaded!");
         
                         // Set Base64 data to iconData.
-                        iconData = reader.result;
+                        setIconData(reader.result);
         
                         console.debug("Icon data => " + iconData);
         
@@ -114,7 +121,7 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                         console.debug("Banner uploaded!");
         
                         // Set Base64 data to bannerData.
-                        bannerData = reader.result;
+                        setBannerData(reader.result);
         
                         console.debug("Banner data => " + bannerData);
         

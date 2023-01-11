@@ -2,12 +2,44 @@
 import { useFormik, FormikProvider, Field } from "formik";
 import React, { useState, useEffect, useMemo } from "react";
 
+import * as Yup from 'yup';
+
 import { trpc } from "../../../utils/trpc";
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
+    const [id, setId] = useState(0);
+    const [dataReceived, setDataReceived] = useState(false);
+
+    // State values we cannot extract from Formik.
+    const [category, setCategory] = useState(0);
+
+    // States for number of download and screenshot forms to show.
+    const [downloadCount, setDownloadCount] = useState(1);
+    const [screenShotCount, setScreenShotCount] = useState(1);
+    const [sourceCount, setSourceCount] = useState(1);
+
+    const [downloadForm, setDownloadForm] = useState<JSX.Element>(<></>);
+    const [screenShotForm, setScreenShotForm] = useState<JSX.Element>(<></>);
+    const [sourceForm, setSourceForm] = useState<JSX.Element>(<></>);
+
+    // For editing (prefilled fields).
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [descriptionShort, setDescriptionShort] = useState("");
+    const [url, setUrl] = useState("");
+    const [install, setInstall] = useState("");
+
+    // File uploads.
     const [banner, setBanner] = useState<File | null>(null);
+    const [bannerData, setBannerData] = useState<string | ArrayBuffer | null>(null);
+
+    // Queries.
+    const modMut = trpc.mod.addMod.useMutation();
+    const sources = trpc.source.getAllSources.useQuery();
+    const catsWithChildren = trpc.category.getCategoriesMapping.useQuery();
+    const modQuery = trpc.mod.getMod.useQuery({url: preUrl ?? ""});
 
     // Downloads (this needs to be rewritten for React->Formik).
     type dlArrType = {
@@ -128,32 +160,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         }
     };
 
-    const [category, setCategory] = useState(0);
-
-    // States for number of download and screenshot forms to show.
-    const [downloadCount, setDownloadCount] = useState(1);
-    const [screenShotCount, setScreenShotCount] = useState(1);
-    const [sourceCount, setSourceCount] = useState(1);
-
-    const [downloadForm, setDownloadForm] = useState<JSX.Element>(<></>);
-    const [screenShotForm, setScreenShotForm] = useState<JSX.Element>(<></>);
-    const [sourceForm, setSourceForm] = useState<JSX.Element>(<></>);
-
-    // For editing (prefilled fields).
-    let name = "";
-    let description = "";
-    let description_short = "";
-    let url = "";
-    let install = "";
-
-    let bannerData: string | ArrayBuffer | null = null;
-
-    // Queries.
-    const modMut = trpc.mod.addMod.useMutation();
-    const sourceMut = trpc.source.getAllSources.useQuery();
-    const catsWithChildren = trpc.category.getCategoriesMapping.useQuery();
-
-    useEffect(() => {
+    useMemo(() => {
         // Check if we have an error.
         if (modMut.isError) {
             let errMsg = "";
@@ -175,6 +182,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     }, [modMut.isError]);
 
     // Handle dynamic download form.
+    /*
     useMemo(() => {
         dlsLoop();
 
@@ -251,18 +259,26 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             </div>
         </>);
     }, [screenShotCount]);
+    */
 
     // Handle dynamic sources.
-    useMemo(() => {
+    useEffect(() => {
         srcsLoop();
         
         const range = Array.from({length: sourceCount}, (value, index) => index + 1);
-        const sources = sourceMut.data;
+        const sourcesArr = sources.data;
 
         setSourceForm(<>
             {range.map((num) => {
                 const srcUrl = "sources-" + num + "-srcurl";
                 const srcQuery = "sources-" + num + "-srcquery";
+
+                // Set new values.
+                let val: { [key: string]: string } = {};
+                val[srcUrl] = "";
+                val[srcQuery] = "";
+
+                setNewValues({...newValues, ...val});
 
                 return (<div key={num} className="mb-4">
                     <div className="mb-4">
@@ -270,7 +286,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
                         <label className="block text-gray-200 text-sm font-bold mb-2">Source</label>
                         <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcUrl} id={srcUrl}>
-                            {sources?.map((src) => {
+                            {sourcesArr?.map((src) => {
                                 return (
                                     <option key={src.url} value={src.url}>{src.name}</option>
                                 )
@@ -298,32 +314,108 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 }} className="text-white bg-lime-500 hover:bg-lime-600 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
             </div>
         </>);
-    }, [sourceCount]);
 
-    // If we have a pre URL, that must mean we're editing. Therefore, pull existing mod data.
-    if (preUrl != null) {
-        // Retrieve mod.
-        const modQuery = trpc.mod.getMod.useQuery({url: preUrl});
-        const mod = modQuery.data;
+    }, [sourceCount, sources.data]);
 
-        // Check if our mod is null.
-        if (mod != null) {
-            name = mod.name;
-            url = mod.url;
+    useEffect(() => {
+        if (!dataReceived) {
+            // Retrieve mod.
+            const mod = modQuery.data;
+    
+            // Check if our mod is null.
+            if (mod != null) {
+                setId(mod.id);
+
+                setName(mod.name);
+                setUrl(mod.url);
+                setDescription(mod.description);
+                setDescriptionShort(mod.description_short ?? "");
+                setInstall(mod.install ?? "");
+
+                setDataReceived(true);
+            }
         }
-    }
+    
+    }, [modQuery.data]);
+
+    // Create our default validation schema.
+    const [formValidation, setFormValidation] = useState(Yup.object().shape({
+        name: Yup.string().required(),
+        description: Yup.string().required(),
+        descriptionShort: Yup.string(),
+        install: Yup.string(),
+        url: Yup.string().required(),
+        bremove: Yup.boolean()
+    }));
+
+    const [initialValues, setInitialValues] = useState<{ [key: string]: string | Boolean | Number }>({
+        name: name,
+        description: description,
+        descriptionShort: descriptionShort,
+        install: install,
+        url: url,
+        bremove: false
+    });
+
+    const [newValues, setNewValues] = useState<{ [key: string]: string | Boolean | Number }>({});
+
+    // Handle dynamic validation fields.
+    useEffect(() => {
+        let i;
+    
+        let newValidation = Yup.object().shape({
+            name: Yup.string().required(),
+            description: Yup.string().required(),
+            descriptionShort: Yup.string(),
+            install: Yup.string(),
+            url: Yup.string().required(),
+            bremove: Yup.boolean()
+        });
+    
+        for (i = 1; i <= downloadCount; i++) {
+            const nameId = "downloads-" + i + "-name";
+            const urlId = "downloads-" + i + "-url";
+
+            newValues[nameId] = "";
+            newValues[urlId] = "";
+    
+            newValidation = newValidation.shape({
+                [nameId]: Yup.string(),
+                [urlId]: Yup.string()
+            });
+        }
+    
+        for (i = 1; i <= screenShotCount; i++) {
+            const urlId = "screenshots-" + i + "-url";
+
+            newValues[urlId] = "";
+
+            newValidation = newValidation.shape({
+                [urlId]: Yup.string(),
+            });
+        }
+    
+        for (i = 1; i <= sourceCount; i++) {
+            const urlId = "sources-" + i + "-srcurl";
+            const queryId = "sources-" + i + "-srcquery";
+
+            newValues[urlId] = "";
+            newValues[queryId] = "";
+    
+            newValidation = newValidation.shape({
+                [urlId]: Yup.string(),
+                [queryId]: Yup.string()
+            });
+        }
+
+        setFormValidation(newValidation);
+    }, [downloadCount, screenShotCount, sourceCount]);
 
     // Create form using Formik.
     const form = useFormik({
-        initialValues: {
-            name: name,
-            description: description,
-            description_short: description_short,
-            install: install,
-            url: url,
-            bremove: false
-        },
+        initialValues: initialValues,
         enableReinitialize: true,
+        validationSchema: formValidation,
 
         onSubmit: (values) => {
             // First, handle file uploads via a promise. Not sure of any other way to do it at the moment (though I am new to TypeScript, Next.JS, and React).
@@ -345,7 +437,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                         console.debug("Banner uploaded!");
         
                         // Set Base64 data to bannerData.
-                        bannerData = reader.result;
+                        setBannerData(reader.result);
         
                         console.debug("Banner data => " + bannerData);
         
@@ -384,15 +476,20 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 setSssStr(JSON.stringify(sssArr));
                 setSrcsStr(JSON.stringify(srcsArr));
 
+                console.log("dlsStr => " + dlsStr);
+                console.log("sssStr => " + sssStr);
+                console.log("srcsStr => " + srcsStr);
+
                 // Insert into the database via mutation.
                 modMut.mutate({
+                    id: id,
                     name: values.name,
                     banner: bannerData?.toString() ?? null,
                     url: values.url,
                     category: category,
 
                     description: values.description,
-                    description_short: values.description_short,
+                    description_short: values.descriptionShort,
                     install: values.install,
 
                     downloads: dlsStr,
@@ -405,74 +502,95 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         }
     });
 
+    const {
+        values,
+        errors,
+        touched,
+        handleChange,
+        handleSubmit,
+        validateForm,
+        handleBlur,
+      } = form;
+
+    useEffect(() => {
+        validateForm();
+    }, [formValidation]);
+
     return (
         <>
-            <FormikProvider value={form}>
-                <form method="POST" onSubmit={form.handleSubmit}>
-                    <h2 className="text-white text-2xl font-bold">General Information</h2>
-                    <div className="mb-4">
-                        <label className="block text-gray-200 text-sm font-bold mb-2">Image Banner</label>
-                        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image_banner" name="image_banner" type="file" placeholder="Mod Image Banner" onChange={(e) => {
-                            setBanner(e.currentTarget.files[0]);
-                        }} />
+            {form != null ? (
+                <FormikProvider value={form}>
+                    <form method="POST" onSubmit={form.handleSubmit}>
+                        <h2 className="text-white text-2xl font-bold">General Information</h2>
+                        <div className="mb-4">
+                            <label className="block text-gray-200 text-sm font-bold mb-2">Image Banner</label>
+                            <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image_banner" name="image_banner" type="file" placeholder="Mod Image Banner" onChange={(e) => {
+                                setBanner(e.currentTarget.files[0]);
+                            }} />
 
-                        <input className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="bremove" name="image_banner-remove" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Remove Current</label>
-                    </div>
+                            <input className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="bremove" name="image_banner-remove" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Remove Current</label>
+                        </div>
 
-                    <div className="mb-4">
-                        <label className="block text-gray-200 text-sm font-bold mb-2">Name</label>
-                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="name" name="name" type="text" placeholder="Mod Name" />
-                    </div>
+                        <div className="mb-4">
+                            <label className="block text-gray-200 text-sm font-bold mb-2">Name</label>
+                            <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="name" name="name" type="text" placeholder="Mod Name" />
+                        </div>
 
-                    <div className="mb-4">
-                        <label className="block text-gray-200 text-sm font-bold mb-2">URL</label>
-                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="url" name="url" type="text" placeholder="bestmods.io/view/value" />
-                    </div>
+                        <div className="mb-4">
+                            <label className="block text-gray-200 text-sm font-bold mb-2">URL</label>
+                            <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="url" name="url" type="text" placeholder="bestmods.io/view/value" />
+                        </div>
 
-                    <div className="mb-4">
-                        <label className="block text-gray-200 text-sm font-bold mb-2">Category</label>
-                        <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="url" name="url">
-                            {catsWithChildren?.data?.map((cat) => {
-                                return (
-                                    <React.Fragment key={cat.id}>
-                                        <option value={cat.id}>{cat.name}</option>
+                        <div className="mb-4">
+                            <label className="block text-gray-200 text-sm font-bold mb-2">Category</label>
+                            <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" onChange={(e) => {
+                                const val = (e.target.value > 0) ? Number(e.target.value) : null;
 
-                                        {cat.children?.map((child) => {
-                                            return <option key={child.id} value={child.id}>-- {child.name}</option>
-                                        })}
-                                    </React.Fragment>
-                                );
-                            })}
-                        </select>
-                    </div>
+                                setCategory(val ?? 0);
+                            }}>
+                                {catsWithChildren?.data?.map((cat) => {
+                                    return (
+                                        <React.Fragment key={cat.id}>
+                                            <option value={cat.id}>{cat.name}</option>
 
-                    <div className="mb-4">
-                        <label className="block text-gray-200 text-sm font-bold mb-2">Short Description</label>
-                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="description_short" name="description_short" as="textarea" placeholder="Mod Short Description" />
-                    </div>
+                                            {cat.children?.map((child) => {
+                                                return <option key={child.id} value={child.id}>-- {child.name}</option>
+                                            })}
+                                        </React.Fragment>
+                                    );
+                                })}
+                            </select>
+                        </div>
 
-                    <div className="mb-4">
-                        <label className="block text-gray-200 text-sm font-bold mb-2">Description</label>
-                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="description" name="description" as="textarea" placeholder="Mod Description" />
-                    </div>
+                        <div className="mb-4">
+                            <label className="block text-gray-200 text-sm font-bold mb-2">Short Description</label>
+                            <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="descriptionShort" name="descriptionShort" as="textarea" placeholder="Mod Short Description" />
+                        </div>
 
-                    <div className="mb-4">
-                        <label className="block text-gray-200 text-sm font-bold mb-2">Installation</label>
-                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="install" name="install" as="textarea" placeholder="Mod Installation" />
-                    </div>
-                    
-                    <h2 className="text-white text-2xl font-bold">Sources</h2>
-                    {sourceForm}
+                        <div className="mb-4">
+                            <label className="block text-gray-200 text-sm font-bold mb-2">Description</label>
+                            <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="description" name="description" as="textarea" placeholder="Mod Description" />
+                        </div>
 
-                    <h2 className="text-white text-2xl font-bold">Downloads</h2>
-                    {downloadForm}
+                        <div className="mb-4">
+                            <label className="block text-gray-200 text-sm font-bold mb-2">Installation</label>
+                            <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="install" name="install" as="textarea" placeholder="Mod Installation" />
+                        </div>
+                        
+                        <h2 className="text-white text-2xl font-bold">Sources</h2>
+                        {sourceForm}
 
-                    <h2 className="text-white text-2xl font-bold">Screenshots</h2>
-                    {screenShotForm}
+                        <h2 className="text-white text-2xl font-bold">Downloads</h2>
+                        {downloadForm}
 
-                    <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{preUrl == null ? "Add Mod!" : "Edit Mod!"}</button>
-                </form>
-            </FormikProvider>
+                        <h2 className="text-white text-2xl font-bold">Screenshots</h2>
+                        {screenShotForm}
+
+                        <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{preUrl == null ? "Add Mod!" : "Edit Mod!"}</button>
+                    </form>
+                </FormikProvider>) : (
+                    <div>Loading</div>
+                )}
         </>
     );
 };

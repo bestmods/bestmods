@@ -1,27 +1,33 @@
 
 import { useFormik, FormikProvider, Field } from "formik";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 import { trpc } from "../../../utils/trpc";
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
-    const [icon, setIcon] = useState<File | null>(null);
+    const [dataRetrieved, setDataReceived] = useState(false);
+
+    // State values we cannot extract from Formik.
     const [parent_id, setParent] = useState<number | null>(null);
 
     // For editing (prefilled fields).
-    let name = "";
-    let name_short = "";
-    let url = "";
-    let classes = "";
+    const [name, setName] = useState("");
+    const [nameShort, setNameShort] = useState("");
+    const [url, setUrl] = useState("");
+    const [classes, setClasses] = useState("");
 
-    let iconData: string | ArrayBuffer | null = null;
+    // File uploads.
+    const [icon, setIcon] = useState<File | null>(null)
+    const [iconData, setIconData] = useState<string | ArrayBuffer | null>(null);
 
+    // Queries.
     const categoryMut = trpc.category.addCategory.useMutation();
     const catsWithChildren = trpc.category.getCategoriesMapping.useQuery();
+    const categoryQuery = trpc.category.getCategory.useQuery({id: id ?? 0});
 
-    useEffect(() => {
+    useMemo(() => {
         // Check if we have an error.
         if (categoryMut.isError) {
             let errMsg = "";
@@ -40,30 +46,32 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
         }
     }, [categoryMut.isError]);
 
-    // If we have a pre URL, that must mean we're editing. Therefore, pull existing category data.
-    if (id != null) {
-        // Retrieve category.
-        const categoryQuery = trpc.category.getCategory.useQuery({id: id});
-        const category = categoryQuery.data;
-
-        // Check if our category is null.
-        if (category != null) {
-            name = category.name;
-            name_short = category.name_short;
-            parent_id = category.parentId;
-            url = category.url;
-
-            // Classes is optional; Check if null.
-            if (category.classes != null)
-                classes = category.classes;
+    useEffect(() => {
+        if (!dataRetrieved) {
+            // Retrieve category.
+            const category = categoryQuery.data;
+    
+            // Check if our category is null.
+            if (category != null) {
+                setName(category.name);
+                setNameShort(category.name_short);
+                setParent(category.parentId);
+                setUrl(category.url ?? "");
+    
+                // Classes is optional; Check if null.
+                if (category.classes != null)
+                    setClasses(category.classes);
+    
+                setDataReceived(true);
+            }
         }
-    }
+    }, [categoryQuery.data]);
 
     // Create form using Formik.
     const form = useFormik({
         initialValues: {
             name: name,
-            name_short: name_short,
+            nameShort: nameShort,
             url: url,
             classes: classes,
             iremove: false
@@ -90,7 +98,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                         console.debug("Icon uploaded!");
         
                         // Set Base64 data to iconData.
-                        iconData = reader.result;
+                        setIconData(reader.result);
         
                         console.debug("Icon data => " + iconData);
         
@@ -124,7 +132,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                 categoryMut.mutate({
                     parent_id: parent_id,
                     name: values.name,
-                    name_short: values.name_short,
+                    name_short: values.nameShort,
                     url: values.url,
                     classes: values.classes,
                     icon: iconData?.toString() ?? null,
@@ -152,6 +160,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                         <label className="block text-gray-200 text-sm font-bold mb-2">Parent</label>
                         <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="parent" name="parent" placeholder="Category Parent" onChange={(e) => {
                             const val = (e.target.value > 0) ? Number(e.target.value) : null;
+
                             setParent(val);
                         }}>
                             <option value="0">None</option>
@@ -176,7 +185,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
 
                     <div className="mb-4">
                         <label className="block text-gray-200 text-sm font-bold mb-2">Short Name</label>
-                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="name_short" name="name_short" type="text" placeholder="Category Short Name" />
+                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="nameShort" name="nameShort" type="text" placeholder="Category Short Name" />
                     </div>
 
                     <div className="mb-4">
@@ -189,7 +198,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                         <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="classes" name="classes" type="text" placeholder="CSS Classes" />
                     </div>
 
-                    <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{id == null ? "Add!" : "Edit!"}</button>
+                    <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{(id == null || id < 1) ? "Add!" : "Edit!"}</button>
                 </form>
             </FormikProvider>
         </>

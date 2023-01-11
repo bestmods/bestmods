@@ -19,6 +19,7 @@ export const modRouter = router({
         }),
     addMod: publicProcedure
         .input(z.object({
+            id: z.number(),
             name: z.string(),
             banner: z.string().nullable(),
             url: z.string(),
@@ -43,7 +44,7 @@ export const modRouter = router({
             try {
                 mod = await ctx.prisma.mod.upsert({
                     where: {
-                        url: input.url
+                        id: input.id
                     },
                     include: {
                         ModSource: true
