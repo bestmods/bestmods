@@ -1,15 +1,31 @@
 
 import { useFormik, FormikProvider, Field } from "formik";
 import React, { useState, useEffect, useMemo } from "react";
+import { string } from "zod";
 
 import { trpc } from "../../../utils/trpc";
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
+const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {    
     const [id, setId] = useState(0);
     const [dataReceived, setDataReceived] = useState(false);
+
     const [submit, setSubmit] = useState(false);
+    const [values, setValues] = useState<{
+        description: string;
+        category: number;
+        id: number;
+        name: string;
+        url: string;
+        banner: string | null;
+        description_short: string;
+        install: string | null;
+        bremove: boolean | null;
+        downloads: string | null;
+        screenshots: string | null;
+        sources: string | null;
+    }>();
 
     // State values we cannot extract from Formik.
     const [category, setCategory] = useState(0);
@@ -40,21 +56,46 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     const catsWithChildren = trpc.category.getCategoriesMapping.useQuery();
     const modQuery = trpc.mod.getMod.useQuery({url: preUrl ?? ""});
 
-    // Downloads (this needs to be rewritten for React->Formik).
+    // Handle error messages to client.
+    useMemo(() => {
+        // Make sure we have an actual error.
+        if (!modMut.isError)
+            return;
+
+        let errMsg = "";
+
+        // Check if we can simplify the error message for client.
+        if (modMut.error.message.includes("Error parsing URL"))
+            errMsg = "Mod URL is too short or empty (<2 bytes).";
+        else if (modMut.error.message.includes("file extension is unknown"))
+            errMsg = modMut.error.message;
+        else if (modMut.error.message.includes("base64 data is null"))
+            errMsg = "Icon or banner file(s) corrupt/invalid.";
+            else
+            errMsg = "Unable to create or edit mod!"; 
+
+        // Send alert and log full error to client's console.
+        console.error(modMut.error);
+        alert("Error! " + errMsg);
+    }, [modMut.isError]);
+
+
+    // Handle dynamic downloads fields/array (uncontrolled input).
     type dlArrType = {
         name: string,
         url: string
     }
 
-    const [dlsStr, setDlsStr] = useState("[]");
+    const [dlsArr, setDlsArr] = useState<Array<dlArrType>>([]);
+    const [fetchDls, setFetchDls] = useState(false);
 
-    const dlsLoop = (): void => {
+    useEffect(() => {
+        if (!fetchDls || typeof window === 'undefined')
+            return;
+
         let arr: Array<dlArrType> = [];
 
-        for (let i = 1; i <= 50; i++) {
-            if (typeof window === 'undefined')
-                break
-    
+        for (let i = 1; i <= 50; i++) {   
             const nameEle = document.getElementById("downloads-" + i + "-name");
             const urlEle = document.getElementById("downloads-" + i + "-url");
 
@@ -70,23 +111,26 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             arr.push({name: nameVal, url: urlVal});
         }
         
-        const jsonStr = JSON.stringify(arr);
-
         // Add to our array.
         if (arr.length > 0)
-            setDlsStr(jsonStr);
-    }
+            setDlsArr(arr);
 
-    useEffect(dlsLoop, [submit]);
+        setFetchDls(false);
+    }, [fetchDls])
 
-    // Screenshots (this needs to be rewritten for React->Formik).
+
+    // Handle dynamic screenshots fields/array (uncontrolled input).
     type ssArrType = {
         url: string
     }
 
-    const [sssStr, setSssStr] = useState("[]");
+    const [sssArr, setSssArr] = useState<Array<ssArrType>>([]);
+    const [fetchSss, setFetchSss] = useState(false);
 
-    const sssLoop = (): void => {
+    useEffect(() => {
+        if (!fetchSss || typeof window === 'undefined')
+            return;
+
         let arr: Array<ssArrType> = [];
 
         for (let i = 1; i <= 50; i++) {
@@ -106,27 +150,26 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             arr.push({url: urlVal});
         }
 
-        const jsonStr = JSON.stringify(arr);
-
         // Add to our array.
         if (arr.length > 0)
-            setSssStr(jsonStr);
+            setSssArr(arr);
 
-        console.log("sssLoop from submit => " + sssStr);
-        console.log(jsonStr);
-    }
+        setFetchSss(false);
+    }, [fetchSss]);
 
-    useEffect(sssLoop, [submit]);
-
-    // Sources (this needs to be rewritten for React->Formik).
+    // Handle dynamic sources (uncontrolled input).
     type srcArrType = {
         url: string
         query: string
     }
 
-    const [srcsStr, setSrcsStr] = useState("[]");
+    const [srcsArr, setSrcsArr] = useState<Array<srcArrType>>([]);
+    const [fetchSrcs, setFetchSrcs] = useState(false);
 
-    const srcsLoop = ():void => {
+    useEffect(() => {
+        if (!fetchSrcs || typeof window === 'undefined')
+            return;
+
         let arr: Array<srcArrType> = [];
 
         for (let i = 1; i <= 50; i++) {
@@ -148,39 +191,16 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             arr.push({url: urlVal, query: queryVal});
         }
 
-        const jsonStr = JSON.stringify(arr);
-
         if (arr.length > 0)
-            setSrcsStr(jsonStr);
-    }
+            setSrcsArr(arr);
 
-    useEffect(srcsLoop, [submit]);
+        setFetchSrcs(false);
+    }, [fetchSrcs]);
 
-    useMemo(() => {
-        // Check if we have an error.
-        if (modMut.isError) {
-            let errMsg = "";
-
-            // Check if we can simplify the error message for client.
-            if (modMut.error.message.includes("Error parsing URL"))
-                errMsg = "Mod URL is too short or empty (<2 bytes).";
-            else if (modMut.error.message.includes("file extension is unknown"))
-                errMsg = modMut.error.message;
-            else if (modMut.error.message.includes("base64 data is null"))
-                errMsg = "Icon or banner file(s) corrupt/invalid.";
-             else
-                errMsg = "Unable to create or edit mod!"; 
-
-            // Send alert and log full error to client's console.
-            console.error(modMut.error);
-            alert("Error! " + errMsg);
-        }
-    }, [modMut.isError]);
 
     // Handle dynamic download form.
     useMemo(() => {
-        dlsLoop();
-
+        // Create a range from 1 to download count.
         const range = Array.from({length: downloadCount}, (value, index) => index + 1);
 
         setDownloadForm(<>
@@ -220,8 +240,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
     // Handle dynamic dynamic screenshot form.
     useMemo(() => {
-        sssLoop();
-
+        // Create a range from 1 to screenshot count.
         const range = Array.from({length: downloadCount}, (value, index) => index + 1);
 
         setScreenShotForm(<>
@@ -257,9 +276,10 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
     // Handle dynamic sources.
     useEffect(() => {
-        srcsLoop();
-        
+        // Create a range from 1 to sources count.
         const range = Array.from({length: sourceCount}, (value, index) => index + 1);
+
+        // Fetch pre-existing source data for URL select box.
         const sourcesArr = sources.data;
 
         setSourceForm(<>
@@ -280,7 +300,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                             })}
                         </select>
 
-                        <label className="block text-gray-200 text-sm font-bold mb-2">URL</label>
+                        <label className="block text-gray-200 text-sm font-bold mb-2">Query URL</label>
                         <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcQuery} id={srcQuery} type="text" />
 
                         <button onClick={(e) => {
@@ -325,6 +345,32 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     
     }, [modQuery.data]);
 
+    useEffect(() => {
+        // Make sure we are submitting, values are valid, and we still aren't fetching relation data.
+        if (!submit || !values || fetchDls || fetchSss || fetchSrcs)
+            return;
+
+        // Create new values.
+        const newVals = values;
+
+        // Convert relation arrays to JSON string.
+        const dlsStr = JSON.stringify(dlsArr);
+        const sssStr = JSON.stringify(sssArr);
+        const srcsStr = JSON.stringify(srcsArr);
+
+        // Assign relation data to new values now.
+        newVals.downloads = dlsStr;
+        newVals.screenshots = sssStr;
+        newVals.sources = srcsStr;
+        
+        // Insert into database.
+        modMut.mutate(newVals);
+
+        // We are no longer submitting.
+        setSubmit(false);
+    }, [submit, values, fetchDls, fetchSss, fetchSrcs]);
+
+
     // Create form using Formik.
     const form = useFormik({
         initialValues: {
@@ -338,7 +384,9 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         enableReinitialize: true,
 
         onSubmit: (values) => {
-            setSubmit(true);
+            setFetchDls(true);
+            setFetchSss(true);
+            setFetchSrcs(true);
 
             // First, handle file uploads via a promise. Not sure of any other way to do it at the moment (though I am new to TypeScript, Next.JS, and React).
             new Promise<void>(async (resolve, reject) => {
@@ -389,26 +437,23 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             }).then(() => {
                 console.debug("File uploads handled!");
 
-                console.log("dlsStr => " + dlsStr);
-                console.log("sssStr => " + sssStr);
-                console.log("srcsStr => " + srcsStr);
-
                 // Insert into the database via mutation.
-                modMut.mutate({
+                setSubmit(true);
+                setValues({
                     id: id,
                     name: values.name,
                     banner: bannerData?.toString() ?? null,
                     url: values.url,
                     category: category,
-
+        
                     description: values.description,
                     description_short: values.descriptionShort,
                     install: values.install,
-
-                    downloads: dlsStr,
-                    screenshots: sssStr,
-                    sources: srcsStr,
-
+        
+                    downloads: null,
+                    screenshots: null,
+                    sources: null,
+        
                     bremove: values.bremove
                 });
             });
