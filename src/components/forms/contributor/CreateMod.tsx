@@ -2,8 +2,6 @@
 import { useFormik, FormikProvider, Field } from "formik";
 import React, { useState, useEffect, useMemo } from "react";
 
-import * as Yup from 'yup';
-
 import { trpc } from "../../../utils/trpc";
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
@@ -11,6 +9,7 @@ const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     const [id, setId] = useState(0);
     const [dataReceived, setDataReceived] = useState(false);
+    const [submit, setSubmit] = useState(false);
 
     // State values we cannot extract from Formik.
     const [category, setCategory] = useState(0);
@@ -47,118 +46,115 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         url: string
     }
 
-    const [dlsArr, setDlsArr] = useState<Array<dlArrType>>([]);
     const [dlsStr, setDlsStr] = useState("[]");
 
     const dlsLoop = (): void => {
+        let arr: Array<dlArrType> = [];
+
         for (let i = 1; i <= 50; i++) {
             if (typeof window === 'undefined')
                 break
-
-            const dl = document.getElementById("downloads-" + i);
     
-            if (dl == null)
-                continue
+            const nameEle = document.getElementById("downloads-" + i + "-name");
+            const urlEle = document.getElementById("downloads-" + i + "-url");
 
-            let dlArr: dlArrType = {name: "", url: ""};
+            if (nameEle == null || urlEle == null)
+                continue;
 
-            for (let j = 0; j < dl.children.length; j++) {
-                // Receive child.
-                const child = dl.children.item(j);
+            const nameVal = (document.getElementById(nameEle.id) as HTMLInputElement).value;
+            const urlVal = (document.getElementById(urlEle.id) as HTMLInputElement).value;
 
-                if (child == null)
-                    continue
+            if (urlVal.length < 1)
+                continue;
 
-                // Check name.
-                if (child.id == "downloads-" + i + "-name")
-                    dlArr.name = child.nodeValue ?? "";
-
-                // Check URL.
-                if (child.id == "downloads-" + i + "-url")
-                    dlArr.url = child.nodeValue ?? "";
-
-                // Add to our array.
-                dlsArr.push(dlArr);
-                setDlsArr(dlsArr);
-            }
+            arr.push({name: nameVal, url: urlVal});
         }
-    };
+        
+        const jsonStr = JSON.stringify(arr);
+
+        // Add to our array.
+        if (arr.length > 0)
+            setDlsStr(jsonStr);
+    }
+
+    useEffect(dlsLoop, [submit]);
 
     // Screenshots (this needs to be rewritten for React->Formik).
     type ssArrType = {
         url: string
     }
 
-    const [sssArr, setSssArr] = useState<Array<ssArrType>>([]);
     const [sssStr, setSssStr] = useState("[]");
 
     const sssLoop = (): void => {
+        let arr: Array<ssArrType> = [];
+
         for (let i = 1; i <= 50; i++) {
             if (typeof window === 'undefined')
                 break
 
-            const ss = document.getElementById("screenshots-" + i);
+            const urlEle = document.getElementById("screenshots-" + i + "-url");
 
-            if (ss == null)
-                continue
-            
-            let ssArr: ssArrType = {url: ""};
+            if (urlEle == null)
+                break;
 
-            for (let j = 0; j < ss.children.length; i++) {
-                // Receive child.
-                const child = ss.children.item(j);
+            const urlVal = (document.getElementById(urlEle.id) as HTMLInputElement).value;
 
-                if (child == null)
-                    continue
-                
-                // Check URL.
-                if (child.id == "screenshots-" + i + "-url")
-                    ssArr.url = child.nodeValue ?? "";
+            if (urlVal.length < 1)
+                continue;
 
-                // Add to our array.
-                sssArr.push(ssArr);
-                setSssArr(sssArr);
-            }
+            arr.push({url: urlVal});
         }
-    };
 
-    // Screenshots (this needs to be rewritten for React->Formik).
-    type srcArrType = {
-        url: string
+        const jsonStr = JSON.stringify(arr);
+
+        // Add to our array.
+        if (arr.length > 0)
+            setSssStr(jsonStr);
+
+        console.log("sssLoop from submit => " + sssStr);
+        console.log(jsonStr);
     }
 
-    const [srcsArr, setSrcsArr] = useState<Array<srcArrType>>([]);
+    useEffect(sssLoop, [submit]);
+
+    // Sources (this needs to be rewritten for React->Formik).
+    type srcArrType = {
+        url: string
+        query: string
+    }
+
     const [srcsStr, setSrcsStr] = useState("[]");
 
     const srcsLoop = ():void => {
+        let arr: Array<srcArrType> = [];
+
         for (let i = 1; i <= 50; i++) {
             if (typeof window === 'undefined')
                 break
     
-            const src = document.getElementById("screenshots-" + i);
+            const urlEle = document.getElementById("sources-" + i + "-url");
+            const queryEle = document.getElementById("sources-" + i + "-query");
 
-            if (src == null)
+            if (urlEle == null || queryEle == null)
                 continue;
 
-            let srcArr: srcArrType = {url: ""};
+            const urlVal = (document.getElementById(urlEle.id) as HTMLInputElement).value;
+            const queryVal = (document.getElementById(queryEle.id) as HTMLInputElement).value;
 
-            for (let j = 0; j < src.children.length; i++) {
-                // Receive child.
-                const child = src.children.item(j);
+            if (urlVal.length < 1)
+                continue;
 
-                if (child == null)
-                    continue
-
-                // Check URL.
-                if (child.id == "screenshots-" + i + "-url")
-                    srcArr.url = child.nodeValue ?? "";
-
-                // Add to our array.
-                srcsArr.push(srcArr);
-                setSrcsArr(srcsArr);
-            }
+            arr.push({url: urlVal, query: queryVal});
         }
-    };
+
+        const jsonStr = JSON.stringify(arr);
+
+        if (arr.length > 0)
+            setSrcsStr(jsonStr);
+    }
+
+    useEffect(srcsLoop, [submit]);
 
     useMemo(() => {
         // Check if we have an error.
@@ -182,7 +178,6 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     }, [modMut.isError]);
 
     // Handle dynamic download form.
-    /*
     useMemo(() => {
         dlsLoop();
 
@@ -198,10 +193,10 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                         <h3 className="text-gray-200 text-lg font-bold mb-2">Download #{num}</h3>
 
                         <label className="block text-gray-200 text-sm font-bold mb-2">Name</label>
-                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={nameId} id={nameId} type="text" />
+                        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={nameId} id={nameId} type="text" />
 
                         <label className="block text-gray-200 text-sm font-bold mb-2">URL</label>
-                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={urlId} id={urlId} type="text" />
+                        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={urlId} id={urlId} type="text" />
 
                         <button onClick={(e) => {
                             e.preventDefault();
@@ -238,7 +233,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                         <h3 className="text-gray-200 text-lg font-bold mb-2">Screenshot #{num}</h3>
 
                         <label className="block text-gray-200 text-sm font-bold mb-2">URL</label>
-                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={urlId} id={urlId} type="text" />
+                        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={urlId} id={urlId} type="text" />
 
                         <button onClick={(e) => {
                             e.preventDefault();
@@ -259,7 +254,6 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             </div>
         </>);
     }, [screenShotCount]);
-    */
 
     // Handle dynamic sources.
     useEffect(() => {
@@ -270,15 +264,8 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
         setSourceForm(<>
             {range.map((num) => {
-                const srcUrl = "sources-" + num + "-srcurl";
-                const srcQuery = "sources-" + num + "-srcquery";
-
-                // Set new values.
-                let val: { [key: string]: string } = {};
-                val[srcUrl] = "";
-                val[srcQuery] = "";
-
-                setNewValues({...newValues, ...val});
+                const srcUrl = "sources-" + num + "-url";
+                const srcQuery = "sources-" + num + "-query";
 
                 return (<div key={num} className="mb-4">
                     <div className="mb-4">
@@ -294,7 +281,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                         </select>
 
                         <label className="block text-gray-200 text-sm font-bold mb-2">URL</label>
-                        <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcQuery} id={srcQuery} type="text" />
+                        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcQuery} id={srcQuery} type="text" />
 
                         <button onClick={(e) => {
                             e.preventDefault();
@@ -338,86 +325,21 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     
     }, [modQuery.data]);
 
-    // Create our default validation schema.
-    const [formValidation, setFormValidation] = useState(Yup.object().shape({
-        name: Yup.string().required(),
-        description: Yup.string().required(),
-        descriptionShort: Yup.string(),
-        install: Yup.string(),
-        url: Yup.string().required(),
-        bremove: Yup.boolean()
-    }));
-
-    const [initialValues, setInitialValues] = useState<{ [key: string]: string | Boolean | Number }>({
-        name: name,
-        description: description,
-        descriptionShort: descriptionShort,
-        install: install,
-        url: url,
-        bremove: false
-    });
-
-    const [newValues, setNewValues] = useState<{ [key: string]: string | Boolean | Number }>({});
-
-    // Handle dynamic validation fields.
-    useEffect(() => {
-        let i;
-    
-        let newValidation = Yup.object().shape({
-            name: Yup.string().required(),
-            description: Yup.string().required(),
-            descriptionShort: Yup.string(),
-            install: Yup.string(),
-            url: Yup.string().required(),
-            bremove: Yup.boolean()
-        });
-    
-        for (i = 1; i <= downloadCount; i++) {
-            const nameId = "downloads-" + i + "-name";
-            const urlId = "downloads-" + i + "-url";
-
-            newValues[nameId] = "";
-            newValues[urlId] = "";
-    
-            newValidation = newValidation.shape({
-                [nameId]: Yup.string(),
-                [urlId]: Yup.string()
-            });
-        }
-    
-        for (i = 1; i <= screenShotCount; i++) {
-            const urlId = "screenshots-" + i + "-url";
-
-            newValues[urlId] = "";
-
-            newValidation = newValidation.shape({
-                [urlId]: Yup.string(),
-            });
-        }
-    
-        for (i = 1; i <= sourceCount; i++) {
-            const urlId = "sources-" + i + "-srcurl";
-            const queryId = "sources-" + i + "-srcquery";
-
-            newValues[urlId] = "";
-            newValues[queryId] = "";
-    
-            newValidation = newValidation.shape({
-                [urlId]: Yup.string(),
-                [queryId]: Yup.string()
-            });
-        }
-
-        setFormValidation(newValidation);
-    }, [downloadCount, screenShotCount, sourceCount]);
-
     // Create form using Formik.
     const form = useFormik({
-        initialValues: initialValues,
+        initialValues: {
+            name: name,
+            description: description,
+            descriptionShort: descriptionShort,
+            install: install,
+            url: url,
+            bremove: false
+        },
         enableReinitialize: true,
-        validationSchema: formValidation,
 
         onSubmit: (values) => {
+            setSubmit(true);
+
             // First, handle file uploads via a promise. Not sure of any other way to do it at the moment (though I am new to TypeScript, Next.JS, and React).
             new Promise<void>(async (resolve, reject) => {
                 // We have uploads / total uploads.
@@ -467,15 +389,6 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             }).then(() => {
                 console.debug("File uploads handled!");
 
-                // Now receive relations and convert them into the scope string via JSON.
-                dlsLoop();
-                sssLoop();
-                srcsLoop();
-
-                setDlsStr(JSON.stringify(dlsArr));
-                setSssStr(JSON.stringify(sssArr));
-                setSrcsStr(JSON.stringify(srcsArr));
-
                 console.log("dlsStr => " + dlsStr);
                 console.log("sssStr => " + sssStr);
                 console.log("srcsStr => " + srcsStr);
@@ -501,20 +414,6 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             });
         }
     });
-
-    const {
-        values,
-        errors,
-        touched,
-        handleChange,
-        handleSubmit,
-        validateForm,
-        handleBlur,
-      } = form;
-
-    useEffect(() => {
-        validateForm();
-    }, [formValidation]);
 
     return (
         <>
