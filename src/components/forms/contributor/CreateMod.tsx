@@ -393,6 +393,15 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         // Insert into database.
         modMut.mutate(newVals);
 
+        // Scroll to top.
+        if (typeof window !== undefined) {
+            window.scroll({ 
+                top: 0, 
+                left: 0, 
+                behavior: 'smooth' 
+            });
+        }
+
         // We are no longer submitting.
         setSubmit(false);
     }, [submit, values, fetchDls, fetchSss, fetchSrcs]);
