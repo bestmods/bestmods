@@ -1,7 +1,6 @@
 
 import { useFormik, FormikProvider, Field } from "formik";
 import React, { useState, useEffect, useMemo } from "react";
-import { string } from "zod";
 
 import { trpc } from "../../../utils/trpc";
 
@@ -11,6 +10,12 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     const [id, setId] = useState(0);
     const [dataReceived, setDataReceived] = useState(false);
 
+    // Error and success messages.
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
+    const [alertForm, setAlertForm] = useState<JSX.Element>(<></>);
+
+    // For submissions.
     const [submit, setSubmit] = useState(false);
     const [values, setValues] = useState<{
         description: string;
@@ -62,22 +67,40 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         if (!modMut.isError)
             return;
 
-        let errMsg = "";
-
         // Check if we can simplify the error message for client.
         if (modMut.error.message.includes("Error parsing URL"))
-            errMsg = "Mod URL is too short or empty (<2 bytes).";
+            setError("Mod URL is too short or empty (<2 bytes).");
         else if (modMut.error.message.includes("file extension is unknown"))
-            errMsg = modMut.error.message;
+            setError(modMut.error.message);
         else if (modMut.error.message.includes("base64 data is null"))
-            errMsg = "Icon or banner file(s) corrupt/invalid.";
-            else
-            errMsg = "Unable to create or edit mod!"; 
+            setError("Icon or banner file(s) corrupt/invalid.");
+        else
+            setError("Unable to create or edit mod!"); 
 
         // Send alert and log full error to client's console.
         console.error(modMut.error);
-        alert("Error! " + errMsg);
+
     }, [modMut.isError]);
+
+    useMemo(() => {
+        setAlertForm(<>
+            <div id="alertbox">
+                {error != null && (
+                    <div className="p-4 bg-red-500/50 text-white">
+                        <h3 className="text-xl">Error!</h3>
+                        <p>{error}</p>
+                    </div>
+                )}
+                
+                {success != null && (
+                        <div className="p-4 bg-lime-500/50 text-white">
+                        <h3 className="text-xl">Success!</h3>
+                        <p>{success}</p>
+                    </div>
+                )}
+            </div>
+        </>);
+    }, [error, success])
 
 
     // Handle dynamic downloads fields/array (uncontrolled input).
@@ -464,6 +487,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         <>
             {form != null ? (
                 <FormikProvider value={form}>
+                    {alertForm}
                     <form method="POST" onSubmit={form.handleSubmit}>
                         <h2 className="text-white text-2xl font-bold">General Information</h2>
                         <div className="mb-4">
