@@ -8,19 +8,19 @@ import ModForm from "../../../components/forms/contributor/CreateMod";
 
 import { useRouter } from 'next/router'
 
+import { BestModsHeader, BestModsBackground} from '../../index';
+
 const Home: NextPage = () => {
   return (
     <>
       <HeadInfo />
-      <main className="flex min-h-screen flex-col bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-          <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-              <h1 className="text-center text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-                  <span className="text-blue-400">B</span>est{" "}
-                  <span className="text-blue-400">M</span>ods
-              </h1>
-
-              <MainContent />
-          </div>
+      <main className="flex min-h-screen flex-col bg-gradient-to-b from-[#002736] to-[#00151b]">
+        <BestModsBackground></BestModsBackground>
+        
+        <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+          <BestModsHeader></BestModsHeader>
+          <MainContent />
+        </div>
       </main>
     </>
   );

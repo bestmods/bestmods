@@ -239,10 +239,10 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                     <div className="mb-4">
                         <h3 className="text-gray-200 text-lg font-bold mb-2">Download #{num}</h3>
 
-                        <label className="block text-gray-200 text-sm font-bold mb-2">Name</label>
+                        <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Name</label>
                         <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={nameId} id={nameId} type="text" />
 
-                        <label className="block text-gray-200 text-sm font-bold mb-2">URL</label>
+                        <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
                         <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={urlId} id={urlId} type="text" />
 
                         <button onClick={(e) => {
@@ -250,7 +250,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
                             // Subtract count.
                             setDownloadCount(downloadCount - 1);
-                        }} className="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
+                        }} className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
                     </div>
                 </div>);
             })}
@@ -260,7 +260,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
                     // Increment downloads count.
                     setDownloadCount(downloadCount + 1);
-                }} className="text-white bg-lime-500 hover:bg-lime-600 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
+                }} className="text-white bg-green-800 hover:bg-green-900 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
             </div>
         </>);
     }, [downloadCount])
@@ -278,7 +278,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                     <div className="mb-4">
                         <h3 className="text-gray-200 text-lg font-bold mb-2">Screenshot #{num}</h3>
 
-                        <label className="block text-gray-200 text-sm font-bold mb-2">URL</label>
+                        <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
                         <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={urlId} id={urlId} type="text" />
 
                         <button onClick={(e) => {
@@ -286,7 +286,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
                             // Subtract count.
                             setScreenShotCount(screenShotCount - 1);
-                        }} className="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
+                        }} className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
                     </div>
                 </div>);
             })}
@@ -296,7 +296,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
                     // Increment downloads count.
                     setScreenShotCount(screenShotCount + 1);
-                }} className="text-white bg-lime-500 hover:bg-lime-600 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
+                }} className="text-white bg-green-800 hover:bg-green-900 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
             </div>
         </>);
     }, [screenShotCount]);
@@ -318,7 +318,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                     <div className="mb-4">
                         <h3 className="text-gray-200 text-lg font-bold mb-2">Source #{num}</h3>
 
-                        <label className="block text-gray-200 text-sm font-bold mb-2">Source</label>
+                        <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Source</label>
                         <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcUrl} id={srcUrl}>
                             {sourcesArr?.map((src) => {
                                 return (
@@ -327,7 +327,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                             })}
                         </select>
 
-                        <label className="block text-gray-200 text-sm font-bold mb-2">Query URL</label>
+                        <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Query URL</label>
                         <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcQuery} id={srcQuery} type="text" />
 
                         <button onClick={(e) => {
@@ -335,7 +335,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
                             // Subtract count.
                             setSourceCount(sourceCount - 1);
-                        }} className="text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
+                        }} className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
                     </div>
                 </div>);
             })}
@@ -345,7 +345,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
                     // Increment downloads count.
                     setSourceCount(sourceCount + 1);
-                }} className="text-white bg-lime-500 hover:bg-lime-600 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
+                }} className="text-white bg-green-800 hover:bg-green-900 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
             </div>
         </>);
 
@@ -492,10 +492,10 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             {form != null ? (
                 <FormikProvider value={form}>
                     {alertForm}
-                    <form method="POST" onSubmit={form.handleSubmit}>
+                    <form method="POST" onSubmit={form.handleSubmit} className="w-full flex flex-col bg-black bg-opacity-50 shadow-md rounded px-8 pt-6 pb-8 mb-4">
                         <h2 className="text-white text-2xl font-bold">General Information</h2>
                         <div className="mb-4">
-                            <label className="block text-gray-200 text-sm font-bold mb-2">Image Banner</label>
+                            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Image Banner</label>
                             <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image_banner" name="image_banner" type="file" placeholder="Mod Image Banner" onChange={(e) => {
                                 setBanner(e.currentTarget.files[0]);
                             }} />
@@ -504,17 +504,17 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                         </div>
 
                         <div className="mb-4">
-                            <label className="block text-gray-200 text-sm font-bold mb-2">Name</label>
+                            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Name</label>
                             <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="name" name="name" type="text" placeholder="Mod Name" />
                         </div>
 
                         <div className="mb-4">
-                            <label className="block text-gray-200 text-sm font-bold mb-2">URL</label>
+                            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
                             <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="url" name="url" type="text" placeholder="bestmods.io/view/value" />
                         </div>
 
                         <div className="mb-4">
-                            <label className="block text-gray-200 text-sm font-bold mb-2">Category</label>
+                            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Category</label>
                             <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" onChange={(e) => {
                                 const val = (e.target.value > 0) ? Number(e.target.value) : null;
 
@@ -539,18 +539,18 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                         </div>
 
                         <div className="mb-4">
-                            <label className="block text-gray-200 text-sm font-bold mb-2">Short Description</label>
-                            <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="descriptionShort" name="descriptionShort" as="textarea" placeholder="Mod Short Description" />
+                            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Short Description</label>
+                            <Field rows="16" cols="32" className="shadow appearance-none border-blue-900 rounded w-full p-6 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="descriptionShort" name="descriptionShort" as="textarea" placeholder="Mod Short Description" />
                         </div>
 
                         <div className="mb-4">
-                            <label className="block text-gray-200 text-sm font-bold mb-2">Description</label>
-                            <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="description" name="description" as="textarea" placeholder="Mod Description" />
+                            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Description</label>
+                            <Field rows="16" cols="32" className="shadow appearance-none border-blue-900 rounded w-full p-6 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="description" name="description" as="textarea" placeholder="Mod Description" />
                         </div>
 
                         <div className="mb-4">
-                            <label className="block text-gray-200 text-sm font-bold mb-2">Installation</label>
-                            <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="install" name="install" as="textarea" placeholder="Mod Installation" />
+                            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Installation</label>
+                            <Field rows="16" cols="32" className="shadow appearance-none border-blue-900 rounded w-full p-6 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="install" name="install" as="textarea" placeholder="Mod Installation" />
                         </div>
                         
                         <h2 className="text-white text-2xl font-bold">Sources</h2>
