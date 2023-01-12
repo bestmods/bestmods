@@ -1,6 +1,7 @@
+import { BestModsPage} from '../../../components/main';
+
 import { type NextPage } from "next";
-import React, { useContext, useState, useEffect, useMemo } from "react";
-import HeadInfo from "../../../components/Head";
+import React from "react";
 
 import SourceForm from "../../../components/forms/contributor/CreateSource";
 import CategoryForm from "../../../components/forms/contributor/CreateCategory";
@@ -8,20 +9,12 @@ import ModForm from "../../../components/forms/contributor/CreateMod";
 
 import { useRouter } from 'next/router'
 
-import { BestModsHeader, BestModsBackground} from '../../index';
-
 const Home: NextPage = () => {
   return (
     <>
-      <HeadInfo />
-      <main className="flex min-h-screen flex-col bg-gradient-to-b from-[#002736] to-[#00151b]">
-        <BestModsBackground></BestModsBackground>
-        
-        <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <BestModsHeader></BestModsHeader>
-          <MainContent />
-        </div>
-      </main>
+      <BestModsPage
+        content={<MainContent></MainContent>}
+      ></BestModsPage>
     </>
   );
 };

@@ -21,14 +21,14 @@ export const categoryRouter = router({
         }),
     addCategory: publicProcedure
         .input(z.object({
+            id: z.number().nullable(),
             parent_id: z.number().nullable(),
             name: z.string(),
             name_short: z.string(),
             url: z.string(),
             icon: z.string().nullable(),
             classes: z.string().nullable(),
-            iremove: z.boolean().nullable(),
-            id: z.number().nullable()
+            iremove: z.boolean().nullable()
         }))
         .mutation(async ({ ctx, input }) => {
             let cat = null;
