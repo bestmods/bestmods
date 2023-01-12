@@ -78,6 +78,30 @@ export const modRouter = router({
             }
 
             if (mod != null) {
+                // For now, we want to clear out all relation data to our mod before re-updating with how our form and React setup works.
+                try {
+                    await ctx.prisma.modDownload.deleteMany({
+                        where: {
+                           modId: mod.id
+                        }
+                    });
+
+                    await ctx.prisma.modScreenshot.deleteMany({
+                        where: {
+                            modId: mod.id
+                        }
+                    });
+
+                    await ctx.prisma.modSource.deleteMany({
+                        where: {
+                            modId: mod.id
+                        }
+                    });
+                } catch (error) {
+                    // Log, but keep continuing.
+                    console.error("Error deleting relations for Mod ID #" + mod.id);
+                }
+
                 // Handle downloads relation.
                 const downloads = JSON.parse(input.downloads ?? "[]");
 
