@@ -241,7 +241,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     // Handle dynamic dynamic screenshot form.
     useMemo(() => {
         // Create a range from 1 to screenshot count.
-        const range = Array.from({length: downloadCount}, (value, index) => index + 1);
+        const range = Array.from({length: screenShotCount}, (value, index) => index + 1);
 
         setScreenShotForm(<>
             {range.map((num) => {
