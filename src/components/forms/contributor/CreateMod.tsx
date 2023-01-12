@@ -67,13 +67,17 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         if (!modMut.isError)
             return;
 
+        const err = modMut.error.message;
+
         // Check if we can simplify the error message for client.
-        if (modMut.error.message.includes("Error parsing URL"))
+        if (err.includes("Error parsing URL"))
             setError("Mod URL is too short or empty (<2 bytes).");
-        else if (modMut.error.message.includes("file extension is unknown"))
-            setError(modMut.error.message);
-        else if (modMut.error.message.includes("base64 data is null"))
+        else if (err.includes("file extension is unknown"))
+            setError(err);
+        else if (err.includes("base64 data is null"))
             setError("Icon or banner file(s) corrupt/invalid.");
+        else if (err.includes("is empty"))
+            setError(err);
         else
             setError("Unable to create or edit mod!"); 
 
@@ -91,7 +95,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                         <p>{error}</p>
                     </div>
                 )}
-                
+
                 {success != null && (
                         <div className="p-4 bg-lime-500/50 text-white">
                         <h3 className="text-xl">Success!</h3>
