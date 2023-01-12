@@ -2,11 +2,38 @@ import { Field, Form, Formik } from "formik";
 import React from "react";
 import HeadInfo from "../components/Head";
 
+import { signIn, signOut, useSession } from "next-auth/react";
+
+export const BestModsLogin: React.FC<{session: any | null}> = ({session}) => {
+    return (
+        <>
+            <div className="flex justify-end items-end">
+                <div>
+                    {session == null ? (
+                        <button className="p-4 text-center text-white bg-cyan-800 hover:bg-cyan-900" onClick={() => {
+                            signIn("discord");
+                        }}>Sign In!</button>
+                    ) : (
+                        <button className="p-4 text-center text-white bg-cyan-800 hover:bg-cyan-900" onClick={() => {
+                            signOut();
+                        }}>Sign Out</button>
+                    )}
+                </div>
+            </div>
+        </>
+    );
+};
+
 export const BestModsPage: React.FC<{content: JSX.Element}> = ({ content }) => {
+    const { data: session, status } = useSession();
+
     return (
       <>
         <HeadInfo />
         <main className="flex min-h-screen flex-col bg-gradient-to-b from-[#002736] to-[#00151b]">
+            <BestModsLogin 
+                session={session}
+            ></BestModsLogin>
           <BestModsBackground></BestModsBackground>
           
           <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
