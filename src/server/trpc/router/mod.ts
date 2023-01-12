@@ -46,6 +46,24 @@ export const modRouter = router({
             // First, we want to insert the mod into the database.
             let mod = null;
 
+            // Make sure we have text in required fields.
+            if (input.url.length < 1 || input.name.length < 1 || input.description.length < 1) {
+                let err = "URL is empty.";
+                
+                if (input.name.length < 1)
+                    err = "Name is empty.";
+
+                if (input.description.length < 1)
+                    err = "Description is empty.";
+
+                console.error(err);
+
+                throw new TRPCError({ 
+                    code: "CONFLICT",
+                    message: err
+                });
+            }
+
             try {
                 mod = await ctx.prisma.mod.upsert({
                     where: {
