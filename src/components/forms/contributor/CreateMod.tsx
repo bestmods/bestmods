@@ -346,7 +346,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     }, [modQuery.data]);
 
     useEffect(() => {
-        // Make sure we are submitting, values are valid, and we still aren't fetching relation data.
+        // Make sure we are submitting, values are valid, and we aren't still fetching relation data.
         if (!submit || !values || fetchDls || fetchSss || fetchSrcs)
             return;
 
@@ -493,6 +493,10 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                                 setCategory(val ?? 0);
                             }}>
                                 {catsWithChildren?.data?.map((cat) => {
+                                    // Check if we need to set default category.
+                                    if (category < 1)
+                                        setCategory(cat.id);
+                                    
                                     return (
                                         <React.Fragment key={cat.id}>
                                             <option value={cat.id}>{cat.name}</option>

@@ -41,13 +41,12 @@ export const modRouter = router({
             // First, we want to insert the mod into the database.
             let mod = null;
 
+            console.log("Using category ID => " + input.category);
+
             try {
                 mod = await ctx.prisma.mod.upsert({
                     where: {
                         id: input.id
-                    },
-                    include: {
-                        ModSource: true
                     },
                     update: {
                         name: input.name,
@@ -84,13 +83,15 @@ export const modRouter = router({
 
                 // Loop through downloads.
                 downloads.forEach(async ({ name, url }: { name: string, url: string }) => {
-                    const results = await ctx.prisma.modDownload.upsert({
+                    await ctx.prisma.modDownload.upsert({
                         where: {
-                            modurl: mod.url,
-                            url: url
+                            modId_url: {
+                                modId: mod.id,
+                                url: url
+                            }
                         },
                         create: {
-                            modurl: mod.url,
+                            modId: mod.id,
                             name: name,
                             url: url,
                         },
@@ -106,14 +107,16 @@ export const modRouter = router({
 
                 // Loop through screenshots.
                 screenshots.forEach(async ({ url }: { url: string }) => {
-                    const results = await ctx.prisma.modScreenshot.upsert({
+                    await ctx.prisma.modScreenshot.upsert({
                         where: {
-                            modurl: mod.url,
-                            url: url
+                            modId_url: {
+                                modId: mod.id,
+                                url: url
+                            }
                         },
                         create: {
-                            modurl: mod.url,
-                            url: url,
+                            modId: mod.id,
+                            url: url
                         },
                         update: {
                             url: url
@@ -125,19 +128,21 @@ export const modRouter = router({
                 const sources = JSON.parse(input.sources ?? "[]");
 
                 // Loop through sources.
-                sources.forEach(async ({ srcurl, url }: { srcurl: string, url: string }) => {
-                    const results = await ctx.prisma.modSource.upsert({
+                sources.forEach(async ({ url, query }: { url: string, query: string }) => {
+                    await ctx.prisma.modSource.upsert({
                         where: {
-                            modurl: mod.url,
-                            sourceUrl: srcurl
+                            modId_sourceUrl: {
+                                modId: mod.id,
+                                sourceUrl: url
+                            }
                         },
                         create: {
-                            modurl: mod.url,
-                            sourceUrl: srcurl,
-                            url: url,
+                            modId: mod.id,
+                            sourceUrl: url,
+                            query: query,
                         },
                         update: {
-                            url: url
+                            query: query
                         }
                     });
                 });

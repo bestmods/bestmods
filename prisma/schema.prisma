@@ -21,7 +21,6 @@ model Source {
   icon      String?
   banner    String?
   classes   String?
-  Mod       Mod[]
   ModSource ModSource[]
 }
 
@@ -51,8 +50,6 @@ model Mod {
   rating            BigInt          @default(1)
   total_downloads   BigInt          @default(0)
   total_views       BigInt          @default(0)
-  source            Source?         @relation(fields: [sourceUrl], references: [url])
-  sourceUrl         String?
   category          Category        @relation(fields: [categoryId], references: [id])
   categoryId        Int
   ModSource         ModSource[]
@@ -62,31 +59,31 @@ model Mod {
 
 // Relations
 model ModDownload {
-  mod    Mod     @relation(fields: [modurl], references: [url])
-  modurl String
-  name   String?
-  url    String
+  mod   Mod     @relation(fields: [modId], references: [id])
+  modId Int
+  name  String?
+  url   String
 
-  @@unique([modurl, url])
+  @@id([modId, url])
 }
 
 model ModScreenshot {
-  mod    Mod    @relation(fields: [modurl], references: [url])
-  modurl String
-  url    String
+  mod   Mod    @relation(fields: [modId], references: [id])
+  modId Int
+  url   String
 
-  @@unique([modurl, url])
+  @@id([modId, url])
 }
 
 model ModSource {
-  mod       Mod     @relation(fields: [modurl], references: [url])
-  modurl    String
+  mod       Mod     @relation(fields: [modId], references: [id])
+  modId     Int
   source    Source  @relation(fields: [sourceUrl], references: [url])
   sourceUrl String
   primary   Boolean @default(false)
-  url       String
+  query     String
 
-  @@unique([modurl, sourceUrl])
+  @@id([modId, sourceUrl])
 }
 
 // User Accounts & Authentication
