@@ -90,15 +90,15 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         setAlertForm(<>
             <div id="alertbox">
                 {error != null && (
-                    <div className="p-4 bg-red-500/50 text-white">
-                        <h3 className="text-xl">Error!</h3>
+                    <div className="p-4 bg-red-800/50 text-white">
+                        <h3 className="text-xl font-bold">Error!</h3>
                         <p>{error}</p>
                     </div>
                 )}
 
                 {success != null && (
                         <div className="p-4 bg-lime-500/50 text-white">
-                        <h3 className="text-xl">Success!</h3>
+                        <h3 className="text-xl font-bold">Success!</h3>
                         <p>{success}</p>
                     </div>
                 )}
@@ -562,7 +562,9 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                         <h2 className="text-white text-2xl font-bold">Screenshots</h2>
                         {screenShotForm}
 
-                        <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{preUrl == null ? "Add Mod!" : "Edit Mod!"}</button>
+                        <div className="text-center">
+                            <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{preUrl == null ? "Add Mod!" : "Edit Mod!"}</button>
+                        </div>
                     </form>
                 </FormikProvider>) : (
                     <div>Loading</div>
