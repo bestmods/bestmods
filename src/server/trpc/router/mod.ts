@@ -12,6 +12,11 @@ export const modRouter = router({
         }))
         .query(({ ctx, input}) => {
             return ctx.prisma.mod.findFirst({
+                    include: {
+                        ModDownload: true,
+                        ModScreenshot: true,
+                        ModSource: true
+                    },
                     where: {
                         url: input.url
                     }
@@ -40,8 +45,6 @@ export const modRouter = router({
         .mutation(async ({ ctx, input }) => {
             // First, we want to insert the mod into the database.
             let mod = null;
-
-            console.log("Using category ID => " + input.category);
 
             try {
                 mod = await ctx.prisma.mod.upsert({
@@ -117,7 +120,7 @@ export const modRouter = router({
                         create: {
                             modId: mod.id,
                             name: name,
-                            url: url,
+                            url: url
                         },
                         update: {
                             name: name,
