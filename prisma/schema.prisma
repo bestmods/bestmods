@@ -38,26 +38,30 @@ model Category {
 }
 
 model Mod {
-  id                Int             @id @default(autoincrement())
+  id                Int              @id @default(autoincrement())
   name              String
   banner            String?
-  url               String          @unique
+  url               String           @unique
   description       String
   description_short String?
   install           String?
-  created_at        DateTime?
-  updated_at        DateTime?
-  rating            BigInt          @default(1)
-  total_downloads   BigInt          @default(0)
-  total_views       BigInt          @default(0)
-  category          Category        @relation(fields: [categoryId], references: [id])
+  createAt          DateTime         @default(now())
+  updateAt          DateTime?        @updatedAt
+  rating            BigInt           @default(1)
+  total_downloads   BigInt           @default(0)
+  total_views       BigInt           @default(0)
+  category          Category         @relation(fields: [categoryId], references: [id])
   categoryId        Int
   ModSource         ModSource[]
   ModDownload       ModDownload[]
   ModScreenshot     ModScreenshot[]
+  ModRating         ModRating[]
+  ModUniqueView     ModUniqueView[]
+  ModCollections    ModCollections[]
+  ModComment        ModComment[]
 }
 
-// Relations
+// Mod Relations
 model ModDownload {
   mod   Mod     @relation(fields: [modId], references: [id])
   modId Int
@@ -86,6 +90,59 @@ model ModSource {
   @@id([modId, sourceUrl])
 }
 
+model ModUniqueView {
+  mod       Mod      @relation(fields: [modId], references: [id])
+  modId     Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+
+  @@id([modId, userId])
+}
+
+model ModRating {
+  mod       Mod      @relation(fields: [modId], references: [id])
+  modId     Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+
+  positive Boolean @default(true)
+
+  @@id([modId, userId])
+}
+
+model ModComment {
+  id        Int       @id @default(autoincrement())
+  mod       Mod       @relation(fields: [modId], references: [id])
+  modId     Int
+  user      User      @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime  @default(now())
+  updateAt  DateTime? @updatedAt
+
+  contents String
+}
+
+// Collections
+model ModCollection {
+  id             Int              @id @default(autoincrement())
+  user           User             @relation(fields: [userId], references: [id])
+  userId         String           @unique
+  ModCollections ModCollections[]
+
+  @@unique([id, userId])
+}
+
+model ModCollections {
+  col   ModCollection @relation(fields: [colId], references: [id])
+  colId Int
+  mod   Mod           @relation(fields: [modId], references: [id])
+  modId Int
+
+  @@id([colId, modId])
+}
+
 // User Accounts & Authentication
 model Account {
   id                String  @id @default(cuid())
@@ -106,14 +163,18 @@ model Account {
 }
 
 model User {
-  id            String        @id @default(cuid())
+  id            String          @id @default(cuid())
   name          String?
-  email         String?       @unique
+  email         String?         @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
   Permissions   Permissions[]
+  ModRating     ModRating[]
+  ModUniqueView ModUniqueView[]
+  ModCollection ModCollection?
+  ModComment    ModComment[]
 }
 
 model VerificationToken {
@@ -135,9 +196,9 @@ model Session {
 
 // Permissions
 model Permissions {
-  perm   String
-  userId String
   user   User   @relation(fields: [userId], references: [id])
+  userId String
+  perm   String
 
   @@unique([perm, userId])
 }
