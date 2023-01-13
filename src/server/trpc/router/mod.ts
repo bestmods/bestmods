@@ -271,20 +271,31 @@ export const modRouter = router({
                 }                
             }
         }),
-    getAllModsLimit: publicProcedure
+    getAllModsBrowser: publicProcedure
         .input(z.object({
-            url: z.string(),
+            search: z.string().nullable(),
+            categories: z.string().nullable(),
+
             offset: z.number().nullable(),
             count: z.number().nullable()
-            
         }))
         .query(({ ctx, input }) => {
             const offset = input.offset ?? 0;
-            const count = input.count ?? 10;
+            const count = (typeof input.count === 'number' && !isNaN(input.count)) ? input.count : 10;
+
+            const catsArr = JSON.parse(input.categories ?? "[]");
 
             return ctx.prisma.mod.findMany({
+                include: {
+                    ModSource: true
+                },
                 where: {
-                    url: input.url
+                    ...(input.search && { name: {
+                            contains: input.search 
+                        }}) ,
+                    ...(catsArr && catsArr.length > 0 && { categoryId: {
+                            in: catsArr
+                        }})
                 },
                 skip: offset,
                 take: count
@@ -293,5 +304,5 @@ export const modRouter = router({
     getAllMods: publicProcedure
         .query(({ ctx }) => {
             return ctx.prisma.mod.findMany();
-        }),
+        })
 });

@@ -524,9 +524,8 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 // Create a for loop for 30 seconds to allow files to upload. We could make a while loop, but I'd prefer having a 30 second timeout (these are image files).
                 for (let i = 0; i < 30; i++) {
                     // If we're done, break to get to resolve().
-                    if (uploads >= totalUploads) {
+                    if (uploads >= totalUploads)
                         break;
-                    }
                     
                     console.debug("Upload progress => " + uploads + "/" + totalUploads);
 
