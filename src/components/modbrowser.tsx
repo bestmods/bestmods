@@ -55,9 +55,9 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
         banner = mod.banner;
 
     // Generate links.
-    const origLink = (src != null) ? "https://" + src.url + "/" + mod.ModSource[0].query : null;
     const viewLink = "/view/" + mod.url;
-
+    const origLink = (src != null) ? "https://" + src.url + "/" + mod.ModSource[0].query : null;
+    
     return (
         <div className="m-10 shadow-sm w-72 h-96 rounded bg-cyan-900/50 flex flex-col">
             <div className="modImage w-full h-36">
