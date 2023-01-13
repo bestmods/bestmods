@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { trpc } from "../utils/trpc";
 
-import { Mod, ModRating, Source } from "@prisma/client";
+import { Mod, ModRating, Source, Category } from "@prisma/client";
 
 import InfiniteScroll from 'react-infinite-scroller';
 
@@ -23,6 +23,17 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
 
     const src: Source | null = (srcQuery.data) ? srcQuery.data : null;
 
+    // Retrieve category.
+    const cat: Category | null = mod.category;
+
+    const catParentQuery = trpc.category.getCategory.useQuery({id: (cat != null && cat.parentId != null) ? cat.parentId : 0});
+
+    const catPar = catParentQuery.data;
+
+    console.log("Category");
+    console.log(cat);
+    console.log(catPar);
+
     // Retrieve rating.
     let positives = 0;
     let negatives = 0;
@@ -42,10 +53,10 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                 negatives++;
         });
 
-        rating = positives - negatives;
+        rating = (positives - negatives) + 1;
     }
 
-    // Retrieve correct banner.   
+    // Generate correct banner.   
     let banner = "/images/mod/default.png";
 
     if (src != null && src.banner != null)
@@ -54,26 +65,66 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     if (mod.banner != null && mod.banner.length > 0)
         banner = mod.banner;
 
+    // Generate category info.
+    const defaultCatIcon = "/images/source/default_icon.png";
+    const catIcon = (cat != null && cat.icon != null) ? cat.icon : defaultCatIcon;
+    const catParIcon = (catPar != null && catPar.icon !=  null) ? catPar.icon : defaultCatIcon;
+
+    // Generating source info.
+    const srcIcon = (src != null && src.icon != null) ? src.icon : "/images/source/default_icon.png";
+    const srcLink = (src != null) ? "https://" + src.url : null;
+
     // Generate links.
     const viewLink = "/view/" + mod.url;
     const origLink = (src != null) ? "https://" + src.url + "/" + mod.ModSource[0].query : null;
     
     return (
-        <div className="m-10 shadow-sm w-72 h-96 rounded bg-cyan-900/50 flex flex-col">
-            <div className="modImage w-full h-36">
-                <img className="w-full" src={banner} />
+        <div className="m-5 shadow-sm w-72 h-96 rounded bg-cyan-900/50 flex flex-col">
+            <div className="modImage w-full max-h-36 h-36">
+                <img className="w-full max-h-full" src={banner} />
             </div>
-            <div className="mainInfo grow ml-8 mr-8">
+            <div className="mainInfo ml-8 mr-8 mb-4">
                     <h3 className="text-white text-xl font-bold text-center">{mod.name}</h3>
-                    <p className="text-white text-base mt-2">{mod.description_short}</p>
+                    <p className="text-white mt-2 text-sm">{mod.description_short}</p>
                 </div>
+                <div className="modCategory ml-8 mr-8 mb-1">
+                    <p className="text-white flex">
+                        {catPar != null && (
+                            <div className="flex">
+                                {catParIcon != null && (
+                                    <img src={catParIcon} className="w-6 h-6 rounded"></img>
+                                )}
+
+                                <span className="ml-2 mr-2">{catPar.name} -{'>'} </span>
+                            </div>
+                        )}
+                        {cat != null && (
+                            <div className="flex">
+                                {catIcon != null && (
+                                    <img src={catIcon} className="w-6 h-6 rounded"></img>
+                                )}
+
+                                <span className="ml-2">{cat.name}</span>
+                            </div>
+                        )}
+                    </p>
+                </div>
+                {srcLink != null && src != null && (
+                    <div className="modSource ml-8 mr-8">
+                        <p className="text-white flex">
+                            <img src={srcIcon} className="w-6 h-6" />
+                            <a href={srcLink} className="ml-2 hover:underline" target="_blank">{src.name}</a>
+                        </p>
+                    </div>
+                )}
+                <div className="grow"></div>
                 <div className="modStats">
 
                 </div>
                 <div className="modLinks flex justify-center pb-4">
-                    <a href={viewLink} className="text-white font-bold bg-blue-400 p-4 rounded-md">View</a>
+                    <a href={viewLink} className="text-white font-bold bg-blue-600 p-2 rounded-md">View</a>
                     {origLink != null && (
-                        <a href={origLink} target="_blank" className="text-white font-bold bg-blue-400 p-4 rounded-md ml-4">Original</a>
+                        <a href={origLink} target="_blank" className="text-white font-bold bg-blue-600 p-2 rounded-md ml-4">Original</a>
                     )}
                 </div>
         </div>

@@ -287,7 +287,8 @@ export const modRouter = router({
 
             return ctx.prisma.mod.findMany({
                 include: {
-                    ModSource: true
+                    ModSource: true,
+                    category: true
                 },
                 where: {
                     ...(input.search && { name: {

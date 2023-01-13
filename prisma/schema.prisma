@@ -47,7 +47,6 @@ model Mod {
   install           String?
   createAt          DateTime         @default(now())
   updateAt          DateTime?        @updatedAt
-  rating            BigInt           @default(1)
   total_downloads   BigInt           @default(0)
   total_views       BigInt           @default(0)
   category          Category         @relation(fields: [categoryId], references: [id])
