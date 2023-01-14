@@ -67,7 +67,7 @@ export const BestModsHeader = () => {
                 history.pushState(null, "", `?search=${e.search}`);
             }}
         >
-            <Form className="w-4/5 flex justify-center items-center gap-2">
+            <Form className="flex justify-center items-center gap-2 flex-wrap">
                 <Filters />
                 <SearchBar />
             </Form>
@@ -81,12 +81,12 @@ const Filters = () => {
 
     return (
         <>
-            <div className="relative">
+            <div className="relative w-full md:w-3/12">
                 <select name="filterTimeframe" value={timeframe.toString()} onChange={(e) => {
                     const val = e.target.value;
 
                     setTimeframe(Number(val));
-                }} className="block p-4 pl-10 w-full text-lg text-gray-100 bg-gray-700 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                }} className="block p-4 w-full text-lg text-gray-100 bg-gray-700 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
                     <option value="0">Hourly</option>
                     <option value="1">Today</option>
                     <option value="2">Week</option>
@@ -95,12 +95,12 @@ const Filters = () => {
                     <option value="5">All Time</option>
                 </select>
             </div>
-            <div className="relative">
+            <div className="relative w-full md:w-3/12">
                 <select name="filterSort" value={sort.toString()} onChange={(e) => {
                     const val = e.target.value;
 
                     setSort(Number(val));
-                }} className="block p-4 pl-10 w-full text-lg text-gray-100 bg-gray-700 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                }} className="block p-4 w-full text-lg text-gray-100 bg-gray-700 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
                     <option value="0">Top Rated</option>
                     <option value="1">Most Viewed</option>
                     <option value="2">Most Downloaded</option>
@@ -114,7 +114,7 @@ const Filters = () => {
   
 const SearchBar = () => {
     return ( 
-        <div className="relative w-3/5">
+        <div className="relative w-full md:w-1/3 ">
             <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                 <svg aria-hidden="true" className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             </div>
