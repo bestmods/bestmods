@@ -30,10 +30,6 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
 
     const catPar = catParentQuery.data;
 
-    console.log("Category");
-    console.log(cat);
-    console.log(catPar);
-
     // Retrieve rating.
     let positives = 0;
     let negatives = 0;
@@ -77,11 +73,14 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     // Generate links.
     const viewLink = "/view/" + mod.url;
     const origLink = (src != null) ? "https://" + src.url + "/" + mod.ModSource[0].query : null;
+
+    // Generate classes.
+    let addClasses = (cat != null && cat.classes != null) ? " " + cat.classes : "";
     
     return (
-        <div className="m-5 shadow-sm w-72 h-96 rounded bg-cyan-900/50 flex flex-col">
-            <div className="modImage w-full max-h-36 h-36">
-                <img className="w-full max-h-full" src={banner} />
+        <div className={"w-72 max-w-72 h-[32rem] rounded bg-gradient-to-b from-cyan-500/30 to-cyan-800/30 flex flex-col shadow-lg" + addClasses}>
+            <div className="modImage w-full max-h-64 h-64">
+                <img className="w-full h-full max-h-full" src={banner} />
             </div>
             <div className="mainInfo ml-8 mr-8 mb-4">
                     <h3 className="text-white text-xl font-bold text-center">{mod.name}</h3>
@@ -121,10 +120,10 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                 <div className="modStats">
 
                 </div>
-                <div className="modLinks flex justify-center pb-4">
-                    <a href={viewLink} className="text-white font-bold bg-blue-600 p-2 rounded-md">View</a>
+                <div className="modLinks justify-between flex">
+                    <a href={viewLink} className="text-white font-bold bg-cyan-900 p-2 rounded-md">View</a>
                     {origLink != null && (
-                        <a href={origLink} target="_blank" className="text-white font-bold bg-blue-600 p-2 rounded-md ml-4">Original</a>
+                        <a href={origLink} target="_blank" className="text-white font-bold bg-cyan-900 p-2 rounded-md ml-4">Original</a>
                     )}
                 </div>
         </div>
@@ -185,7 +184,7 @@ const ModBrowser: React.FC<ModBrowserArguments> = ({ search, categories }) => {
             hasMore={needMoreMods}
             loader={<div className="loadindicator">Loading...</div>}
         >
-            <div className="grid grid-flow-col">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
                 {mods.map(mod => {
                     return (
                         <React.Fragment key={mod.id}>

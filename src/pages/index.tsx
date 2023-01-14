@@ -1,7 +1,5 @@
-import { Mod } from "@prisma/client";
 import { type NextPage } from "next";
-import React, { useContext, useEffect, useMemo } from "react";
-import { trpc } from "../utils/trpc";
+import React from "react";
 
 import { BestModsPage } from '../components/main';
 
@@ -23,4 +21,5 @@ const Home: NextPage = () => {
     </>
   );
 };
+
 export default Home;
