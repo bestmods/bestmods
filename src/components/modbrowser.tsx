@@ -84,7 +84,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     return (
         <div className={"w-72 max-w-72 h-[32rem] rounded bg-gradient-to-b from-cyan-500/30 to-cyan-800/30 flex flex-col shadow-lg" + addClasses}>
             <div className="modImage w-full max-h-64 h-64">
-                <img className="w-full h-full max-h-full" src={banner} />
+                <img className="w-full h-full max-h-full rounded-t" src={banner} />
             </div>
             <div className="mainInfo ml-8 mr-8 mb-4">
                     <h3 className="text-white text-xl font-bold text-center">{mod.name}</h3>
@@ -149,12 +149,12 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                     {installers.length > 0 && (
                         <>
                             <div className="relative p-2 w-1/3">
-                                <button id={"installerDropdownBtn" + mod.id}  onClick={(e) => {
+                                <button id={"installerDropdownBtn" + mod.id} onClick={(e) => {
                                     setInstallersMenuOpen(!installersMenuOpen);
-                                }} className="text-white font-bold" type="button">Install {!installersMenuOpen ? (
-                                    <svg className="w-4 h-4 text-center ml-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
+                                }} className="text-white font-bold flex items-center mx-auto" type="button"><span>Install</span> {!installersMenuOpen ? (
+                                    <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
                                 ) : (
-                                    <svg className="w-4 h-4 text-center ml-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
+                                    <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
                                 )}</button>
             
                                 <ul id={"installerDropdownMenu" + mod.id} className={`absolute py-1 text-sm bg-teal-800 ${ installersMenuOpen ? "block" : "hidden" }`} aria-labelledby={"installerDropdownBtn" + mod.id}>
