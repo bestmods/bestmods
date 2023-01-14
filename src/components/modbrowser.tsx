@@ -76,6 +76,10 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
 
     // Generate classes.
     let addClasses = (cat != null && cat.classes != null) ? " " + cat.classes : "";
+
+    // Generate installers.
+    const installers: Array<{name: string, url: string}> = [{url: "moddingcommunity.com/launchMod.php?id=2", name: "Curseforge"}];
+    const [installersMenuOpen, setInstallersMenuOpen] = useState(false);
     
     return (
         <div className={"w-72 max-w-72 h-[32rem] rounded bg-gradient-to-b from-cyan-500/30 to-cyan-800/30 flex flex-col shadow-lg" + addClasses}>
@@ -120,10 +124,29 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                 <div className="modStats">
 
                 </div>
-                <div className="modLinks justify-between flex">
-                    <a href={viewLink} className="text-white font-bold bg-cyan-900 p-2 rounded-md">View</a>
+                <div className="modLinks justify-between flex text-center bg-cyan-900">
+                    <a href={viewLink} className="text-white font-bold p-2 w-1/3">View</a>
+                    {installers.length > 0 && (
+                        <>
+                            <div className="relative p-2 w-1/3">
+                                <button id={"installerDropdownBtn" + mod.id}  onClick={(e) => {
+                                    setInstallersMenuOpen(!installersMenuOpen);
+                                }} className="text-white font-bold" type="button">Install <svg className="w-4 h-4 text-center ml-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></button>
+            
+                                <ul id={"installerDropdownMenu" + mod.id} className={`absolute py-1 text-sm bg-teal-800 ${ installersMenuOpen ? "block" : "hidden" }`} aria-labelledby={"installerDropdownBtn" + mod.id}>
+                                    {installers.map((i) => {
+                                        return (
+                                            <li>
+                                                <a href={i.url} className="block px-4 hover:bg-teal-900 text-white" target="_blank">{i.name}</a>
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            </div>
+                        </>
+                    )}
                     {origLink != null && (
-                        <a href={origLink} target="_blank" className="text-white font-bold bg-cyan-900 p-2 rounded-md ml-4">Original</a>
+                        <a href={origLink} target="_blank" className="text-white font-bold p-2 w-1/3 ">Original</a>
                     )}
                 </div>
         </div>
