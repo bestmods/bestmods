@@ -3,6 +3,7 @@ import { router, publicProcedure } from "../trpc";
 
 import { TRPCError } from "@trpc/server"
 import { trpc } from "../../../utils/trpc";
+import { TRPCClientError } from "@trpc/client";
 
 export const ratingRouter = router({
     getRatingsForMod: publicProcedure
@@ -47,21 +48,31 @@ export const ratingRouter = router({
             positive: z.boolean()
         }))
         .mutation(async ({ ctx, input }) => {
-            const res = ctx.prisma.modRating.upsert({
-                where: {
-                    modId_userId: {
+            try {
+                await ctx.prisma.modRating.upsert({
+                    where: {
+                        modId_userId: {
+                            userId: input.userId,
+                            modId: input.modId
+                        }
+                    },
+                    create: {
                         userId: input.userId,
-                        modId: input.modId
+                        modId: input.modId,
+                        positive: input.positive
+                    },
+                    update: {
+                        positive: input.positive
                     }
-                },
-                create: {
-                    userId: input.userId,
-                    modId: input.modId,
-                    positive: input.positive
-                },
-                update: {
-                    positive: input.positive
-                }
-            })
+                });
+            } catch (error) {
+                console.error("Error adding rating for user ID '" + input.userId + "' for mod ID #" + input.modId);
+                console.error(error);
+
+                throw new TRPCError({
+                    code: "CONFLICT",
+                    message: error
+                })
+            }
         })
 });
