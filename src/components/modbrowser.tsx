@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { trpc } from "../utils/trpc";
 
+import { signIn, useSession } from "next-auth/react";
+
 import { Mod, ModRating, Source, Category } from "@prisma/client";
 
 import InfiniteScroll from 'react-infinite-scroller';
@@ -12,6 +14,92 @@ type ModBrowserArguments = {
 
 type ModRowArguments = {
     mod: Mod
+};
+
+const ModRating: React.FC<ModRowArguments> = ({ mod }) => {
+    // Retrieve session.
+    const { data: session } = useSession();
+
+    // Retrieve rating.
+    const [rating, setRating] = useState(1);
+    const [ratingReceived, setRatingReceived] = useState(false);
+
+    const ratingQuery = trpc.rating.getRatingsForMod.useQuery({
+        url: mod.url,
+        dateStart: null,
+        dateEnd: null
+    });
+
+    if (ratingQuery.data && ratingQuery.isFetched && !ratingReceived) {
+        let positives = 0;
+        let negatives = 0;
+
+        ratingQuery.data.map((r: ModRating) => {
+            if (r.positive)
+                positives++;
+            else
+                negatives++;
+        });
+
+        setRating((positives - negatives) + 1);
+        setRatingReceived(true);
+    }
+
+    // Controls whether user rated this mod or not.
+    const myRatingQuery = trpc.rating.getUserRatingForMod.useQuery({
+        modId: mod.id,
+        userId: session?.user?.id ?? ""
+    });
+
+    const [didRate, setDidRate] = useState(false);
+    const [rateIsPositive, setRateIsPositive] = useState(false);
+
+    if (myRatingQuery.data && myRatingQuery.isFetched && !didRate) {
+        if (myRatingQuery.data.positive)
+            setRateIsPositive(true);
+        
+        setDidRate(true);
+    }
+
+    const myRatingMut = trpc.rating.addUserRating.useMutation();
+
+    return (
+        <div className="relative w-3/5 flex text-center justify-center items-center">
+            <div className="mr-1">
+                <a href="#" onClick={(e) => {
+                    e.preventDefault();
+
+                    // Submit negative rating.
+                    if (session?.user != null && !(didRate && !rateIsPositive)) {
+                        myRatingMut.mutate({
+                            userId: session.user.id,
+                            modId: mod.id,
+                            positive: false
+                        });
+                    } else
+                        signIn("discord");
+                }}><svg className={`w-12 h-12 text-center${ (didRate && rateIsPositive) ? " opacity-20" : ""}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFA574" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 15L17 10" stroke="#FFA574" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white"/></clipPath></defs></svg></a>
+            </div>
+            <div className="text-center">
+                <span className="text-white font-bold text-4xl">{rating}</span>
+            </div>
+            <div className="ml-1">
+            <a href="#" onClick={(e) => {
+                    e.preventDefault();
+
+                    // Submit negative rating.
+                    if (session?.user != null && !(didRate && !rateIsPositive)) {
+                        myRatingMut.mutate({
+                            userId: session.user.id,
+                            modId: mod.id,
+                            positive: true
+                        });
+                    } else
+                        signIn("discord");
+                }}><svg className={`w-12 h-12 text-center${ (didRate && !rateIsPositive) ? " opacity-20" : ""}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#60A5FA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 9L7 14" stroke="#60A5FA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white"/></clipPath></defs></svg></a>
+            </div>
+        </div>
+    );
 };
 
 const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
@@ -29,28 +117,6 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     const catParentQuery = trpc.category.getCategory.useQuery({id: (cat != null && cat.parentId != null) ? cat.parentId : 0});
 
     const catPar = catParentQuery.data;
-
-    // Retrieve rating.
-    let positives = 0;
-    let negatives = 0;
-    let rating = 1;
-
-    const ratingQuery = trpc.rating.getRatingsForMod.useQuery({
-        url: mod.url,
-        dateStart: null,
-        dateEnd: null
-    });
-
-    if (ratingQuery.data && ratingQuery.isFetched) {
-        ratingQuery.data.map((r: ModRating) => {
-            if (r.positive)
-                positives++;
-            else
-                negatives++;
-        });
-
-        rating = (positives - negatives) + 1;
-    }
 
     // Generate correct banner.   
     let banner = "/images/mod/default.png";
@@ -91,7 +157,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                     <p className="text-white mt-2 text-sm">{mod.description_short}</p>
                 </div>
                 <div className="modCategory ml-8 mr-8 mb-1">
-                    <p className="text-white flex">
+                    <div className="text-white flex">
                         {catPar != null && (
                             <div className="flex">
                                 {catParIcon != null && (
@@ -110,7 +176,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                                 <span className="ml-2">{cat.name}</span>
                             </div>
                         )}
-                    </p>
+                    </div>
                 </div>
                 {srcLink != null && src != null && (
                     <div className="modSource ml-8 mr-8">
@@ -127,17 +193,9 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                         <span className="text-white text-sm ml-1">{mod.total_views.toString()}</span>
                     </div>
 
-                    <div className="relative w-3/5 flex text-center justify-center items-center">
-                        <div className="mr-1">
-                            <svg className="w-12 h-12 text-center" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFA574" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 15L17 10" stroke="#FFA574" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
-                        </div>
-                        <div className="text-center">
-                            <span className="text-white font-bold text-4xl">{rating}</span>
-                        </div>
-                        <div className="ml-1">
-                            <svg className="w-12 h-12 text-center" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#60A5FA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 9L7 14" stroke="#60A5FA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
-                        </div>
-                    </div>
+                    <ModRating
+                        mod={mod}
+                    ></ModRating>
 
                     <div className="relative mr-2 w-1/5 flex justify-end items-end flex-col">
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 11L12 15M12 15L8 11M12 15V3M21 15V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V15" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -152,15 +210,15 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                                 <button id={"installerDropdownBtn" + mod.id} onClick={(e) => {
                                     setInstallersMenuOpen(!installersMenuOpen);
                                 }} className="text-white font-bold flex items-center mx-auto" type="button"><span>Install</span> {!installersMenuOpen ? (
-                                    <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
+                                    <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
                                 ) : (
-                                    <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
+                                    <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
                                 )}</button>
             
                                 <ul id={"installerDropdownMenu" + mod.id} className={`absolute py-1 text-sm bg-teal-800 ${ installersMenuOpen ? "block" : "hidden" }`} aria-labelledby={"installerDropdownBtn" + mod.id}>
                                     {installers.map((i) => {
                                         return (
-                                            <li>
+                                            <li key={i.url}>
                                                 <a href={i.url} className="block px-4 hover:bg-teal-900 text-white" target="_blank">{i.name}</a>
                                             </li>
                                         );
@@ -234,11 +292,10 @@ const ModBrowser: React.FC<ModBrowserArguments> = ({ search, categories }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
                 {mods.map(mod => {
                     return (
-                        <React.Fragment key={mod.id}>
-                            <ModRow
-                                mod={mod}
-                            ></ModRow>
-                        </React.Fragment>
+                        <ModRow
+                            key={mod.id}
+                            mod={mod}
+                        ></ModRow>
                     );
                 })}
             </div>
