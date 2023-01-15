@@ -3,7 +3,7 @@ import { trpc } from "../utils/trpc";
 
 import { signIn, useSession } from "next-auth/react";
 
-import { Mod, ModRating, Source, Category } from "@prisma/client";
+import { Mod, ModRating, ModSource, Source, Category } from "@prisma/client";
 
 import InfiniteScroll from 'react-infinite-scroller';
 
@@ -16,7 +16,25 @@ type ModRowArguments = {
     mod: Mod
 };
 
-const ModRating: React.FC<ModRowArguments> = ({ mod }) => {
+const ModSourceRender: React.FC<{mod: Mod, modSrc: ModSource}> = ({ mod, modSrc}) => {
+    const srcQuery = trpc.source.getSource.useQuery({
+        url: modSrc.sourceUrl
+    });
+
+    let name = "Placeholder";
+    const url = "https://" + modSrc.sourceUrl + "/" + modSrc.query;
+
+    if (srcQuery.data && srcQuery.isFetched)
+        name = srcQuery.data.name;
+
+    return (
+        <li>
+            <a href={url} className="block px-4 hover:bg-teal-900 text-white" target="_blank">{name}</a>
+        </li>
+    );
+};
+
+const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
     // Retrieve session.
     const { data: session } = useSession();
 
@@ -133,12 +151,10 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     const catParIcon = (catPar != null && catPar.icon !=  null) ? catPar.icon : defaultCatIcon;
 
     // Generating source info.
-    const srcIcon = (src != null && src.icon != null) ? src.icon : "/images/source/default_icon.png";
-    const srcLink = (src != null) ? "https://" + src.url : null;
+    const [sourcesMenuOpen, setSourcesMenuOpen] = useState(false);
 
     // Generate links.
     const viewLink = "/view/" + mod.url;
-    const origLink = (src != null) ? "https://" + src.url + "/" + mod.ModSource[0].query : null;
 
     // Generate classes.
     let addClasses = (cat != null && cat.classes != null) ? " " + cat.classes : "";
@@ -156,34 +172,16 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                     <h3 className="text-white text-xl font-bold text-center">{mod.name}</h3>
                     <p className="text-white mt-2 text-sm">{mod.description_short}</p>
                 </div>
-                <div className="modCategory ml-8 mr-8 mb-1">
-                    <div className="text-white flex">
-                        {catPar != null && (
-                            <div className="flex">
-                                {catParIcon != null && (
-                                    <img src={catParIcon} className="w-6 h-6 rounded"></img>
-                                )}
-
-                                <span className="ml-2 mr-2">{catPar.name} -{'>'} </span>
-                            </div>
-                        )}
-                        {cat != null && (
-                            <div className="flex">
-                                {catIcon != null && (
-                                    <img src={catIcon} className="w-6 h-6 rounded"></img>
-                                )}
-
-                                <span className="ml-2">{cat.name}</span>
-                            </div>
-                        )}
+                {catPar != null && (
+                    <div className="modCategory ml-8 mr-8 mb-1 text-white flex">
+                        <img src={catParIcon} className="w-6 h-6 rounded"></img>
+                        <span className="ml-2 mr-2">{catPar.name}</span>
                     </div>
-                </div>
-                {srcLink != null && src != null && (
-                    <div className="modSource ml-8 mr-8">
-                        <p className="text-white flex">
-                            <img src={srcIcon} className="w-6 h-6" />
-                            <a href={srcLink} className="ml-2 hover:underline" target="_blank">{src.name}</a>
-                        </p>
+                )}
+                {cat != null && (
+                    <div className="modCategory ml-8 mr-8 mb-1 text-white flex">
+                        <img src={catIcon} className="w-6 h-6 rounded"></img>
+                        <span className="ml-2">{cat.name}</span>
                     </div>
                 )}
                 <div className="grow"></div>
@@ -193,9 +191,9 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                         <span className="text-white text-sm ml-1">{mod.total_views.toString()}</span>
                     </div>
 
-                    <ModRating
+                    <ModRatingRender
                         mod={mod}
-                    ></ModRating>
+                    ></ModRatingRender>
 
                     <div className="relative mr-2 w-1/5 flex justify-end items-end flex-col">
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 11L12 15M12 15L8 11M12 15V3M21 15V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V15" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -227,8 +225,28 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                             </div>
                         </>
                     )}
-                    {origLink != null && (
-                        <a href={origLink} target="_blank" className="text-white font-bold p-2 w-1/3 ">Original</a>
+                    {mod.ModSource != null && mod.ModSource.length > 0 && (
+                        <div className="relative p-2 w-1/3">
+                            <button id={"sourceDropdownBtn" + mod.id} onClick={(e) => {
+                                setSourcesMenuOpen(!sourcesMenuOpen);
+                            }} className="text-white font-bold flex items-center mx-auto" type="button"><span>Sources</span> {!sourcesMenuOpen ? (
+                                <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
+                            ) : (
+                                <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
+                            )}</button>
+        
+                            <ul id={"sourceDropdownMenu" + mod.id} className={`absolute py-1 text-sm bg-teal-800 ${ sourcesMenuOpen ? "block" : "hidden" }`} aria-labelledby={"installerDropdownBtn" + mod.id}>
+                                {mod.ModSource.map((src: ModSource) => {
+                                    return (
+                                        <ModSourceRender
+                                            key={mod.id + "-" + src.sourceUrl}
+                                            mod={mod}
+                                            modSrc={src}
+                                        ></ModSourceRender>
+                                    );
+                                })}
+                            </ul>
+                        </div>
                     )}
                 </div>
         </div>
