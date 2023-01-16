@@ -84,7 +84,7 @@ export const sourceRouter = router({
                             const fileName = src.url + "." + fileExt;
 
                             // Set icon path.
-                            iconPath = "images/source/" + fileName;
+                            iconPath = "/images/source/" + fileName;
 
                             // Convert to binary from base64.
                             const buffer = Buffer.from(base64Data, 'base64');
@@ -132,7 +132,7 @@ export const sourceRouter = router({
                             const fileName = src.url + "_banner." + fileExt;
 
                             // Set banner path.
-                            bannerPath = "images/source/" + fileName;
+                            bannerPath = "/images/source/" + fileName;
 
                             // Convert to binary from base64.
                             const buffer = Buffer.from(base64Data, 'base64');

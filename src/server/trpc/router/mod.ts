@@ -209,7 +209,7 @@ export const modRouter = router({
                             const fileName = mod.url + "." + fileExt;
 
                             // Set icon path.
-                            bannerPath = "images/mods/" + fileName;
+                            bannerPath = "/images/mod/" + fileName;
 
                             // Convert to binary from base64.
                             const buffer = Buffer.from(base64Data, 'base64');
@@ -254,7 +254,7 @@ export const modRouter = router({
                     try {
                         await ctx.prisma.mod.update({
                             where: {
-                                url: mod.url
+                                id: mod.id
                             },
                             data: {
                                 banner: bannerPath

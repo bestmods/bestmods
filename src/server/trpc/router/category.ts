@@ -46,7 +46,7 @@ export const categoryRouter = router({
                         classes: input.classes ?? null        
                     },
                     create: {
-                        parentId: input.parent_id,
+                        parentId: input.parent_id || null,
                         name: input.name,
                         name_short: input.name_short,
                         url: input.url,
@@ -80,7 +80,7 @@ export const categoryRouter = router({
                             const fileName = cat.id + "." + fileExt;
 
                             // Set icon path.
-                            iconPath = "images/category/" + fileName;
+                            iconPath = "/images/category/" + fileName;
 
                             // Convert to binary from base64.
                             const buffer = Buffer.from(base64Data, 'base64');
