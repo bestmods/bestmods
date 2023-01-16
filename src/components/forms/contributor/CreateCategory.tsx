@@ -206,6 +206,8 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                 // We have uploads / total uploads.
                 let uploads: number = 0;
                 let totalUploads: number = 0;
+
+                console.log("Doing file uploads!");
                 
                 // Check icon and handle upload.
                 if (icon != null) {
@@ -217,12 +219,12 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
         
                     // On file uploaded.
                     reader.onload = () => {
-                        console.debug("Icon uploaded!");
-        
+                        
+                        console.log("Icon loaded");
                         // Set Base64 data to iconData.
                         setIconData(reader.result);
         
-                        console.debug("Icon data => " + iconData);
+                        console.log("Icon data => " + iconData);
         
                         // We're done; Increment uploads.
                         uploads++;
@@ -238,7 +240,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                     if (uploads >= totalUploads)
                         break;
                     
-                    console.debug("Upload progress => " + uploads + "/" + totalUploads);
+                    console.log("Upload progress => " + uploads + "/" + totalUploads);
 
                     // Wait 1 second to save CPU cycles.
                     await delay(1000);

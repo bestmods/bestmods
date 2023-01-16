@@ -461,6 +461,9 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         newVals.downloads = dlsStr;
         newVals.screenshots = sssStr;
         newVals.sources = srcsStr;
+
+        // Assign banner data.
+        newVals.banner = bannerData?.toString() ?? null;
         
         // Insert into database.
         modMut.mutate(newVals);
@@ -511,13 +514,9 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                     const reader = new FileReader();
         
                     // On file uploaded.
-                    reader.onload = () => {
-                        console.debug("Banner uploaded!");
-        
+                    reader.onload = () => {        
                         // Set Base64 data to bannerData.
                         setBannerData(reader.result);
-        
-                        console.debug("Banner data => " + bannerData);
         
                         // We're done; Increment uploads.
                         uploads++;
@@ -532,8 +531,6 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                     // If we're done, break to get to resolve().
                     if (uploads >= totalUploads)
                         break;
-                    
-                    console.debug("Upload progress => " + uploads + "/" + totalUploads);
 
                     // Wait 1 second to save CPU cycles.
                     await delay(1000);
@@ -549,9 +546,9 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 setValues({
                     id: id,
                     name: values.name,
-                    banner: bannerData?.toString() ?? null,
                     url: values.url,
                     category: category,
+                    banner: null,
         
                     description: values.description,
                     description_short: values.descriptionShort,

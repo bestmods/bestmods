@@ -65,6 +65,57 @@ export const modRouter = router({
                 });
             }
 
+            // Let's now handle file uploads.
+            let bannerPath = null;
+
+            if (input.banner != null && input.banner.length > 0 && !input.bremove) {
+                const base64Data = input.banner.split(',')[1];
+
+                if (base64Data != null) {
+                    // Retrieve file type.
+                    const fileExt = FileType(base64Data);
+
+                    // Make sure we don't have an-++ unknown file type.
+                    if (fileExt != "unknown") {
+                        // Now let's compile our file name.
+                        const fileName = input.url + "." + fileExt;
+
+                        // Set icon path.
+                        bannerPath = "/images/mod/" + fileName;
+
+                        // Convert to binary from base64.
+                        const buffer = Buffer.from(base64Data, 'base64');
+
+                        // Write file to disk.
+                        try {
+                            fs.writeFileSync(process.env.PUBLIC_DIR + "/" + bannerPath, buffer);
+                        } catch (error) {
+                            console.error("Error writing banner to disk.");
+                            console.error(error);
+
+                            throw new TRPCError({ 
+                                code: "PARSE_ERROR",
+                                message: error
+                            });
+                        }
+                    } else {
+                        console.error("Banner's file extension is unknown.");
+
+                        throw new TRPCError({ 
+                            code: "PARSE_ERROR",
+                            message: "Unknown file extension for banner."
+                        });
+                    }
+                } else {
+                    console.error("Parsing base64 data is null.");
+
+                    throw new TRPCError({ 
+                        code: "PARSE_ERROR",
+                        message: "Unable to process banner's Base64 data."
+                    });
+                }
+            }
+
             try {
                 mod = await ctx.prisma.mod.upsert({
                     where: {
@@ -77,7 +128,9 @@ export const modRouter = router({
 
                         description: input.description,
                         description_short: input.description_short,
-                        install: input.install
+                        install: input.install,
+
+                        banner: bannerPath
                     },
                     create: {
                         name: input.name,
@@ -86,7 +139,9 @@ export const modRouter = router({
 
                         description: input.description,
                         description_short: input.description_short,
-                        install: input.install
+                        install: input.install,
+
+                        banner: bannerPath
                     }
                 });
             } catch (error) {
@@ -191,85 +246,7 @@ export const modRouter = router({
                             query: query
                         }
                     });
-                });
-
-                // Let's now handle file uploads.
-                let bannerPath = null;
-
-                if (input.banner != null && input.banner.length > 0) {
-                    const base64Data = input.banner.split(',')[1];
-
-                    if (base64Data != null) {
-                        // Retrieve file type.
-                        const fileExt = FileType(base64Data);
-
-                        // Make sure we don't have an-++ unknown file type.
-                        if (fileExt != "unknown") {
-                            // Now let's compile our file name.
-                            const fileName = mod.url + "." + fileExt;
-
-                            // Set icon path.
-                            bannerPath = "/images/mod/" + fileName;
-
-                            // Convert to binary from base64.
-                            const buffer = Buffer.from(base64Data, 'base64');
-
-                            // Write file to disk.
-                            try {
-                                fs.writeFileSync(process.env.PUBLIC_DIR + "/" + bannerPath, buffer);
-                            } catch (error) {
-                                console.error("Error writing banner to disk.");
-                                console.error(error);
-
-                                throw new TRPCError({ 
-                                    code: "PARSE_ERROR",
-                                    message: error
-                                });
-                            }
-                        } else {
-                            console.error("Banner's file extension is unknown.");
-
-                            throw new TRPCError({ 
-                                code: "PARSE_ERROR",
-                                message: "Unknown file extension for banner."
-                            });
-                        }
-                    } else {
-                        console.error("Parsing base64 data is null.");
-
-                        throw new TRPCError({ 
-                            code: "PARSE_ERROR",
-                            message: "Unable to process banner's Base64 data."
-                        });
-                    }
-                }
-
-                // If we have a file upload, update database.
-                if (bannerPath != null || input.bremove) {
-                    // If we're removing the banner, make sure our data is null before updating again.
-                    if (input.bremove) {
-                        bannerPath = null;
-                    }
-
-                    try {
-                        await ctx.prisma.mod.update({
-                            where: {
-                                id: mod.id
-                            },
-                            data: {
-                                banner: bannerPath
-                            }
-                        })
-                    } catch (error) {
-                        console.error("Error updating mod when adding banner.");
-                        console.error(error);
-
-                        throw new TRPCError({ 
-                            code: "BAD_REQUEST",
-                            message: "Error updating mod with icon and banner data. " + error
-                        });
-                    }
-                }                
+                });            
             }
         }),
     getAllModsBrowser: publicProcedure
