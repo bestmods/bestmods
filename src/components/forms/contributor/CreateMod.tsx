@@ -70,6 +70,19 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     const catsWithChildren = trpc.category.getCategoriesMapping.useQuery();
     const modQuery = trpc.mod.getMod.useQuery({url: preUrl ?? ""});
 
+    const mod = modQuery.data;
+
+    useEffect(() => {
+        if (mod) {
+            if (mod.ModDownload != null && mod.ModDownload.length > 1)
+                setDownloadCount(mod.ModDownload.length);
+            else if (mod.ModScreenshot != null && mod.ModScreenshot.length > 1)
+                setScreenShotCount(mod.ModScreenshot.length);
+            else if (mod.ModSource != null && mod.ModSource.length > 1)
+                setSourceCount(mod.ModSource.length);
+        }
+    }, [mod]);
+
     // Form fields.
     const [modFormFields, setModFormFields] = useState<JSX.Element>(<></>);
 
@@ -301,7 +314,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     useMemo(() => {
         // Create a range from 1 to download count.
         const range = Array.from({length: downloadCount}, (value, index) => index + 1);
-
+        
         setDownloadForm(<>
             {range.map((num) => {
                 const nameId = "downloads-" + num + "-name";
@@ -312,10 +325,10 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                         <h3 className="text-gray-200 text-lg font-bold mb-2">Download #{num}</h3>
 
                         <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Name</label>
-                        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={nameId} id={nameId} type="text" />
+                        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={nameId} id={nameId} defaultValue={mod != null && mod.ModDownload != null && mod.ModDownload[num - 1] != null ? mod.ModDownload[num - 1]?.name ?? "" : ""} type="text" />
 
                         <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
-                        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={urlId} id={urlId} type="text" />
+                        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={urlId} id={urlId} defaultValue={mod != null && mod.ModDownload != null && mod.ModDownload[num - 1] != null ? mod.ModDownload[num - 1]?.url ?? "" : ""} type="text" />
 
                         <button onClick={(e) => {
                             e.preventDefault();
@@ -335,7 +348,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 }} className="text-white bg-green-800 hover:bg-green-900 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
             </div>
         </>);
-    }, [downloadCount]);
+    }, [downloadCount, mod]);
 
     // Handle dynamic dynamic screenshot form.
     useMemo(() => {
@@ -351,7 +364,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                         <h3 className="text-gray-200 text-lg font-bold mb-2">Screenshot #{num}</h3>
 
                         <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
-                        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={urlId} id={urlId} type="text" />
+                        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={urlId} id={urlId} defaultValue={mod != null && mod.ModScreenshot != null && mod.ModScreenshot[num - 1] != null ? mod.ModScreenshot[num - 1]?.url ?? "" : ""} type="text" />
 
                         <button onClick={(e) => {
                             e.preventDefault();
@@ -371,7 +384,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 }} className="text-white bg-green-800 hover:bg-green-900 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
             </div>
         </>);
-    }, [screenShotCount]);
+    }, [screenShotCount, mod]);
 
     // Handle dynamic sources.
     useEffect(() => {
@@ -391,7 +404,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                         <h3 className="text-gray-200 text-lg font-bold mb-2">Source #{num}</h3>
 
                         <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Source</label>
-                        <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcUrl} id={srcUrl}>
+                        <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcUrl} id={srcUrl} defaultValue={mod != null && mod.ModSource != null && mod.ModSource[num - 1] != null ? mod.ModSource[num - 1]?.sourceUrl ?? "" : ""}>
                             {sourcesArr?.map((src) => {
                                 return (
                                     <option key={src.url} value={src.url}>{src.name}</option>
@@ -400,7 +413,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                         </select>
 
                         <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Query URL</label>
-                        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcQuery} id={srcQuery} type="text" />
+                        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcQuery} id={srcQuery} defaultValue={mod != null && mod.ModSource != null && mod.ModSource[num - 1] != null ? mod.ModSource[num - 1]?.query ?? "" : ""} type="text" />
 
                         <button onClick={(e) => {
                             e.preventDefault();
@@ -421,7 +434,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             </div>
         </>);
 
-    }, [sourceCount, sources.data]);
+    }, [sourceCount, sources.data, mod]);
 
     useEffect(() => {
         if (!dataReceived) {
@@ -539,8 +552,6 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 // We're done uploading files.
                 resolve();
             }).then(() => {
-                console.debug("File uploads handled!");
-
                 // Insert into the database via mutation.
                 setSubmit(true);
                 setValues({
