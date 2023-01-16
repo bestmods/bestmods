@@ -33,11 +33,13 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         screenshots: string | null;
         sources: string | null;
     }>();
-    const [submitBtn, setSubmitBtn] = useState<JSX.Element>(<>
-        <div className="text-center">
-            <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{preUrl == null ? "Add Mod!" : "Edit Mod!"}</button>
-        </div>
-    </>)
+    const submitBtn = useMemo(() => {
+        return (<>
+            <div className="text-center">
+                <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{preUrl == null ? "Add Mod!" : "Edit Mod!"}</button>
+            </div>
+        </>);
+    }, [preUrl]);
 
     // State values we cannot extract from Formik.
     const [category, setCategory] = useState(0);
@@ -147,8 +149,10 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
     // Handle error messages to client.
     useMemo(() => {
-        if (!modMut.isError && modMut.isSuccess)
-            setSuccess("Successfully added mod!");
+        if (!modMut.isError && modMut.isSuccess) {
+            setSuccess("Successfully added or edited mod!");
+            setError(null);
+        }
 
         // Make sure we have an actual error.
         if (!modMut.isError)
@@ -166,7 +170,9 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         else if (err.includes("is empty"))
             setError(err);
         else
-            setError("Unable to create or edit mod!"); 
+            setError("Unable to create or edit mod!");
+
+        setSuccess(null);
 
         // Send alert and log full error to client's console.
         console.error(modMut.error);

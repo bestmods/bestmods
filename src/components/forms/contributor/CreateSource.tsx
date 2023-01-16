@@ -27,12 +27,13 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         iremove: boolean;
         bremove: boolean;
     }>();
-    const [submitBtn, setSubmitBtn] = useState<JSX.Element>(<>
-        <div className="text-center">
-            <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{preUrl == null ? "Add Source!" : "Edit Source!"}</button>
-        </div>
-    </>)
-
+    const submitBtn = useMemo(() => {
+        return (<>
+            <div className="text-center">
+                <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{preUrl == null ? "Add Source!" : "Edit Source!"}</button>
+            </div>
+        </>);
+    }, [preUrl]);
     // For editing (prefilled fields).
     const [name, setName] = useState("");
     const [url, setUrl] = useState("");
@@ -91,8 +92,10 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
     // Handle error messages to client.
     useMemo(() => {
-        if (!sourceMut.isError && sourceMut.isSuccess)
-            setSuccess("Successfully added mod!");
+        if (!sourceMut.isError && sourceMut.isSuccess) {
+            setSuccess("Successfully added or edited source!");
+            setError(null);
+        }
 
         // Make sure we have an actual error.
         if (!sourceMut.isError)
@@ -110,7 +113,9 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         else if (err.includes("is empty"))
             setError(err);
         else
-            setError("Unable to create or edit source!"); 
+            setError("Unable to create or edit source!");
+
+        setSuccess(null);
 
         // Send alert and log full error to client's console.
         console.error(sourceMut.error);

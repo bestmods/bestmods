@@ -30,11 +30,13 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
         icon: string | null;
         iremove: boolean | null;
     }>();
-    const [submitBtn, setSubmitBtn] = useState<JSX.Element>(<>
-        <div className="text-center">
-            <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{id == null ? "Add Category!" : "Edit Category!"}</button>
-        </div>
-    </>)
+    const submitBtn = useMemo(() => {
+        return (<>
+            <div className="text-center">
+                <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{id == null ? "Add Category!" : "Edit Category!"}</button>
+            </div>
+        </>);
+    }, [id]);
 
     // State values we cannot extract from Formik.
     const [parent_id, setParent] = useState<number | null>(null);
@@ -114,8 +116,10 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
 
     // Handle error messages to client.
     useMemo(() => {
-        if (!categoryMut.isError && categoryMut.isSuccess)
-            setSuccess("Successfully added mod!");
+        if (!categoryMut.isError && categoryMut.isSuccess) {
+            setSuccess("Successfully added or edited category!");
+            setError(null);
+        }
 
         // Make sure we have an actual error.
         if (!categoryMut.isError)
@@ -131,7 +135,9 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
         else if (err.includes("is empty"))
             setError(err);
         else
-            setError("Unable to create or edit category!"); 
+            setError("Unable to create or edit category!");
+            
+        setSuccess(null);
 
         // Send alert and log full error to client's console.
         console.error(categoryMut.error);
