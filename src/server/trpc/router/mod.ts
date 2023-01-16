@@ -13,6 +13,7 @@ export const modRouter = router({
         .query(({ ctx, input}) => {
             return ctx.prisma.mod.findFirst({
                     include: {
+                        category: true,
                         ModDownload: true,
                         ModScreenshot: true,
                         ModSource: true
@@ -293,7 +294,7 @@ export const modRouter = router({
                 where: {
                     ...(input.search && { name: {
                             contains: input.search 
-                        }}) ,
+                        }}),
                     ...(catsArr && catsArr.length > 0 && { categoryId: {
                             in: catsArr
                         }})

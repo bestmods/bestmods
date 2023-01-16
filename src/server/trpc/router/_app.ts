@@ -5,15 +5,17 @@ import  { categoryRouter } from './category';
 import { sourceRouter } from "./source";
 import { modRouter } from "./mod";
 import { userRouter } from './user';
-import { ratingRouter } from './rating';
+import { modRatingRouter } from './mod_rating';
+import { modDownloadRouter } from './mod_download';
 
 export const appRouter = router({
   source: sourceRouter,
   category: categoryRouter,
   mod: modRouter,
+  modRating: modRatingRouter,
+  modDownload: modDownloadRouter,
   auth: authRouter,
-  user: userRouter,
-  rating: ratingRouter
+  user: userRouter
 });
 
 // export type definition of API

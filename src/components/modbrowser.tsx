@@ -42,7 +42,7 @@ const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
     const [rating, setRating] = useState(1);
     const [ratingReceived, setRatingReceived] = useState(false);
 
-    const ratingQuery = trpc.rating.getRatingsForMod.useQuery({
+    const ratingQuery = trpc.modRating.getModRatings.useQuery({
         url: mod.url,
         dateStart: null,
         dateEnd: null
@@ -64,7 +64,7 @@ const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
     }
 
     // Controls whether user rated this mod or not.
-    const myRatingQuery = trpc.rating.getUserRatingForMod.useQuery({
+    const myRatingQuery = trpc.modRating.getModUserRating.useQuery({
         modId: mod.id,
         userId: session?.user?.id ?? ""
     });
@@ -79,7 +79,7 @@ const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
         setDidRate(true);
     }
 
-    const myRatingMut = trpc.rating.addUserRating.useMutation();
+    const myRatingMut = trpc.modRating.addModUserRating.useMutation();
 
     return (
         <div className="relative w-3/5 flex text-center justify-center items-center">

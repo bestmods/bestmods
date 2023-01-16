@@ -2,11 +2,9 @@ import { z } from "zod";
 import { router, publicProcedure } from "../trpc";
 
 import { TRPCError } from "@trpc/server"
-import { trpc } from "../../../utils/trpc";
-import { TRPCClientError } from "@trpc/client";
 
-export const ratingRouter = router({
-    getRatingsForMod: publicProcedure
+export const modRatingRouter = router({
+    getModRatings: publicProcedure
         .input(z.object({
             url: z.string(),
             dateStart: z.date().nullable(),
@@ -28,7 +26,7 @@ export const ratingRouter = router({
                 }
             })
         }),
-    getUserRatingForMod: publicProcedure
+    getModUserRating: publicProcedure
         .input(z.object({
             userId: z.string(),
             modId: z.number()
@@ -41,7 +39,7 @@ export const ratingRouter = router({
                 }
             });
         }),
-    addUserRating: publicProcedure
+    addModUserRating: publicProcedure
         .input(z.object({
             userId: z.string(),
             modId: z.number(),
