@@ -34,6 +34,7 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             </div>
         </>);
     }, [preUrl]);
+    
     // For editing (prefilled fields).
     const [name, setName] = useState("");
     const [url, setUrl] = useState("");
@@ -149,6 +150,9 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         // Create new values.
         const newVals = values;
 
+        newVals.icon = iconData?.toString() ?? null;
+        newVals.banner = bannerData?.toString() ?? null;
+
         // Insert into database.
         sourceMut.mutate(newVals);
 
@@ -193,13 +197,9 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                     const reader = new FileReader();
         
                     // On file uploaded.
-                    reader.onload = () => {
-                        console.debug("Icon uploaded!");
-        
+                    reader.onload = () => {        
                         // Set Base64 data to iconData.
                         setIconData(reader.result);
-        
-                        console.debug("Icon data => " + iconData);
         
                         // We're done; Increment uploads.
                         uploads++;
@@ -219,12 +219,8 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         
                     // On file uploaded.
                     reader.onload = () => {
-                        console.debug("Banner uploaded!");
-        
                         // Set Base64 data to bannerData.
                         setBannerData(reader.result);
-        
-                        console.debug("Banner data => " + bannerData);
         
                         // We're done; Increment uploads.
                         uploads++;
@@ -239,8 +235,6 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                     // If we're done, break to get to resolve().
                     if (uploads >= totalUploads)
                         break;
-                    
-                    console.debug("Upload progress => " + uploads + "/" + totalUploads);
 
                     // Wait 1 second to save CPU cycles.
                     await delay(1000);
@@ -249,8 +243,6 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 // We're done uploading files.
                 resolve();
             }).then(() => {
-                console.debug("File uploads handled!");
-
                 // Insert into the database via mutation.
                 setSubmit(true);
                 setValues({
@@ -258,8 +250,8 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                     url: values.url,
                     classes: values.classes,
 
-                    icon: iconData?.toString() ?? null,
-                    banner: bannerData?.toString() ?? null,
+                    icon: null,
+                    banner: null,
         
                     iremove: values.iremove,
                     bremove: values.bremove

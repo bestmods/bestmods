@@ -116,186 +116,21 @@
     background-size: cover;
 }
 
-#bestmodsLogo
-{
-    text-align: center;
-    padding: 30px;
-}
-
-#bestmodsLogo img
-{
-    margin: 0 auto;
-}
-
-#searchContainer
-{
-    width: 50%;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.card thead 
-{
-    display: none;
-}
-
-.card tbody tr 
-{
-    max-width: 25em;
-    flex: 1 1 25em;
-    margin: 0.5em;
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0.25rem 0.25rem 0.5rem rgba(0, 0, 0, 0.25);
-}
-.card tbody tr td 
-{
-	display: block;
-	border: 0;
-}
-
-.card-image-td
-{
-    padding: 0px !important;
-}
-
-.card-image
-{
-    width: 100%;
-    max-width: 100%;
-    height: 224px;
-    border-radius: 15px 15px 0px 0px;
-}
-
-.card-icons
-{
-    display: flex;
-    justify-content: space-between;
-}
-
-.card-icon
-{
-    width: 24px;
-    height: 24px;
-}
-
-.card-icon-text
-{
-    vertical-align: middle;
-}
-
-.card-seed img
-{
-    display: inline-block;
-}
-
-.card-seed a
-{
-    vertical-align: middle;
-}
-
-.boxView
-{
-    border-radius: 0px 0px 5px 5px;
-    background-color: rgba(0, 0, 0, 0.5) !important;
-    box-shadow: 0.25rem 0.25rem 0.5rem rgba(0, 0, 0, 0.25);
-}
-
-.hiddenView
-{
-    visibility: hidden !important;
-    opacity: 0 !important;
-    -webkit-transition: visibility 3s, opacity 0.5s linear !important;
-    -moz-transition: visibility 3s, opacity 0.5s linear !important;
-    -o-transition: visibility 3s, opacity 0.5s linear !important;
-    transition: visibility 3s, opacity 0.5s linear !important;
-}
-
-.viewSel
-{
-    background-color: rgba(0, 85, 100, 0.5) !important;
-}
-
-.modDownload
-{
-    padding: 0.5em;
-    border-radius: 5px;
-    background-color: rgba(3, 85, 179, 0.5);
-    display: inline-block;
-    max-width: 48em;
-    margin-top: 1em;
-}
-
-pre
-{
-    padding: 1em;
-    border-radius: 2px;
-    background-color: rgba(0, 88, 81, 0.5);
-    white-space: pre-wrap;
-    max-width: 100%;
-    word-break: break-all;
-}
-
-table 
-{
-    border-color: transparent !important;
-    width: 100% !important;
-}
-
-tbody
-{
-    display: grid;
-    justify-content: center;
-    grid-auto-rows: 1fr;
-    grid-template-columns: repeat(auto-fill, minmax(2em, 25em));
-}
-
-tbody tr
-{
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-}
-
-::-webkit-scrollbar
-{
-    width: 8px;
-}
- 
-::-webkit-scrollbar-track
-{
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
-    border-radius: 10px;
-	background: rgba(0, 0, 0, 0.60);
-}
- 
-::-webkit-scrollbar-thumb
-{
-    border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
-	background-color: #009ae7;
-}
-
-.card-desc-td
-{
-    flex-grow: 1;
-}
-
 #viewContent > strong
 {
-    font-weight: bold;
+    @apply font-bold;
 }
 
 #viewContent h1, #viewContent h2, #viewContent h3, #viewContent h4, #viewContent h5, #viewContent h6
 {
-    margin-top: 1em;
-    font-weight: bold;
+    @apply mt-1;
+    @apply font-bold;
 }
 
 #viewContent pre
 {
-    margin-top: 1em;
-    margin-bottom: 1em;
+    @apply mt-1;
+    @apply mb-1;
 }
 
 #viewContent code
@@ -318,26 +153,22 @@ tbody tr
 
 #viewContent h1
 {
-    font-size: 1.75em;
-    line-height: 1.65;
+    @apply text-3xl;
 }
 
 #viewContent h2
 {
-    font-size: 1.55em;
-    line-height: 1.45;
+    @apply text-2xl;
 }
 
 #viewContent h3
 {
-    font-size: 1.35em;
-    line-height: 1.25;
+    @apply text-xl;
 }
 
 #viewContent h4
 {
-    font-size: 1.00em;
-    line-height: 0.90;
+    @apply text-lg;
 }
 
 #viewContent ul, #viewContent ol
@@ -359,19 +190,4 @@ tbody tr
 #viewContent p
 {
     @apply mb-5;
-}
-
-#viewContent a:not(.modDownload)
-{
-    text-decoration: underline;
-}
-
-#modstable td
-{
-    @apply py-2;
-}
-
-.socialIcon
-{
-    @apply mb-4;
 }

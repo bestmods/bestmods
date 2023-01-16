@@ -38,8 +38,10 @@ export const BestModsPage: React.FC<{content: JSX.Element}> = ({ content }) => {
           
           <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
             <BestModsHeader></BestModsHeader>
-            {content}
           </div>
+            <div className="relative">
+                {content}
+            </div>
         </main>
       </>
     )

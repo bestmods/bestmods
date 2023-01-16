@@ -32,7 +32,7 @@ const MainContent: React.FC = () => {
     let body: JSX.Element = <></>;
 
     // Generate classes for buttons and such.
-    const btnBaseClasses = "text-white font-bold rounded-t p-3 mr-1";
+    const btnBaseClasses = "!font-sm text-white font-bold rounded-t p-1 md:p-3 mr-1";
     const defaultStyle = "bg-cyan-900/50";
     const activeStyle = "font-bold bg-cyan-500/50";
 
@@ -60,10 +60,10 @@ const MainContent: React.FC = () => {
 
     return (
       <>
-        <div className="relative w-full">
+        <div className="container mx-auto w-full">
           <div id="modHeader">
             <div className="flex justify-center">
-              <img className="block rounded-t w-96 h-96" src={banner} />
+              <img className="block rounded-t w-96 h-72" src={banner} />
             </div>
             <h1 className="text-4xl font-bold mb-4 text-white text-center">{mod.name}</h1>
           </div>
@@ -120,8 +120,10 @@ const ModInstall: React.FC<{ mod: Mod }> = ({ mod }) => {
 const ModSources: React.FC<{ mod: Mod }> = ({ mod }) => {
   return (
     <>
+      <h3>Sources</h3>
       {mod.ModSource != null && mod.ModSource.length > 0 && (
-        <div className="">
+        <div className="flex flex-wrap gap-6 justify-center">
+          
           {mod.ModSource.map((src: ModSource) => {
             const srcQuery = trpc.source.getSource.useQuery({
               url: src.sourceUrl 
@@ -142,14 +144,16 @@ const ModSources: React.FC<{ mod: Mod }> = ({ mod }) => {
             const srcLink = "https://" + src.sourceUrl + "/" + src.query;
 
             return (
-              <div key={src.modId} className="p-6 bg-teal-800 hover:bg-teal-900 rounded flex">
-                <div className="w-1/3">
-                  <img src={banner} className="w-full" />
+              <a href={srcLink} className="relative no-underline" target="_blank">
+                <div key={src.modId} className="bg-cyan-500/50 hover:bg-cyan-900/50 rounded w-72 h-72">
+                  <div className="w-full h-36">
+                    <img src={banner} className="w-full h-full rounded-t" />
+                  </div>
+                  <div className="w-full text-center p-6">
+                    <h3 className="!text-lg font-bold no-underline">{name}</h3>
+                  </div>
                 </div>
-                <div className="w-2/3">
-                  <a href={srcLink} target="_blank"><h3 className="text-lg font-bold">{name}</h3></a>
-                </div>
-              </div>
+              </a>
             );
           })}
         </div>
