@@ -8,6 +8,43 @@ const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 import FormTemplate from '../main';
 import { AlertForm } from '../../alert';
+import { Mod, Source } from "@prisma/client";
+
+const SourceForm: React.FC<{mod: any, num: number, sources: Source[]}> = ({ mod, num, sources }) => {
+    const srcUrl = "sources-" + num + "-url";
+    const srcQuery = "sources-" + num + "-query";
+    
+    const curUrl = mod != null && mod.ModSource != null && mod.ModSource[num - 1] != null ? mod.ModSource[num - 1]?.sourceUrl ?? "" : "";
+
+    const [srcUrlVal, setSrcUrlVal] = useState(curUrl);
+
+    useEffect(() => {
+        setSrcUrlVal(curUrl);
+    }, [mod]);
+
+    return (
+        <>
+            <h3 className="text-gray-200 text-lg font-bold mb-2">Source #{num}</h3>
+
+            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Source</label>
+            <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcUrl} id={srcUrl} value={srcUrlVal} onChange={(e) => {
+                const val = e.target.value;
+
+                setSrcUrlVal(val);
+            }}>
+                {sources?.map((src) => {
+                    return (
+                        <option key={src.url} value={src.url}>{src.name}</option>
+                    );
+                })}
+            </select>
+
+            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Query URL</label>
+            <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcQuery} id={srcQuery} defaultValue={mod != null && mod.ModSource != null && mod.ModSource[num - 1] != null ? mod.ModSource[num - 1]?.query ?? "" : ""} type="text" />
+
+        </>
+    )
+};
 
 const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {    
     const [id, setId] = useState(0);
@@ -80,6 +117,8 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 setScreenShotCount(mod.ModScreenshot.length);
             else if (mod.ModSource != null && mod.ModSource.length > 1)
                 setSourceCount(mod.ModSource.length);
+
+            setCategory(mod.categoryId);
         }
     }, [mod]);
 
@@ -110,7 +149,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
             <div className="mb-4">
                 <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Category</label>
-                <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" onChange={(e) => {
+                <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" value={category} onChange={(e) => {
                     const val = (e.target.value > 0) ? Number(e.target.value) : null;
 
                     setCategory(val ?? 0);
@@ -157,7 +196,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             <h2 className="text-white text-2xl font-bold">Screenshots</h2>
             {screenShotForm}
         </>);
-    }, [catsWithChildren.data, sourceForm, downloadForm, screenShotForm]);
+    }, [catsWithChildren.data, sourceForm, downloadForm, screenShotForm, category]);
     
 
     // Handle error messages to client.
@@ -396,33 +435,25 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
         setSourceForm(<>
             {range.map((num) => {
-                const srcUrl = "sources-" + num + "-url";
-                const srcQuery = "sources-" + num + "-query";
+                return (
+                    <>
+                        <div key={num} className="mb-4">
+                            <SourceForm 
+                                mod={mod}
+                                num={num}
+                                sources={sourcesArr ?? []}
+                            >
+                            </SourceForm>
 
-                return (<div key={num} className="mb-4">
-                    <div className="mb-4">
-                        <h3 className="text-gray-200 text-lg font-bold mb-2">Source #{num}</h3>
+                            <button onClick={(e) => {
+                                e.preventDefault();
 
-                        <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Source</label>
-                        <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcUrl} id={srcUrl} defaultValue={mod != null && mod.ModSource != null && mod.ModSource[num - 1] != null ? mod.ModSource[num - 1]?.sourceUrl ?? "" : ""}>
-                            {sourcesArr?.map((src) => {
-                                return (
-                                    <option key={src.url} value={src.url}>{src.name}</option>
-                                )
-                            })}
-                        </select>
-
-                        <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Query URL</label>
-                        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcQuery} id={srcQuery} defaultValue={mod != null && mod.ModSource != null && mod.ModSource[num - 1] != null ? mod.ModSource[num - 1]?.query ?? "" : ""} type="text" />
-
-                        <button onClick={(e) => {
-                            e.preventDefault();
-
-                            // Subtract count.
-                            setSourceCount(sourceCount - 1);
-                        }} className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
-                    </div>
-                </div>);
+                                // Subtract count.
+                                setSourceCount(sourceCount - 1);
+                            }} className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
+                        </div>
+                    </>
+                );
             })}
             <div className="mb-4">
                 <button onClick={(e) => {
