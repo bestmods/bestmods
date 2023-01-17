@@ -29,8 +29,7 @@ export const BestModsPage: React.FC<{content: JSX.Element}> = ({ content }) => {
 
     return (
       <>
-        <HeadInfo />
-        <main className="flex min-h-screen flex-col bg-gradient-to-b from-[#002736] to-[#00151b]">
+        <main className="flex min-h-screen flex-col bg-gradient-to-b from-[#002736] to-[#00151b] pb-20">
             <BestModsLogin 
                 session={session}
             ></BestModsLogin>
@@ -69,7 +68,7 @@ export const BestModsHeader = () => {
                 history.pushState(null, "", `?search=${e.search}`);
             }}
         >
-            <Form className="flex justify-center items-center gap-2 flex-wrap">
+            <Form className="w-full flex justify-center items-center gap-2 flex-wrap">
                 <Filters />
                 <SearchBar />
             </Form>
