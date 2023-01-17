@@ -39,7 +39,7 @@ export const categoryRouter = router({
                         id: input.id ?? 0
                     },
                     update: {
-                        parentId: input.parent_id,
+                        parentId: input.parent_id || null,
                         name: input.name,
                         name_short: input.name_short,
                         url: input.url,
