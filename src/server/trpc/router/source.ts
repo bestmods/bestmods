@@ -40,8 +40,15 @@ export const sourceRouter = router({
                 });
             }
 
-            let iconPath = null;
-            let bannerPath = null;
+            let iconPath: string | boolean | null = false;
+            let bannerPath: string | boolean | null = false;
+
+            if (input.iremove)
+                iconPath = null;
+
+            if (input.bremove)
+                bannerPath = null;
+
 
             if (input.icon != null && input.icon.length > 0 && !input.iremove) {
                 const base64Data = input.icon.split(',')[1];
@@ -149,16 +156,24 @@ export const sourceRouter = router({
                         url: input.url,
                         classes: input.classes ?? null,
                         
-                        icon: iconPath,
-                        banner: bannerPath
+                        ...(iconPath !== false && {
+                            icon: iconPath
+                        }),
+                        ...(bannerPath !== false && {
+                            banner: bannerPath
+                        })
                     },
                     create: {
                         name: input.name,
                         url: input.url,
                         classes: input.classes ?? null,
 
-                        icon: iconPath,
-                        banner: bannerPath
+                        ...(iconPath !== false && {
+                            icon: iconPath
+                        }),
+                        ...(bannerPath !== false && {
+                            banner: bannerPath
+                        })
                     }
                 });
             } catch (error) {

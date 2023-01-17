@@ -66,7 +66,12 @@ export const modRouter = router({
             }
 
             // Let's now handle file uploads.
-            let bannerPath = null;
+            let bannerPath: string | boolean | null = false;
+
+            if (input.bremove) {
+                console.log("BANNER REMOVE SET");
+                bannerPath = null;
+            }
 
             if (input.banner != null && input.banner.length > 0 && !input.bremove) {
                 const base64Data = input.banner.split(',')[1];
@@ -116,6 +121,9 @@ export const modRouter = router({
                 }
             }
 
+            console.log("Banner  data");
+            console.log(bannerPath);
+
             try {
                 mod = await ctx.prisma.mod.upsert({
                     where: {
@@ -130,7 +138,9 @@ export const modRouter = router({
                         description_short: input.description_short,
                         install: input.install,
 
-                        banner: bannerPath
+                        ...(bannerPath !== false && {
+                            banner: bannerPath
+                        })
                     },
                     create: {
                         name: input.name,
@@ -141,7 +151,9 @@ export const modRouter = router({
                         description_short: input.description_short,
                         install: input.install,
 
-                        banner: bannerPath
+                        ...(bannerPath !== false && {
+                            banner: bannerPath
+                        })
                     }
                 });
             } catch (error) {
