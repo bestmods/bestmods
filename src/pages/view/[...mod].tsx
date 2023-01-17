@@ -10,9 +10,12 @@ import { ModSource, ModDownload } from '@prisma/client';
 
 import { marked } from 'marked';
 
+import HeadInfo from "../../components/Head";
+
 const Home: NextPage = () => {
   return (
     <>
+      <HeadInfo />
       <BestModsPage
         content={<MainContent></MainContent>}
       ></BestModsPage>
@@ -90,8 +93,12 @@ const MainContent: React.FC = () => {
   } else {
     return (
       <>
-        <h1 className="text-3xl font-bold mb-4 text-white">Not Found</h1>
-        <p className="text-white">Mod not found. Please check the URL.</p>
+        {modQuery.isFetched && (
+          <div className="container mx-auto">
+            <h1 className="text-2xl font-bold mb-4 text-white text-center">Not Found</h1>
+            <p className="text-white text-center">Mod not found. Please check the URL.</p>
+          </div>
+        )}
       </>
     );
   }
@@ -144,8 +151,8 @@ const ModSources: React.FC<{ mod: Mod }> = ({ mod }) => {
             const srcLink = "https://" + src.sourceUrl + "/" + src.query;
 
             return (
-              <a href={srcLink} className="relative no-underline" target="_blank">
-                <div key={src.modId} className="bg-cyan-500/50 hover:bg-cyan-900/50 rounded w-72 h-72">
+              <a key={src.modId} href={srcLink} className="relative no-underline" target="_blank">
+                <div className="bg-cyan-500/50 hover:bg-cyan-600/50 rounded w-72 h-72">
                   <div className="w-full h-36">
                     <img src={banner} className="w-full h-full rounded-t" />
                   </div>

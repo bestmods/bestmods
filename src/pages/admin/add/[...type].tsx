@@ -9,9 +9,12 @@ import ModForm from "../../../components/forms/contributor/CreateMod";
 
 import { useRouter } from 'next/router'
 
+import HeadInfo from "../../../components/Head";
+
 const Home: NextPage = () => {
   return (
     <>
+      <HeadInfo />
       <BestModsPage
         content={<MainContent></MainContent>}
       ></BestModsPage>
@@ -35,7 +38,9 @@ const MainContent: React.FC = () => {
 
     return (
       <>
-        {formComponent}
+        <div className="container mx-auto">
+          {formComponent}
+        </div>
       </>
     );
 };

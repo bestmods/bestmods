@@ -5,6 +5,8 @@ import { BestModsPage } from '../components/main';
 
 import ModBrowser from '../components/modbrowser';
 
+import HeadInfo from "../components/Head";
+
 const Home: NextPage = () => {
   const content = <>
     <ModBrowser
@@ -15,6 +17,7 @@ const Home: NextPage = () => {
 
   return (
     <>
+      <HeadInfo />
       <BestModsPage
         content={content}
       ></BestModsPage>

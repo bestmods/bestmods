@@ -164,7 +164,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     const [installersMenuOpen, setInstallersMenuOpen] = useState(false);
     
     return (
-        <div className={"w-72 md:w-96 h-[32rem] rounded bg-gradient-to-b from-cyan-500/30 to-cyan-800/30 flex flex-col shadow-lg" + addClasses}>
+        <div key={mod.id} className={"w-72 md:w-96 h-[32rem] rounded bg-gradient-to-b from-cyan-500/30 to-cyan-800/30 flex flex-col shadow-lg" + addClasses}>
             <div className="modImage w-full max-h-64 h-64">
                 <img className="w-full h-full max-h-full rounded-t" src={banner} />
             </div>
@@ -302,24 +302,25 @@ const ModBrowser: React.FC<ModBrowserArguments> = ({ search, categories }) => {
     };
 
     return (
-        <InfiniteScroll
-            loadMore={fetchMods}
-            hasMore={needMoreMods}
-            loader={<div className="loadindicator">Loading...</div>}
-        >
-            <div className="container mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 justify-items-center gap-4">
-                    {mods.map(mod => {
-                        return (
-                            <ModRow
-                                key={mod.id}
-                                mod={mod}
-                            ></ModRow>
-                        );
-                    })}
-                </div>
-            </div>
-        </InfiniteScroll>
+        <div className="container mx-auto">
+            <InfiniteScroll
+                className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 justify-items-center gap-4"
+                loadMore={fetchMods}
+                hasMore={needMoreMods}
+                loader={
+                        <h3 className="text-center text-white text-2xl">Loading...</h3>
+                }
+            >
+                {mods.map(mod => {
+                    return (
+                        <ModRow
+                            key={mod.id + "-row"}
+                            mod={mod}
+                        ></ModRow>
+                    );
+                })}
+            </InfiniteScroll>
+        </div>
     );
 };
 
