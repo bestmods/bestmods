@@ -7,10 +7,7 @@ import { Mod, ModRating, ModSource, Source, Category } from "@prisma/client";
 
 import InfiniteScroll from 'react-infinite-scroller';
 
-type ModBrowserArguments = {
-    search: string | null
-    categories: Array<number> | null
-};
+import { filterArgs } from './main';
 
 type ModRowArguments = {
     mod: Mod
@@ -123,11 +120,6 @@ const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
 const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     // Retrieve source.
     const srcUrl = (mod.ModSource != null && mod.ModSource.length > 0) ? mod.ModSource[0].sourceUrl : "";
-    const srcQuery = trpc.source.getSource.useQuery({
-        url: srcUrl
-    });
-
-    const src: Source | null = (srcQuery.data) ? srcQuery.data : null;
 
     // Retrieve category.
     const cat: Category | null = mod.category;
@@ -138,9 +130,6 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
 
     // Generate correct banner.   
     let banner = "/images/mod/default.png";
-
-    if (src != null && src.banner != null)
-        banner = src.banner;
 
     if (mod.banner != null && mod.banner.length > 0)
         banner = mod.banner;
@@ -253,20 +242,23 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     );
 };
 
-const ModBrowser: React.FC<ModBrowserArguments> = ({ search, categories }) => {
+const ModBrowser: React.FC<{filters: filterArgs}> = ({ filters }) => {
     const [mods, setMods] = useState<Array<Mod>>([]);
     const [needMoreMods, setNeedMoreMods] = useState(true);
     const [modsVisible, setModsVisible] = useState(0);
     const [isFetching, setIsFetching] = useState(false);
 
+    // Generate mods per page.
     let modsPerPage = Number(process.env.MODS_PER_PAGE);
 
     if (isNaN(modsPerPage))
         modsPerPage = 10;
 
     const modQuery = trpc.mod.getAllModsBrowser.useQuery({
-        search: search,
-        categories: JSON.stringify(categories) ?? null,
+        categories: filters.categories,
+        timeframe: filters.timeframe,
+        sort: filters.sort,
+        search: filters.search,
 
         offset: modsVisible,
         count: modsPerPage
@@ -292,6 +284,15 @@ const ModBrowser: React.FC<ModBrowserArguments> = ({ search, categories }) => {
             setIsFetching(false);
         }
     }, [isFetching, modQuery.data]);
+
+    useEffect(() => {
+        setMods([]);
+        setModsVisible(0);
+        modQuery.refetch();
+
+        setIsFetching(true);
+        setNeedMoreMods(true);
+    }, [filters.categories, filters.timeframe, filters.sort, filters.search]);
 
     const fetchMods = async () => {
         if (isFetching)

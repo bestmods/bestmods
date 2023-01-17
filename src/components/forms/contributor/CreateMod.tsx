@@ -511,6 +511,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         
         // Insert into database.
         modMut.mutate(newVals);
+        console.log("MUTATING");
 
         // Scroll to top.
         if (typeof window !== undefined) {

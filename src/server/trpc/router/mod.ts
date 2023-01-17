@@ -47,6 +47,8 @@ export const modRouter = router({
             // First, we want to insert the mod into the database.
             let mod = null;
 
+            console.log("Got to mutation");
+
             // Make sure we have text in required fields.
             if (input.url.length < 1 || input.name.length < 1 || input.description.length < 1) {
                 let err = "URL is empty.";
@@ -263,8 +265,10 @@ export const modRouter = router({
         }),
     getAllModsBrowser: publicProcedure
         .input(z.object({
-            search: z.string().nullable(),
             categories: z.string().nullable(),
+            search: z.string().nullable(),
+            timeframe: z.number().nullable(),
+            sort: z.number().nullable(),
 
             offset: z.number().nullable(),
             count: z.number().nullable()
@@ -273,21 +277,93 @@ export const modRouter = router({
             const offset = input.offset ?? 0;
             const count = (typeof input.count === 'number' && !isNaN(input.count)) ? input.count : 10;
 
+            // Process categories.
             const catsArr = JSON.parse(input.categories ?? "[]");
+
+            // Construct timeframe.
+            let dateAfter: Date | null = null;
+            let toSub: number | null = null;
+
+            switch (input.timeframe) {
+                case 0:
+                    toSub = 3600;
+
+                    break;
+
+                case 1:
+                    toSub = 86400;
+
+                    break;
+
+                case 2:
+                    toSub = 604800;
+
+                case 3:
+                    toSub = 592000;
+
+                    break;
+
+                case 4:
+                    toSub = 31536000;
+
+                    break;
+            }
+
+            if (toSub)
+                dateAfter = new Date((Math.floor(Date.now() / 1000) - toSub) * 1000);
+
+            console.log("Sort is " + input.sort);
 
             return ctx.prisma.mod.findMany({
                 include: {
                     ModSource: true,
+                    ModRating: true,
                     category: true
                 },
                 where: {
-                    ...(input.search && { name: {
-                            contains: input.search 
-                        }}),
                     ...(catsArr && catsArr.length > 0 && { categoryId: {
                             in: catsArr
-                        }})
+                        }}),
+                        ...(input.search && {
+                            OR: {
+                                name: {
+                                    contains: input.search 
+                                },
+                                description_short: {
+                                    contains: input.search
+                                },
+                                category: {
+                                    name: {
+                                        contains: input.search
+                                    },
+                                    name_short: {
+                                        contains: input.search
+                                    }
+                                }
+                            }
+                        }),
                 },
+                ...(input.sort != null && {
+                    orderBy: {
+                        ...(input.sort == 0 && {
+                            ModRating: {
+                                _count: "desc"
+                            }
+                        }),
+                        ...(input.sort == 1 && {
+                            total_views: "desc"
+                        }),
+                        ...(input.sort == 2 && {
+                            total_downloads: "desc"
+                        }),
+                        ...(input.sort == 3 && {
+                            updateAt: "desc"
+                        }),
+                        ...(input.sort == 4) && {
+                            createAt: "desc"
+                        }
+                    }
+                }),
                 skip: offset,
                 take: count
             });

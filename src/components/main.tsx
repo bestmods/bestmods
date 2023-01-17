@@ -1,8 +1,19 @@
 import { Field, Form, Formik } from "formik";
 import React, { useState } from "react";
-import HeadInfo from "../components/Head";
 
 import { signIn, signOut, useSession } from "next-auth/react";
+
+export type filterArgs = {
+    categories: string | null
+    timeframe: number | null
+    sort: number | null
+    search: string | null
+    
+    categoriesCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void) | null 
+    timeframeCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void) | null 
+    sortCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void) | null
+    searchCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void) | null
+}
 
 export const BestModsLogin: React.FC<{session: any | null}> = ({session}) => {
     return (
@@ -24,7 +35,7 @@ export const BestModsLogin: React.FC<{session: any | null}> = ({session}) => {
     );
 };
 
-export const BestModsPage: React.FC<{content: JSX.Element}> = ({ content }) => {
+export const BestModsPage: React.FC<{content: JSX.Element, filters: filterArgs}> = ({ content, filters }) => {
     const { data: session, status } = useSession();
 
     return (
@@ -36,7 +47,9 @@ export const BestModsPage: React.FC<{content: JSX.Element}> = ({ content }) => {
           <BestModsBackground></BestModsBackground>
           
           <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-            <BestModsHeader></BestModsHeader>
+            <BestModsHeader 
+                filters={filters}
+            ></BestModsHeader>
           </div>
             <div className="relative">
                 {content}
@@ -53,7 +66,7 @@ export const BestModsBackground = () => {
     </>);
 };
   
-export const BestModsHeader = () => {
+export const BestModsHeader: React.FC<{filters: filterArgs | null}> = ({ filters  }) => {
     return (<>
         <h1 className="text-center text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
             <a href="/"><span className="text-blue-400">B</span>est{" "}
@@ -69,25 +82,25 @@ export const BestModsHeader = () => {
             }}
         >
             <Form className="w-full flex justify-center items-center gap-2 flex-wrap">
-                <Filters />
-                <SearchBar />
+                <Filters
+                    filters={filters}
+                />
+                <SearchBar 
+                    filters={filters}
+                />
             </Form>
         </Formik>
     </>);
 };
 
-const Filters = () => {
-    const [timeframe, setTimeframe] = useState(1);
-    const [sort, setSort] = useState(0);
-
+const Filters: React.FC<{filters: filterArgs | null}> = ({ filters }) => {
     return (
         <>
             <div className="relative w-full md:w-3/12">
-                <select name="filterTimeframe" value={timeframe.toString()} onChange={(e) => {
-                    const val = e.target.value;
-
-                    setTimeframe(Number(val));
-                }} className="block p-4 w-full text-lg text-gray-100 bg-gray-700 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                <select name="filterTimeframe" value={filters?.timeframe?.toString() ?? ""} onChange={filters?.timeframeCb ?? ((e) => {
+                if (typeof window !== "undefined")
+                    window.location.href = "/?timeframe=" + e.target.value;
+            })} className="block p-4 w-full text-lg text-gray-100 bg-gray-700 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
                     <option value="0">Hourly</option>
                     <option value="1">Today</option>
                     <option value="2">Week</option>
@@ -97,11 +110,10 @@ const Filters = () => {
                 </select>
             </div>
             <div className="relative w-full md:w-3/12">
-                <select name="filterSort" value={sort.toString()} onChange={(e) => {
-                    const val = e.target.value;
-
-                    setSort(Number(val));
-                }} className="block p-4 w-full text-lg text-gray-100 bg-gray-700 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                <select name="filterSort" value={filters?.sort?.toString() ?? ""} onChange={filters?.sortCb ?? ((e) => {
+                if (typeof window !== "undefined")
+                    window.location.href = "/?sort=" + e.target.value;
+            })} className="block p-4 w-full text-lg text-gray-100 bg-gray-700 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
                     <option value="0">Top Rated</option>
                     <option value="1">Most Viewed</option>
                     <option value="2">Most Downloaded</option>
@@ -113,14 +125,17 @@ const Filters = () => {
     );
 };
   
-const SearchBar = () => {
+const SearchBar: React.FC<{filters: filterArgs | null}> = ({ filters }) => {
     return ( 
         <div className="relative w-full md:w-1/3 ">
             <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                 <svg aria-hidden="true" className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             </div>
 
-            <Field type="search" name="search" id="default-search" className="block p-4 pl-10 w-full text-sm text-gray-100 bg-gray-700 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500" placeholder="Search for your favorite mods!" />
+            <Field type="search" name="search" id="search" value={filters?.search ?? ""} onChange={filters?.searchCb ?? ((e) => {
+                if (typeof window !== "undefined")
+                    window.location.href = "/?search=" + e.target.value;
+            })} className="block p-4 pl-10 w-full text-sm text-gray-100 bg-gray-700 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500" placeholder="Search for your favorite mods!" />
         </div>
     );
 };  
