@@ -46,6 +46,46 @@ const SourceForm: React.FC<{mod: any, num: number, sources: Source[]}> = ({ mod,
     )
 };
 
+const InstallerForm: React.FC<{mod: any, num: number, sources: Source[]}> = ({ mod, num, sources }) => {
+    const srcUrl = "installers-" + num + "-srcurl";
+    const url = "installers-" + num + "-url";
+
+    console.log("Mod Installers");
+    if (mod)
+        console.log(mod.ModInstaller);
+    
+    const curUrl = mod != null && mod.ModInstaller != null && mod.ModInstaller[num - 1] != null ? mod.ModInstaller[num - 1]?.sourceUrl ?? "" : "";
+
+    const [srcUrlVal, setSrcUrlVal] = useState(curUrl);
+
+    useEffect(() => {
+        setSrcUrlVal(curUrl);
+    }, [mod]);
+
+    return (
+        <>
+            <h3 className="text-gray-200 text-lg font-bold mb-2">Installer #{num}</h3>
+
+            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Source</label>
+            <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcUrl} id={srcUrl} value={srcUrlVal} onChange={(e) => {
+                const val = e.target.value;
+
+                setSrcUrlVal(val);
+            }}>
+                {sources?.map((src) => {
+                    return (
+                        <option key={src.url} value={src.url}>{src.name}</option>
+                    );
+                })}
+            </select>
+
+            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
+            <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={url} id={url} defaultValue={mod != null && mod.ModInstaller != null && mod.ModInstaller[num - 1] != null ? mod.ModInstaller[num - 1]?.url ?? "" : ""} type="text" />
+
+        </>
+    )
+};
+
 const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {    
     const [id, setId] = useState(0);
     const [dataReceived, setDataReceived] = useState(false);
@@ -69,6 +109,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         downloads: string | null;
         screenshots: string | null;
         sources: string | null;
+        installers: string  | null;
     }>();
     const submitBtn = useMemo(() => {
         return (<>
@@ -85,10 +126,12 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     const [downloadCount, setDownloadCount] = useState(1);
     const [screenShotCount, setScreenShotCount] = useState(1);
     const [sourceCount, setSourceCount] = useState(1);
+    const [installerCount, setInstallerCount] = useState(1);
 
     const [downloadForm, setDownloadForm] = useState<JSX.Element>(<></>);
     const [screenShotForm, setScreenShotForm] = useState<JSX.Element>(<></>);
     const [sourceForm, setSourceForm] = useState<JSX.Element>(<></>);
+    const [installerForm, setInstallerForm] = useState<JSX.Element>(<></>);
 
     // For editing (prefilled fields).
     const [name, setName] = useState("");
@@ -117,6 +160,8 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 setScreenShotCount(mod.ModScreenshot.length);
             else if (mod.ModSource != null && mod.ModSource.length > 1)
                 setSourceCount(mod.ModSource.length);
+            else if (mod.ModInstaller != null && mod.ModInstaller.length > 1)
+                setInstallerCount(mod.ModInstaller.length);
 
             setCategory(mod.categoryId);
         }
@@ -190,13 +235,16 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             <h2 className="text-white text-2xl font-bold">Sources</h2>
             {sourceForm}
 
+            <h2 className="text-white text-2xl font-bold">Installers</h2>
+            {installerForm}
+
             <h2 className="text-white text-2xl font-bold">Downloads</h2>
             {downloadForm}
 
             <h2 className="text-white text-2xl font-bold">Screenshots</h2>
             {screenShotForm}
         </>);
-    }, [catsWithChildren.data, sourceForm, downloadForm, screenShotForm, category]);
+    }, [catsWithChildren.data, sourceForm, downloadForm, screenShotForm, installerForm, category]);
     
 
     // Handle error messages to client.
@@ -348,6 +396,46 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         setFetchSrcs(false);
     }, [fetchSrcs]);
 
+    // Handle dynamic installers (uncontrolled input).
+    type insArrType = {
+        srcUrl: string
+        url: string
+    }
+
+    const [inssArr, setInssArr] = useState<Array<insArrType>>([]);
+    const [fetchInss, setFetchInss] = useState(false);
+
+    useEffect(() => {
+        if (!fetchInss || typeof window === 'undefined')
+            return;
+
+        let arr: Array<insArrType> = [];
+
+        for (let i = 1; i <= 50; i++) {
+            if (typeof window === 'undefined')
+                break
+    
+            const srcUrlEle = document.getElementById("installers-" + i + "-srcurl");
+            const urlEle = document.getElementById("installers-" + i + "-url");
+
+            if (srcUrlEle == null || urlEle == null)
+                continue;
+
+            const srcUrlVal = (document.getElementById(srcUrlEle.id) as HTMLInputElement).value;
+            const urlVal = (document.getElementById(urlEle.id) as HTMLInputElement).value;
+
+            if (urlVal.length < 1)
+                continue;
+
+            arr.push({srcUrl: srcUrlVal, url: urlVal});
+        }
+
+        if (arr.length > 0)
+            setInssArr(arr);
+
+        setFetchInss(false);
+    }, [fetchInss]);
+
 
     // Handle dynamic download form.
     useMemo(() => {
@@ -442,8 +530,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                                 mod={mod}
                                 num={num}
                                 sources={sourcesArr ?? []}
-                            >
-                            </SourceForm>
+                            />
 
                             <button onClick={(e) => {
                                 e.preventDefault();
@@ -466,6 +553,47 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         </>);
 
     }, [sourceCount, sources.data, mod]);
+
+    // Handle dynamic installers.
+    useEffect(() => {
+        // Create a range from 1 to sources count.
+        const range = Array.from({length: installerCount}, (value, index) => index + 1);
+
+        // Fetch pre-existing source data for URL select box.
+        const sourcesArr = sources.data;
+
+        setInstallerForm(<>
+            {range.map((num) => {
+                return (
+                    <>
+                        <div key={num} className="mb-4">
+                            <InstallerForm 
+                                mod={mod}
+                                num={num}
+                                sources={sourcesArr ?? []}
+                            />
+
+                            <button onClick={(e) => {
+                                e.preventDefault();
+
+                                // Subtract count.
+                                setInstallerCount(installerCount - 1);
+                            }} className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
+                        </div>
+                    </>
+                );
+            })}
+            <div className="mb-4">
+                <button onClick={(e) => {
+                    e.preventDefault();
+
+                    // Increment downloads count.
+                    setInstallerCount(installerCount + 1);
+                }} className="text-white bg-green-800 hover:bg-green-900 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
+            </div>
+        </>);
+
+    }, [installerCount, sources.data, mod]);
 
     useEffect(() => {
         if (!dataReceived) {
@@ -490,7 +618,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
     useEffect(() => {
         // Make sure we are submitting, values are valid, and we aren't still fetching relation data.
-        if (!submit || !values || fetchDls || fetchSss || fetchSrcs)
+        if (!submit || !values || fetchDls || fetchSss || fetchSrcs || fetchInss)
             return;
 
         // Create new values.
@@ -500,18 +628,19 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         const dlsStr = JSON.stringify(dlsArr);
         const sssStr = JSON.stringify(sssArr);
         const srcsStr = JSON.stringify(srcsArr);
+        const inssStr = JSON.stringify(inssArr);
 
         // Assign relation data to new values now.
         newVals.downloads = dlsStr;
         newVals.screenshots = sssStr;
         newVals.sources = srcsStr;
+        newVals.installers = inssStr;
 
         // Assign banner data.
         newVals.banner = bannerData?.toString() ?? null;
         
         // Insert into database.
         modMut.mutate(newVals);
-        console.log("MUTATING");
 
         // Scroll to top.
         if (typeof window !== undefined) {
@@ -524,7 +653,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
         // We are no longer submitting.
         setSubmit(false);
-    }, [submit, values, fetchDls, fetchSss, fetchSrcs]);
+    }, [submit, values, fetchDls, fetchSss, fetchSrcs, fetchInss]);
 
 
     // Create form using Formik.
@@ -543,6 +672,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             setFetchDls(true);
             setFetchSss(true);
             setFetchSrcs(true);
+            setFetchInss(true);
 
             // First, handle file uploads via a promise. Not sure of any other way to do it at the moment (though I am new to TypeScript, Next.JS, and React).
             new Promise<void>(async (resolve, reject) => {
@@ -600,6 +730,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                     downloads: null,
                     screenshots: null,
                     sources: null,
+                    installers: null,
         
                     bremove: values.bremove
                 });

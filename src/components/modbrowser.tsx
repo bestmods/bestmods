@@ -3,7 +3,7 @@ import { trpc } from "../utils/trpc";
 
 import { signIn, useSession } from "next-auth/react";
 
-import { Mod, ModRating, ModSource, Source, Category } from "@prisma/client";
+import { Mod, ModRating, ModSource, ModInstaller, Category } from "@prisma/client";
 
 import InfiniteScroll from 'react-infinite-scroller';
 
@@ -20,6 +20,24 @@ const ModSourceRender: React.FC<{mod: Mod, modSrc: ModSource}> = ({ mod, modSrc}
 
     let name = "Placeholder";
     const url = "https://" + modSrc.sourceUrl + "/" + modSrc.query;
+
+    if (srcQuery.data && srcQuery.isFetched)
+        name = srcQuery.data.name;
+
+    return (
+        <li>
+            <a href={url} className="block px-4 hover:bg-teal-900 text-white" target="_blank">{name}</a>
+        </li>
+    );
+};
+
+const ModInstallerRender: React.FC<{mod: Mod, modIns: ModInstaller}> = ({ mod, modIns}) => {
+    const srcQuery = trpc.source.getSource.useQuery({
+        url: modIns.sourceUrl
+    });
+
+    let name = "Placeholder";
+    const url = modIns.url;
 
     if (srcQuery.data && srcQuery.isFetched)
         name = srcQuery.data.name;
@@ -203,13 +221,15 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                                 )}</button>
             
                                 <ul id={"installerDropdownMenu" + mod.id} className={`absolute py-1 text-sm bg-teal-800 ${ installersMenuOpen ? "block" : "hidden" }`} aria-labelledby={"installerDropdownBtn" + mod.id}>
-                                    {installers.map((i) => {
-                                        return (
-                                            <li key={i.url}>
-                                                <a href={i.url} className="block px-4 hover:bg-teal-900 text-white" target="_blank">{i.name}</a>
-                                            </li>
-                                        );
-                                    })}
+                                {mod.ModInstaller.map((ins: ModInstaller) => {
+                                    return (
+                                        <ModInstallerRender
+                                            key={mod.id + "-" + ins.sourceUrl}
+                                            mod={mod}
+                                            modIns={ins}
+                                        ></ModInstallerRender>
+                                    );
+                                })}
                                 </ul>
                             </div>
                         </>

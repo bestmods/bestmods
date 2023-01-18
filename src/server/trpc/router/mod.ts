@@ -16,7 +16,8 @@ export const modRouter = router({
                         category: true,
                         ModDownload: true,
                         ModScreenshot: true,
-                        ModSource: true
+                        ModSource: true,
+                        ModInstaller: true
                     },
                     where: {
                         url: input.url
@@ -40,6 +41,7 @@ export const modRouter = router({
             downloads: z.string().nullable(),
             screenshots: z.string().nullable(),
             sources: z.string().nullable(),
+            installers: z.string().nullable(),
 
             bremove: z.boolean().nullable()
         }))
@@ -188,6 +190,12 @@ export const modRouter = router({
                             modId: mod.id
                         }
                     });
+
+                    await ctx.prisma.modInstaller.deleteMany({
+                        where: {
+                            modId: mod.id
+                        }
+                    });
                 } catch (error) {
                     // Log, but keep continuing.
                     console.error("Error deleting relations for Mod ID #" + mod.id);
@@ -260,7 +268,30 @@ export const modRouter = router({
                             query: query
                         }
                     });
-                });            
+                });
+                
+                // Handle installers relation.
+                const installers = JSON.parse(input.installers ?? "[]");
+
+                // Loop through installers.
+                installers.forEach(async ({ srcUrl, url }: { srcUrl: string, url: string }) => {
+                    await ctx.prisma.modInstaller.upsert({
+                        where: {
+                            modId_sourceUrl: {
+                                modId: mod.id,
+                                sourceUrl: srcUrl
+                            }
+                        },
+                        create: {
+                            modId: mod.id,
+                            sourceUrl: srcUrl,
+                            url: url
+                        },
+                        update: {
+                            url: url
+                        }
+                    });
+                });  
             }
         }),
     getAllModsBrowser: publicProcedure
@@ -314,9 +345,11 @@ export const modRouter = router({
 
             return ctx.prisma.mod.findMany({
                 include: {
-                    ModSource: true,
                     category: true,
-                    ModRating: true
+                    ModRating: true,
+
+                    ModSource: true,
+                    ModInstaller: true
                 },
                 where: {
                     ...(catsArr && catsArr.length > 0 && { categoryId: {
