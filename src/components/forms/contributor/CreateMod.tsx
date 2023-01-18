@@ -49,10 +49,6 @@ const SourceForm: React.FC<{mod: any, num: number, sources: Source[]}> = ({ mod,
 const InstallerForm: React.FC<{mod: any, num: number, sources: Source[]}> = ({ mod, num, sources }) => {
     const srcUrl = "installers-" + num + "-srcurl";
     const url = "installers-" + num + "-url";
-
-    console.log("Mod Installers");
-    if (mod)
-        console.log(mod.ModInstaller);
     
     const curUrl = mod != null && mod.ModInstaller != null && mod.ModInstaller[num - 1] != null ? mod.ModInstaller[num - 1]?.sourceUrl ?? "" : "";
 
@@ -97,6 +93,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     // For submissions.
     const [submit, setSubmit] = useState(false);
     const [values, setValues] = useState<{
+        ownerName: string | null,
         description: string;
         category: number;
         id: number;
@@ -134,6 +131,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     const [installerForm, setInstallerForm] = useState<JSX.Element>(<></>);
 
     // For editing (prefilled fields).
+    const [ownerName, setOwnerName] = useState("");
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [descriptionShort, setDescriptionShort] = useState("");
@@ -185,6 +183,11 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             <div className="mb-4">
                 <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Name</label>
                 <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="name" name="name" type="text" placeholder="Mod Name" />
+            </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Owner Name</label>
+                <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="ownerName" name="ownerName" type="text" placeholder="Owner Name If Any" />
             </div>
 
             <div className="mb-4">
@@ -604,6 +607,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             if (mod != null) {
                 setId(mod.id);
 
+                setOwnerName(mod.ownerName);
                 setName(mod.name);
                 setUrl(mod.url);
                 setDescription(mod.description);
@@ -660,6 +664,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     const form = useFormik({
         initialValues: {
             name: name,
+            ownerName: ownerName,
             description: description,
             descriptionShort: descriptionShort,
             install: install,
@@ -718,6 +723,9 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 setSubmit(true);
                 setValues({
                     id: id,
+
+                    ownerName: values.ownerName,
+
                     name: values.name,
                     url: values.url,
                     category: category,

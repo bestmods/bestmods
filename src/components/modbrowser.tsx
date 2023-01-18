@@ -172,8 +172,14 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     
     return (
         <div key={mod.id} className={"w-72 md:w-96 h-[32rem] rounded bg-gradient-to-b from-cyan-500/30 to-cyan-800/30 flex flex-col shadow-lg" + addClasses}>
-            <div className="modImage w-full max-h-64 h-64">
+            <div className="relative modImage w-full max-h-64 h-64">
                 <img className="w-full h-full max-h-full rounded-t" src={banner} />
+                {mod.ownerName != null && (
+                    <div className="absolute bottom-0 left-0 h-8 pr-4 rounded-tr bg-cyan-500/60 hover:bg-cyan-900 flex items-center">
+                        <p className="text-white text-sm ml-1">{mod.ownerName}</p>
+                    </div>
+                )}
+
             </div>
             <div className="mainInfo ml-8 mr-8 mb-4 max-h-20 overflow-hidden text-ellipsis">
                     <h3 className="text-white text-xl font-bold text-center">{mod.name}</h3>

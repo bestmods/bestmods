@@ -27,6 +27,10 @@ export const modRouter = router({
     addMod: publicProcedure
         .input(z.object({
             id: z.number(),
+
+            ownerName: z.string().nullable(),
+
+
             name: z.string(),
             banner: z.string().nullable(),
             url: z.string(),
@@ -49,8 +53,6 @@ export const modRouter = router({
             // First, we want to insert the mod into the database.
             let mod = null;
 
-            console.log("Got to mutation");
-
             // Make sure we have text in required fields.
             if (input.url.length < 1 || input.name.length < 1 || input.description.length < 1) {
                 let err = "URL is empty.";
@@ -72,10 +74,8 @@ export const modRouter = router({
             // Let's now handle file uploads.
             let bannerPath: string | boolean | null = false;
 
-            if (input.bremove) {
-                console.log("BANNER REMOVE SET");
+            if (input.bremove)
                 bannerPath = null;
-            }
 
             if (input.banner != null && input.banner.length > 0 && !input.bremove) {
                 const base64Data = input.banner.split(',')[1];
@@ -125,15 +125,14 @@ export const modRouter = router({
                 }
             }
 
-            console.log("Banner  data");
-            console.log(bannerPath);
-
             try {
                 mod = await ctx.prisma.mod.upsert({
                     where: {
                         id: input.id
                     },
                     update: {
+                        ownerName: input.ownerName,
+
                         name: input.name,
                         url: input.url,
                         categoryId: input.category,
@@ -147,6 +146,8 @@ export const modRouter = router({
                         })
                     },
                     create: {
+                        ownerName: input.ownerName,
+                        
                         name: input.name,
                         url: input.url,
                         categoryId: input.category,
