@@ -25,39 +25,58 @@ model Source {
 }
 
 model Category {
-  id         Int        @id @default(autoincrement())
-  parentId   Int?       @default(0) @map("parentId")
-  children   Category[] @relation("children")
-  parent     Category?  @relation("children", fields: [parentId], references: [id])
-  name       String
-  name_short String
-  url        String?
-  classes    String?
-  icon       String?
-  Mod        Mod[]
+  id        Int        @id @default(autoincrement())
+  parentId  Int?       @default(0) @map("parentId")
+  children  Category[] @relation("children")
+  parent    Category?  @relation("children", fields: [parentId], references: [id])
+  name      String
+  nameShort String
+  url       String?
+  classes   String?
+  icon      String?
+  Mod       Mod[]
 }
 
 model Mod {
-  id                Int              @id @default(autoincrement())
-  name              String
-  banner            String?
-  url               String           @unique
-  description       String
-  description_short String?
-  install           String?
-  createAt          DateTime         @default(now())
-  updateAt          DateTime?        @updatedAt
-  total_downloads   BigInt           @default(0)
-  total_views       BigInt           @default(0)
-  category          Category         @relation(fields: [categoryId], references: [id])
-  categoryId        Int
-  ModSource         ModSource[]
-  ModDownload       ModDownload[]
-  ModScreenshot     ModScreenshot[]
-  ModRating         ModRating[]
-  ModUniqueView     ModUniqueView[]
-  ModCollections    ModCollections[]
-  ModComment        ModComment[]
+  id  Int    @id @default(autoincrement())
+  url String @unique
+
+  // Ownership
+  owner     User?   @relation(fields: [ownerId], references: [id])
+  ownerId   String?
+  ownerName String?
+
+  // General details.
+  name             String
+  banner           String?
+  description      String
+  descriptionShort String?
+  install          String?
+  createAt         DateTime  @default(now())
+  updateAt         DateTime? @updatedAt
+
+  // For caching and whatnot.
+  totalDownloads BigInt @default(0)
+  totalViews     BigInt @default(0)
+  totalRating    BigInt @default(1)
+
+  ratingHour  BigInt @default(1)
+  ratingDay   BigInt @default(1)
+  ratingWeek  BigInt @default(1)
+  ratingMonth BigInt @default(1)
+  ratingYear  BigInt @default(1)
+
+  // Relations
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+
+  ModSource      ModSource[]
+  ModDownload    ModDownload[]
+  ModScreenshot  ModScreenshot[]
+  ModRating      ModRating[]
+  ModUniqueView  ModUniqueView[]
+  ModCollections ModCollections[]
+  ModComment     ModComment[]
 }
 
 // Mod Relations
@@ -174,6 +193,7 @@ model User {
   ModUniqueView ModUniqueView[]
   ModCollection ModCollection?
   ModComment    ModComment[]
+  Mod           Mod[]
 }
 
 model VerificationToken {

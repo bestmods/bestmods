@@ -33,7 +33,7 @@ export const modRouter = router({
 
             // The following should be parsed via Markdown Syntax.
             description: z.string(),
-            description_short: z.string(),
+            descriptionShort: z.string(),
             install: z.string().nullable(),
 
             // The following should be parsed via JSON.
@@ -137,7 +137,7 @@ export const modRouter = router({
                         categoryId: input.category,
 
                         description: input.description,
-                        description_short: input.description_short,
+                        descriptionShort: input.descriptionShort,
                         install: input.install,
 
                         ...(bannerPath !== false && {
@@ -150,7 +150,7 @@ export const modRouter = router({
                         categoryId: input.category,
 
                         description: input.description,
-                        description_short: input.description_short,
+                        descriptionShort: input.descriptionShort,
                         install: input.install,
 
                         ...(bannerPath !== false && {
@@ -315,8 +315,8 @@ export const modRouter = router({
             return ctx.prisma.mod.findMany({
                 include: {
                     ModSource: true,
-                    ModRating: true,
-                    category: true
+                    category: true,
+                    ModRating: true
                 },
                 where: {
                     ...(catsArr && catsArr.length > 0 && { categoryId: {
@@ -329,7 +329,7 @@ export const modRouter = router({
                                     }
                                 },
                                 {
-                                    description_short: {
+                                    descriptionShort: {
                                         contains: input.search
                                     }
                                 },
@@ -338,7 +338,7 @@ export const modRouter = router({
                                         name: {
                                             contains: input.search
                                         },
-                                        name_short: {
+                                        nameShort: {
                                             contains: input.search
                                         }
                                     }
@@ -349,15 +349,30 @@ export const modRouter = router({
                 ...(input.sort != null && {
                     orderBy: {
                         ...(input.sort == 0 && {
-                            ModRating: {
-                                _count: "desc"
-                            }
+                            ...(input.timeframe == 0 && {
+                                ratingHour: "desc"
+                            }),
+                            ...(input.timeframe == 1 && {
+                                ratingDay: "desc"
+                            }),
+                            ...(input.timeframe == 2 && {
+                                ratingWeek: "desc"
+                            }),
+                            ...(input.timeframe == 3 && {
+                                ratingMonth: "desc"
+                            }),
+                            ...(input.timeframe == 4 && {
+                                ratingYear: "desc"
+                            }),
+                            ...(input.timeframe == 5 && {
+                                totalRating: "desc"
+                            })
                         }),
                         ...(input.sort == 1 && {
-                            total_views: "desc"
+                            totalViews: "desc"
                         }),
                         ...(input.sort == 2 && {
-                            total_downloads: "desc"
+                            totalDownloads: "desc"
                         }),
                         ...(input.sort == 3 && {
                             updateAt: "desc"

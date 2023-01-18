@@ -23,7 +23,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
         parent_id: number;
 
         name: string;
-        name_short: string;
+        nameShort: string;
         url: string;
         classes: string;
 
@@ -33,7 +33,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
     const submitBtn = useMemo(() => {
         return (<>
             <div className="text-center">
-                <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{id == null ? "Add Category!" : "Edit Category!"}</button>
+                <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{id == null || id < 1 ? "Add Category!" : "Edit Category!"}</button>
             </div>
         </>);
     }, [id]);
@@ -152,7 +152,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
             // Check if our category is null.
             if (category != null) {
                 setName(category.name);
-                setNameShort(category.name_short);
+                setNameShort(category.nameShort);
                 setParent(category.parentId);
                 setUrl(category.url ?? "");
     
@@ -172,6 +172,8 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
 
         // Create new values.
         const newVals = values;
+
+        newVals.icon = iconData?.toString() ?? null;
         
         // Insert into database.
         categoryMut.mutate(newVals);
@@ -258,11 +260,11 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                     parent_id: parent_id ?? 0,
 
                     name: values.name,
-                    name_short: values.nameShort,
+                    nameShort: values.nameShort,
                     url: values.url,
                     classes: values.classes,
 
-                    icon: iconData?.toString() ?? null,
+                    icon: null,
         
                     iremove: values.iremove
                 });

@@ -24,7 +24,7 @@ export const categoryRouter = router({
             id: z.number().nullable(),
             parent_id: z.number().nullable(),
             name: z.string(),
-            name_short: z.string(),
+            nameShort: z.string(),
             url: z.string(),
             icon: z.string().nullable(),
             classes: z.string().nullable(),
@@ -41,14 +41,14 @@ export const categoryRouter = router({
                     update: {
                         parentId: input.parent_id || null,
                         name: input.name,
-                        name_short: input.name_short,
+                        nameShort: input.nameShort,
                         url: input.url,
                         classes: input.classes ?? null        
                     },
                     create: {
                         parentId: input.parent_id || null,
                         name: input.name,
-                        name_short: input.name_short,
+                        nameShort: input.nameShort,
                         url: input.url,
                         classes: input.classes ?? null 
                     }

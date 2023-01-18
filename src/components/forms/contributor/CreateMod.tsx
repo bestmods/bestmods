@@ -63,7 +63,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         name: string;
         url: string;
         banner: string | null;
-        description_short: string;
+        descriptionShort: string;
         install: string | null;
         bremove: boolean | null;
         downloads: string | null;
@@ -479,7 +479,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 setName(mod.name);
                 setUrl(mod.url);
                 setDescription(mod.description);
-                setDescriptionShort(mod.description_short ?? "");
+                setDescriptionShort(mod.descriptionShort ?? "");
                 setInstall(mod.install ?? "");
 
                 setDataReceived(true);
@@ -594,7 +594,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                     banner: null,
         
                     description: values.description,
-                    description_short: values.descriptionShort,
+                    descriptionShort: values.descriptionShort,
                     install: values.install,
         
                     downloads: null,
