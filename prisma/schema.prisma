@@ -16,12 +16,13 @@ datasource db {
 
 // Primary Content Models
 model Source {
-  name      String
-  url       String      @id
-  icon      String?
-  banner    String?
-  classes   String?
-  ModSource ModSource[]
+  name         String
+  url          String         @id
+  icon         String?
+  banner       String?
+  classes      String?
+  ModSource    ModSource[]
+  ModInstaller ModInstaller[]
 }
 
 model Category {
@@ -77,6 +78,7 @@ model Mod {
   ModUniqueView  ModUniqueView[]
   ModCollections ModCollections[]
   ModComment     ModComment[]
+  ModInstaller   ModInstaller[]
 }
 
 // Mod Relations
@@ -104,6 +106,16 @@ model ModSource {
   sourceUrl String
   primary   Boolean @default(false)
   query     String
+
+  @@id([modId, sourceUrl])
+}
+
+model ModInstaller {
+  mod       Mod    @relation(fields: [modId], references: [id])
+  modId     Int
+  source    Source @relation(fields: [sourceUrl], references: [url])
+  sourceUrl String
+  url       String
 
   @@id([modId, sourceUrl])
 }
