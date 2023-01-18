@@ -312,8 +312,6 @@ export const modRouter = router({
             if (toSub)
                 dateAfter = new Date((Math.floor(Date.now() / 1000) - toSub) * 1000);
 
-            console.log("Sort is " + input.sort);
-
             return ctx.prisma.mod.findMany({
                 include: {
                     ModSource: true,
@@ -325,22 +323,27 @@ export const modRouter = router({
                             in: catsArr
                         }}),
                         ...(input.search && {
-                            OR: {
-                                name: {
-                                    contains: input.search 
-                                },
-                                description_short: {
-                                    contains: input.search
-                                },
-                                category: {
+                            OR: [{
                                     name: {
-                                        contains: input.search
-                                    },
-                                    name_short: {
+                                        contains: input.search 
+                                    }
+                                },
+                                {
+                                    description_short: {
                                         contains: input.search
                                     }
+                                },
+                                {
+                                    category: {
+                                        name: {
+                                            contains: input.search
+                                        },
+                                        name_short: {
+                                            contains: input.search
+                                        }
+                                    }
                                 }
-                            }
+                            ]
                         }),
                 },
                 ...(input.sort != null && {

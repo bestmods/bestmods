@@ -305,7 +305,7 @@ const ModBrowser: React.FC<{filters: filterArgs}> = ({ filters }) => {
     return (
         <div className="container mx-auto">
             <InfiniteScroll
-                className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 justify-items-center gap-4"
+                className="grid grid-flow-row auto-cols-max grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 justify-items-center gap-16"
                 loadMore={fetchMods}
                 hasMore={needMoreMods}
                 loader={

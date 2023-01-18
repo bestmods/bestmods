@@ -151,7 +151,7 @@ const ModSources: React.FC<{ mod: Mod }> = ({ mod }) => {
             const srcLink = "https://" + src.sourceUrl + "/" + src.query;
 
             return (
-              <a key={src.modId} href={srcLink} className="relative no-underline" target="_blank">
+              <a key={"src-" + src.modId + "-" + src.sourceUrl + "-" + src.query} href={srcLink} className="relative no-underline" target="_blank">
                 <div className="bg-cyan-500/50 hover:bg-cyan-600/50 rounded w-72 h-72">
                   <div className="w-full h-36">
                     <img src={banner} className="w-full h-full rounded-t" />
