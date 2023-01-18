@@ -31,7 +31,7 @@ const ModSourceRender: React.FC<{mod: Mod, modSrc: ModSource}> = ({ mod, modSrc}
     );
 };
 
-const ModInstallerRender: React.FC<{mod: Mod, modIns: ModInstaller}> = ({ mod, modIns}) => {
+export const ModInstallerRender: React.FC<{mod: Mod, modIns: ModInstaller}> = ({ mod, modIns}) => {
     const srcQuery = trpc.source.getSource.useQuery({
         url: modIns.sourceUrl
     });
@@ -49,7 +49,7 @@ const ModInstallerRender: React.FC<{mod: Mod, modIns: ModInstaller}> = ({ mod, m
     );
 };
 
-const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
+export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
     // Retrieve session.
     const { data: session } = useSession();
 
