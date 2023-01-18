@@ -175,7 +175,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
             <div className="relative modImage w-full max-h-64 h-64">
                 <img className="w-full h-full max-h-full rounded-t" src={banner} />
                 {mod.ownerName != null && (
-                    <div className="absolute bottom-0 left-0 h-8 pr-4 rounded-tr bg-cyan-500/60 hover:bg-cyan-900 flex items-center">
+                    <div className="absolute bottom-0 left-0 h-8 pr-4 rounded-tr bg-cyan-900/60 hover:bg-cyan-900 flex items-center">
                         <p className="text-white text-sm ml-1">{mod.ownerName}</p>
                     </div>
                 )}
