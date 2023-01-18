@@ -87,19 +87,14 @@ const MainContent: React.FC = () => {
           </div>
 
           <div className="p-12 w-full rounded-b bg-cyan-900/20">
-            <div className={`flex flex-wrap mb-4 ${onlyRating ? "justify-center" : "justify-between"}`}>
+            <div className={`flex flex-wrap mb-4 ${onlyRating ? "justify-end" : "justify-between"}`}>
               {mod.ownerName != null && (
                   <div className="">
                     <p className="text-white">Maintained By <span className="font-bold">{mod.ownerName}</span></p>
                   </div>
               )}
-              <div>
-                <ModRatingRender
-                  mod={mod}
-                />
-              </div>
               {mod.ModInstaller != null && mod.ModInstaller.length > 0 && (
-                <div>
+                <div className="relative">
                   <div className="p-2 flex items-center bg-cyan-800 hover:bg-cyan-900 rounded-t">
                     <button id="installerDropdownBtn" onClick={(e) => {
                         setInstallersMenuOpen(!installersMenuOpen);
@@ -123,6 +118,11 @@ const MainContent: React.FC = () => {
                   </ul>
                 </div>
               )}
+              <div className="relative flex justify-center">
+                <ModRatingRender
+                  mod={mod}
+                />
+              </div>
             </div>
             <div className="text-white" id="viewContent">
               {body}
