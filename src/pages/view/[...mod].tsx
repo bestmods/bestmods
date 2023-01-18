@@ -129,7 +129,7 @@ const ModSources: React.FC<{ mod: Mod }> = ({ mod }) => {
     <>
       <h3>Sources</h3>
       {mod.ModSource != null && mod.ModSource.length > 0 && (
-        <div className="flex flex-wrap gap-6 justify-center">
+        <div className="flex flex-wrap gap-6">
           
           {mod.ModSource.map((src: ModSource) => {
             const srcQuery = trpc.source.getSource.useQuery({
@@ -152,11 +152,11 @@ const ModSources: React.FC<{ mod: Mod }> = ({ mod }) => {
 
             return (
               <a key={"src-" + src.modId + "-" + src.sourceUrl + "-" + src.query} href={srcLink} className="relative no-underline" target="_blank">
-                <div className="bg-cyan-500/50 hover:bg-cyan-600/50 rounded w-72 h-72">
+                <div className="bg-cyan-500/50 hover:bg-cyan-600/50 rounded w-72 h-48">
                   <div className="w-full h-36">
                     <img src={banner} className="w-full h-full rounded-t" />
                   </div>
-                  <div className="w-full text-center p-6">
+                  <div className="w-full text-center">
                     <h3 className="!text-lg font-bold no-underline">{name}</h3>
                   </div>
                 </div>
@@ -180,7 +180,7 @@ const ModDownloads: React.FC<{ mod: Mod }> = ({ mod }) => {
     <>
       {downloads.map((dl: ModDownload) => {
         return (
-          <div key={dl.modId + dl.url} className="p-6 bg-teal-800 hover:bg-teal-900 rounded flex m-6">
+          <div key={dl.modId + dl.url} className="p-6 max-w-lg bg-teal-800 hover:bg-teal-900 rounded flex m-6">
             <a className="text-white ml-2" href={dl.url} target="_blank">{dl.name}</a>
           </div>
         );

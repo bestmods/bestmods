@@ -167,7 +167,6 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     let addClasses = (cat != null && cat.classes != null) ? " " + cat.classes : "";
 
     // Generate installers.
-    const installers: Array<{name: string, url: string}> = [{url: "moddingcommunity.com/launchMod.php?id=2", name: "Curseforge"}];
     const [installersMenuOpen, setInstallersMenuOpen] = useState(false);
     
     return (
@@ -215,7 +214,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                 </div>
                 <div className="modLinks justify-between flex text-center bg-cyan-900">
                     <a href={viewLink} className="text-white font-bold p-2 w-1/3">View</a>
-                    {installers.length > 0 && (
+                    {mod.ModInstaller != null && mod.ModInstaller.length > 0 && (
                         <>
                             <div className="relative p-2 w-1/3">
                                 <button id={"installerDropdownBtn" + mod.id} onClick={(e) => {
