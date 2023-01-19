@@ -38,7 +38,7 @@ export const BestModsLogin: React.FC<{session: any | null}> = ({session}) => {
     );
 };
 
-export const BestModsPage: React.FC<{ content: JSX.Element }> = ({ content }) => {
+export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | null }> = ({ content, classes }) => {
     const { data: session } = useSession();
 
     const [categories, setCategories] = useState<string | null>(null);
@@ -78,7 +78,7 @@ export const BestModsPage: React.FC<{ content: JSX.Element }> = ({ content }) =>
 
     return (
       <>
-        <main className="flex min-h-screen flex-col bg-gradient-to-b from-[#002736] to-[#00151b] pb-20">
+        <main className={`flex min-h-screen flex-col bg-gradient-to-b from-[#002736] to-[#00151b] pb-20 ${classes != null ? classes : ""}`}>
             <SessionCtx.Provider value={session}>
                 <BestModsLogin 
                     session={session}

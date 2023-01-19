@@ -32,11 +32,13 @@ const Home: NextPage = () => {
         parent: parentId
     });
 
+    const cat = categoryQuery.data;
+    const cat2 = categoryParQuery.data;
+
     const categories: Array<number> = [];
 
     if (category != null) {
-        const cat = categoryQuery.data;
-        const cat2 = categoryParQuery.data;
+
 
         if (cat) {
             categories.push(cat.id);
@@ -56,7 +58,13 @@ const Home: NextPage = () => {
     } else if (!error)
         setError(notFound);
 
-    const content = (error == null) ? <ModBrowser categories={JSON.stringify(categories)} /> : error;
+    const content = (error == null) ?
+        <div className="container mx-auto">
+            <h1 className="text-white text-center text-lg font-bold">{cat != null && cat.name} Mods</h1>
+            <ModBrowser categories={JSON.stringify(categories)} />
+        </div>
+        
+        : error;
 
     return (
     <>
