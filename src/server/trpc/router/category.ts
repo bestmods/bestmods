@@ -8,16 +8,27 @@ import { TRPCError } from "@trpc/server"
 export const categoryRouter = router({
     getCategory: publicProcedure
         .input(z.object({
-            id: z.number(),
+            id: z.number().nullable(),
+            url: z.string().nullable(),
+            parent: z.number().nullable()
         }))
         .query(({ ctx, input}) => {
-            const cat = ctx.prisma.category.findFirst({
+            return ctx.prisma.category.findFirst({
+                include: {
+                    children: true
+                },
                 where: {
-                    id: input.id
+                    ...(input.id != null && {
+                        id: input.id
+                    }),
+                    ...(input.url != null && {
+                        url: input.url
+                    }),
+                    ...(input.parent != null && {
+                        parentId: input.parent
+                    })
                 }
             });
-
-            return cat;
         }),
     addCategory: publicProcedure
         .input(z.object({

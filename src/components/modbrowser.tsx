@@ -145,7 +145,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     // Retrieve category.
     const cat: Category | null = mod.category;
 
-    const catParentQuery = trpc.category.getCategory.useQuery({id: (cat != null && cat.parentId != null) ? cat.parentId : 0});
+    const catParentQuery = trpc.category.getCategory.useQuery({id: (cat != null && cat.parentId != null) ? cat.parentId : 0, url: null, parent: null});
 
     const catPar = catParentQuery.data;
 
@@ -165,6 +165,9 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
 
     // Generate links.
     const viewLink = "/view/" + mod.url;
+
+    const catParLink = (catPar != null) ? "/category/" + catPar.url : null;
+    const catLink = ((cat != null) ? "/category" + ((catPar != null) ? "/" + catPar.url : "") + "/" + cat.url : null);
 
     // Generate classes.
     let addClasses = (cat != null && cat.classes != null) ? " " + cat.classes : "";
@@ -186,91 +189,103 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
             <div className="mainInfo ml-8 mr-8 mb-4 max-h-20 overflow-hidden text-ellipsis">
                     <h3 className="text-white text-xl font-bold text-center">{mod.name}</h3>
                     <p className="text-white mt-2 text-sm">{mod.descriptionShort}</p>
+            </div>
+            {catPar != null && (
+                <div className="modCategory ml-8 mr-8 mb-1 text-white flex">
+                    <img src={catParIcon} className="w-6 h-6 rounded"></img>
+                    <span className="ml-2 mr-2">
+                        {catParLink != null ? (
+                            <a href={catParLink}>{catPar.name}</a>
+                        ) : (
+                            <span>{catPar.name}</span>
+                        )}
+                    </span>
                 </div>
-                {catPar != null && (
-                    <div className="modCategory ml-8 mr-8 mb-1 text-white flex">
-                        <img src={catParIcon} className="w-6 h-6 rounded"></img>
-                        <span className="ml-2 mr-2">{catPar.name}</span>
-                    </div>
-                )}
-                {cat != null && (
-                    <div className="modCategory ml-8 mr-8 mb-1 text-white flex">
-                        <img src={catIcon} className="w-6 h-6 rounded"></img>
-                        <span className="ml-2">{cat.name}</span>
-                    </div>
-                )}
-                <div className="grow"></div>
-                <div className="modStats flex justify-between items-center">
-                    <div className="relative ml-2 w-1/5">
-                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11085)"><path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M2 12C3.60014 7.90264 7.33603 5 12 5C16.664 5 20.3999 7.90264 22 12C20.3999 16.0974 16.664 19 12 19C7.33603 19 3.60014 16.0974 2 12Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11085"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
-                        <span className="text-white text-sm ml-1">{mod.totalViews.toString()}</span>
-                    </div>
-
-                    <ModRatingRender
-                        mod={mod}
-                    ></ModRatingRender>
-
-                    <div className="relative mr-2 w-1/5 flex justify-end items-end flex-col">
-                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 11L12 15M12 15L8 11M12 15V3M21 15V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V15" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                        <span className="text-white text-sm mr-1">{mod.totalDownloads.toString()}</span>
-                    </div>
+            )}
+            {cat != null && (
+                <div className="modCategory ml-8 mr-8 mb-1 text-white flex">
+                    <img src={catIcon} className="w-6 h-6 rounded"></img>
+                    <span className="ml-2">
+                        {catLink != null ? (
+                            <a href={catLink}>{cat.name}</a>
+                        ) : (
+                            <span>{cat.name}</span>
+                        )}
+                    </span>
                 </div>
-                <div className="modLinks justify-between flex text-center bg-cyan-900">
-                    <a href={viewLink} className="text-white font-bold p-2 w-1/3">View</a>
-                    {mod.ModInstaller != null && mod.ModInstaller.length > 0 && (
-                        <>
-                            <div className="relative p-2 w-1/3">
-                                <button id={"installerDropdownBtn" + mod.id} onClick={(e) => {
-                                    setInstallersMenuOpen(!installersMenuOpen);
-                                }} className="text-white font-bold flex items-center mx-auto" type="button"><span>Install</span> {!installersMenuOpen ? (
-                                    <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
-                                ) : (
-                                    <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
-                                )}</button>
-            
-                                <ul id={"installerDropdownMenu" + mod.id} className={`absolute py-1 text-sm bg-teal-800 ${ installersMenuOpen ? "block" : "hidden" }`} aria-labelledby={"installerDropdownBtn" + mod.id}>
-                                {mod.ModInstaller.map((ins: ModInstaller) => {
-                                    return (
-                                        <ModInstallerRender
-                                            key={mod.id + "-" + ins.sourceUrl}
-                                            mod={mod}
-                                            modIns={ins}
-                                        ></ModInstallerRender>
-                                    );
-                                })}
-                                </ul>
-                            </div>
-                        </>
-                    )}
-                    {mod.ModSource != null && mod.ModSource.length > 0 && (
+            )}
+            <div className="grow"></div>
+            <div className="modStats flex justify-between items-center">
+                <div className="relative ml-2 w-1/5">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11085)"><path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M2 12C3.60014 7.90264 7.33603 5 12 5C16.664 5 20.3999 7.90264 22 12C20.3999 16.0974 16.664 19 12 19C7.33603 19 3.60014 16.0974 2 12Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11085"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
+                    <span className="text-white text-sm ml-1">{mod.totalViews.toString()}</span>
+                </div>
+
+                <ModRatingRender
+                    mod={mod}
+                ></ModRatingRender>
+
+                <div className="relative mr-2 w-1/5 flex justify-end items-end flex-col">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 11L12 15M12 15L8 11M12 15V3M21 15V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V15" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    <span className="text-white text-sm mr-1">{mod.totalDownloads.toString()}</span>
+                </div>
+            </div>
+            <div className="modLinks justify-between flex text-center bg-cyan-900">
+                <a href={viewLink} className="text-white font-bold p-2 w-1/3">View</a>
+                {mod.ModInstaller != null && mod.ModInstaller.length > 0 && (
+                    <>
                         <div className="relative p-2 w-1/3">
-                            <button id={"sourceDropdownBtn" + mod.id} onClick={(e) => {
-                                setSourcesMenuOpen(!sourcesMenuOpen);
-                            }} className="text-white font-bold flex items-center mx-auto" type="button"><span>Sources</span> {!sourcesMenuOpen ? (
+                            <button id={"installerDropdownBtn" + mod.id} onClick={(e) => {
+                                setInstallersMenuOpen(!installersMenuOpen);
+                            }} className="text-white font-bold flex items-center mx-auto" type="button"><span>Install</span> {!installersMenuOpen ? (
                                 <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
                             ) : (
                                 <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
                             )}</button>
         
-                            <ul id={"sourceDropdownMenu" + mod.id} className={`absolute py-1 text-sm bg-teal-800 ${ sourcesMenuOpen ? "block" : "hidden" }`} aria-labelledby={"installerDropdownBtn" + mod.id}>
-                                {mod.ModSource.map((src: ModSource) => {
-                                    return (
-                                        <ModSourceRender
-                                            key={mod.id + "-" + src.sourceUrl}
-                                            mod={mod}
-                                            modSrc={src}
-                                        ></ModSourceRender>
-                                    );
-                                })}
+                            <ul id={"installerDropdownMenu" + mod.id} className={`absolute py-1 text-sm bg-teal-800 ${ installersMenuOpen ? "block" : "hidden" }`} aria-labelledby={"installerDropdownBtn" + mod.id}>
+                            {mod.ModInstaller.map((ins: ModInstaller) => {
+                                return (
+                                    <ModInstallerRender
+                                        key={mod.id + "-" + ins.sourceUrl}
+                                        mod={mod}
+                                        modIns={ins}
+                                    ></ModInstallerRender>
+                                );
+                            })}
                             </ul>
                         </div>
-                    )}
-                </div>
+                    </>
+                )}
+                {mod.ModSource != null && mod.ModSource.length > 0 && (
+                    <div className="relative p-2 w-1/3">
+                        <button id={"sourceDropdownBtn" + mod.id} onClick={(e) => {
+                            setSourcesMenuOpen(!sourcesMenuOpen);
+                        }} className="text-white font-bold flex items-center mx-auto" type="button"><span>Sources</span> {!sourcesMenuOpen ? (
+                            <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
+                        ) : (
+                            <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
+                        )}</button>
+    
+                        <ul id={"sourceDropdownMenu" + mod.id} className={`absolute py-1 text-sm bg-teal-800 ${ sourcesMenuOpen ? "block" : "hidden" }`} aria-labelledby={"installerDropdownBtn" + mod.id}>
+                            {mod.ModSource.map((src: ModSource) => {
+                                return (
+                                    <ModSourceRender
+                                        key={mod.id + "-" + src.sourceUrl}
+                                        mod={mod}
+                                        modSrc={src}
+                                    ></ModSourceRender>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
 
-const ModBrowser: React.FC = () => {
+const ModBrowser: React.FC<{categories?: string | null }> = ({ categories }) => {
     const filters = useContext(FilterCtx);
 
     const [mods, setMods] = useState<Array<Mod>>([]);
@@ -285,7 +300,7 @@ const ModBrowser: React.FC = () => {
         modsPerPage = 10;
 
     const modQuery = trpc.mod.getAllModsBrowser.useQuery({
-        categories: filters?.categories ?? null,
+        categories: (categories != null) ? categories : filters?.categories ?? null,
         timeframe: filters?.timeframe ?? null,
         sort: filters?.sort ?? null,
         search: filters?.search ?? null,
