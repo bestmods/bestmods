@@ -1,12 +1,13 @@
 
 import { useFormik, FormikProvider, Field } from "formik";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 
 import { trpc } from "../../../utils/trpc";
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 import FormTemplate from '../main';
+import { SessionCtx } from '../../main';
 import { AlertForm } from '../../alert';
 import { Mod, Source } from "@prisma/client";
 
@@ -82,7 +83,28 @@ const InstallerForm: React.FC<{mod: any, num: number, sources: Source[]}> = ({ m
     )
 };
 
-const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {    
+const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
+    /*
+    const session = useContext(SessionCtx);
+
+    if (session == null) {
+        return <>
+            <h1 className="text-center text-white font-bold text-lg">You must be logged in and have permission to access this page!</h1>
+        </>;
+    }
+
+    const permCheck = trpc.permission.checkPerm.useQuery({
+        userId: session.user?.id ?? "",
+        perm: "add_sources"
+    });
+
+    if (permCheck.data == null) {
+        return <>
+            <h1 className="text-center text-white font-bold text-lg">You are not authorized for this page!</h1>
+        </>;
+    }
+    */
+
     const [id, setId] = useState(0);
     const [dataReceived, setDataReceived] = useState(false);
 
