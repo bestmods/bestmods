@@ -30,7 +30,6 @@ export const modRouter = router({
 
             ownerName: z.string().nullable(),
 
-
             name: z.string(),
             banner: z.string().nullable(),
             url: z.string(),

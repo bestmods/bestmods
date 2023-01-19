@@ -14,7 +14,6 @@ import HeadInfo from "../../components/Head";
 
 import { ModInstallerRender, ModRatingRender } from '../../components/modbrowser';
 import { ModInstaller } from '@prisma/client';
-import { appendFileSync } from 'fs';
 
 const Home: NextPage = () => {
   return (
@@ -34,6 +33,21 @@ const MainContent: React.FC = () => {
 
   const modQuery = trpc.mod.getMod.useQuery({url: modParam ?? ""});
   const mod = modQuery.data;
+
+  // View generator.
+  const [isViewed, setIsViewed] = useState(false);
+  const modViewMut = trpc.modView.incModViewCnt.useMutation();
+
+  useEffect(() => {
+    if (!mod || isViewed || modView != "overview")
+      return;
+
+    modViewMut.mutate({
+      url: mod.url
+    });
+
+    setIsViewed(true);    
+  }, [mod]);
 
   const [installersMenuOpen, setInstallersMenuOpen] = useState(false);
 
@@ -67,6 +81,7 @@ const MainContent: React.FC = () => {
     const downloadsLink = "/view/" + modParam + "/downloads";
     const editLink = "/admin/add/mod/" + modParam;
 
+    // Check rating.
     const onlyRating = ((mod.ModInstaller != null && mod.ModInstaller.length > 0) || mod.ownerName != null) ? false : true;
 
     return (

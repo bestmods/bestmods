@@ -7,6 +7,8 @@ import { modRouter } from "./mod";
 import { userRouter } from './user';
 import { modRatingRouter } from './mod_rating';
 import { modDownloadRouter } from './mod_download';
+import { modViewRouter } from "./mod_view";
+import { permissionRouter } from "./permission";
 
 export const appRouter = router({
   source: sourceRouter,
@@ -14,8 +16,10 @@ export const appRouter = router({
   mod: modRouter,
   modRating: modRatingRouter,
   modDownload: modDownloadRouter,
+  modView: modViewRouter,
   auth: authRouter,
-  user: userRouter
+  user: userRouter,
+  permission: permissionRouter
 });
 
 // export type definition of API
