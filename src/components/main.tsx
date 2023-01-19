@@ -1,5 +1,5 @@
 import { Field, Form, Formik } from "formik";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 
 import { signIn, signOut, useSession } from "next-auth/react";
 
@@ -14,6 +14,9 @@ export type filterArgs = {
     sortCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void) | null
     searchCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void) | null
 }
+
+export const SessionCtx = React.createContext<any | null>(null);
+export const FilterCtx = React.createContext<filterArgs | null>(null);
 
 export const BestModsLogin: React.FC<{session: any | null}> = ({session}) => {
     return (
@@ -35,25 +38,65 @@ export const BestModsLogin: React.FC<{session: any | null}> = ({session}) => {
     );
 };
 
-export const BestModsPage: React.FC<{content: JSX.Element, filters: filterArgs}> = ({ content, filters }) => {
-    const { data: session, status } = useSession();
+export const BestModsPage: React.FC<{ content: JSX.Element }> = ({ content }) => {
+    const { data: session } = useSession();
+
+    const [categories, setCategories] = useState<string | null>(null);
+    const [timeframe, setTimeframe] = useState<number | null>(0);
+    const [sort, setSort] = useState<number | null>(0);
+    const [search, setSearch] = useState<string | null>(null);
+  
+    const categoriesCb = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setCategories(e.target.value);
+    };
+  
+    const timeframeCb = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setTimeframe(Number(e.target.value));
+    };
+  
+    const sortCb = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setSort(Number(e.target.value));
+    };
+  
+    const searchCb = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      if (e.target.value.length > 0)
+        setSearch(e.target.value);
+      else
+        setSearch(null);
+    };
+  
+    const filters: filterArgs = {
+      categories: categories,
+      timeframe: timeframe,
+      sort: sort,
+      search: search,
+      categoriesCb: categoriesCb,
+      timeframeCb: timeframeCb,
+      sortCb: sortCb,
+      searchCb: searchCb
+    };
 
     return (
       <>
         <main className="flex min-h-screen flex-col bg-gradient-to-b from-[#002736] to-[#00151b] pb-20">
-            <BestModsLogin 
-                session={session}
-            ></BestModsLogin>
-          <BestModsBackground></BestModsBackground>
-          
-          <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-            <BestModsHeader 
-                filters={filters}
-            ></BestModsHeader>
-          </div>
-            <div className="relative">
-                {content}
-            </div>
+            <SessionCtx.Provider value={session}>
+                <BestModsLogin 
+                    session={session}
+                ></BestModsLogin>
+
+                <FilterCtx.Provider value={filters}>
+                    <BestModsBackground></BestModsBackground>
+                
+                    <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+                        <BestModsHeader 
+                            filters={filters}
+                        ></BestModsHeader>
+                    </div>
+                    <div className="relative">
+                        {content}
+                    </div>
+                </FilterCtx.Provider>
+            </SessionCtx.Provider>
         </main>
       </>
     )

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { trpc } from "../utils/trpc";
 
 import { signIn, useSession } from "next-auth/react";
@@ -7,7 +7,7 @@ import { Mod, ModRating, ModSource, ModInstaller, Category } from "@prisma/clien
 
 import InfiniteScroll from 'react-infinite-scroller';
 
-import { filterArgs } from './main';
+import { SessionCtx, FilterCtx } from './main';
 
 type ModRowArguments = {
     mod: Mod
@@ -51,7 +51,10 @@ export const ModInstallerRender: React.FC<{mod: Mod, modIns: ModInstaller}> = ({
 
 export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
     // Retrieve session.
-    const { data: session } = useSession();
+    const session = useContext(SessionCtx);
+
+    if (session != null)
+        console.log(session);
 
     // Retrieve rating.
     const [rating, setRating] = useState(1);
@@ -267,7 +270,9 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     );
 };
 
-const ModBrowser: React.FC<{filters: filterArgs}> = ({ filters }) => {
+const ModBrowser: React.FC = () => {
+    const filters = useContext(FilterCtx);
+
     const [mods, setMods] = useState<Array<Mod>>([]);
     const [needMoreMods, setNeedMoreMods] = useState(true);
     const [modsVisible, setModsVisible] = useState(0);
@@ -280,10 +285,10 @@ const ModBrowser: React.FC<{filters: filterArgs}> = ({ filters }) => {
         modsPerPage = 10;
 
     const modQuery = trpc.mod.getAllModsBrowser.useQuery({
-        categories: filters.categories,
-        timeframe: filters.timeframe,
-        sort: filters.sort,
-        search: filters.search,
+        categories: filters?.categories ?? null,
+        timeframe: filters?.timeframe ?? null,
+        sort: filters?.sort ?? null,
+        search: filters?.search ?? null,
 
         offset: modsVisible,
         count: modsPerPage
@@ -317,7 +322,7 @@ const ModBrowser: React.FC<{filters: filterArgs}> = ({ filters }) => {
 
         setIsFetching(true);
         setNeedMoreMods(true);
-    }, [filters.categories, filters.timeframe, filters.sort, filters.search]);
+    }, [filters?.categories, filters?.timeframe, filters?.sort, filters?.search]);
 
     const fetchMods = async () => {
         if (isFetching)

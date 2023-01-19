@@ -1,4 +1,4 @@
-import { BestModsPage} from '../../components/main';
+import { BestModsPage, SessionCtx } from '../../components/main';
 
 import { Mod } from "@prisma/client";
 import { type NextPage } from "next";
@@ -27,6 +27,8 @@ const Home: NextPage = () => {
 };
 
 const MainContent: React.FC = () => {
+  const session = useContext(SessionCtx);
+
   const { query } = useRouter()
   const modParam = (query.mod != null) ? query.mod[0] : null;
   const modView = (query.mod != null && query.mod[1] != null) ? query.mod[1] : 'overview';
