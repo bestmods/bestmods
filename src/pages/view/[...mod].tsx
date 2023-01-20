@@ -1,6 +1,6 @@
 import { BestModsPage, SessionCtx } from '../../components/main';
 
-import { Mod } from "@prisma/client";
+import { Mod, ModInstaller } from "@prisma/client";
 import { type NextPage } from "next";
 import React, { useContext, useState, useEffect, useMemo } from "react";
 import { useRouter } from 'next/router'
@@ -13,15 +13,39 @@ import { marked } from 'marked';
 import HeadInfo from "../../components/Head";
 
 import { ModInstallerRender, ModRatingRender } from '../../components/modbrowser';
-import { ModInstaller } from '@prisma/client';
+
+const ModCtx = React.createContext<any | boolean |null>(null);
+const ModViewCtx = React.createContext<string | null>(null);
 
 const Home: NextPage = () => {
+  const { query } = useRouter()
+  const modParam = (query.mod != null) ? query.mod[0] : null;
+  const modView = (query.mod != null && query.mod[1] != null) ? query.mod[1] : 'overview';
+
+  const modQuery = trpc.mod.getMod.useQuery({url: modParam ?? ""});
+  let mod = null;
+
+  if (modQuery.data)
+    mod = modQuery.data;
+  else if (!modQuery.data && modQuery.isFetched)
+    mod = false;
+
   return (
     <>
-      <HeadInfo />
-      <BestModsPage
-        content={<MainContent></MainContent>}
-      ></BestModsPage>
+      <ModCtx.Provider value={mod}>
+        <ModViewCtx.Provider value={modView}>
+          <HeadInfo
+            title={mod != null && mod ? mod.name + " - Best Mods" : "Viewing Mod - Best Mods"}
+            description={mod != null ? mod.descriptionShort : "A mod submitted to Best Mods!"}
+            image={mod != null && mod.banner != null ? mod.banner : "/images/bestmods-filled.png"}
+            webtype="article"
+            author={mod != null && mod.ownerName != null ? mod.ownerName : "Best Mods"} 
+          />
+          <BestModsPage
+            content={<MainContent></MainContent>}
+          ></BestModsPage>
+        </ModViewCtx.Provider>
+      </ModCtx.Provider>
     </>
   );
 };
@@ -29,12 +53,8 @@ const Home: NextPage = () => {
 const MainContent: React.FC = () => {
   const session = useContext(SessionCtx);
 
-  const { query } = useRouter()
-  const modParam = (query.mod != null) ? query.mod[0] : null;
-  const modView = (query.mod != null && query.mod[1] != null) ? query.mod[1] : 'overview';
-
-  const modQuery = trpc.mod.getMod.useQuery({url: modParam ?? ""});
-  const mod = modQuery.data;
+  const mod = useContext(ModCtx);
+  const modView = useContext(ModViewCtx);
 
   // View generator.
   const [isViewed, setIsViewed] = useState(false);
@@ -64,13 +84,13 @@ const MainContent: React.FC = () => {
 
     // Decide what content to serve.
     if (modView == "install")
-      body = <ModInstall mod={mod} />;
+      body = <ModInstall />;
     else if (modView == "sources")
-      body = <ModSources mod={mod} />;
+      body = <ModSources />;
     else if (modView == "downloads")
-      body = <ModDownloads mod={mod} />;
+      body = <ModDownloads />;
     else
-      body = <ModOverview mod={mod} />;
+      body = <ModOverview />;
 
     // Generate image and link URLs.
     let banner = "/images/mod/default.png";
@@ -78,11 +98,11 @@ const MainContent: React.FC = () => {
     if (mod.banner != null)
       banner = mod.banner;
 
-    const overviewLink = "/view/" + modParam;
-    const installLink = "/view/" + modParam + "/install";
-    const sourcesLink = "/view/" + modParam + "/sources";
-    const downloadsLink = "/view/" + modParam + "/downloads";
-    const editLink = "/admin/add/mod/" + modParam;
+    const overviewLink = "/view/" + mod.url;
+    const installLink = "/view/" + mod.url + "/install";
+    const sourcesLink = "/view/" + mod.url + "/sources";
+    const downloadsLink = "/view/" + mod.url + "/downloads";
+    const editLink = "/admin/add/mod/" + mod.url;
 
     // Check rating.
     const onlyRating = ((mod.ModInstaller != null && mod.ModInstaller.length > 0) || mod.ownerName != null) ? false : true;
@@ -156,7 +176,7 @@ const MainContent: React.FC = () => {
   } else {
     return (
       <>
-        {modQuery.isFetched && (
+        {mod === false && (
           <div className="container mx-auto">
             <h1 className="text-2xl font-bold mb-4 text-white text-center">Not Found</h1>
             <p className="text-white text-center">Mod not found. Please check the URL.</p>
@@ -167,7 +187,8 @@ const MainContent: React.FC = () => {
   }
 };
 
-const ModOverview: React.FC<{ mod: Mod }> = ({ mod }) => {
+const ModOverview: React.FC = () => {
+  const mod = useContext(ModCtx);
   const data = marked(mod.description);
 
   return (
@@ -177,7 +198,9 @@ const ModOverview: React.FC<{ mod: Mod }> = ({ mod }) => {
   );
 };
 
-const ModInstall: React.FC<{ mod: Mod }> = ({ mod }) => {
+const ModInstall: React.FC = () => {
+  const mod = useContext(ModCtx);
+
   const data = (mod.install != null) ? marked(mod.install) : "<p>No installation guide found.</p>";
 
   return (
@@ -187,7 +210,9 @@ const ModInstall: React.FC<{ mod: Mod }> = ({ mod }) => {
   );
 };
 
-const ModSources: React.FC<{ mod: Mod }> = ({ mod }) => {
+const ModSources: React.FC = () => {
+  const mod = useContext(ModCtx);
+
   return (
     <>
       <h3>Sources</h3>
@@ -232,7 +257,9 @@ const ModSources: React.FC<{ mod: Mod }> = ({ mod }) => {
   );
 };
 
-const ModDownloads: React.FC<{ mod: Mod }> = ({ mod }) => {
+const ModDownloads: React.FC = () => {
+  const mod = useContext(ModCtx);
+
   const downloadsQuery = trpc.modDownload.getModDownloads.useQuery({
     id: mod.id
   });
