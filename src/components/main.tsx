@@ -18,7 +18,9 @@ export type filterArgs = {
 export const SessionCtx = React.createContext<any | null>(null);
 export const FilterCtx = React.createContext<filterArgs | null>(null);
 
-export const BestModsLogin: React.FC<{session: any | null}> = ({session}) => {
+export const BestModsLogin: React.FC = () => {
+    const session = useContext(SessionCtx);
+    
     return (
         <>
             <div className="flex justify-end items-end">
@@ -80,17 +82,12 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
       <>
         <main className={`flex min-h-screen flex-col bg-gradient-to-b from-[#002736] to-[#00151b] pb-20 ${classes != null ? classes : ""}`}>
             <SessionCtx.Provider value={session}>
-                <BestModsLogin 
-                    session={session}
-                ></BestModsLogin>
-
+                <BestModsLogin />
                 <FilterCtx.Provider value={filters}>
-                    <BestModsBackground></BestModsBackground>
+                    <BestModsBackground />
                 
                     <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-                        <BestModsHeader 
-                            filters={filters}
-                        ></BestModsHeader>
+                        <BestModsHeader />
                     </div>
                     <div className="relative">
                         {content}
