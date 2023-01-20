@@ -109,7 +109,9 @@ export const BestModsBackground = () => {
     </>);
 };
   
-export const BestModsHeader: React.FC<{filters: filterArgs | null}> = ({ filters  }) => {
+export const BestModsHeader: React.FC = () => {
+    const filters = useContext(FilterCtx);
+
     return (<>
         <h1 className="text-center text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
             <a href="/"><span className="text-blue-400">B</span>est{" "}
@@ -125,18 +127,16 @@ export const BestModsHeader: React.FC<{filters: filterArgs | null}> = ({ filters
             }}
         >
             <Form className="w-full flex justify-center items-center gap-2 flex-wrap">
-                <Filters
-                    filters={filters}
-                />
-                <SearchBar 
-                    filters={filters}
-                />
+                <Filters />
+                <SearchBar />
             </Form>
         </Formik>
     </>);
 };
 
-const Filters: React.FC<{filters: filterArgs | null}> = ({ filters }) => {
+const Filters: React.FC = () => {
+    const filters = useContext(FilterCtx);
+
     return (
         <>
             <div className="relative w-full md:w-3/12">
@@ -168,7 +168,9 @@ const Filters: React.FC<{filters: filterArgs | null}> = ({ filters }) => {
     );
 };
   
-const SearchBar: React.FC<{filters: filterArgs | null}> = ({ filters }) => {
+const SearchBar: React.FC = () => {
+    const filters = useContext(FilterCtx);
+    
     return ( 
         <div className="relative w-full md:w-1/3 ">
             <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
