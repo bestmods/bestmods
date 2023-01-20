@@ -150,13 +150,13 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     const catPar = catParentQuery.data;
 
     // Generate correct banner.   
-    let banner = "/images/mod/default.png";
+    let banner = "/images/default_mod_banner.png";
 
     if (mod.banner != null && mod.banner.length > 0)
         banner = mod.banner;
 
     // Generate category info.
-    const defaultCatIcon = "/images/source/default_icon.png";
+    const defaultCatIcon = "/images/default_icon.png";
     const catIcon = (cat != null && cat.icon != null) ? cat.icon : defaultCatIcon;
     const catParIcon = (catPar != null && catPar.icon !=  null) ? catPar.icon : defaultCatIcon;
 

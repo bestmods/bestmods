@@ -93,7 +93,7 @@ const MainContent: React.FC = () => {
       body = <ModOverview />;
 
     // Generate image and link URLs.
-    let banner = "/images/mod/default.png";
+    let banner = "/images/default_mod_banner.png";
 
     if (mod.banner != null)
       banner = mod.banner;

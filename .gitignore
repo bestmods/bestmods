@@ -42,4 +42,6 @@ yarn-error.log*
 *.tsbuildinfo
 
 # Best Mods (Custom)
-public/images
+public/images/source
+public/images/category
+public/images/mod
