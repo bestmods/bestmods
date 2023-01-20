@@ -111,16 +111,18 @@ export const BestModsBackground = () => {
   
 export const BestModsHeader: React.FC = () => {
     return (<>
-        <h1 className="text-center text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-            <a href="/"><span className="text-blue-400">B</span>est{" "}
-            <span className="text-blue-400">M</span>ods</a>
-        </h1>
-        <div className="flex flex-wrap text-gray-300 font-mono text-sm gap-5">
-            <a className="hover:text-white" href="https://github.com/orgs/bestmods/discussions/categories/feedback-ideas" target="_blank">Feedback</a>
-            <a className="hover:text-white" href="https://github.com/bestmods/roadmap/issues" target="_blank">Roadmap</a>
-            <a className="hover:text-white" href="https://github.com/BestMods/bestmods" target="_blank">Source Code</a>
-            <a className="hover:text-white" href="https://github.com/orgs/bestmods/discussions/2">Removals</a>
-            <a className="hover:text-white" href="https://moddingcommunity.com/" target="_blank">Community</a>
+        <div className="relative">
+            <h1 className="text-center text-[3rem] font-extrabold tracking-tight text-white sm:text-[5rem]">
+                <a href="/"><span className="text-blue-400">B</span>est{" "}
+                <span className="text-blue-400">M</span>ods</a>
+            </h1>
+            <div className="hidden md:flex flex-wrap text-gray-300 font-mono text-sm gap-5">
+                <a className="hover:text-white" href="https://github.com/orgs/bestmods/discussions/categories/feedback-ideas" target="_blank">Feedback</a>
+                <a className="hover:text-white" href="https://github.com/bestmods/roadmap/issues" target="_blank">Roadmap</a>
+                <a className="hover:text-white" href="https://github.com/BestMods/bestmods" target="_blank">Source Code</a>
+                <a className="hover:text-white" href="https://github.com/orgs/bestmods/discussions/2" target="_blank">Removals</a>
+                <a className="hover:text-white" href="https://moddingcommunity.com/" target="_blank">Community</a>
+            </div>
         </div>
 
         <Formik
