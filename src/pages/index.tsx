@@ -1,7 +1,7 @@
 import { type NextPage } from "next";
-import React, { useState } from "react";
+import React from "react";
 
-import { BestModsPage, filterArgs } from '../components/main';
+import { BestModsPage } from '../components/main';
 import HeadInfo from "../components/Head";
 
 import ModBrowser from '../components/modbrowser';

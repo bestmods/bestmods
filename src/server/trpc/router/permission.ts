@@ -32,12 +32,12 @@ export const permissionRouter = router({
                 });
             } catch (error) {
                 // Ignore error if it is due to existing entry.
-                if (error.includes("constraint"))
+                if (typeof error === "string" && error.includes("constraint"))
                     return;
                 
                 throw new TRPCError({
-                    message: error,
-                    code: "BAD_RQEUEST"
+                    message: (typeof error == "string") ? error : "",
+                    code: "BAD_REQUEST"
                 });
             }
         })

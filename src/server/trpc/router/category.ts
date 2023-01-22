@@ -70,7 +70,7 @@ export const categoryRouter = router({
 
                 throw new TRPCError({ 
                     code: "CONFLICT",
-                    message: error
+                    message: (typeof error == "string") ? error : ""
                 });
             }
 
@@ -105,7 +105,7 @@ export const categoryRouter = router({
 
                                 throw new TRPCError({ 
                                     code: "PARSE_ERROR",
-                                    message: error
+                                    message: (typeof error == "string") ? error : ""
                                 });
                             }
                         } else {
@@ -113,7 +113,7 @@ export const categoryRouter = router({
 
                             throw new TRPCError({ 
                                 code: "PARSE_ERROR",
-                                message: error
+                                message: "Icon's file extension is unknown."
                             });
                         }
                     } else {
@@ -159,8 +159,6 @@ export const categoryRouter = router({
             id: z.number()
         }))
         .mutation(async ({ ctx, input }) => {
-            console.log("DELETING CATEGORY => " + input.id);
-
             if (input.id < 1)
                 return;
 

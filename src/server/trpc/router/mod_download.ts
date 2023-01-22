@@ -22,7 +22,7 @@ export const modDownloadRouter = router({
                 });
             } catch (error) {
                 throw new TRPCError({
-                    message: error,
+                    message: (typeof error == "string") ? error : "",
                     code: "BAD_REQUEST"
                 });
             }
@@ -68,7 +68,7 @@ export const modDownloadRouter = router({
 
                 throw new TRPCError({
                     code: "CONFLICT",
-                    message: error
+                    message: (typeof error == "string") ? error : ""
                 })
             }
         })

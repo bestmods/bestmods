@@ -1,5 +1,5 @@
 import { type NextPage } from "next";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { BestModsPage } from '../../components/main';
 import HeadInfo from "../../components/Head";
@@ -7,6 +7,8 @@ import HeadInfo from "../../components/Head";
 import { AlertForm } from '../../components/alert';
 
 import { trpc } from '../../utils/trpc';
+
+import Link from 'next/link';
 
 const Home: NextPage = () => {
   return (
@@ -55,9 +57,9 @@ const Categories: React.FC = () => {
                         const icon = (cat.icon != null) ? cat.icon : "/images/default_icon.png"
                         
                         return (
-                            <div className="p-4">
+                            <div key={"cat-" + cat.id} className="p-4">
                                 <div className="flex items-center flex-wrap">
-                                    <img src={icon} className="w-8 h-8" />
+                                    <img src={icon} className="w-8 h-8" alt="Category Icon" />
                                     <span className="text-white ml-2">{cat.name}</span>
                                     <a href={editLink} className="text-white hover:text-cyan-800 ml-2"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="style=fill"><g id="edit"><path id="Subtract" fillRule="evenodd" clipRule="evenodd" d="M18.9405 3.12087L21.0618 5.24219C22.2334 6.41376 22.2334 8.31326 21.0618 9.48483L19.2586 11.288L12.8947 4.92403L14.6978 3.12087C15.8694 1.94929 17.7689 1.94929 18.9405 3.12087ZM11.834 5.98469L3.70656 14.1121C3.22329 14.5954 2.91952 15.2292 2.84552 15.9086L2.45151 19.5264C2.31313 20.7969 3.38571 21.8695 4.65629 21.7311L8.27401 21.3371C8.95345 21.2631 9.58725 20.9594 10.0705 20.4761L18.1979 12.3486L11.834 5.98469Z" fill="#FFFFFF"/></g></g></svg></a>
                                     <button className="ml-2" onClick={(e) => {
@@ -75,8 +77,8 @@ const Categories: React.FC = () => {
                                             const iconChild = (catChild.icon != null) ? catChild.icon : "/images/default_icon.png";
 
                                             return (
-                                                <div className="flex items-center flex-wrap ml-4">
-                                                    <img src={iconChild} className="w-8 h-8" />
+                                                <div key={"catchild-" + catChild.id} className="flex items-center flex-wrap ml-4">
+                                                    <img src={iconChild} className="w-8 h-8" alt="Category Child Icon" />
                                                     <span className="text-white ml-2">{catChild.name}</span>
                                                     <a href={editLinkChild} className="text-white hover:text-cyan-800 ml-2"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="style=fill"><g id="edit"><path id="Subtract" fillRule="evenodd" clipRule="evenodd" d="M18.9405 3.12087L21.0618 5.24219C22.2334 6.41376 22.2334 8.31326 21.0618 9.48483L19.2586 11.288L12.8947 4.92403L14.6978 3.12087C15.8694 1.94929 17.7689 1.94929 18.9405 3.12087ZM11.834 5.98469L3.70656 14.1121C3.22329 14.5954 2.91952 15.2292 2.84552 15.9086L2.45151 19.5264C2.31313 20.7969 3.38571 21.8695 4.65629 21.7311L8.27401 21.3371C8.95345 21.2631 9.58725 20.9594 10.0705 20.4761L18.1979 12.3486L11.834 5.98469Z" fill="#FFFFFF"/></g></g></svg></a>
                                                     <button className="ml-2" onClick={(e) => {
@@ -99,9 +101,9 @@ const Categories: React.FC = () => {
                 <p className="text-white">No categories found.</p>
             )}
             <div className="relative mx-auto">
-                <a href="/admin/add/category">
+                <Link href="/admin/add/category">
                     <div className="text-white bg-cyan-700 hover:bg-cyan-800 rounded p-4 text-center">Add Category!</div>
-                </a>
+                </Link>
             </div>
         </div>
     );
@@ -130,9 +132,9 @@ const Sources: React.FC = () => {
                         const icon = (src.icon != null) ? src.icon : "/images/default_icon.png"
                         
                         return (
-                            <div className="p-4">
+                            <div key={"src-" + src.url} className="p-4">
                                 <div className="flex items-center flex-wrap">
-                                    <img src={icon} className="w-8 h-8" />
+                                    <img src={icon} className="w-8 h-8" alt="Source Icon" />
                                     <span className="text-white ml-2">{src.name}</span>
                                     <a href={editLink} className="text-white hover:text-cyan-800 ml-2"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="style=fill"><g id="edit"><path id="Subtract" fillRule="evenodd" clipRule="evenodd" d="M18.9405 3.12087L21.0618 5.24219C22.2334 6.41376 22.2334 8.31326 21.0618 9.48483L19.2586 11.288L12.8947 4.92403L14.6978 3.12087C15.8694 1.94929 17.7689 1.94929 18.9405 3.12087ZM11.834 5.98469L3.70656 14.1121C3.22329 14.5954 2.91952 15.2292 2.84552 15.9086L2.45151 19.5264C2.31313 20.7969 3.38571 21.8695 4.65629 21.7311L8.27401 21.3371C8.95345 21.2631 9.58725 20.9594 10.0705 20.4761L18.1979 12.3486L11.834 5.98469Z" fill="#FFFFFF"/></g></g></svg></a>
                                     <button className="ml-2" onClick={(e) => {
@@ -151,9 +153,9 @@ const Sources: React.FC = () => {
                 <p className="text-white">No sources found.</p>
             )}
             <div className="relative mx-auto">
-                <a href="/admin/add/source">
+                <Link href="/admin/add/source">
                     <div className="text-white bg-cyan-700 hover:bg-cyan-800 rounded p-4 text-center">Add Source!</div>
-                </a>
+                </Link>
             </div>
         </div>
     );

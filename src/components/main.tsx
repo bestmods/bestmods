@@ -5,6 +5,8 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 import { trpc } from '../utils/trpc';
 
+import Link from 'next/link'
+
 export type filterArgs = {
     categories: Array<number> | null
     timeframe: number | null
@@ -161,7 +163,7 @@ export const Categories: React.FC = () => {
                                             <ul className="list-none ml-10">
                                                 {cat.children.map((child) => {
                                                     return (
-                                                        <li className="text-white">{child.nameShort}</li>
+                                                        <li key={"catChild-" + child.id} className="text-white">{child.nameShort}</li>
                                                     );
                                                 })}
                                             </ul>
@@ -186,7 +188,7 @@ export const Login: React.FC = () => {
     return (
         <div className="absolute top-0 right-0 rounded-bl bg-cyan-800 hover:bg-cyan-900">
             {session == null ? (
-                <button className="p-4 text-center " onClick={(e) => {
+                <button className="p-4 text-center " onClick={() => {
                     signIn("discord");
                 }}><span><svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 1C8.96243 1 6.5 3.46243 6.5 6.5C6.5 9.53757 8.96243 12 12 12C15.0376 12 17.5 9.53757 17.5 6.5C17.5 3.46243 15.0376 1 12 1Z" fill="#FFFFFF"/>
@@ -212,8 +214,8 @@ export const Header: React.FC = () => {
     return (<>
         <div className="relative">
             <h1 className="text-center text-[3rem] font-extrabold tracking-tight text-white sm:text-[5rem]">
-                <a href="/"><span className="text-blue-400">B</span>est{" "}
-                <span className="text-blue-400">M</span>ods</a>
+                <Link href="/"><span className="text-blue-400">B</span>est{" "}
+                <span className="text-blue-400">M</span>ods</Link>
             </h1>
             <div className="hidden sm:flex flex-wrap text-gray-300 font-mono text-sm gap-5">
                 <MainNavItems />
@@ -282,11 +284,11 @@ const Filters: React.FC<{classes?: string}> = ({ classes="w-full flex justify-ce
 export const MainNavItems: React.FC<{classes?: string | null}> = ({ classes }) => {
     return (
         <>
-            <a className={classes != null ? classes : "text-gray-300 hover:text-white"} href="https://github.com/orgs/bestmods/discussions/categories/feedback-ideas" target="_blank">Feedback</a>
-            <a className={classes != null ? classes : "text-gray-300 hover:text-white"} href="https://github.com/bestmods/roadmap/issues" target="_blank">Roadmap</a>
-            <a className={classes != null ? classes : "text-gray-300 hover:text-white"} href="https://github.com/BestMods/bestmods" target="_blank">Source Code</a>
-            <a className={classes != null ? classes : "text-gray-300 hover:text-white"} href="https://github.com/orgs/bestmods/discussions/2" target="_blank">Removals</a>
-            <a className={classes != null ? classes : "text-gray-300 hover:text-white"} href="https://moddingcommunity.com/" target="_blank">Community</a>
+            <a rel="noreferrer" className={classes != null ? classes : "text-gray-300 hover:text-white"} href="https://github.com/orgs/bestmods/discussions/categories/feedback-ideas" target="_blank">Feedback</a>
+            <a rel="noreferrer" className={classes != null ? classes : "text-gray-300 hover:text-white"} href="https://github.com/bestmods/roadmap/issues" target="_blank">Roadmap</a>
+            <a rel="noreferrer" className={classes != null ? classes : "text-gray-300 hover:text-white"} href="https://github.com/BestMods/bestmods" target="_blank">Source Code</a>
+            <a rel="noreferrer" className={classes != null ? classes : "text-gray-300 hover:text-white"} href="https://github.com/orgs/bestmods/discussions/2" target="_blank">Removals</a>
+            <a rel="noreferrer" className={classes != null ? classes : "text-gray-300 hover:text-white"} href="https://moddingcommunity.com/" target="_blank">Community</a>
         </>
     );
 }

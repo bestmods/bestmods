@@ -1,19 +1,21 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { trpc } from "../utils/trpc";
 
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 
-import { Mod, ModRating, ModSource, ModInstaller, Category } from "@prisma/client";
+import { type Mod, type ModRating, type ModSource, type ModInstaller, type Category } from "@prisma/client";
 
 import InfiniteScroll from 'react-infinite-scroller';
 
 import { SessionCtx, FilterCtx } from './main';
 
 type ModRowArguments = {
-    mod: Mod
+    mod: any
 };
 
-const ModSourceRender: React.FC<{mod: Mod, modSrc: ModSource}> = ({ mod, modSrc}) => {
+import Image from 'next/image'
+
+const ModSourceRender: React.FC<{modSrc: ModSource}> = ({ modSrc}) => {
     const srcQuery = trpc.source.getSource.useQuery({
         url: modSrc.sourceUrl
     });
@@ -26,12 +28,12 @@ const ModSourceRender: React.FC<{mod: Mod, modSrc: ModSource}> = ({ mod, modSrc}
 
     return (
         <li>
-            <a href={url} className="block px-4 hover:bg-teal-900 text-white" target="_blank">{name}</a>
+            <a rel="noreferrer" href={url} className="block px-4 hover:bg-teal-900 text-white" target="_blank">{name}</a>
         </li>
     );
 };
 
-export const ModInstallerRender: React.FC<{mod: Mod, modIns: ModInstaller}> = ({ mod, modIns}) => {
+export const ModInstallerRender: React.FC<{modIns: ModInstaller}> = ({ modIns}) => {
     const srcQuery = trpc.source.getSource.useQuery({
         url: modIns.sourceUrl
     });
@@ -44,7 +46,7 @@ export const ModInstallerRender: React.FC<{mod: Mod, modIns: ModInstaller}> = ({
 
     return (
         <li>
-            <a href={url} className="block px-4 hover:bg-teal-900 text-white" target="_blank">{name}</a>
+            <a rel="noreferrer" href={url} className="block px-4 hover:bg-teal-900 text-white" target="_blank">{name}</a>
         </li>
     );
 };
@@ -139,9 +141,6 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
 };
 
 const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
-    // Retrieve source.
-    const srcUrl = (mod.ModSource != null && mod.ModSource.length > 0) ? mod.ModSource[0].sourceUrl : "";
-
     // Retrieve category.
     const cat: Category | null = mod.category;
 
@@ -170,7 +169,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     const catLink = ((cat != null) ? "/category" + ((catPar != null) ? "/" + catPar.url : "") + "/" + cat.url : null);
 
     // Generate classes.
-    let addClasses = (cat != null && cat.classes != null) ? " " + cat.classes : "";
+    const addClasses = (cat != null && cat.classes != null) ? " " + cat.classes : "";
 
     // Generate installers.
     const [installersMenuOpen, setInstallersMenuOpen] = useState(false);
@@ -178,7 +177,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     return (
         <div key={mod.id} className={"w-4/5 md:w-96 h-[32rem] rounded bg-gradient-to-b from-cyan-800 to-cyan-900 flex flex-col shadow-lg" + addClasses}>
             <div className="relative modImage w-full max-h-64 h-64">
-                <img className="w-full h-full max-h-full rounded-t" src={banner} />
+                <img className="w-full h-full max-h-full rounded-t" src={banner} alt="Mod Banner" />
                 {mod.ownerName != null && (
                     <div className="absolute bottom-0 left-0 h-8 pr-4 rounded-tr bg-cyan-900/60 hover:bg-cyan-900 flex items-center">
                         <p className="text-white text-sm ml-1">{mod.ownerName}</p>
@@ -192,7 +191,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
             </div>
             {catPar != null && (
                 <div className="modCategory ml-8 mr-8 mb-1 text-white flex">
-                    <img src={catParIcon} className="w-6 h-6 rounded"></img>
+                    <img src={catParIcon} className="w-6 h-6 rounded" alt="Category Icon" />
                     <span className="ml-2 mr-2">
                         {catParLink != null ? (
                             <a href={catParLink}>{catPar.name}</a>
@@ -204,7 +203,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
             )}
             {cat != null && (
                 <div className="modCategory ml-8 mr-8 mb-1 text-white flex">
-                    <img src={catIcon} className="w-6 h-6 rounded"></img>
+                    <img src={catIcon} className="w-6 h-6 rounded" alt="Category Icon" />
                     <span className="ml-2">
                         {catLink != null ? (
                             <a href={catLink}>{cat.name}</a>
@@ -235,7 +234,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                 {mod.ModInstaller != null && mod.ModInstaller.length > 0 && (
                     <>
                         <div className="relative p-2 w-1/3">
-                            <button id={"installerDropdownBtn" + mod.id} onClick={(e) => {
+                            <button id={"installerDropdownBtn" + mod.id} onClick={() => {
                                 setInstallersMenuOpen(!installersMenuOpen);
                             }} className="text-white font-bold flex items-center mx-auto" type="button"><span>Install</span> {!installersMenuOpen ? (
                                 <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
@@ -248,7 +247,6 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                                 return (
                                     <ModInstallerRender
                                         key={mod.id + "-" + ins.sourceUrl}
-                                        mod={mod}
                                         modIns={ins}
                                     ></ModInstallerRender>
                                 );
@@ -259,7 +257,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                 )}
                 {mod.ModSource != null && mod.ModSource.length > 0 && (
                     <div className="relative p-2 w-1/3">
-                        <button id={"sourceDropdownBtn" + mod.id} onClick={(e) => {
+                        <button id={"sourceDropdownBtn" + mod.id} onClick={() => {
                             setSourcesMenuOpen(!sourcesMenuOpen);
                         }} className="text-white font-bold flex items-center mx-auto" type="button"><span>Sources</span> {!sourcesMenuOpen ? (
                             <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
@@ -272,7 +270,6 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                                 return (
                                     <ModSourceRender
                                         key={mod.id + "-" + src.sourceUrl}
-                                        mod={mod}
                                         modSrc={src}
                                     ></ModSourceRender>
                                 );
@@ -328,7 +325,7 @@ const ModBrowser: React.FC<{categories?: Array<number> | null }> = ({ categories
             // We're no longer fetching.
             setIsFetching(false);
         }
-    }, [isFetching, modQuery.data]);
+    }, [isFetching, modQuery.data, modQuery.isFetched, modsPerPage, modsVisible]);
 
     useEffect(() => {
         setMods([]);

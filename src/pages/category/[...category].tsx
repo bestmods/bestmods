@@ -2,7 +2,7 @@ import { type NextPage } from "next";
 import React, { useState } from "react";
 import { useRouter } from 'next/router'
 
-import { BestModsPage, filterArgs } from '../../components/main';
+import { BestModsPage } from '../../components/main';
 import HeadInfo from "../../components/Head";
 
 import ModBrowser from '../../components/modbrowser';
@@ -24,7 +24,7 @@ const Home: NextPage = () => {
         parent: 0
     });
 
-    let parentId: number | null = (categoryParQuery.data) ? categoryParQuery.data.id : null;
+    const parentId: number | null = (categoryParQuery.data) ? categoryParQuery.data.id : null;
 
     const categoryQuery = trpc.category.getCategory.useQuery({
         id: null,

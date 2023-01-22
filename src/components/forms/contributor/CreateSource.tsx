@@ -1,5 +1,5 @@
 
-import { useFormik, FormikProvider, Field } from "formik";
+import { useFormik, Field } from "formik";
 import React, { useState, useEffect, useMemo } from "react";
 
 import { trpc } from "../../../utils/trpc";
@@ -80,7 +80,9 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             <div className="mb-4">
                 <label className="block text-gray-200 text-sm font-bold mb-2">Image</label>
                 <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image" name="image" type="file" placeholder="Source Image" onChange={(e) => {
-                    setIcon(e.currentTarget.files[0]);
+                    const val = (e?.currentTarget?.files != null) ? e.currentTarget.files[0] : null;
+
+                    setIcon(val ?? null);
                 }} />
 
                 <Field className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image-remove" name="iremove" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Remove Current</label>
@@ -89,7 +91,9 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             <div className="mb-4">
                 <label className="block text-gray-200 text-sm font-bold mb-2">Image Banner</label>
                 <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image_banner" name="image_banner" type="file" placeholder="Source Image Banner" onChange={(e) => {
-                    setBanner(e.currentTarget.files[0]);
+                    const val = (e?.currentTarget?.files != null) ? e.currentTarget.files[0] : null;
+
+                    setBanner(val ?? null);
                 }} />
 
                 <input className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="bremove" name="image_banner-remove" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Remove Current</label>
@@ -204,10 +208,10 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
         onSubmit: (values) => {
             // First, handle file uploads via a promise. Not sure of any other way to do it at the moment (though I am new to TypeScript, Next.JS, and React).
-            new Promise<void>(async (resolve, reject) => {
+            new Promise<void>(async (resolve) => {
                 // We have uploads / total uploads.
-                let uploads: number = 0;
-                let totalUploads: number = 0;
+                let uploads = 0;
+                let totalUploads = 0;
                 
                 // Check icon and handle upload.
                 if (icon != null) {

@@ -1,12 +1,12 @@
 import { BestModsPage, SessionCtx } from '../../components/main';
 
-import { Mod, ModInstaller } from "@prisma/client";
+import { type ModInstaller } from "@prisma/client";
 import { type NextPage } from "next";
-import React, { useContext, useState, useEffect, useMemo } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useRouter } from 'next/router'
 
 import { trpc } from "../../utils/trpc";
-import { ModSource, ModDownload } from '@prisma/client';
+import { type ModSource, type ModDownload } from '@prisma/client';
 
 import { marked } from 'marked';
 
@@ -23,7 +23,7 @@ const Home: NextPage = () => {
   const modView = (query.mod != null && query.mod[1] != null) ? query.mod[1] : 'overview';
 
   const modQuery = trpc.mod.getMod.useQuery({url: modParam ?? ""});
-  let mod = null;
+  let mod: any | null = null;
 
   if (modQuery.data)
     mod = modQuery.data;
@@ -35,11 +35,11 @@ const Home: NextPage = () => {
       <ModCtx.Provider value={mod}>
         <ModViewCtx.Provider value={modView}>
           <HeadInfo
-            title={mod != null && mod ? mod.name + " - Best Mods" : "Viewing Mod - Best Mods"}
-            description={mod != null ? mod.descriptionShort : "A mod submitted to Best Mods!"}
-            image={mod != null && mod.banner != null ? mod.banner : "/images/bestmods-filled.png"}
+            title={mod ? mod.name + " - Best Mods" : "Viewing Mod - Best Mods"}
+            description={mod != null && mod !== false ? mod.descriptionShort : "A mod submitted to Best Mods!"}
+            image={mod && mod.banner != null ? mod.banner : "/images/bestmods-filled.png"}
             webtype="article"
-            author={mod != null && mod.ownerName != null ? mod.ownerName : "Best Mods"} 
+            author={mod && mod.ownerName != null ? mod.ownerName : "Best Mods"} 
           />
           <BestModsPage
             content={<MainContent></MainContent>}
@@ -112,7 +112,7 @@ const MainContent: React.FC = () => {
         <div className="container mx-auto w-full">
           <div id="modHeader">
             <div className="flex justify-center">
-              <img className="block rounded-t w-96 h-72" src={banner} />
+              <img className="block rounded-t w-96 h-72" src={banner} alt="Mod Banner" />
             </div>
             <h1 className="text-4xl font-bold mb-4 text-white text-center">{mod.name}</h1>
           </div>
@@ -134,7 +134,7 @@ const MainContent: React.FC = () => {
               {mod.ModInstaller != null && mod.ModInstaller.length > 0 && (
                 <div className="relative">
                   <div className="p-2 flex items-center bg-cyan-800 hover:bg-cyan-900 rounded-t">
-                    <button id="installerDropdownBtn" onClick={(e) => {
+                    <button id="installerDropdownBtn" onClick={() => {
                         setInstallersMenuOpen(!installersMenuOpen);
                     }} className="text-white font-bold flex items-center mx-auto" type="button"><span>Install</span> {!installersMenuOpen ? (
                       <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
@@ -148,7 +148,6 @@ const MainContent: React.FC = () => {
                     return (
                       <ModInstallerRender
                         key={mod.id + "-" + ins.sourceUrl}
-                        mod={mod}
                         modIns={ins}
                       />
                       );
@@ -239,10 +238,10 @@ const ModSources: React.FC = () => {
             const srcLink = "https://" + src.sourceUrl + "/" + src.query;
 
             return (
-              <a key={"src-" + src.modId + "-" + src.sourceUrl + "-" + src.query} href={srcLink} className="relative no-underline" target="_blank">
+              <a rel="noreferrer" key={"src-" + src.modId + "-" + src.sourceUrl + "-" + src.query} href={srcLink} className="relative no-underline" target="_blank">
                 <div className="bg-cyan-500/50 hover:bg-cyan-600/50 rounded w-72 h-48">
                   <div className="w-full h-36">
-                    <img src={banner} className="w-full h-full rounded-t" />
+                    <img src={banner} className="w-full h-full rounded-t" alt="Source Banner" />
                   </div>
                   <div className="w-full text-center">
                     <h3 className="!text-lg font-bold no-underline">{name}</h3>
@@ -275,7 +274,7 @@ const ModDownloads: React.FC = () => {
       <div className="relative flex flex-wrap gap-6">
         {downloads.map((dl: ModDownload) => {
           return (
-            <a key={mod.id + "-" + dl.url} onClick={(e) => {
+            <a rel="noreferrer" key={mod.id + "-" + dl.url} onClick={() => {
               modDownloadMut.mutate({
                 url: mod.url
               });

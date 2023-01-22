@@ -50,7 +50,7 @@ export const modRouter = router({
         }))
         .mutation(async ({ ctx, input }) => {
             // First, we want to insert the mod into the database.
-            let mod = null;
+            let mod: any | null = null;
 
             // Make sure we have text in required fields.
             if (input.url.length < 1 || input.name.length < 1 || input.description.length < 1) {
@@ -103,7 +103,7 @@ export const modRouter = router({
 
                             throw new TRPCError({ 
                                 code: "PARSE_ERROR",
-                                message: error
+                                message: (typeof error == "string") ? error : ""
                             });
                         }
                     } else {
@@ -166,7 +166,7 @@ export const modRouter = router({
 
                 throw new TRPCError({ 
                     code: "CONFLICT",
-                    message: error
+                    message: (typeof error == "string") ? error : ""
                 });
             }
 

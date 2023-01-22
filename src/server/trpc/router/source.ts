@@ -77,7 +77,7 @@ export const sourceRouter = router({
 
                             throw new TRPCError({ 
                                 code: "PARSE_ERROR",
-                                message: error
+                                message: (typeof error == "string") ? error : ""
                             });
                         }
                     } else {
@@ -85,7 +85,7 @@ export const sourceRouter = router({
 
                         throw new TRPCError({ 
                             code: "PARSE_ERROR",
-                            message: error
+                            message: "Icon's file extension is unknown."
                         });
                     }
                 } else {
@@ -125,7 +125,7 @@ export const sourceRouter = router({
 
                             throw new TRPCError({ 
                                 code: "PARSE_ERROR",
-                                message: error
+                                message: (typeof error == "string") ? error : ""
                             });
                         }
                     } else {
@@ -182,7 +182,7 @@ export const sourceRouter = router({
 
                 throw new TRPCError({ 
                     code: "CONFLICT",
-                    message: error
+                    message: (typeof error == "string") ? error : ""
                 });
             }
         }),

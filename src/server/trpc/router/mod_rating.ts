@@ -69,7 +69,7 @@ export const modRatingRouter = router({
 
                 throw new TRPCError({
                     code: "CONFLICT",
-                    message: error
+                    message: (typeof error == "string") ? error : ""
                 })
             }
         })

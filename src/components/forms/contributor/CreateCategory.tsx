@@ -1,5 +1,5 @@
 
-import { useFormik, FormikProvider, Field } from "formik";
+import { useFormik, Field } from "formik";
 import React, { useState, useEffect, useMemo } from "react";
 
 import { trpc } from "../../../utils/trpc";
@@ -85,7 +85,8 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
             <div className="mb-4">
                 <label className="block text-gray-200 text-sm font-bold mb-2">Image</label>
                 <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image" name="image" type="file" placeholder="Source Image" onChange={(e) => {
-                    setIcon(e.currentTarget.files[0]);
+                    const val = (e?.currentTarget?.files != null) ? e.currentTarget.files[0] : null;
+                    setIcon(val ?? null);
                 }} />
 
                 <Field className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image-remove" name="iremove" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Remove Current</label>
@@ -94,7 +95,8 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
             <div className="mb-4">
                 <label className="block text-gray-200 text-sm font-bold mb-2">Parent</label>
                 <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="parent" name="parent" placeholder="Category Parent" onChange={(e) => {
-                    const val = (e.target.value > 0) ? Number(e.target.value) : null;
+                    
+                    const val = (Number(e.target.value) > 0) ? Number(e.target.value) : null;
 
                     setParent(val);
                 }}>
@@ -163,7 +165,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
         // Send alert and log full error to client's console.
         console.error(categoryMut.error);
 
-    }, [categoryMut.isError, categoryMut.isSuccess]);
+    }, [categoryMut.isError, categoryMut.isSuccess, categoryMut.error]);
 
     useEffect(() => {
         if (!dataRetrieved) {
@@ -184,7 +186,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                 setDataReceived(true);
             }
         }
-    }, [categoryQuery.data]);
+    }, [categoryQuery.data, dataRetrieved]);
 
     useEffect(() => {
         // Make sure we are submitting, values are valid, and we aren't still fetching relation data.
@@ -210,7 +212,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
 
         // We are no longer submitting.
         setSubmit(false);
-    }, [submit, values]);
+    }, [submit, values, categoryMut, iconData]);
 
     // Create form using Formik.
     const form = useFormik({
@@ -225,10 +227,10 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
 
         onSubmit: (values) => {
             // First, handle file uploads via a promise. Not sure of any other way to do it at the moment (though I am new to TypeScript, Next.JS, and React).
-            new Promise<void>(async (resolve, reject) => {
+            new Promise<void>(async (resolve) => {
                 // We have uploads / total uploads.
-                let uploads: number = 0;
-                let totalUploads: number = 0;
+                let uploads = 0;
+                let totalUploads = 0;
 
                 console.log("Doing file uploads!");
                 

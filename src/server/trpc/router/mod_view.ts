@@ -22,7 +22,7 @@ export const modViewRouter = router({
                 });
             } catch (error) {
                 throw new TRPCError({
-                    message: error,
+                    message: (typeof error == "string") ? error : "",
                     code: "BAD_REQUEST"
                 });
             }
@@ -41,11 +41,11 @@ export const modViewRouter = router({
                         }
                     });
                 } catch (error) {
-                    if (error.includes("constraint"))
+                    if (typeof error === "string" && error.includes("constraint"))
                         return;
 
                     throw new TRPCError({
-                        message: error,
+                        message: (typeof error == "string") ? error : "",
                         code: "BAD_REQUEST"
                     });
                 }

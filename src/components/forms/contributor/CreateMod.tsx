@@ -1,15 +1,14 @@
 
-import { useFormik, FormikProvider, Field } from "formik";
-import React, { useState, useEffect, useMemo, useContext } from "react";
+import { useFormik, Field } from "formik";
+import React, { useState, useEffect, useMemo } from "react";
 
 import { trpc } from "../../../utils/trpc";
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 import FormTemplate from '../main';
-import { SessionCtx } from '../../main';
 import { AlertForm } from '../../alert';
-import { Mod, Source } from "@prisma/client";
+import { type Source } from "@prisma/client";
 
 const SourceForm: React.FC<{mod: any, num: number, sources: Source[]}> = ({ mod, num, sources }) => {
     const srcUrl = "sources-" + num + "-url";
@@ -153,7 +152,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     const [installerForm, setInstallerForm] = useState<JSX.Element>(<></>);
 
     // For editing (prefilled fields).
-    const [ownerName, setOwnerName] = useState("");
+    const [ownerName, setOwnerName] = useState<string | null>("");
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [descriptionShort, setDescriptionShort] = useState("");
@@ -196,7 +195,9 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             <div className="mb-4">
                 <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Image Banner</label>
                 <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image_banner" name="image_banner" type="file" placeholder="Mod Image Banner" onChange={(e) => {
-                    setBanner(e.currentTarget.files[0]);
+                    const val = (e?.currentTarget?.files != null) ? e.currentTarget.files[0] : null;
+
+                    setBanner(val ?? null);
                 }} />
 
                 <Field className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="bremove" name="bremove" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Remove Current</label>
@@ -220,7 +221,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             <div className="mb-4">
                 <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Category</label>
                 <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" value={category} onChange={(e) => {
-                    const val = (e.target.value > 0) ? Number(e.target.value) : null;
+                    const val = (Number(e.target.value) > 0) ? Number(e.target.value) : null;
 
                     setCategory(val ?? 0);
                 }}>
@@ -317,7 +318,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         if (!fetchDls || typeof window === 'undefined')
             return;
 
-        let arr: Array<dlArrType> = [];
+        const arr: Array<dlArrType> = [];
 
         for (let i = 1; i <= 50; i++) {   
             const nameEle = document.getElementById("downloads-" + i + "-name");
@@ -355,7 +356,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         if (!fetchSss || typeof window === 'undefined')
             return;
 
-        let arr: Array<ssArrType> = [];
+        const arr: Array<ssArrType> = [];
 
         for (let i = 1; i <= 50; i++) {
             if (typeof window === 'undefined')
@@ -394,7 +395,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         if (!fetchSrcs || typeof window === 'undefined')
             return;
 
-        let arr: Array<srcArrType> = [];
+        const arr: Array<srcArrType> = [];
 
         for (let i = 1; i <= 50; i++) {
             if (typeof window === 'undefined')
@@ -434,7 +435,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         if (!fetchInss || typeof window === 'undefined')
             return;
 
-        let arr: Array<insArrType> = [];
+        const arr: Array<insArrType> = [];
 
         for (let i = 1; i <= 50; i++) {
             if (typeof window === 'undefined')
@@ -702,10 +703,10 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             setFetchInss(true);
 
             // First, handle file uploads via a promise. Not sure of any other way to do it at the moment (though I am new to TypeScript, Next.JS, and React).
-            new Promise<void>(async (resolve, reject) => {
+            new Promise<void>(async (resolve) => {
                 // We have uploads / total uploads.
-                let uploads: number = 0;
-                let totalUploads: number = 0;
+                let uploads = 0;
+                let totalUploads = 0;
 
                 // Check banner and handle upload.
                 if (banner != null) {
