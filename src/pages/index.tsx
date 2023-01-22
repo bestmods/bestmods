@@ -2,10 +2,9 @@ import { type NextPage } from "next";
 import React, { useState } from "react";
 
 import { BestModsPage, filterArgs } from '../components/main';
+import HeadInfo from "../components/Head";
 
 import ModBrowser from '../components/modbrowser';
-
-import HeadInfo from "../components/Head";
 
 const Home: NextPage = () => {
   return (
