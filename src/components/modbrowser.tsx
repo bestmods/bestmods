@@ -348,7 +348,7 @@ const ModBrowser: React.FC<{categories?: Array<number> | null }> = ({ categories
     };
 
     return (
-        <div className="mx-auto">
+        <div className="mx-auto w-full sm:w-4/5">
             <InfiniteScroll
                 className="grid grid-cols-[repeat(auto-fill,minmax(theme(width.full),1fr))] sm:grid-cols-[repeat(auto-fill,minmax(theme(width.96),1fr))] justify-items-center gap-8"
                 loadMore={fetchMods}
