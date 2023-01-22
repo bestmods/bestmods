@@ -186,6 +186,20 @@ export const sourceRouter = router({
                 });
             }
         }),
+    delSource: publicProcedure
+        .input(z.object({
+            url: z.string()
+        }))
+        .mutation(async ({ ctx, input }) => {
+            if (input.url.length < 1)
+                return;
+
+            return await ctx.prisma.source.delete({
+                where: {
+                    url: input.url
+                }
+            });
+        }),
     getAllSources: publicProcedure.query(({ ctx }) => {
         return ctx.prisma.source.findMany();
     })

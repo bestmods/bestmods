@@ -154,6 +154,22 @@ export const categoryRouter = router({
                 }                
             }
         }),
+    delCategory: publicProcedure
+        .input(z.object({
+            id: z.number()
+        }))
+        .mutation(async ({ ctx, input }) => {
+            console.log("DELETING CATEGORY => " + input.id);
+
+            if (input.id < 1)
+                return;
+
+            return await ctx.prisma.category.delete({
+                where: {
+                    id: input.id
+                }
+            });
+        }),
     getCategoriesByParent: publicProcedure
         .input(z.object({
             parent_id: z.number()
