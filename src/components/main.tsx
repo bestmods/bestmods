@@ -260,7 +260,7 @@ const Filters: React.FC<{classes?: string}> = ({ classes="w-full flex justify-ce
                         <option value="0">Top Rated</option>
                         <option value="1">Most Viewed</option>
                         <option value="2">Most Downloaded</option>
-                        <option value="3">Most Recently Added</option>
+                        <option value="3">Most Recently Updated</option>
                         <option value="4">Most Recently Created</option>
                     </select>
                 </div>
