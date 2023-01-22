@@ -176,7 +176,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     const [installersMenuOpen, setInstallersMenuOpen] = useState(false);
     
     return (
-        <div key={mod.id} className={"w-72 md:w-96 h-[32rem] rounded bg-gradient-to-b from-cyan-800 to-cyan-900 flex flex-col shadow-lg" + addClasses}>
+        <div key={mod.id} className={"w-4/5 md:w-96 h-[32rem] rounded bg-gradient-to-b from-cyan-800 to-cyan-900 flex flex-col shadow-lg" + addClasses}>
             <div className="relative modImage w-full max-h-64 h-64">
                 <img className="w-full h-full max-h-full rounded-t" src={banner} />
                 {mod.ownerName != null && (
@@ -350,7 +350,7 @@ const ModBrowser: React.FC<{categories?: Array<number> | null }> = ({ categories
     return (
         <div className="mx-auto">
             <InfiniteScroll
-                className="grid grid-cols-[repeat(auto-fill,minmax(theme(width.72),1fr))] sm:grid-cols-[repeat(auto-fill,minmax(theme(width.96),1fr))] justify-items-center gap-8"
+                className="grid grid-cols-[repeat(auto-fill,minmax(theme(width.full),1fr))] sm:grid-cols-[repeat(auto-fill,minmax(theme(width.96),1fr))] justify-items-center gap-8"
                 loadMore={fetchMods}
                 hasMore={needMoreMods}
                 loader={
