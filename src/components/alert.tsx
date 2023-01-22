@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 
-export const AlertForm: React.FC<{error: string | null, success: string | null}> = ({ error, success }) => {
+export const AlertForm: React.FC<{error?: string | null, success?: string | null}> = ({ error, success }) => {
 
     return (<>
         <div id="alertbox">
