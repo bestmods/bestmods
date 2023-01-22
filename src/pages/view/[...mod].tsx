@@ -74,7 +74,7 @@ const MainContent: React.FC = () => {
   // Installer menu.
   const [installersMenuOpen, setInstallersMenuOpen] = useState(false);
 
-  if (mod != null) {
+  if (mod != null && mod !== false) {
     let body: JSX.Element = <></>;
 
     // Generate classes for buttons and such.
@@ -189,7 +189,7 @@ const MainContent: React.FC = () => {
 
 const ModOverview: React.FC = () => {
   const mod = useContext(ModCtx);
-  const data = marked(mod.description);
+  const data = marked(mod?.description ?? "");
 
   return (
     <>
