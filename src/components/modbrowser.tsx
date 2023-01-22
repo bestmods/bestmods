@@ -176,7 +176,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     const [installersMenuOpen, setInstallersMenuOpen] = useState(false);
     
     return (
-        <div key={mod.id} className={"w-72 md:w-96 h-[32rem] rounded bg-gradient-to-b from-cyan-500/30 to-cyan-800/30 flex flex-col shadow-lg" + addClasses}>
+        <div key={mod.id} className={"w-72 md:w-96 h-[32rem] rounded bg-gradient-to-b from-cyan-800 to-cyan-900 flex flex-col shadow-lg" + addClasses}>
             <div className="relative modImage w-full max-h-64 h-64">
                 <img className="w-full h-full max-h-full rounded-t" src={banner} />
                 {mod.ownerName != null && (
@@ -230,7 +230,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                     <span className="text-white text-sm mr-1">{mod.totalDownloads.toString()}</span>
                 </div>
             </div>
-            <div className="modLinks justify-between flex text-center bg-cyan-900">
+            <div className="modLinks justify-between flex text-center bg-cyan-700 rounded-b">
                 <a href={viewLink} className="text-white font-bold p-2 w-1/3">View</a>
                 {mod.ModInstaller != null && mod.ModInstaller.length > 0 && (
                     <>
@@ -285,7 +285,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     );
 };
 
-const ModBrowser: React.FC<{categories?: string | null }> = ({ categories }) => {
+const ModBrowser: React.FC<{categories?: Array<number> | null }> = ({ categories }) => {
     const filters = useContext(FilterCtx);
 
     const [mods, setMods] = useState<Array<Mod>>([]);
@@ -300,7 +300,7 @@ const ModBrowser: React.FC<{categories?: string | null }> = ({ categories }) => 
         modsPerPage = 10;
 
     const modQuery = trpc.mod.getAllModsBrowser.useQuery({
-        categories: (categories != null) ? categories : filters?.categories ?? null,
+        categories: ((categories != null) ? JSON.stringify(categories) : (filters?.categories != null ) ? JSON.stringify(filters.categories) : null),
         timeframe: filters?.timeframe ?? null,
         sort: filters?.sort ?? null,
         search: filters?.search ?? null,
@@ -348,9 +348,9 @@ const ModBrowser: React.FC<{categories?: string | null }> = ({ categories }) => 
     };
 
     return (
-        <div className="container mx-auto">
+        <div className="mx-auto">
             <InfiniteScroll
-                className="grid grid-flow-row auto-cols-max grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 justify-items-center gap-x-2 gap-y-8"
+                className="grid grid-cols-[repeat(auto-fill,minmax(theme(width.96),1fr))] justify-items-center gap-8"
                 loadMore={fetchMods}
                 hasMore={needMoreMods}
                 loader={

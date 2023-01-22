@@ -38,8 +38,6 @@ const Home: NextPage = () => {
     const categories: Array<number> = [];
 
     if (category != null) {
-
-
         if (cat) {
             categories.push(cat.id);
 
@@ -61,7 +59,7 @@ const Home: NextPage = () => {
     const content = (error == null) ?
         <div className="container mx-auto">
             <h1 className="text-white text-center text-lg font-bold">{cat != null && cat.name} Mods</h1>
-            <ModBrowser categories={JSON.stringify(categories)} />
+            <ModBrowser categories={categories} />
         </div>
         
         : error;
