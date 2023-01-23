@@ -11,6 +11,9 @@ export const modRouter = router({
             url: z.string()
         }))
         .query(({ ctx, input}) => {
+            if (input.url.length < 1)
+                return null;
+            
             return ctx.prisma.mod.findFirst({
                     include: {
                         category: true,

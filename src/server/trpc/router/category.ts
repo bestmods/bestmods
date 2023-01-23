@@ -14,6 +14,9 @@ export const categoryRouter = router({
             includeMods: z.boolean().default(false)
         }))
         .query(({ ctx, input}) => {
+            if (input.id == null && input.url == null && input.parent == null)
+                return null;
+            
             return ctx.prisma.category.findFirst({
                 include: {
                     children: true,

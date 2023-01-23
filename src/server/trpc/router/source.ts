@@ -9,6 +9,9 @@ export const sourceRouter = router({
     getSource: publicProcedure.input(z.object({
         url: z.string()
     })).query(({ ctx, input}) => {
+        if (input.url.length < 1)
+            return null;
+        
         const src = ctx.prisma.source.findFirst({
             where: {
                 url: input.url
