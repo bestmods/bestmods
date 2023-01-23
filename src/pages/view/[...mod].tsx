@@ -30,6 +30,27 @@ const Home: NextPage = () => {
   else if (!modQuery.data && modQuery.isFetched)
     mod = false;
 
+  // Load category.
+  const catQuery = trpc.category.getCategory.useQuery({
+    id: mod?.category?.id ?? 0,
+    url: null,
+    parent: null
+  });
+
+  const cat = catQuery.data;
+
+  // Handle background image.
+  let bgFile: string | null = null;
+
+  if (cat != null && cat.hasBg && cat.parent != null)
+      bgFile = cat.parent.url + "_" + cat.url + ".png";
+  else if (cat != null && cat.hasBg && cat.parent == null)
+      bgFile = cat.url + ".png";
+  else if (cat != null && cat.parent != null && cat.parent.hasBg)
+      bgFile = cat.parent.url + ".png";
+
+  const bgPath = "/images/backgrounds/" + bgFile;
+
   return (
     <>
       <ModCtx.Provider value={mod}>
@@ -41,9 +62,16 @@ const Home: NextPage = () => {
             webtype="article"
             author={mod && mod.ownerName != null ? mod.ownerName : "Best Mods"} 
           />
-          <BestModsPage
-            content={<MainContent></MainContent>}
-          ></BestModsPage>
+          {bgFile != null ? (
+            <BestModsPage
+              content={<MainContent></MainContent>}
+              image={bgPath}
+            />
+          ) : (
+            <BestModsPage
+              content={<MainContent></MainContent>}
+            />
+          )}
         </ModViewCtx.Provider>
       </ModCtx.Provider>
     </>

@@ -50,6 +50,8 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
 
         icon: string | null;
         iremove: boolean | null;
+
+        hasBg: boolean
     }>();
     const submitBtn = useMemo(() => {
         return (<>
@@ -67,6 +69,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
     const [nameShort, setNameShort] = useState("");
     const [url, setUrl] = useState("");
     const [classes, setClasses] = useState("");
+    const [hasBg, setHasBg] = useState(false);
 
     // File uploads.
     const [icon, setIcon] = useState<File | null>(null)
@@ -89,7 +92,13 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                     setIcon(val ?? null);
                 }} />
 
-                <Field className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image-remove" name="iremove" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Remove Current</label>
+                <Field className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="iremove" name="iremove" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Remove Current</label>
+            </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-200 text-sm font-bold mb-2">Has Background</label>
+
+                <Field className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="hasBg" name="hasBg" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Yes</label>
             </div>
 
             <div className="mb-4">
@@ -178,6 +187,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                 setNameShort(category.nameShort);
                 setParent(category.parentId);
                 setUrl(category.url ?? "");
+                setHasBg(category.hasBg);
     
                 // Classes is optional; Check if null.
                 if (category.classes != null)
@@ -221,7 +231,8 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
             nameShort: nameShort,
             url: url,
             classes: classes,
-            iremove: false
+            iremove: false,
+            hasBg: hasBg
         },
         enableReinitialize: true,
 
@@ -258,8 +269,6 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                     // If we're done, break to get to resolve().
                     if (uploads >= totalUploads)
                         break;
-                    
-                    console.log("Upload progress => " + uploads + "/" + totalUploads);
 
                     // Wait 1 second to save CPU cycles.
                     await delay(1000);
@@ -268,8 +277,6 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                 // We're done uploading files.
                 resolve();
             }).then(() => {
-                console.debug("File uploads handled!");
-
                 // Insert into the database via mutation.
                 setSubmit(true);
                 setValues({
@@ -283,7 +290,9 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
 
                     icon: null,
         
-                    iremove: values.iremove
+                    iremove: values.iremove,
+
+                    hasBg: values.hasBg
                 });
             });
         }

@@ -155,6 +155,8 @@ export const modRouter = router({
                         descriptionShort: input.descriptionShort,
                         install: input.install,
 
+                        hasBg: input.bg,
+
                         ...(bannerPath !== false && {
                             banner: bannerPath
                         })

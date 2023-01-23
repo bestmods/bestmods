@@ -35,20 +35,16 @@ const Home: NextPage = () => {
     const cat = categoryQuery.data;
     const cat2 = categoryParQuery.data;
 
-    let bgFile = "notfound.png";
+    let bgFile: string | null = null;
 
-    if (cat2 != null && cat != null)
-        bgFile = cat2.url + "_" + cat.url + ".png";
-    else if (cat != null)
+    if (cat != null && cat.hasBg && cat.parent != null)
+        bgFile = cat.parent.url + "_" + cat.url + ".png";
+    else if (cat != null && cat.hasBg && cat.parent == null)
         bgFile = cat.url + ".png";
+    else if (cat != null && cat.parent != null && cat.parent.hasBg)
+        bgFile = cat.parent.url + ".png";
 
     const bgPath = "/images/backgrounds/" + bgFile;
-
-    const bgQuery = trpc.files.doesExist.useQuery({
-        path: bgPath
-    })
-
-    const bg = bgQuery.data;
 
     const categories: Array<number> = [];
 
@@ -95,7 +91,7 @@ const Home: NextPage = () => {
     return (
         <>
             <HeadInfo />
-            {bg !== false ? (
+            {bgFile != null ? (
                 <BestModsPage
                     content={content}
                     image={bgPath}

@@ -44,7 +44,10 @@ export const categoryRouter = router({
             url: z.string(),
             icon: z.string().nullable(),
             classes: z.string().nullable(),
-            iremove: z.boolean().nullable()
+
+            iremove: z.boolean().nullable(),
+
+            hasBg: z.boolean().default(false)
         }))
         .mutation(async ({ ctx, input }) => {
             let cat = null;
@@ -59,14 +62,18 @@ export const categoryRouter = router({
                         name: input.name,
                         nameShort: input.nameShort,
                         url: input.url,
-                        classes: input.classes ?? null        
+                        classes: input.classes ?? null,
+                        
+                        hasBg: input.hasBg
                     },
                     create: {
                         parentId: input.parent_id || null,
                         name: input.name,
                         nameShort: input.nameShort,
                         url: input.url,
-                        classes: input.classes ?? null 
+                        classes: input.classes ?? null,
+
+                        hasBg: input.hasBg
                     }
                 });
             } catch (error) {
