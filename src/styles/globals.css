@@ -132,24 +132,31 @@
 {
     @apply mt-1;
     @apply mb-1;
+    @apply p-4;
+    @apply m-1;
+    @apply bg-cyan-800/80;
+    @apply rounded-sm;
+    @apply inline-block;
+    @apply break-all;
 }
 
 #viewContent code
 {
-    padding: 0.10em;
-    margin: 3px;
-    background: #00585180;
-    border-radius: 2px;
-    display: inline-block;
-    word-break: break-all;
+    @apply p-1;
+    @apply m-1;
+    @apply bg-cyan-800/80;
+    @apply rounded-sm;
+    @apply inline-block;
+    @apply break-all;
 }
 
-#viewContent pre code
+#viewContent pre > code
 {
-    padding: 0 !important;
-    margin: 0px !important;
-    background: none !important;
-    border-radius: none !important;
+    @apply !p-0;
+    @apply !m-0;
+    @apply !bg-none;
+    @apply !bg-transparent;
+    @apply !rounded-none;
 }
 
 #viewContent h1
@@ -180,12 +187,12 @@
 
 #viewContent ul
 {
-    list-style: disc;
+    @apply list-disc;
 }
 
 #viewContent ol
 {
-    list-style:decimal;
+    @apply list-decimal;
 }
 
 #viewContent p
@@ -195,7 +202,7 @@
 
 #viewContent a:not(.modDownload)
 {
-    text-decoration: underline;
+    @apply underline;
 }
 
 ::-webkit-scrollbar
