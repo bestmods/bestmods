@@ -22,7 +22,7 @@ export type filterArgs = {
 export const SessionCtx = React.createContext<any | null>(null);
 export const FilterCtx = React.createContext<filterArgs | null>(null);
 
-export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | null, overlay?: string, background?: string }> = ({ content, classes, overlay="bg-none md:bg-black/80", background="bg-gradient-to-b from-[#002736] to-[#00151b] md:bg-[url('/images/bg.jpg')]" }) => {
+export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | null, background?: string, image?: string | null, overlay?: string }> = ({ content, classes, background="bg-gradient-to-b from-[#002736] to-[#00151b] md:bg-[url('/images/backgrounds/default.jpg')]", image=null, overlay="bg-none md:bg-black/80" }) => {
     const { data: session } = useSession();
 
     const [categories, setCategories] = useState<Array<number> | null>(null);
@@ -86,8 +86,9 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
                     </div>
                 
                     <Background 
-                        overlay={overlay}
                         background={background}
+                        image={image}
+                        overlay={overlay}
                     />
 
                     <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
@@ -149,7 +150,7 @@ export const Categories: React.FC = () => {
                     else
                         setIsOpen(true);
                 }}>
-                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_429_11052)"><circle cx="17" cy="7" r="3" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="7" cy="17" r="3" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 14H20V19C20 19.5523 19.5523 20 19 20H15C14.4477 20 14 19.5523 14 19V14Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M4 4H10V9C10 9.55228 9.55228 10 9 10H5C4.44772 10 4 9.55228 4 9V4Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11052"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11052)"><circle cx="17" cy="7" r="3" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="7" cy="17" r="3" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 14H20V19C20 19.5523 19.5523 20 19 20H15C14.4477 20 14 19.5523 14 19V14Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M4 4H10V9C10 9.55228 9.55228 10 9 10H5C4.44772 10 4 9.55228 4 9V4Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11052"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
                 </button>
                 <div className={`${isOpen ? "block" : "hidden"} p-4`}>
                     <h1 className="text-white text-center text-2xl">Categories</h1>
@@ -206,13 +207,19 @@ export const Login: React.FC = () => {
     );
 };
   
-export const Background: React.FC<{background?: string , overlay?: boolean | string }> = ({ background="bg-gradient-to-b from-[#002736] to-[#00151b]", overlay=true }) => {
+export const Background: React.FC<{background?: string, image?: string | null, overlay?: boolean | string }> = ({ background="bg-gradient-to-b from-[#002736] to-[#00151b]", image=null, overlay=true }) => {
     return (<>
         {overlay && (
-            <div id="bgol" className={typeof(overlay) === "string" ? overlay : "bg-black/80"}></div>
+            <div id="bgol" className={typeof(overlay) === "string" ? overlay : "bg-black/80"}>
+
+            </div>
         )}
         
-        <div id="bg" className={background}></div>
+        <div id="bg" className={background}>
+            {image != null && (
+                <img src={image} className="hidden md:block w-full h-full" alt="background" />
+            )}
+        </div>
     </>);
 };
   
@@ -285,7 +292,7 @@ const Filters: React.FC<{classes?: string}> = ({ classes="w-full flex justify-ce
                 <div className="relative w-full sm:w-16 flex items-center justify-center">
                     <Link href="/category">
                         <div className="block p-4 w-full text-lg text-gray-100 bg-gray-700 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
-                            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_429_11052)"><circle cx="17" cy="7" r="3" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="7" cy="17" r="3" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 14H20V19C20 19.5523 19.5523 20 19 20H15C14.4477 20 14 19.5523 14 19V14Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M4 4H10V9C10 9.55228 9.55228 10 9 10H5C4.44772 10 4 9.55228 4 9V4Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11052"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
+                            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11052)"><circle cx="17" cy="7" r="3" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="7" cy="17" r="3" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 14H20V19C20 19.5523 19.5523 20 19 20H15C14.4477 20 14 19.5523 14 19V14Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M4 4H10V9C10 9.55228 9.55228 10 9 10H5C4.44772 10 4 9.55228 4 9V4Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11052"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
                         </div>
                     </Link>
                 </div>

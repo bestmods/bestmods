@@ -16,7 +16,7 @@ const Home: NextPage = () => {
     const { query } = useRouter();
 
     const category = (query.category != null) ? query.category[0] : null;
-    const category2 = (query.category != null && query.category[1] != null) ? query.category[1] : null;
+    const category2 = (query.category != null && query.category[1] != null) ? query.category[1] : null; 
 
     const categoryParQuery = trpc.category.getCategory.useQuery({
         id: null,
@@ -34,6 +34,21 @@ const Home: NextPage = () => {
 
     const cat = categoryQuery.data;
     const cat2 = categoryParQuery.data;
+
+    let bgFile = "notfound.png";
+
+    if (cat2 != null && cat != null)
+        bgFile = cat2.url + "_" + cat.url + ".png";
+    else if (cat != null)
+        bgFile = cat.url + ".png";
+
+    const bgPath = "/images/backgrounds/" + bgFile;
+
+    const bgQuery = trpc.files.doesExist.useQuery({
+        path: bgPath
+    })
+
+    const bg = bgQuery.data;
 
     const categories: Array<number> = [];
 
@@ -78,13 +93,21 @@ const Home: NextPage = () => {
         : error;
 
     return (
-    <>
-        <HeadInfo />
-        <BestModsPage
-            content={content}
-        ></BestModsPage>
-    </>
+        <>
+            <HeadInfo />
+            {bg !== false ? (
+                <BestModsPage
+                    content={content}
+                    image={bgPath}
+                />
+            ) : (
+                <BestModsPage
+                    content={content}
+                />  
+            )}
+        </>
     );
 };
+
 
 export default Home;

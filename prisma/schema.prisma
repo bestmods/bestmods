@@ -36,6 +36,7 @@ model Category {
   classes   String?
   icon      String?
   Mod       Mod[]
+  hasBg     Boolean    @default(false)
 }
 
 model Mod {
