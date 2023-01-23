@@ -29,7 +29,7 @@ model Category {
   id        Int        @id @default(autoincrement())
   parentId  Int?       @default(0) @map("parentId")
   children  Category[] @relation("children")
-  parent    Category?  @relation("children", fields: [parentId], references: [id])
+  parent    Category?  @relation("children", fields: [parentId], references: [id], onUpdate: Cascade, onDelete: NoAction)
   name      String
   nameShort String
   url       String?
@@ -44,7 +44,7 @@ model Mod {
   url String @unique
 
   // Ownership
-  owner     User?   @relation(fields: [ownerId], references: [id])
+  owner     User?   @relation(fields: [ownerId], references: [id], onUpdate: Cascade, onDelete: NoAction)
   ownerId   String?
   ownerName String?
 
@@ -69,8 +69,8 @@ model Mod {
   ratingYear  BigInt @default(1)
 
   // Relations
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId Int
+  category   Category? @relation(fields: [categoryId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  categoryId Int?
 
   ModSource      ModSource[]
   ModDownload    ModDownload[]
@@ -84,7 +84,7 @@ model Mod {
 
 // Mod Relations
 model ModDownload {
-  mod   Mod     @relation(fields: [modId], references: [id])
+  mod   Mod     @relation(fields: [modId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   modId Int
   name  String?
   url   String
@@ -93,7 +93,7 @@ model ModDownload {
 }
 
 model ModScreenshot {
-  mod   Mod    @relation(fields: [modId], references: [id])
+  mod   Mod    @relation(fields: [modId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   modId Int
   url   String
 
@@ -101,9 +101,9 @@ model ModScreenshot {
 }
 
 model ModSource {
-  mod       Mod     @relation(fields: [modId], references: [id])
+  mod       Mod     @relation(fields: [modId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   modId     Int
-  source    Source  @relation(fields: [sourceUrl], references: [url])
+  source    Source  @relation(fields: [sourceUrl], references: [url], onUpdate: Cascade, onDelete: Cascade)
   sourceUrl String
   primary   Boolean @default(false)
   query     String
@@ -112,9 +112,9 @@ model ModSource {
 }
 
 model ModInstaller {
-  mod       Mod    @relation(fields: [modId], references: [id])
+  mod       Mod    @relation(fields: [modId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   modId     Int
-  source    Source @relation(fields: [sourceUrl], references: [url])
+  source    Source @relation(fields: [sourceUrl], references: [url], onUpdate: Cascade, onDelete: Cascade)
   sourceUrl String
   url       String
 
@@ -122,9 +122,9 @@ model ModInstaller {
 }
 
 model ModUniqueView {
-  mod       Mod      @relation(fields: [modId], references: [id])
+  mod       Mod      @relation(fields: [modId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   modId     Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   userId    String
   createdAt DateTime @default(now())
 
@@ -132,9 +132,9 @@ model ModUniqueView {
 }
 
 model ModRating {
-  mod       Mod      @relation(fields: [modId], references: [id])
+  mod       Mod      @relation(fields: [modId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   modId     Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   userId    String
   createdAt DateTime @default(now())
 
@@ -145,9 +145,9 @@ model ModRating {
 
 model ModComment {
   id        Int       @id @default(autoincrement())
-  mod       Mod       @relation(fields: [modId], references: [id])
+  mod       Mod       @relation(fields: [modId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   modId     Int
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   userId    String
   createdAt DateTime  @default(now())
   updateAt  DateTime? @updatedAt
@@ -158,7 +158,7 @@ model ModComment {
 // Collections
 model ModCollection {
   id             Int              @id @default(autoincrement())
-  user           User             @relation(fields: [userId], references: [id])
+  user           User             @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   userId         String           @unique
   ModCollections ModCollections[]
 
@@ -166,9 +166,9 @@ model ModCollection {
 }
 
 model ModCollections {
-  col   ModCollection @relation(fields: [colId], references: [id])
+  col   ModCollection @relation(fields: [colId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   colId Int
-  mod   Mod           @relation(fields: [modId], references: [id])
+  mod   Mod           @relation(fields: [modId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   modId Int
 
   @@id([colId, modId])
