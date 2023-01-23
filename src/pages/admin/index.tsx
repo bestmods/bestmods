@@ -43,7 +43,7 @@ const Categories: React.FC = () => {
     const delCats = trpc.category.delCategory.useMutation();
 
     return (
-        <div className="relative bg-cyan-900 rounded-sm p-16">
+        <div className="relative bg-cyan-900/20 rounded-sm p-16">
             <AlertForm
                 success={success}
             />
@@ -118,7 +118,7 @@ const Sources: React.FC = () => {
     const delSrcs = trpc.source.delSource.useMutation();
 
     return (
-        <div className="relative bg-cyan-900 rounded-sm p-16">
+        <div className="relative bg-cyan-900/20 rounded-sm p-16">
             <AlertForm
                 success={success}
             />

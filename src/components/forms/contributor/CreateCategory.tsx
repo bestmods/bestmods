@@ -231,8 +231,6 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                 // We have uploads / total uploads.
                 let uploads = 0;
                 let totalUploads = 0;
-
-                console.log("Doing file uploads!");
                 
                 // Check icon and handle upload.
                 if (icon != null) {
@@ -244,12 +242,8 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
         
                     // On file uploaded.
                     reader.onload = () => {
-                        
-                        console.log("Icon loaded");
                         // Set Base64 data to iconData.
                         setIconData(reader.result);
-        
-                        console.log("Icon data => " + iconData);
         
                         // We're done; Increment uploads.
                         uploads++;

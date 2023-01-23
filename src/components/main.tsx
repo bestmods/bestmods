@@ -106,7 +106,7 @@ export const MobileMenu: React.FC = () => {
 
     return (
         <>
-            <div className={`absolute sm:hidden ${isOpen ? "min-h-full h-auto w-1/2 md:h-auto md:w-1/4 transition-all ease-in-out duration-300" : ""} z-50 top-0 left-0 rounded-br bg-cyan-800 hover:bg-cyan-900`}>
+            <div className={`absolute sm:hidden ${isOpen ? "min-h-full h-auto w-2/3 md:h-auto md:w-1/4 transition-all ease-in-out duration-300" : ""} z-50 top-0 left-0 rounded-br bg-cyan-800 hover:bg-cyan-900`}>
                 <button className="p-4 text-center" onClick={(e) => {
                     if (isOpen)
                         setIsOpen(false);
@@ -275,6 +275,13 @@ const Filters: React.FC<{classes?: string}> = ({ classes="w-full flex justify-ce
                         if (typeof window !== "undefined")
                             window.location.href = "/?search=" + e.target.value;
                     })} className="block p-4 pl-10 w-full text-sm text-gray-100 bg-gray-700 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500" placeholder="Search for your favorite mods!" />
+                </div>
+                <div className="relative w-full md:w-16 flex items-center justify-center">
+                    <Link href="/category">
+                        <div className="block p-4 w-full text-lg text-gray-100 bg-gray-700 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_429_11052)"><circle cx="17" cy="7" r="3" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="7" cy="17" r="3" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 14H20V19C20 19.5523 19.5523 20 19 20H15C14.4477 20 14 19.5523 14 19V14Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M4 4H10V9C10 9.55228 9.55228 10 9 10H5C4.44772 10 4 9.55228 4 9V4Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11052"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
+                        </div>
+                    </Link>
                 </div>
             </Form>
         </Formik>

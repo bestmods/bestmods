@@ -13,8 +13,6 @@ type ModRowArguments = {
     mod: any
 };
 
-import Image from 'next/image'
-
 const ModSourceRender: React.FC<{modSrc: ModSource}> = ({ modSrc}) => {
     const srcQuery = trpc.source.getSource.useQuery({
         url: modSrc.sourceUrl

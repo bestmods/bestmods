@@ -15,7 +15,8 @@ export const categoryRouter = router({
         .query(({ ctx, input}) => {
             return ctx.prisma.category.findFirst({
                 include: {
-                    children: true
+                    children: true,
+                    parent: true
                 },
                 where: {
                     ...(input.id != null && {

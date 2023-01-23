@@ -57,8 +57,21 @@ const Home: NextPage = () => {
         setError(notFound);
 
     const content = (error == null) ?
-        <div className="container mx-auto">
-            <h1 className="text-white text-center text-lg font-bold">{cat != null && cat.name} Mods</h1>
+        <div>
+            <div className="w-full sm:w-4/5 mx-auto m-4">
+                <h1 className="text-white text-3xl font-bold">
+                    {cat2 == null && cat != null && cat.parent != null ? (
+                        <>
+                            {cat.parent.name} {"→"} {cat.name + " "}
+                        </>
+                    ) : (
+                        <>
+                            {cat != null && cat.name + " "}
+                        </>
+                    )}
+                    Mods
+                </h1>
+            </div>
             <ModBrowser categories={categories} />
         </div>
         
