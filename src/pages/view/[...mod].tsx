@@ -266,13 +266,13 @@ const ModSources: React.FC = () => {
             const srcLink = "https://" + src.sourceUrl + "/" + src.query;
 
             return (
-              <a rel="noreferrer" key={"src-" + src.modId + "-" + src.sourceUrl + "-" + src.query} href={srcLink} className="relative no-underline" target="_blank">
+              <a rel="noreferrer" key={"src-" + src.modId + "-" + src.sourceUrl + "-" + src.query} href={srcLink} className="relative !no-underline" target="_blank">
                 <div className="bg-cyan-500/50 hover:bg-cyan-600/50 rounded w-72 h-48">
                   <div className="w-full h-36">
                     <img src={banner} className="w-full h-full rounded-t" alt="Source Banner" />
                   </div>
                   <div className="w-full text-center">
-                    <h3 className="!text-lg font-bold no-underline">{name}</h3>
+                    <h3 className="!text-lg font-bold">{name}</h3>
                   </div>
                 </div>
               </a>
