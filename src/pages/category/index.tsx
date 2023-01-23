@@ -16,6 +16,7 @@ const Home: NextPage = () => {
         />
         <BestModsPage
             content={<Categories></Categories>}
+            image={"/images/backgrounds/default.jpg"}
         ></BestModsPage>
     </>
     );
