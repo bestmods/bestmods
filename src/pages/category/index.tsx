@@ -46,7 +46,7 @@ const Categories: React.FC = () => {
                                 </Link>
                                 {cat.children.length > 0 && (
                                     <div className="p-4">
-                                        {cat.children.map((catChild) => {
+                                        {cat.children.map((catChild: any) => {
                                             const viewLinkChild = "/category/" + cat.url + "/" + catChild.url;
                                             const iconChild = (catChild.icon != null) ? catChild.icon : "/images/default_icon.png";
 
