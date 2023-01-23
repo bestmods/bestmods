@@ -26,7 +26,7 @@ const Categories: React.FC = () => {
     const cats = catsQuery.data;
 
     return (
-        <div className="container mx-auto bg-cyan-900/20 rounded-sm p-16">
+        <div className="container mx-auto bg-cyan-900/20 rounded-sm p-2 sm:p-16">
             <h1 className="text-white text-3xl font-bold text-center">All Categories</h1>
 
             {cats ? (
