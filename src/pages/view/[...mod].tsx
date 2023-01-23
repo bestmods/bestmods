@@ -79,7 +79,7 @@ const Home: NextPage = () => {
 };
 
 const MainContent: React.FC = () => {
-  const session = useContext(SessionCtx);
+  //const session = useContext(SessionCtx);
 
   const mod = useContext(ModCtx);
   const modView = useContext(ModViewCtx);

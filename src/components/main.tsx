@@ -22,7 +22,7 @@ export type filterArgs = {
 export const SessionCtx = React.createContext<any | null>(null);
 export const FilterCtx = React.createContext<filterArgs | null>(null);
 
-export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | null, background?: string, image?: string | null, overlay?: string }> = ({ content, classes, background="bg-gradient-to-b from-[#002736] to-[#00151b] md:bg-[url('/images/backgrounds/default.jpg')]", image=null, overlay="bg-none md:bg-black/80" }) => {
+export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | null, background?: string, image?: string | null, overlay?: string }> = ({ content, classes, background="bg-gradient-to-b from-[#002736] to-[#00151b]", image=null, overlay="bg-none md:bg-black/80" }) => {
     const { data: session } = useSession();
 
     const [categories, setCategories] = useState<Array<number> | null>(null);
@@ -111,7 +111,7 @@ export const MobileMenu: React.FC = () => {
     return (
         <>
             <div className={`absolute sm:hidden ${isOpen ? "min-h-full h-auto w-2/3 md:h-auto md:w-1/4 transition-all ease-in-out duration-300" : ""} z-50 top-0 left-0 rounded-br bg-cyan-800 hover:bg-cyan-900`}>
-                <button className="p-4 text-center" onClick={(e) => {
+                <button className="p-4 text-center" onClick={() => {
                     if (isOpen)
                         setIsOpen(false);
                     else
@@ -134,8 +134,6 @@ export const MobileMenu: React.FC = () => {
 }
 
 export const Categories: React.FC = () => {
-    const filters = useContext(FilterCtx);
-
     const [isOpen, setIsOpen] = useState(false);
 
     const catsQuery = trpc.category.getCategoriesMapping.useQuery({includeMods: false});
@@ -144,7 +142,7 @@ export const Categories: React.FC = () => {
     return (
         <>
             <div className={`fixed ${isOpen ? "h-full w-1/2 md:h-auto md:w-1/4 transition-all ease-in-out duration-300" : ""} z-50 top-0 left-0 rounded-br bg-cyan-800 hover:bg-cyan-900`}>
-                <button className="p-4 text-center" onClick={(e) => {
+                <button className="p-4 text-center" onClick={() => {
                     if (isOpen)
                         setIsOpen(false);
                     else
@@ -160,7 +158,7 @@ export const Categories: React.FC = () => {
                                 return (
                                     <>
                                         <span className="flex items-center">{cat.icon != null && (
-                                            <img src={cat.icon} className="w-4 h-4" />
+                                            <img src={cat.icon} className="w-4 h-4" alt="Category Icon" />
                                         )}
                                         <h3 className="text-white text-lg ml-2">{cat.nameShort}</h3></span>
                                         {cat.children != null && cat.children.length > 0 && (
@@ -210,9 +208,7 @@ export const Login: React.FC = () => {
 export const Background: React.FC<{background?: string, image?: string | null, overlay?: boolean | string }> = ({ background="bg-gradient-to-b from-[#002736] to-[#00151b]", image=null, overlay=true }) => {
     return (<>
         {overlay && (
-            <div id="bgol" className={typeof(overlay) === "string" ? overlay : "bg-black/80"}>
-
-            </div>
+            <div id="bgol" className={typeof(overlay) === "string" ? overlay : "bg-black/80"}></div>
         )}
         
         <div id="bg" className={background}>

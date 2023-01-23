@@ -1,5 +1,5 @@
 import { type NextPage } from "next";
-import React, { useState } from "react";
+import React from "react";
 
 import { BestModsPage } from '../../components/main';
 import HeadInfo from "../../components/Head";

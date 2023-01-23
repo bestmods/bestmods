@@ -30,8 +30,6 @@ export const sourceRouter = router({
         })
         )
         .mutation(async ({ ctx, input }) => {
-            let src = null;
-
             // Make sure our URL is valid.
             if (input.url.length < 2) {
                 throw new TRPCError({ 
@@ -147,7 +145,7 @@ export const sourceRouter = router({
             }
 
             try {
-                src = await ctx.prisma.source.upsert({
+                await ctx.prisma.source.upsert({
                     where: {
                         url: input.url
                     },
