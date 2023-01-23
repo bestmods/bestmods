@@ -10,13 +10,17 @@ export const categoryRouter = router({
         .input(z.object({
             id: z.number().nullable(),
             url: z.string().nullable(),
-            parent: z.number().nullable()
+            parent: z.number().nullable(),
+            includeMods: z.boolean().default(false)
         }))
         .query(({ ctx, input}) => {
             return ctx.prisma.category.findFirst({
                 include: {
                     children: true,
-                    parent: true
+                    parent: true,
+                    ...(input.includeMods && {
+                        Mod: true
+                    })
                 },
                 where: {
                     ...(input.id != null && {
@@ -183,14 +187,20 @@ export const categoryRouter = router({
             return cats;
         }),
     getCategoriesMapping: publicProcedure
-        .query(({ ctx }) => {
+        .input(z.object({
+            includeMods: z.boolean().default(false)
+        }))
+        .query(({ ctx, input }) => {
             // First retrieve all platform categories (parent ID => 0).
             return ctx.prisma.category.findMany({
                 where: {
                     parentId: null
                 },
                 include: {
-                    children: true
+                    children: true,
+                    ...(input.includeMods && {
+                        Mod: true
+                    })
                 }
             });
         }),

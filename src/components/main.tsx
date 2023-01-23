@@ -134,7 +134,7 @@ export const Categories: React.FC = () => {
 
     const [isOpen, setIsOpen] = useState(false);
 
-    const catsQuery = trpc.category.getCategoriesMapping.useQuery();
+    const catsQuery = trpc.category.getCategoriesMapping.useQuery({includeMods: false});
     const cats = catsQuery.data;
 
     return (

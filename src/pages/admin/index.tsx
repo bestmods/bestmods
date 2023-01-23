@@ -37,7 +37,7 @@ const MainContent: React.FC = () => {
 const Categories: React.FC = () => {
     const [success, setSuccess] = useState<string | null>(null);
 
-    const catsQuery = trpc.category.getCategoriesMapping.useQuery();
+    const catsQuery = trpc.category.getCategoriesMapping.useQuery({includeMods: false});
     const cats = catsQuery.data;
 
     const delCats = trpc.category.delCategory.useMutation();

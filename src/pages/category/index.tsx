@@ -22,7 +22,7 @@ const Home: NextPage = () => {
 };
 
 const Categories: React.FC = () => {
-    const catsQuery = trpc.category.getCategoriesMapping.useQuery();
+    const catsQuery = trpc.category.getCategoriesMapping.useQuery({includeMods: true});
     const cats = catsQuery.data;
 
     return (
@@ -39,7 +39,9 @@ const Categories: React.FC = () => {
                             <div key={"cat-" + cat.id} className="p-4">
                                 <Link href={viewLink} className="flex items-center flex-wrap">
                                     <img src={icon} className="w-8 h-8" alt="Category Icon" />
-                                    <span className="text-white ml-2">{cat.name}</span>
+                                    <span className="text-white ml-2">{cat.name}</span>{cat.Mod != null && cat.Mod.length > 0 && (
+                                        <span className="text-sm text-white ml-2">({cat.Mod.length})</span>
+                                    )}
                                 </Link>
                                 {cat.children.length > 0 && (
                                     <div className="p-4">
@@ -51,7 +53,9 @@ const Categories: React.FC = () => {
                                                 <div key={"catchild-" + catChild.id} className="flex items-center flex-wrap ml-4">
                                                     <Link href={viewLinkChild} className="flex items-center flex-wrap">
                                                         <img src={iconChild} className="w-8 h-8" alt="Category Child Icon" />
-                                                        <span className="text-white ml-2">{catChild.name}</span>
+                                                        <span className="text-white ml-2">{catChild.name}</span>{catChild.Mod != null && catChild.Mod.length > 0 && (
+                                        <span className="text-sm text-white ml-2">({catChild.Mod.length})</span>
+                                    )}
                                                     </Link>
                                                 </div>
                                             )

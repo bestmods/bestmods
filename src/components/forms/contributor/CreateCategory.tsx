@@ -74,7 +74,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
 
     // Queries.
     const categoryMut = trpc.category.addCategory.useMutation();
-    const catsWithChildren = trpc.category.getCategoriesMapping.useQuery();
+    const catsWithChildren = trpc.category.getCategoriesMapping.useQuery({includeMods: false});
     const categoryQuery = trpc.category.getCategory.useQuery({id: id ?? 0, url: null, parent: null});
 
     // Form fields.
