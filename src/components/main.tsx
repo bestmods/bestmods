@@ -22,7 +22,7 @@ export type filterArgs = {
 export const SessionCtx = React.createContext<any | null>(null);
 export const FilterCtx = React.createContext<filterArgs | null>(null);
 
-export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | null }> = ({ content, classes }) => {
+export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | null, overlay?: string, background?: string }> = ({ content, classes, overlay="bg-none md:bg-black/80", background="bg-gradient-to-b from-[#002736] to-[#00151b] md:bg-[url('/images/bg.jpg')]" }) => {
     const { data: session } = useSession();
 
     const [categories, setCategories] = useState<Array<number> | null>(null);
@@ -77,7 +77,7 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
 
     return (
       <>
-        <main key="main" className={`flex min-h-screen flex-col bg-gradient-to-b from-[#002736] to-[#00151b] pb-20 ${classes != null ? classes : ""}`}>
+        <main key="main" className={`flex min-h-screen flex-col pb-20 ${classes != null ? classes : ""}`}>
             <SessionCtx.Provider value={session}>
                 <FilterCtx.Provider value={filters}>
                     <div className="flex flex-wrap justify-between">
@@ -85,7 +85,10 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
                         <Login />
                     </div>
                 
-                    <Background />
+                    <Background 
+                        overlay={overlay}
+                        background={background}
+                    />
 
                     <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
                         <Header />
@@ -203,10 +206,13 @@ export const Login: React.FC = () => {
     );
 };
   
-export const Background: React.FC = () => {
+export const Background: React.FC<{background?: string , overlay?: boolean | string }> = ({ background="bg-gradient-to-b from-[#002736] to-[#00151b]", overlay=true }) => {
     return (<>
-        <div id="bgol"></div>
-        <div id="bg"></div>
+        {overlay && (
+            <div id="bgol" className={typeof(overlay) === "string" ? overlay : "bg-black/80"}></div>
+        )}
+        
+        <div id="bg" className={background}></div>
     </>);
 };
   

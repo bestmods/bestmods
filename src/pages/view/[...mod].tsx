@@ -124,7 +124,7 @@ const MainContent: React.FC = () => {
             <a href={downloadsLink} className={`${btnBaseClasses} ${modView == "downloads" ? activeStyle : defaultStyle}`}>Downloads</a>
           </div>
 
-          <div className="p-12 w-full rounded-b bg-cyan-900/20">
+          <div className="p-12 w-full rounded-b bg-cyan-900/80">
             <div className={`flex flex-wrap mb-4 ${onlyRating ? "justify-end" : "justify-between"}`}>
               {mod.ownerName != null && (
                   <div className="">
