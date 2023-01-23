@@ -240,7 +240,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                                 <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
                             )}</button>
         
-                            <ul id={"installerDropdownMenu" + mod.id} className={`absolute py-1 text-sm bg-cyan-800 ${ installersMenuOpen ? "block" : "hidden" }`} aria-labelledby={"installerDropdownBtn" + mod.id}>
+                            <ul id={"installerDropdownMenu" + mod.id} className={`absolute z-30 py-1 text-sm bg-cyan-800 ${ installersMenuOpen ? "block" : "hidden" }`} aria-labelledby={"installerDropdownBtn" + mod.id}>
                             {mod.ModInstaller.map((ins: ModInstaller) => {
                                 return (
                                     <ModInstallerRender
@@ -263,7 +263,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                             <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
                         )}</button>
     
-                        <ul id={"sourceDropdownMenu" + mod.id} className={`absolute py-1 text-sm bg-cyan-800 ${ sourcesMenuOpen ? "block" : "hidden" }`} aria-labelledby={"installerDropdownBtn" + mod.id}>
+                        <ul id={"sourceDropdownMenu" + mod.id} className={`absolute z-30 py-1 text-sm bg-cyan-800 ${ sourcesMenuOpen ? "block" : "hidden" }`} aria-labelledby={"installerDropdownBtn" + mod.id}>
                             {mod.ModSource.map((src: ModSource) => {
                                 return (
                                     <ModSourceRender
