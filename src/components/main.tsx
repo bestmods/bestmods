@@ -247,7 +247,7 @@ const Filters: React.FC<{classes?: string}> = ({ classes="w-full flex justify-ce
             }}
         >
             <Form className={classes}>
-                <div className="relative w-full md:w-32">
+                <div className="relative w-full sm:w-32">
                     <select name="filterTimeframe" value={filters?.timeframe?.toString() ?? ""} onChange={filters?.timeframeCb ?? ((e) => {
                     if (typeof window !== "undefined")
                         window.location.href = "/?timeframe=" + e.target.value;
@@ -260,7 +260,7 @@ const Filters: React.FC<{classes?: string}> = ({ classes="w-full flex justify-ce
                         <option value="5">All Time</option>
                     </select>
                 </div>
-                <div className="relative w-full md:w-3/12">
+                <div className="relative w-full sm:w-3/12">
                     <select name="filterSort" value={filters?.sort?.toString() ?? ""} onChange={filters?.sortCb ?? ((e) => {
                     if (typeof window !== "undefined")
                         window.location.href = "/?sort=" + e.target.value;
@@ -272,7 +272,7 @@ const Filters: React.FC<{classes?: string}> = ({ classes="w-full flex justify-ce
                         <option value="4">Most Recently Created</option>
                     </select>
                 </div>
-                <div className="relative w-full md:w-1/3 ">
+                <div className="relative w-full sm:w-1/3 ">
                     <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                         <svg aria-hidden="true" className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
@@ -282,7 +282,7 @@ const Filters: React.FC<{classes?: string}> = ({ classes="w-full flex justify-ce
                             window.location.href = "/?search=" + e.target.value;
                     })} className="block p-4 pl-10 w-full text-sm text-gray-100 bg-gray-700 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500" placeholder="Search for your favorite mods!" />
                 </div>
-                <div className="relative w-full md:w-16 flex items-center justify-center">
+                <div className="relative w-full sm:w-16 flex items-center justify-center">
                     <Link href="/category">
                         <div className="block p-4 w-full text-lg text-gray-100 bg-gray-700 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
                             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_429_11052)"><circle cx="17" cy="7" r="3" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="7" cy="17" r="3" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 14H20V19C20 19.5523 19.5523 20 19 20H15C14.4477 20 14 19.5523 14 19V14Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M4 4H10V9C10 9.55228 9.55228 10 9 10H5C4.44772 10 4 9.55228 4 9V4Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11052"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
