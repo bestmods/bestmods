@@ -102,7 +102,6 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
       },
 
       data: {
-        lastUpdate: new Date(),
         ...(hour != null && {
           ratingHour: hour
         }),
