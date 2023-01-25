@@ -54,8 +54,10 @@ model Mod {
   description      String
   descriptionShort String?
   install          String?
+
   createAt         DateTime  @default(now())
   updateAt         DateTime? @updatedAt
+  lastUpdate       DateTime @default(now())
 
   // For caching and whatnot.
   totalDownloads BigInt @default(0)
