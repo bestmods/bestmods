@@ -53,7 +53,7 @@ const genRatingsTask = async () => {
   }
 }
 
-// Schedule and generate task.
+// Schedule regeneration of ratings task if we haven't already.
 if (process.env.TASKS_START === undefined) {
   cron.schedule("*/5 * * * * *", genRatingsTask);
   genRatingsTask();

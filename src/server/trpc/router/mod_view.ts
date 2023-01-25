@@ -9,6 +9,9 @@ export const modViewRouter = router({
             url: z.string()
         }))
         .mutation(async ({ ctx, input }) => {
+            if (input.url.length < 1)
+                return;
+                
             try {
                 await ctx.prisma.mod.update({
                     where: {

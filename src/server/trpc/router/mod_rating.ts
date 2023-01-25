@@ -32,6 +32,9 @@ export const modRatingRouter = router({
             modId: z.number()
         }))
         .query(({ ctx, input}) => {
+            if (input.userId.length < 1 || input.modId < 1)
+                return null;
+            
             return ctx.prisma.modRating.findFirst({
                 where: {
                     userId: input.userId,
@@ -46,6 +49,9 @@ export const modRatingRouter = router({
             positive: z.boolean()
         }))
         .mutation(async ({ ctx, input }) => {
+            if (input.userId.length < 1 || input.modId < 1)
+                return;
+
             try {
                 await ctx.prisma.modRating.upsert({
                     where: {

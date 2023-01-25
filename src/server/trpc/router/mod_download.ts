@@ -32,6 +32,9 @@ export const modDownloadRouter = router({
             id: z.number()
         }))
         .query(({ ctx, input }) => {
+            if (input.id < 1)
+                return null;
+            
             return ctx.prisma.modDownload.findMany({
                 where: {
                     modId: input.id
