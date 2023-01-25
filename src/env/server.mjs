@@ -6,6 +6,10 @@
 import { serverSchema } from "./schema.mjs";
 import { env as clientEnv, formatErrors } from "./client.mjs";
 
+import cron from 'node-cron';
+
+import fetch from 'isomorphic-unfetch';
+
 const _serverEnv = serverSchema.safeParse(process.env);
 
 if (!_serverEnv.success) {
@@ -23,5 +27,35 @@ for (let key of Object.keys(_serverEnv.data)) {
     throw new Error("You are exposing a server-side env-variable");
   }
 }
+
+/* Tasks */
+const genRatingsTask = async () => {
+  const url = _serverEnv.data.NEXTAUTH_URL + "/api/genratings";
+  const authKey = _serverEnv.data.API_AUTH_KEY;
+
+  if (url.length < 1)
+    return;
+
+  const req = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Authorization": "Bearer " + authKey
+    }
+  });
+
+  const status = req.status;
+
+  if (status != 200) {
+    console.error("Error generating ratings.");
+
+    const body = await req.json();
+    
+    console.error(body);
+  }
+}
+
+// Schedule and generate task.
+cron.schedule("0 * * * *", genRatingsTask);
+genRatingsTask();
 
 export const env = { ..._serverEnv.data, ...clientEnv };
