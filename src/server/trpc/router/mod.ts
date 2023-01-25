@@ -390,6 +390,20 @@ export const modRouter = router({
                 take: count
             });
         }),
+    requireUpdate: publicProcedure
+        .input(z.object({
+            id: z.number()
+        }))
+        .mutation(async ({ ctx, input }) => {
+            await ctx.prisma.mod.update({
+                where: {
+                    id: input.id 
+                },
+                data: {
+                    needsRecounting: true
+                }
+            })
+        }),
     getAllMods: publicProcedure
         .query(({ ctx }) => {
             return ctx.prisma.mod.findMany();

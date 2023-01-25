@@ -55,9 +55,9 @@ model Mod {
   descriptionShort String?
   install          String?
 
-  createAt         DateTime  @default(now())
-  updateAt         DateTime? @updatedAt
-  lastUpdate       DateTime @default(now())
+  createAt        DateTime  @default(now())
+  updateAt        DateTime? @updatedAt
+  needsRecounting Boolean   @default(false)
 
   // For caching and whatnot.
   totalDownloads BigInt @default(0)

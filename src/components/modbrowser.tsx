@@ -54,11 +54,10 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
     const session = useContext(SessionCtx);
     const filters = useContext(FilterCtx);
 
-    if (session != null)
-        console.log(session);
-
     // Retrieve rating.
     const [rating, setRating] = useState(1);
+
+    const modRequiresUpdateMut = trpc.mod.requireUpdate.useMutation();
 
     useEffect(() => {
         if (filters?.timeframe == null)
@@ -126,6 +125,9 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
                             modId: mod.id,
                             positive: false
                         });
+
+                        // Require updating.
+                        modRequiresUpdateMut.mutate({id: mod.id});
                     } else
                         signIn("discord");
                 }}><svg className={`w-12 h-12 text-center${ (didRate && rateIsPositive) ? " opacity-20" : ""}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFA574" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 15L17 10" stroke="#FFA574" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white"/></clipPath></defs></svg></a>
@@ -137,13 +139,16 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
             <a href="#" onClick={(e) => {
                     e.preventDefault();
 
-                    // Submit negative rating.
+                    // Submit positive rating.
                     if (session?.user != null && !(didRate && !rateIsPositive)) {
                         myRatingMut.mutate({
                             userId: session.user.id,
                             modId: mod.id,
                             positive: true
                         });
+
+                        // Require updating.
+                        modRequiresUpdateMut.mutate({id: mod.id});
                     } else
                         signIn("discord");
                 }}><svg className={`w-12 h-12 text-center${ (didRate && !rateIsPositive) ? " opacity-20" : ""}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#60A5FA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 9L7 14" stroke="#60A5FA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white"/></clipPath></defs></svg></a>

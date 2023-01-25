@@ -35,28 +35,21 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
   ];
 
   const mods = await prisma.mod.findMany({
-    orderBy: {
-      lastUpdate: "asc"
+    where: {
+      needsRecounting: true
     },
     take: limit
   });
 
   mods.map(async (mod) => {
     intervals.map(async (i) => {
-      const dateAfter = (i.dateBack != null) ? new Date((Math.floor(Date.now() / 1000) - i.dateBack) * 1000) : null;
-
       let positives = 0;
       let negatives = 0;
 
       // Retrieve mod ratings.
       const ratings = await prisma.modRating.findMany({
         where: {
-          modId: mod.id,
-          ...(dateAfter != null && {
-            createdAt: {
-              lte: dateAfter
-            }
-          })
+          modId: mod.id
         }
       });
 

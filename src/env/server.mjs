@@ -55,7 +55,7 @@ const genRatingsTask = async () => {
 }
 
 // Schedule and generate task.
-cron.schedule("0 * * * *", genRatingsTask);
+cron.schedule("*/5 * * * * *", genRatingsTask);
 genRatingsTask();
 
 export const env = { ..._serverEnv.data, ...clientEnv };
