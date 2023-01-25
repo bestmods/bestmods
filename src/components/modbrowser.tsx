@@ -52,34 +52,48 @@ export const ModInstallerRender: React.FC<{modIns: ModInstaller}> = ({ modIns}) 
 export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
     // Retrieve session.
     const session = useContext(SessionCtx);
+    const filters = useContext(FilterCtx);
 
     if (session != null)
         console.log(session);
 
     // Retrieve rating.
     const [rating, setRating] = useState(1);
-    const [ratingReceived, setRatingReceived] = useState(false);
 
-    const ratingQuery = trpc.modRating.getModRatings.useQuery({
-        url: mod.url,
-        dateStart: null,
-        dateEnd: null
-    });
+    useEffect(() => {
+        if (filters?.timeframe == null)
+            return;
 
-    if (ratingQuery.data && ratingQuery.isFetched && !ratingReceived) {
-        let positives = 0;
-        let negatives = 0;
+        switch (filters.timeframe) {
+            case 0:
+                setRating(mod.ratingHour);
 
-        ratingQuery.data.map((r: ModRating) => {
-            if (r.positive)
-                positives++;
-            else
-                negatives++;
-        });
+                break;
 
-        setRating((positives - negatives) + 1);
-        setRatingReceived(true);
-    }
+            case 1:
+                setRating(mod.ratingDay);
+
+                break;
+
+            case 2:
+                setRating(mod.ratingWeek);
+
+                break;
+
+            case 3:
+                setRating(mod.ratingMonth);
+
+                break;
+
+            case 4:
+                setRating(mod.ratingYear);
+
+                break;
+
+            default:
+                setRating(mod.totalRating);
+        }
+    }, [filters?.timeframe]);
 
     // Controls whether user rated this mod or not.
     const myRatingQuery = trpc.modRating.getModUserRating.useQuery({
@@ -117,7 +131,7 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
                 }}><svg className={`w-12 h-12 text-center${ (didRate && rateIsPositive) ? " opacity-20" : ""}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFA574" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 15L17 10" stroke="#FFA574" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white"/></clipPath></defs></svg></a>
             </div>
             <div className="text-center">
-                <span className="text-white font-bold text-4xl">{rating}</span>
+                <span className="text-white font-bold text-4xl">{rating.toString()}</span>
             </div>
             <div className="ml-1">
             <a href="#" onClick={(e) => {
