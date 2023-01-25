@@ -7,7 +7,6 @@ import { serverSchema } from "./schema.mjs";
 import { env as clientEnv, formatErrors } from "./client.mjs";
 
 import cron from 'node-cron';
-
 import fetch from 'isomorphic-unfetch';
 
 const _serverEnv = serverSchema.safeParse(process.env);
@@ -55,7 +54,11 @@ const genRatingsTask = async () => {
 }
 
 // Schedule and generate task.
-cron.schedule("*/5 * * * * *", genRatingsTask);
-genRatingsTask();
+if (process.env.TASKS_START === undefined) {
+  cron.schedule("*/5 * * * * *", genRatingsTask);
+  genRatingsTask();
+
+  process.env.TASKS_START = "avalue";
+}
 
 export const env = { ..._serverEnv.data, ...clientEnv };
