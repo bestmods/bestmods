@@ -314,38 +314,6 @@ export const modRouter = router({
             // Process categories.
             const catsArr = JSON.parse(input.categories ?? "[]");
 
-            // Construct timeframe.
-            let dateAfter: Date | null = null;
-            let toSub: number | null = null;
-
-            switch (input.timeframe) {
-                case 0:
-                    toSub = 3600;
-
-                    break;
-
-                case 1:
-                    toSub = 86400;
-
-                    break;
-
-                case 2:
-                    toSub = 604800;
-
-                case 3:
-                    toSub = 592000;
-
-                    break;
-
-                case 4:
-                    toSub = 31536000;
-
-                    break;
-            }
-
-            if (toSub)
-                dateAfter = new Date((Math.floor(Date.now() / 1000) - toSub) * 1000);
-
             return ctx.prisma.mod.findMany({
                 include: {
                     category: true,
