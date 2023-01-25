@@ -54,9 +54,9 @@ const HeadInfo: React.FC<HeadArgs> = ({
         <Head>
             <title>{title}</title>
 
-            <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+            <meta httpEquiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
             <meta name="opt-targeting" content="{&quot;type&quot;:&quot;Browse&quot;}" />
-            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta httpEquiv="Content-Type" content="text/html; charset=UTF-8" />
 
             <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
