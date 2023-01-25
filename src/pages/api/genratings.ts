@@ -126,7 +126,7 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
           ratingYear: year
         }),
         ...(alltime != null && {
-          rating: alltime
+          totalRating: alltime
         })
       }
     });
