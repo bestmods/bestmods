@@ -3,7 +3,7 @@ import { trpc } from "../utils/trpc";
 
 import { signIn } from "next-auth/react";
 
-import { type Mod, type ModRating, type ModSource, type ModInstaller, type Category } from "@prisma/client";
+import { type Mod, type ModSource, type ModInstaller, type Category } from "@prisma/client";
 
 import InfiniteScroll from 'react-infinite-scroller';
 
@@ -318,7 +318,7 @@ const ModBrowser: React.FC<{categories?: Array<number> | null, visible?: boolean
         timeframe: filters?.timeframe ?? null,
         sort: filters?.sort ?? null,
         search: filters?.search ?? null,
-        visible: (visible != null) ? visible : null,
+        visible: (visible != null) ? visible : true,
 
         offset: modsVisible,
         count: modsPerPage
