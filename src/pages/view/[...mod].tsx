@@ -150,7 +150,7 @@ const MainContent: React.FC<{cdn?: string}> = ({ cdn }) => {
         <div className="container mx-auto w-full">
           <div id="modHeader">
             <div className="flex justify-center">
-              <img className="block rounded-t w-96 h-72" src={banner} alt="Mod Banner" />
+              <img className="block rounded-t w-[48rem] h-[36rem]" src={banner} alt="Mod Banner" />
             </div>
             <h1 className="text-4xl font-bold mb-4 text-white text-center">{mod.name}</h1>
           </div>
