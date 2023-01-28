@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, publicProcedure } from "../trpc";
+import { router, publicProcedure, contributorProcedure } from "../trpc";
 
 import fs from 'fs';
 import FileType from '../../../utils/base64';
@@ -38,7 +38,7 @@ export const categoryRouter = router({
                 }
             });
         }),
-    addCategory: publicProcedure
+    addCategory: contributorProcedure
         .input(z.object({
             id: z.number().nullable(),
             parent_id: z.number().nullable(),
@@ -169,7 +169,7 @@ export const categoryRouter = router({
                 }                
             }
         }),
-    delCategory: publicProcedure
+    delCategory: contributorProcedure
         .input(z.object({
             id: z.number()
         }))

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, publicProcedure } from "../trpc";
+import { router, publicProcedure, protectedProcedure, contributorProcedure } from "../trpc";
 
 import { TRPCError } from "@trpc/server"
 
@@ -42,7 +42,7 @@ export const modRatingRouter = router({
                 }
             });
         }),
-    addModUserRating: publicProcedure
+    addModUserRating: protectedProcedure
         .input(z.object({
             userId: z.string(),
             modId: z.number(),

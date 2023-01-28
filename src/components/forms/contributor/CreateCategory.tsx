@@ -10,27 +10,6 @@ import FormTemplate from '../main';
 import { AlertForm } from '../../alert';
 
 const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
-    /*
-    const session = useContext(SessionCtx);
-
-    if (session == null) {
-        return <>
-            <h1 className="text-center text-white font-bold text-lg">You must be logged in and have permission to access this page!</h1>
-        </>;
-    }
-
-    const permCheck = trpc.permission.checkPerm.useQuery({
-        userId: session.user?.id ?? "",
-        perm: "add_sources"
-    });
-
-    if (permCheck.data == null) {
-        return <>
-            <h1 className="text-center text-white font-bold text-lg">You are not authorized for this page!</h1>
-        </>;
-    }
-    */
-   
     const [dataRetrieved, setDataReceived] = useState(false);
 
     // Errors and success handles.

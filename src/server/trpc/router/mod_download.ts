@@ -1,14 +1,17 @@
 import { z } from "zod";
-import { router, publicProcedure } from "../trpc";
+import { router, publicProcedure, protectedProcedure, contributorProcedure } from "../trpc";
 
 import { TRPCError } from "@trpc/server"
 
 export const modDownloadRouter = router({
-    incModDownloadCnt: publicProcedure
+    incModDownloadCnt: protectedProcedure
         .input(z.object({
             url: z.string()
         }))
         .mutation(async ({ ctx, input }) => {
+            if (input.url.length < 1)
+                return;
+
             try {
                 await ctx.prisma.mod.update({
                     where: {
@@ -41,7 +44,7 @@ export const modDownloadRouter = router({
                 }
             })
         }),
-    addModDownload: publicProcedure
+    addModDownload: contributorProcedure
         .input(z.object({
             modId: z.number(),
             name: z.string(),

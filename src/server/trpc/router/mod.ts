@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, publicProcedure } from "../trpc";
+import { router, publicProcedure, protectedProcedure, contributorProcedure } from "../trpc";
 
 import fs from 'fs';
 import FileType from '../../../utils/base64';
@@ -31,7 +31,7 @@ export const modRouter = router({
                     }
             });
         }),
-    addMod: publicProcedure
+    addMod: contributorProcedure
         .input(z.object({
             id: z.number(),
 
@@ -399,7 +399,7 @@ export const modRouter = router({
                 take: count
             });
         }),
-    requireUpdate: publicProcedure
+    requireUpdate: protectedProcedure
         .input(z.object({
             id: z.number()
         }))

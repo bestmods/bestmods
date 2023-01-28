@@ -45,7 +45,7 @@ const isContributor = t.middleware(async ({ ctx, next }) => {
   const lookUp = await ctx.prisma.permissions.findFirst({
     where: {
       userId: ctx.session.user.id,
-      perm: "is_contributor"
+      perm: "contributor"
     }
   });
 

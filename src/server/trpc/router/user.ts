@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { router, publicProcedure, protectedProcedure } from "../trpc";
+import { router, protectedProcedure } from "../trpc";
 
 export const userRouter = router({
-    checkPermission: publicProcedure
+    checkPermission: protectedProcedure
         .input(z.object({
             name: z.string()
         }))

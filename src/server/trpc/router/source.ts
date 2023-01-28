@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, publicProcedure } from "../trpc";
+import { router, publicProcedure, protectedProcedure, contributorProcedure } from "../trpc";
 
 import fs from 'fs';
 import FileType from '../../../utils/base64';
@@ -20,7 +20,7 @@ export const sourceRouter = router({
 
         return src;
     }),
-    addSource: publicProcedure
+    addSource: contributorProcedure
         .input(
         z.object({
             name: z.string(),
@@ -187,7 +187,7 @@ export const sourceRouter = router({
                 });
             }
         }),
-    delSource: publicProcedure
+    delSource: contributorProcedure
         .input(z.object({
             url: z.string()
         }))

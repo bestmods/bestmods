@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { router, publicProcedure } from "../trpc";
+import { router, publicProcedure, protectedProcedure, contributorProcedure } from "../trpc";
 
 import { TRPCError } from "@trpc/server"
 
 export const permissionRouter = router({
-    checkPerm: publicProcedure
+    checkPerm: protectedProcedure
         .input(z.object({
             userId: z.string(),
             perm: z.string()
@@ -17,7 +17,7 @@ export const permissionRouter = router({
                 }
             });
         }),
-    addUserPerm: publicProcedure
+    addUserPerm: contributorProcedure
         .input(z.object({
             userId: z.string(),
             perm: z.string()

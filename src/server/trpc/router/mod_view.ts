@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { router, publicProcedure } from "../trpc";
+import { router, publicProcedure, protectedProcedure, contributorProcedure } from "../trpc";
 
 import { TRPCError } from "@trpc/server"
 
 export const modViewRouter = router({
-    incModViewCnt: publicProcedure
+    incModViewCnt: protectedProcedure
         .input(z.object({
             url: z.string()
         }))
@@ -30,7 +30,7 @@ export const modViewRouter = router({
                 });
             }
         }),
-        addModUniqueView: publicProcedure
+        addModUniqueView: protectedProcedure
             .input(z.object({
                 userId: z.string(),
                 modId: z.number()

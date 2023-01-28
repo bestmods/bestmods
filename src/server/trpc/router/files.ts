@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { router, publicProcedure } from "../trpc";
+import { router, contributorProcedure } from "../trpc";
 
 import fs from 'fs';
 
 export const filesRouter = router({
-    doesExist: publicProcedure
+    doesExist: contributorProcedure
         .input(z.object({
             path: z.string()
         }))

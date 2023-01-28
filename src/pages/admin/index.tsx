@@ -1,8 +1,9 @@
 import { type NextPage } from "next";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 
 import { BestModsPage } from '../../components/main';
 import HeadInfo from "../../components/Head";
+import { SessionCtx } from "../../components/main";
 
 import { AlertForm } from '../../components/alert';
 
@@ -23,6 +24,26 @@ const Home: NextPage = () => {
 };
 
 const MainContent: React.FC = () => {
+    // First make sure we have access to this page.
+    const session = useContext(SessionCtx);
+
+    if (session == null) {
+        return <div className="container mx-auto">
+          <h1 className="text-center text-white font-bold text-lg">You must be logged in and have permission to access this page!</h1>
+        </div>;
+    }
+
+    const permCheck = trpc.permission.checkPerm.useQuery({
+        userId: session.user?.id ?? "",
+        perm: "contributor"
+    });
+
+    if (permCheck.data == null) {
+        return <div className="container mx-auto">
+          <h1 className="text-center text-white font-bold text-lg">You are not authorized to view this page!</h1>
+        </div>;
+    }
+
     return (
         <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 gap-12 justify-items-center">
             <div className="p-10">
@@ -39,6 +60,7 @@ const Categories: React.FC = () => {
     const [success, setSuccess] = useState<string | null>(null);
 
     const catsQuery = trpc.category.getCategoriesMapping.useQuery({includeMods: false});
+
     const cats = catsQuery.data;
 
     const delCats = trpc.category.delCategory.useMutation();
