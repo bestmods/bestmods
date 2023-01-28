@@ -1,4 +1,5 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
+import { resolve } from "path";
 
 import { prisma } from "../../server/db/client";
 
@@ -42,92 +43,99 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   mods.map(async (mod) => {
-    intervals.map(async (i) => {
-      let positives = 0;
-      let negatives = 0;
+    new Promise<void>( async (resolve) => {
+      intervals.map(async (i) => {
+        let positives = 0;
+        let negatives = 0;
+  
+        // Retrieve mod ratings.
+        const ratings = await prisma.modRating.findMany({
+          where: {
+            modId: mod.id
+          }
+        });
+  
+        // Loop through each rating and decide whether upvote or downvote.
+        ratings.map((rating) => {
+          if (rating.positive)
+            positives++;
+          else
+            negatives++;
+        });
+  
+        if (positives < 1)
+          positives = 1;
+  
+        const rating = positives - negatives;
+  
+        // Now update mod with new values.
+        switch(i.type) {
+          case "hour":
+            hour = rating;
+  
+            break;
+  
+          case "day":
+            day = rating;
+  
+            break;
+  
+          case "week":
+            week = rating;
+  
+            break;
+  
+          case "month":
+            month = rating;
+            
+            break;
+  
+          case "year":
+            year = rating;
+  
+            break;
+  
+          default:
+            alltime = rating;
 
-      // Retrieve mod ratings.
-      const ratings = await prisma.modRating.findMany({
+            resolve();
+        }
+      });
+    }).then(async () => {
+      // Update mod.
+      const update = await prisma.mod.update({
         where: {
-          modId: mod.id
+          id: mod.id
+        },
+
+        data: {
+          needsRecounting: false,
+          ...(hour != null && {
+            ratingHour: hour
+          }),
+          ...(day != null && {
+            ratingDay: day
+          }),
+          ...(week != null && {
+            ratingWeek: week
+          }),
+          ...(month != null && {
+            ratingMonth: month
+          }),
+          ...(year != null && {
+            ratingYear: year
+          }),
+          ...(alltime != null && {
+            totalRating: alltime
+          })
         }
       });
 
-      // Loop through each rating and decide whether upvote or downvote.
-      ratings.map((rating) => {
-        if (rating.positive)
-          positives++;
-        else
-          negatives++;
-      });
-
-      const rating = positives - negatives;
-
-      // Now update mod with new values.
-      switch(i.type) {
-        case "hour":
-          hour = rating;
-
-          break;
-
-        case "day":
-          day = rating;
-
-          break;
-
-        case "week":
-          week = rating;
-
-          break;
-
-        case "month":
-          month = rating;
-          
-          break;
-
-        case "year":
-          year = rating;
-
-          break;
-
-        default:
-          alltime = rating;
-      }
+      if (update == null)
+        console.error("Unable to update ratings on mod ID #" + mod.id);
+      else
+        updates++;
     });
-
-    // Update mod.
-    const update = await prisma.mod.update({
-      where: {
-        id: mod.id
-      },
-
-      data: {
-        needsRecounting: false,
-        ...(hour != null && {
-          ratingHour: hour
-        }),
-        ...(day != null && {
-          ratingDay: day
-        }),
-        ...(week != null && {
-          ratingWeek: week
-        }),
-        ...(month != null && {
-          ratingMonth: month
-        }),
-        ...(year != null && {
-          ratingYear: year
-        }),
-        ...(alltime != null && {
-          totalRating: alltime
-        })
-      }
-    });
-
-    if (update == null)
-      console.error("Unable to update ratings on mod ID #" + mod.id);
-    else
-      updates++;
   });
 
   return res.status(200).json({code: 200, message: "Success!", updates: updates, limit: limit});
