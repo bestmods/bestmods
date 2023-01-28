@@ -126,6 +126,10 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
                             positive: false
                         });
 
+                        // Since we recalculate off of scheduling, set visible rating now.
+                        const curRating = Number(rating);
+                        setRating(curRating - 1);
+
                         // Require updating.
                         modRequiresUpdateMut.mutate({id: mod.id});
 
@@ -149,6 +153,10 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
                             modId: mod.id,
                             positive: true
                         });
+
+                        // Since we recalculate off of scheduling, set visible rating now.
+                        const curRating = Number(rating);
+                        setRating(curRating + 1);
 
                         // Require updating.
                         modRequiresUpdateMut.mutate({id: mod.id});
