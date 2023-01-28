@@ -41,7 +41,6 @@ const SourceForm: React.FC<{mod: any, num: number, sources: Source[]}> = ({ mod,
 
             <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Query URL</label>
             <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcQuery} id={srcQuery} defaultValue={mod != null && mod.ModSource != null && mod.ModSource[num - 1] != null ? mod.ModSource[num - 1]?.query ?? "" : ""} type="text" />
-
         </>
     )
 };
