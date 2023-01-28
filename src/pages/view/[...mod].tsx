@@ -128,10 +128,13 @@ const MainContent: React.FC<{cdn?: string}> = ({ cdn }) => {
       body = <ModOverview />;
 
     // Generate image and link URLs.
-    let banner = cdn + "/images/default_mod_banner.png";
+    let banner = "/images/default_mod_banner.png";
 
     if (mod.banner != null)
       banner = mod.banner;
+
+    if (cdn)
+      banner = cdn + banner;
 
     const overviewLink = "/view/" + mod.url;
     const installLink = "/view/" + mod.url + "/install";
@@ -261,7 +264,7 @@ const ModSources: React.FC<{cdn?: string}> = ({ cdn }) => {
             const srcData = srcQuery.data;
 
             let name = "Placeholder";
-            let banner = cdn ?? "" + "/images/source/default_banner.png";
+            let banner = "/images/asdsad.png";
 
             if (srcData != null && srcQuery.isFetched) {
               name = srcData.name;
@@ -269,6 +272,9 @@ const ModSources: React.FC<{cdn?: string}> = ({ cdn }) => {
               if (srcData.banner != null)
                 banner = srcData.banner;
             }
+
+            if (cdn)
+              banner = cdn + banner;
 
             const srcLink = "https://" + src.sourceUrl + "/" + src.query;
 
