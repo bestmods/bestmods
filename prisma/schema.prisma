@@ -52,7 +52,7 @@ model Mod {
   // General details.
   name             String
   banner           String?
-  description      String @db.Text
+  description      String  @db.Text
   descriptionShort String?
   install          String? @db.Text
 
@@ -184,12 +184,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String?  @db.Text
-  access_token      String?  @db.Text
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?  @db.Text
+  id_token          String? @db.Text
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
