@@ -342,21 +342,31 @@ export const modRouter = router({
                         ...(input.search && {
                             OR: [{
                                     name: {
-                                        contains: input.search 
+                                        contains: input.search,
+                                        mode: "insensitive" 
                                     }
                                 },
                                 {
                                     descriptionShort: {
-                                        contains: input.search
+                                        contains: input.search,
+                                        mode: "insensitive" 
+                                    }
+                                },
+                                {
+                                    ownerName: {
+                                        contains: input.search,
+                                        mode: "insensitive" 
                                     }
                                 },
                                 {
                                     category: {
                                         name: {
-                                            contains: input.search
+                                            contains: input.search,
+                                            mode: "insensitive" 
                                         },
                                         nameShort: {
-                                            contains: input.search
+                                            contains: input.search,
+                                            mode: "insensitive" 
                                         }
                                     }
                                 }
