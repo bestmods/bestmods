@@ -8,7 +8,8 @@ import { TRPCError } from "@trpc/server"
 export const modRouter = router({
     getMod: publicProcedure
         .input(z.object({
-            url: z.string()
+            url: z.string(),
+            visible: z.boolean().nullable()
         }))
         .query(({ ctx, input}) => {
             if (input.url.length < 1)
@@ -23,7 +24,10 @@ export const modRouter = router({
                         ModInstaller: true
                     },
                     where: {
-                        url: input.url
+                        url: input.url,
+                        ...(input.visible != null && {
+                            visible: input.visible
+                        })
                     }
             });
         }),

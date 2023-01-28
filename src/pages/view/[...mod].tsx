@@ -22,7 +22,7 @@ const Home: NextPage = () => {
   const modParam = (query.mod != null) ? query.mod[0] : null;
   const modView = (query.mod != null && query.mod[1] != null) ? query.mod[1] : 'overview';
 
-  const modQuery = trpc.mod.getMod.useQuery({url: modParam ?? ""});
+  const modQuery = trpc.mod.getMod.useQuery({url: modParam ?? "", visible: true});
   let mod: any | null = null;
 
   if (modQuery.data)
