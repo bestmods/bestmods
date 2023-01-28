@@ -299,7 +299,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     );
 };
 
-const ModBrowser: React.FC<{categories?: Array<number> | null }> = ({ categories }) => {
+const ModBrowser: React.FC<{categories?: Array<number> | null, visible?: boolean | null }> = ({ categories, visible }) => {
     const filters = useContext(FilterCtx);
 
     const [mods, setMods] = useState<Array<Mod>>([]);
@@ -318,6 +318,7 @@ const ModBrowser: React.FC<{categories?: Array<number> | null }> = ({ categories
         timeframe: filters?.timeframe ?? null,
         sort: filters?.sort ?? null,
         search: filters?.search ?? null,
+        visible: (visible != null) ? visible : null,
 
         offset: modsVisible,
         count: modsPerPage

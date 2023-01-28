@@ -40,8 +40,9 @@ model Category {
 }
 
 model Mod {
-  id  Int    @id @default(autoincrement())
-  url String @unique
+  id      Int     @id @default(autoincrement())
+  url     String  @unique
+  visible Boolean @default(true)
 
   // Ownership
   owner     User?   @relation(fields: [ownerId], references: [id], onUpdate: Cascade, onDelete: NoAction)

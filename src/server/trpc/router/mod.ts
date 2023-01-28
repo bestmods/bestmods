@@ -304,6 +304,8 @@ export const modRouter = router({
             timeframe: z.number().nullable(),
             sort: z.number().nullable(),
 
+            visible: z.boolean().nullable(),
+
             offset: z.number().nullable(),
             count: z.number().nullable()
         }))
@@ -326,6 +328,9 @@ export const modRouter = router({
                     ...(catsArr && catsArr.length > 0 && { categoryId: {
                             in: catsArr
                         }}),
+                        ...(input.visible != null && {
+                            visible: input.visible
+                        }),
                         ...(input.search && {
                             OR: [{
                                     name: {
