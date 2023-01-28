@@ -1,5 +1,5 @@
 import { type NextPage } from "next";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useRouter } from 'next/router'
 
 import { BestModsPage } from '../../components/main';
@@ -9,7 +9,17 @@ import ModBrowser from '../../components/modbrowser';
 
 import { trpc } from "../../utils/trpc";
 
+import { CfgCtx } from "../../components/main";
+
 const Home: NextPage = () => {
+    // Retrieve config and CDN.
+    const cfg = useContext(CfgCtx);
+
+    let cdn = "";
+
+    if (cfg && cfg.cdn)
+        cdn = cfg.cdn;
+
     const [error, setError] = useState<JSX.Element | null>(null);
     const notFound = <div><h1 className="text-center text-white text-lg font-bold">Not Found</h1><p className="text-center text-white">Category or game within URL not found.</p></div>;
 
@@ -44,7 +54,7 @@ const Home: NextPage = () => {
     else if (cat != null && cat.parent != null && cat.parent.hasBg)
         bgFile = cat.parent.url + ".png";
 
-    const bgPath = "/images/backgrounds/" + bgFile;
+    const bgPath = cdn + "/images/backgrounds/" + bgFile;
 
     const categories: Array<number> = [];
 

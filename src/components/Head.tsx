@@ -1,5 +1,9 @@
 import Head from "next/head";
 
+import { useContext } from "react";
+
+import { CfgCtx } from "./main";
+
 type HeadArgs = {
     title?: string
     description?: string
@@ -26,6 +30,13 @@ const HeadInfo: React.FC<HeadArgs> = ({
                     author="Best Mods",
                     section="Technology",
                     tags="mod"}) => {
+    // Retrieve config and CDN.
+    const cfg = useContext(CfgCtx);
+
+    // If we have CDN, prepend it to image if not null.
+    if (cfg && cfg.cdn)
+        image = cfg.cdn + image;
+
     // Retrieve URLs.
     let base_url;
     let full_url;

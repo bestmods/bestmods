@@ -1,7 +1,7 @@
 import { type NextPage } from "next";
-import React from "react";
+import React, { useContext } from "react";
 
-import { BestModsPage } from '../../components/main';
+import { BestModsPage, CfgCtx } from '../../components/main';
 import HeadInfo from "../../components/Head";
 
 import { trpc } from '../../utils/trpc';
@@ -16,13 +16,20 @@ const Home: NextPage = () => {
         />
         <BestModsPage
             content={<Categories></Categories>}
-            image={"/images/backgrounds/default.jpg"}
         ></BestModsPage>
     </>
     );
 };
 
 const Categories: React.FC = () => {
+    // Retrieve config and CDN.
+    const cfg = useContext(CfgCtx);
+
+    let cdn = "";
+
+    if (cfg && cfg.cdn)
+        cdn = cfg.cdn;
+
     const catsQuery = trpc.category.getCategoriesMapping.useQuery({includeMods: true});
     const cats = catsQuery.data;
 
@@ -34,7 +41,7 @@ const Categories: React.FC = () => {
                 <>
                     {cats.map((cat) => {
                         const viewLink = "/category/" + cat.url;
-                        const icon = (cat.icon != null) ? cat.icon : "/images/default_icon.png"
+                        const icon = (cat.icon != null) ? cat.icon : cdn + "/images/default_icon.png"
                         
                         return (
                             <div key={"cat-" + cat.id} className="p-4">
@@ -48,7 +55,7 @@ const Categories: React.FC = () => {
                                     <div className="p-4">
                                         {cat.children.map((catChild: any) => {
                                             const viewLinkChild = "/category/" + cat.url + "/" + catChild.url;
-                                            const iconChild = (catChild.icon != null) ? catChild.icon : "/images/default_icon.png";
+                                            const iconChild = (catChild.icon != null) ? catChild.icon : cdn + "/images/default_icon.png";
 
                                             return (
                                                 <div key={"catchild-" + catChild.id} className="flex items-center flex-wrap ml-4">

@@ -3,7 +3,7 @@ import React, { useState, useContext } from "react";
 
 import { BestModsPage } from '../../components/main';
 import HeadInfo from "../../components/Head";
-import { SessionCtx } from "../../components/main";
+import { SessionCtx, CfgCtx } from "../../components/main";
 
 import { AlertForm } from '../../components/alert';
 
@@ -17,7 +17,6 @@ const Home: NextPage = () => {
       <HeadInfo />
       <BestModsPage
         content={<MainContent></MainContent>}
-        image={"/images/backgrounds/default.jpg"}
       ></BestModsPage>
     </>
   );
@@ -57,6 +56,14 @@ const MainContent: React.FC = () => {
 }
 
 const Categories: React.FC = () => {
+    // Retrieve config and CDN.
+    const cfg = useContext(CfgCtx);
+
+    let cdn = "";
+
+    if (cfg && cfg.cdn)
+        cdn = cfg.cdn;
+
     const [success, setSuccess] = useState<string | null>(null);
 
     const catsQuery = trpc.category.getCategoriesMapping.useQuery({includeMods: false});
@@ -77,7 +84,7 @@ const Categories: React.FC = () => {
                 <>
                     {cats.map((cat) => {
                         const editLink = "/admin/add/category/" + cat.id;
-                        const icon = (cat.icon != null) ? cat.icon : "/images/default_icon.png"
+                        const icon = (cat.icon != null) ? cat.icon : cdn + "/images/default_icon.png"
                         
                         return (
                             <div key={"cat-" + cat.id} className="p-4">
@@ -97,7 +104,7 @@ const Categories: React.FC = () => {
                                     <div className="p-4">
                                         {cat.children.map((catChild) => {
                                             const editLinkChild = "/view/add/category/" + catChild.id;
-                                            const iconChild = (catChild.icon != null) ? catChild.icon : "/images/default_icon.png";
+                                            const iconChild = (catChild.icon != null) ? catChild.icon : cdn + "/images/default_icon.png";
 
                                             return (
                                                 <div key={"catchild-" + catChild.id} className="flex items-center flex-wrap ml-4">
@@ -133,6 +140,14 @@ const Categories: React.FC = () => {
 }
 
 const Sources: React.FC = () => {
+    // Retrieve config and CDN.
+    const cfg = useContext(CfgCtx);
+
+    let cdn = "";
+
+    if (cfg && cfg.cdn)
+        cdn = cfg.cdn;
+
     const [success, setSuccess] = useState<string | null>(null);
 
     const srcsQuery = trpc.source.getAllSources.useQuery();
@@ -152,7 +167,7 @@ const Sources: React.FC = () => {
                 <>
                     {srcs.map((src) => {
                         const editLink = "/admin/add/source/" + src.url;
-                        const icon = (src.icon != null) ? src.icon : "/images/default_icon.png"
+                        const icon = (src.icon != null) ? src.icon : cdn + "/images/default_icon.png"
                         
                         return (
                             <div key={"src-" + src.url} className="p-4">

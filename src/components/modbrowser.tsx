@@ -7,7 +7,7 @@ import { type Mod, type ModSource, type ModInstaller, type Category } from "@pri
 
 import InfiniteScroll from 'react-infinite-scroller';
 
-import { SessionCtx, FilterCtx } from './main';
+import { SessionCtx, FilterCtx, CfgCtx } from './main';
 
 type ModRowArguments = {
     mod: any
@@ -172,6 +172,14 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
 };
 
 const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
+    // Retrieve config and CDN.
+    const cfg = useContext(CfgCtx);
+
+    let cdn = "";
+
+    if (cfg && cfg.cdn)
+        cdn = cfg.cdn;
+
     // Retrieve category.
     const cat: Category | null = mod.category;
 
@@ -180,15 +188,15 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     const catPar = catParentQuery.data;
 
     // Generate correct banner.   
-    let banner = "/images/default_mod_banner.png";
+    let banner = cdn + "/images/default_mod_banner.png";
 
     if (mod.banner != null && mod.banner.length > 0)
         banner = mod.banner;
 
     // Generate category info.
-    const defaultCatIcon = "/images/default_icon.png";
-    const catIcon = (cat != null && cat.icon != null) ? cat.icon : defaultCatIcon;
-    const catParIcon = (catPar != null && catPar.icon !=  null) ? catPar.icon : defaultCatIcon;
+    const defaultCatIcon = cdn + "/images/default_icon.png";
+    const catIcon = (cat != null && cat.icon != null) ? cdn + cat.icon : defaultCatIcon;
+    const catParIcon = (catPar != null && catPar.icon !=  null) ? cdn + catPar.icon : defaultCatIcon;
 
     // Generating source info.
     const [sourcesMenuOpen, setSourcesMenuOpen] = useState(false);

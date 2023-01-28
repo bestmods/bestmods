@@ -7,6 +7,10 @@ import { trpc } from '../utils/trpc';
 
 import Link from 'next/link'
 
+export type cfg = {
+    cdn: string | undefined
+}
+
 export type filterArgs = {
     categories: Array<number> | null
     timeframe: number | null
@@ -21,10 +25,13 @@ export type filterArgs = {
 
 export const SessionCtx = React.createContext<any | null>(null);
 export const FilterCtx = React.createContext<filterArgs | null>(null);
+export const CfgCtx = React.createContext<cfg | null>(null);
 
 export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | null, background?: string, image?: string | null, overlay?: string }> = ({ content, classes, background="bg-gradient-to-b from-[#002736] to-[#00151b]", image="/images/backgrounds/default.jpg", overlay="bg-none md:bg-black/80" }) => {
+    // Retrieve session to use in context.
     const { data: session } = useSession();
 
+    // Handle filtering options.
     const [categories, setCategories] = useState<Array<number> | null>(null);
     const [timeframe, setTimeframe] = useState<number | null>(0);
     const [sort, setSort] = useState<number | null>(0);
@@ -48,7 +55,7 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
             
         setCategories(val);
     };
-  
+
     const timeframeCb = (e: React.ChangeEvent<HTMLSelectElement>) => {
       setTimeframe(Number(e.target.value));
     };
@@ -75,31 +82,42 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
       searchCb: searchCb
     };
 
+    // Retrieve config (e.g. CDN URL).
+    const cfgQuery = trpc.files.getCfg.useQuery();
+
+    const cfg = cfgQuery.data;
+
+    // Check if we must prepend CDN URL.
+    if (cfg != null && cfg.cdn)
+        image = cfg.cdn + image;
+
     return (
       <>
         <main key="main" className={`flex min-h-screen flex-col pb-20 ${classes != null ? classes : ""}`}>
-            <SessionCtx.Provider value={session}>
-                <FilterCtx.Provider value={filters}>
-                    <div className="flex flex-wrap justify-between">
-                        <MobileMenu />
-                        <Login />
-                    </div>
-                
-                    <Background 
-                        background={background}
-                        image={image}
-                        overlay={overlay}
-                    />
+            <CfgCtx.Provider value={cfg ?? null}>
+                <SessionCtx.Provider value={session}>
+                    <FilterCtx.Provider value={filters}>
+                        <div className="flex flex-wrap justify-between">
+                            <MobileMenu />
+                            <Login />
+                        </div>
+                    
+                        <Background 
+                            background={background}
+                            image={image}
+                            overlay={overlay}
+                        />
 
-                    <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-                        <Header />
-                    </div>
+                        <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+                            <Header />
+                        </div>
 
-                    <div className="relative">
-                        {content}
-                    </div>
-                </FilterCtx.Provider>
-            </SessionCtx.Provider>
+                        <div className="relative">
+                            {content}
+                        </div>
+                    </FilterCtx.Provider>
+                </SessionCtx.Provider>
+            </CfgCtx.Provider>
         </main>
       </>
     )

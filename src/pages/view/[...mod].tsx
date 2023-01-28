@@ -1,4 +1,4 @@
-import { BestModsPage, SessionCtx } from '../../components/main';
+import { BestModsPage, CfgCtx } from '../../components/main';
 
 import { type ModInstaller } from "@prisma/client";
 import { type NextPage } from "next";
@@ -14,10 +14,19 @@ import HeadInfo from "../../components/Head";
 
 import { ModInstallerRender, ModRatingRender } from '../../components/modbrowser';
 
+
 const ModCtx = React.createContext<any | boolean |null>(null);
 const ModViewCtx = React.createContext<string | null>(null);
 
 const Home: NextPage = () => {
+  // Retrieve config and CDN.
+  const cfg = useContext(CfgCtx);
+
+  let cdn = "";
+
+  if (cfg && cfg.cdn)
+      cdn = cfg.cdn;
+
   const { query } = useRouter()
   const modParam = (query.mod != null) ? query.mod[0] : null;
   const modView = (query.mod != null && query.mod[1] != null) ? query.mod[1] : 'overview';
@@ -49,7 +58,7 @@ const Home: NextPage = () => {
   else if (cat != null && cat.parent != null && cat.parent.hasBg)
       bgFile = cat.parent.url + ".png";
 
-  const bgPath = "/images/backgrounds/" + bgFile;
+  const bgPath = cdn + "/images/backgrounds/" + bgFile;
 
   return (
     <>
@@ -58,13 +67,13 @@ const Home: NextPage = () => {
           <HeadInfo
             title={mod ? mod.name + " - Best Mods" : "Viewing Mod - Best Mods"}
             description={mod != null && mod !== false ? mod.descriptionShort : "A mod submitted to Best Mods!"}
-            image={mod && mod.banner != null ? mod.banner : "/images/bestmods-filled.png"}
+            image={mod && mod.banner != null ? mod.banner : cdn + "/images/bestmods-filled.png"}
             webtype="article"
             author={mod && mod.ownerName != null ? mod.ownerName : "Best Mods"} 
           />
           {bgFile != null ? (
             <BestModsPage
-              content={<MainContent></MainContent>}
+              content={<MainContent cdn={cdn}></MainContent>}
               image={bgPath}
             />
           ) : (
@@ -78,9 +87,7 @@ const Home: NextPage = () => {
   );
 };
 
-const MainContent: React.FC = () => {
-  //const session = useContext(SessionCtx);
-
+const MainContent: React.FC<{cdn?: string}> = ({ cdn }) => {
   const mod = useContext(ModCtx);
   const modView = useContext(ModViewCtx);
 
@@ -114,14 +121,14 @@ const MainContent: React.FC = () => {
     if (modView == "install")
       body = <ModInstall />;
     else if (modView == "sources")
-      body = <ModSources />;
+      body = <ModSources cdn={cdn} />;
     else if (modView == "downloads")
       body = <ModDownloads />;
     else
       body = <ModOverview />;
 
     // Generate image and link URLs.
-    let banner = "/images/default_mod_banner.png";
+    let banner = cdn + "/images/default_mod_banner.png";
 
     if (mod.banner != null)
       banner = mod.banner;
@@ -237,7 +244,7 @@ const ModInstall: React.FC = () => {
   );
 };
 
-const ModSources: React.FC = () => {
+const ModSources: React.FC<{cdn?: string}> = ({ cdn }) => {
   const mod = useContext(ModCtx);
 
   return (
@@ -254,7 +261,7 @@ const ModSources: React.FC = () => {
             const srcData = srcQuery.data;
 
             let name = "Placeholder";
-            let banner = "/images/source/default_banner.png";
+            let banner = cdn ?? "" + "/images/source/default_banner.png";
 
             if (srcData != null && srcQuery.isFetched) {
               name = srcData.name;

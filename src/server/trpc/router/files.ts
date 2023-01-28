@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, contributorProcedure } from "../trpc";
+import { router, contributorProcedure, publicProcedure } from "../trpc";
 
 import fs from 'fs';
 
@@ -15,5 +15,11 @@ export const filesRouter = router({
                 exists = true;
 
             return exists;
+        }),
+    getCfg: publicProcedure
+        .query(() => {
+            return {
+                cdn: process.env.CDN_URL
+            };
         })
 });
