@@ -12,7 +12,6 @@ const Home: NextPage = () => {
       <HeadInfo />
       <BestModsPage
         content={<ModBrowser></ModBrowser>}
-        image={"/images/backgrounds/default.jpg"}
       ></BestModsPage>
     </>
   );

@@ -22,7 +22,7 @@ export type filterArgs = {
 export const SessionCtx = React.createContext<any | null>(null);
 export const FilterCtx = React.createContext<filterArgs | null>(null);
 
-export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | null, background?: string, image?: string | null, overlay?: string }> = ({ content, classes, background="bg-gradient-to-b from-[#002736] to-[#00151b]", image=null, overlay="bg-none md:bg-black/80" }) => {
+export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | null, background?: string, image?: string | null, overlay?: string }> = ({ content, classes, background="bg-gradient-to-b from-[#002736] to-[#00151b]", image="/images/backgrounds/default.jpg", overlay="bg-none md:bg-black/80" }) => {
     const { data: session } = useSession();
 
     const [categories, setCategories] = useState<Array<number> | null>(null);
