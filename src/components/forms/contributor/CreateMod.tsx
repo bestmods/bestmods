@@ -167,7 +167,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     const modMut = trpc.mod.addMod.useMutation();
     const sources = trpc.source.getAllSources.useQuery();
     const catsWithChildren = trpc.category.getCategoriesMapping.useQuery({includeMods: false});
-    const modQuery = trpc.mod.getMod.useQuery({url: preUrl ?? ""});
+    const modQuery = trpc.mod.getMod.useQuery({url: preUrl ?? "", visible: null});
 
     const mod = modQuery.data;
 
@@ -182,7 +182,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             else if (mod.ModInstaller != null && mod.ModInstaller.length > 1)
                 setInstallerCount(mod.ModInstaller.length);
 
-            setCategory(mod.categoryId);
+            setCategory(mod.categoryId ?? 0);
         }
     }, [mod]);
 
