@@ -69,7 +69,7 @@ const Home: NextPage = () => {
             description={mod != null && mod !== false ? mod.descriptionShort : "A mod submitted to Best Mods!"}
             image={mod && mod.banner != null ? mod.banner : cdn + "/images/bestmods-filled.png"}
             webtype="article"
-            author={mod && mod.ownerName != null ? mod.ownerName : "Best Mods"} 
+            author={(mod && mod.ownerName != null && mod.ownerName.length > 0) ? mod.ownerName : "Best Mods"} 
           />
           {bgFile != null ? (
             <BestModsPage
@@ -143,7 +143,7 @@ const MainContent: React.FC<{cdn?: string}> = ({ cdn }) => {
     const editLink = "/admin/add/mod/" + mod.url;
 
     // Check rating.
-    const onlyRating = ((mod.ModInstaller != null && mod.ModInstaller.length > 0) || mod.ownerName != null) ? false : true;
+    const onlyRating = ((mod.ModInstaller != null && mod.ModInstaller.length > 0) || (mod.ownerName != null && mod.ownerName.length > 0)) ? false : true;
 
     return (
       <>
@@ -164,7 +164,7 @@ const MainContent: React.FC<{cdn?: string}> = ({ cdn }) => {
 
           <div className="p-12 w-full rounded-b bg-cyan-900/80">
             <div className={`flex flex-wrap mb-4 ${onlyRating ? "justify-end" : "justify-between"}`}>
-              {mod.ownerName != null && (
+              {mod.ownerName != null && mod.ownerName.length > 0 && (
                   <div className="">
                     <p className="text-white">Maintained By <span className="font-bold">{mod.ownerName}</span></p>
                   </div>
