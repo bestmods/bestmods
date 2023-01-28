@@ -71,7 +71,7 @@ export const sourceRouter = router({
 
                         // Write file to disk.
                         try {
-                            fs.writeFileSync(process.env.PUBLIC_DIR + "/" + iconPath, buffer);
+                            fs.writeFileSync(process.env.UPLOADS_DIR + "/" + iconPath, buffer);
                         } catch (error) {
                             console.error("Error writing icon to disk.");
                             console.error(error);
@@ -119,7 +119,7 @@ export const sourceRouter = router({
 
                         // Write file to disk.
                         try {
-                            fs.writeFileSync(process.env.PUBLIC_DIR + "/" +  bannerPath, buffer);
+                            fs.writeFileSync(process.env.UPLOADS_DIR + "/" +  bannerPath, buffer);
                         } catch (error) {
                             console.error("Error writing banner to disk.");
                             console.error(error);

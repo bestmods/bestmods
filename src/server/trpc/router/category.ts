@@ -113,7 +113,7 @@ export const categoryRouter = router({
 
                             // Write file to disk.
                             try {
-                                fs.writeFileSync(process.env.PUBLIC_DIR + "/" + iconPath, buffer);
+                                fs.writeFileSync(process.env.UPLOADS_DIR + "/" + iconPath, buffer);
                             } catch (error) {
                                 console.error("Error writing icon to disk.");
                                 console.error(error);

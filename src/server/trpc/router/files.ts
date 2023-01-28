@@ -11,7 +11,7 @@ export const filesRouter = router({
         .query(({ input }) => {
             let exists = false;
 
-            if (fs.existsSync(process.env.PUBLIC_DIR + "/" + input.path))
+            if (fs.existsSync(process.env.UPLOADS_DIR + "/" + input.path))
                 exists = true;
 
             return exists;
