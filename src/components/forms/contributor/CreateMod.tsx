@@ -82,27 +82,6 @@ const InstallerForm: React.FC<{mod: any, num: number, sources: Source[]}> = ({ m
 };
 
 const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
-    /*
-    const session = useContext(SessionCtx);
-
-    if (session == null) {
-        return <>
-            <h1 className="text-center text-white font-bold text-lg">You must be logged in and have permission to access this page!</h1>
-        </>;
-    }
-
-    const permCheck = trpc.permission.checkPerm.useQuery({
-        userId: session.user?.id ?? "",
-        perm: "add_sources"
-    });
-
-    if (permCheck.data == null) {
-        return <>
-            <h1 className="text-center text-white font-bold text-lg">You are not authorized for this page!</h1>
-        </>;
-    }
-    */
-
     const [id, setId] = useState(0);
     const [dataReceived, setDataReceived] = useState(false);
 
@@ -224,11 +203,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
                     setCategory(val ?? 0);
                 }}>
-                    {catsWithChildren?.data?.map((cat) => {
-                        // Check if we need to set default category.
-                        if (category < 1)
-                            setCategory(cat.id);
-                        
+                    {catsWithChildren?.data?.map((cat) => {                        
                         return (
                             <React.Fragment key={cat.id}>
                                 <option value={cat.id}>{cat.name}</option>
