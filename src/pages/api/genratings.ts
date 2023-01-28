@@ -1,5 +1,4 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
-import { resolve } from "path";
 
 import { prisma } from "../../server/db/client";
 
