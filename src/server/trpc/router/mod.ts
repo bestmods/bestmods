@@ -137,8 +137,10 @@ export const modRouter = router({
                         id: input.id
                     },
                     update: {
-                        ownerName: input.ownerName,
-
+                        ...(input.ownerName != null && input.ownerName.length > 0 && {
+                            ownerName: input.ownerName
+                        }),
+                        
                         name: input.name,
                         url: input.url,
                         categoryId: input.category,
@@ -152,7 +154,9 @@ export const modRouter = router({
                         })
                     },
                     create: {
-                        ownerName: input.ownerName,
+                        ...(input.ownerName != null && input.ownerName.length > 0 && {
+                            ownerName: input.ownerName
+                        }),
                         
                         name: input.name,
                         url: input.url,
