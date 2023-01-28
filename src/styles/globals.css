@@ -157,6 +157,7 @@
     @apply !bg-none;
     @apply !bg-transparent;
     @apply !rounded-none;
+    @apply !whitespace-pre-line;
 }
 
 #viewContent h1
