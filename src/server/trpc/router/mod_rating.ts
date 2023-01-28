@@ -76,7 +76,27 @@ export const modRatingRouter = router({
                 throw new TRPCError({
                     code: "CONFLICT",
                     message: (typeof error == "string") ? error : ""
-                })
+                });
+            }
+
+            // Require recounting now.
+            try {
+                await ctx.prisma.mod.update({
+                    where: {
+                        id: input.modId
+                    },
+                    data: {
+                        needsRecounting: true
+                    }
+                });
+            } catch (error) {
+                console.error("Error requiring recount for mod ID #" + input.modId);
+                console.error(error);
+
+                throw new TRPCError({
+                    code: "CONFLICT",
+                    message: (typeof error == "string") ? error : ""
+                });
             }
         })
 });
