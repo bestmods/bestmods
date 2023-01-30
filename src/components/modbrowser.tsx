@@ -357,7 +357,7 @@ const ModBrowser: React.FC<{categories?: Array<number> | null, visible?: boolean
             const curVisibleMods = modsVisible;
 
             // Set visible number.
-            setModsVisible(curVisibleMods + modsPerPage);
+            setModsVisible(curVisibleMods + modQuery.data.length);
 
             // Set our mods
             setMods([...mods, ...modQuery.data ?? []]);
@@ -370,7 +370,6 @@ const ModBrowser: React.FC<{categories?: Array<number> | null, visible?: boolean
     useEffect(() => {
         setMods([]);
         setModsVisible(0);
-        modQuery.refetch();
 
         setIsFetching(true);
         setNeedMoreMods(true);
@@ -380,7 +379,6 @@ const ModBrowser: React.FC<{categories?: Array<number> | null, visible?: boolean
         if (isFetching)
             return;
 
-        modQuery.refetch();
         setIsFetching(true);
     };
 
