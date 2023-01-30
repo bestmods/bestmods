@@ -447,7 +447,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 const nameId = "downloads-" + num + "-name";
                 const urlId = "downloads-" + num + "-url";
 
-                return (<div key={num} className="mb-4">
+                return (<div key={"download-" + num} className="mb-4">
                     <div className="mb-4">
                         <h3 className="text-gray-200 text-lg font-bold mb-2">Download #{num}</h3>
 
@@ -486,7 +486,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             {range.map((num) => {
                 const urlId = "screenshots-" + num + "-url";
 
-                return (<div key={num} className="mb-4">
+                return (<div key={"screenshot-" + num} className="mb-4">
                     <div className="mb-4">
                         <h3 className="text-gray-200 text-lg font-bold mb-2">Screenshot #{num}</h3>
 
@@ -566,7 +566,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             {range.map((num) => {
                 return (
                     <>
-                        <div key={num} className="mb-4">
+                        <div key={"installer-" + num} className="mb-4">
                             <InstallerForm 
                                 mod={mod}
                                 num={num}
