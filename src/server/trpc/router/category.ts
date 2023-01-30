@@ -8,9 +8,10 @@ import { TRPCError } from "@trpc/server"
 export const categoryRouter = router({
     getCategory: publicProcedure
         .input(z.object({
-            id: z.number().nullable(),
-            url: z.string().nullable(),
-            parent: z.number().nullable(),
+            id: z.number().nullable().default(null),
+            url: z.string().nullable().default(null),
+            parent: z.number().nullable().default(null),
+            parentUrl: z.string().nullable().default(null),
             includeMods: z.boolean().default(false)
         }))
         .query(({ ctx, input}) => {
@@ -34,6 +35,11 @@ export const categoryRouter = router({
                     }),
                     ...(input.parent != null && {
                         parentId: input.parent
+                    }),
+                    ...(input.parentUrl != null && {
+                        parent: {
+                            url: input.parentUrl
+                        }
                     })
                 }
             });
