@@ -26,6 +26,8 @@ const Home: NextPage = () => {
 };
 
 const MainContent: React.FC = () => {
+    const { query } = useRouter()
+
     // First make sure we have access to this page.
     const session = useContext(SessionCtx);
 
@@ -46,7 +48,6 @@ const MainContent: React.FC = () => {
         </div>;
     }
    
-    const { query } = useRouter()
     const typeParam: string | null = (query.type != null && query.type[0] != null) ? query.type[0] : null;
     const typeId: string | null = (query.type != null && query.type[1] != null) ? query.type[1] : null;
 
