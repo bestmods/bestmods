@@ -41,7 +41,7 @@ const Categories: React.FC = () => {
                 <>
                     {cats.map((cat) => {
                         const viewLink = "/category/" + cat.url;
-                        const icon = (cat.icon != null) ? cat.icon : cdn + "/images/default_icon.png"
+                        const icon = (cat.icon != null) ? cdn + cat.icon : cdn + "/images/default_icon.png"
                         
                         return (
                             <div key={"cat-" + cat.id} className="p-4">
