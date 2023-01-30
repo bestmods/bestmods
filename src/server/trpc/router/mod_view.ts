@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { router, publicProcedure, protectedProcedure, contributorProcedure } from "../trpc";
+import { router, publicProcedure, protectedProcedure } from "../trpc";
 
 import { TRPCError } from "@trpc/server"
 
 export const modViewRouter = router({
-    incModViewCnt: protectedProcedure
+    incModViewCnt: publicProcedure
         .input(z.object({
             url: z.string()
         }))

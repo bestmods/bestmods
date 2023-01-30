@@ -14,7 +14,6 @@ import HeadInfo from "../../components/Head";
 
 import { ModInstallerRender, ModRatingRender } from '../../components/modbrowser';
 
-
 const ModCtx = React.createContext<any | boolean |null>(null);
 const ModViewCtx = React.createContext<string | null>(null);
 
