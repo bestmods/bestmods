@@ -328,90 +328,70 @@ export const modRouter = router({
                 include: {
                     category: true,
                     ModRating: true,
-
                     ModSource: true,
                     ModInstaller: true
                 },
                 where: {
-                    ...(catsArr && catsArr.length > 0 && { categoryId: {
-                            in: catsArr
-                        }}),
-                        ...(input.visible != null && {
-                            visible: input.visible
-                        }),
-                        ...(input.search && {
-                            OR: [{
-                                    name: {
-                                        contains: input.search,
+                    ...(catsArr && catsArr.length > 0 && { categoryId: { in: catsArr } }),
+                    ...(input.visible != null && { visible: input.visible }),
+                    ...(input.search && {
+                        OR: [
+                            { 
+                                name: { 
+                                    contains: input.search, 
+                                    mode: "insensitive" 
+                                } 
+                            },
+                            { 
+                                descriptionShort: { 
+                                    contains: input.search, 
+                                    mode: "insensitive" 
+                                } 
+                            },
+                            { 
+                                ownerName: { 
+                                    contains: input.search, 
+                                    mode: "insensitive" 
+                                } 
+                            },
+                            {
+                                category: {
+                                    name: { 
+                                        contains: input.search, 
+                                        mode: "insensitive" },
+                                    nameShort: { 
+                                        contains: input.search, 
                                         mode: "insensitive" 
-                                    }
-                                },
-                                {
-                                    descriptionShort: {
-                                        contains: input.search,
-                                        mode: "insensitive" 
-                                    }
-                                },
-                                {
-                                    ownerName: {
-                                        contains: input.search,
-                                        mode: "insensitive" 
-                                    }
-                                },
-                                {
-                                    category: {
-                                        name: {
-                                            contains: input.search,
-                                            mode: "insensitive" 
-                                        },
-                                        nameShort: {
-                                            contains: input.search,
-                                            mode: "insensitive" 
-                                        }
                                     }
                                 }
-                            ]
-                        }),
+                            }
+                        ]
+                    })
                 },
-                ...(input.sort != null && {
-                    orderBy: {
-                        ...(input.sort == 0 && {
-                            ...(input.timeframe == 0 && {
-                                ratingHour: "desc"
-                            }),
-                            ...(input.timeframe == 1 && {
-                                ratingDay: "desc"
-                            }),
-                            ...(input.timeframe == 2 && {
-                                ratingWeek: "desc"
-                            }),
-                            ...(input.timeframe == 3 && {
-                                ratingMonth: "desc"
-                            }),
-                            ...(input.timeframe == 4 && {
-                                ratingYear: "desc"
-                            }),
-                            ...(input.timeframe == 5 && {
-                                totalRating: "desc"
-                            })
+                orderBy: [
+                    {
+                        ...(input.sort != null && input.sort == 0 && {
+                            ...(input.timeframe == 0 && { ratingHour: "desc" }),
+                            ...(input.timeframe == 1 && { ratingDay: "desc" }),
+                            ...(input.timeframe == 2 && { ratingWeek: "desc" }),
+                            ...(input.timeframe == 3 && { ratingMonth: "desc" }),
+                            ...(input.timeframe == 4 && { ratingYear: "desc" }),
+                            ...(input.timeframe == 5 && { totalRating: "desc" })
                         }),
-                        ...(input.sort == 1 && {
-                            totalViews: "desc"
-                        }),
-                        ...(input.sort == 2 && {
-                            totalDownloads: "desc"
-                        }),
-                        ...(input.sort == 3 && {
-                            updateAt: "desc"
-                        }),
-                        ...(input.sort == 4) && {
-                            createAt: "desc"
-                        }
+                        ...(input.sort != null && input.sort > 0 && {
+                            ...(input.sort == 1 && { totalViews: "desc" }),
+                            ...(input.sort == 2 && { totalDownloads: "desc" }),
+                            ...(input.sort == 3 && { updateAt: "desc" }),
+                            ...(input.sort == 4 && { createAt: "desc" })
+                        })
+                    },
+                    {
+                        id: "desc"
                     }
-                }),
+                ],
                 skip: offset,
                 take: count
-            });
+              });
         }),
     requireUpdate: protectedProcedure
         .input(z.object({
