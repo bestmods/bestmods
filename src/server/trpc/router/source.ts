@@ -1,14 +1,16 @@
 import { z } from "zod";
-import { router, publicProcedure, protectedProcedure, contributorProcedure } from "../trpc";
+import { router, publicProcedure, contributorProcedure } from "../trpc";
 
 import fs from 'fs';
 import FileType from '../../../utils/base64';
 import { TRPCError } from "@trpc/server"
 
 export const sourceRouter = router({
-    getSource: publicProcedure.input(z.object({
+    getSource: publicProcedure
+        .input(z.object({
         url: z.string()
-    })).query(({ ctx, input}) => {
+        }))
+        .query(({ ctx, input}) => {
         if (input.url.length < 1)
             return null;
         
@@ -19,10 +21,9 @@ export const sourceRouter = router({
         });
 
         return src;
-    }),
+        }),
     addSource: contributorProcedure
-        .input(
-        z.object({
+        .input(z.object({
             name: z.string(),
             url: z.string(),
             icon: z.string().nullable(),
@@ -30,8 +31,7 @@ export const sourceRouter = router({
             classes: z.string().nullable(),
             iremove: z.boolean(),
             bremove: z.boolean()
-        })
-        )
+        }))
         .mutation(async ({ ctx, input }) => {
             // Make sure our URL is valid.
             if (input.url.length < 2) {
