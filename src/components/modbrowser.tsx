@@ -191,7 +191,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     let banner = cdn + "/images/default_mod_banner.png";
 
     if (mod.banner != null && mod.banner.length > 0)
-        banner = mod.banner;
+        banner = cdn + mod.banner;
 
     // Generate category info.
     const defaultCatIcon = cdn + "/images/default_icon.png";

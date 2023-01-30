@@ -19,14 +19,6 @@ const ModCtx = React.createContext<any | boolean |null>(null);
 const ModViewCtx = React.createContext<string | null>(null);
 
 const Home: NextPage = () => {
-  // Retrieve config and CDN.
-  const cfg = useContext(CfgCtx);
-
-  let cdn = "";
-
-  if (cfg && cfg.cdn)
-      cdn = cfg.cdn;
-
   const { query } = useRouter()
   const modParam = (query.mod != null) ? query.mod[0] : null;
   const modView = (query.mod != null && query.mod[1] != null) ? query.mod[1] : 'overview';
@@ -58,7 +50,7 @@ const Home: NextPage = () => {
   else if (cat != null && cat.parent != null && cat.parent.hasBg)
       bgFile = cat.parent.url + ".png";
 
-  const bgPath = cdn + "/images/backgrounds/" + bgFile;
+  const bgPath = "/images/backgrounds/" + bgFile;
 
   return (
     <>
@@ -67,13 +59,13 @@ const Home: NextPage = () => {
           <HeadInfo
             title={mod ? mod.name + " - Best Mods" : "Viewing Mod - Best Mods"}
             description={mod != null && mod !== false ? mod.descriptionShort : "A mod submitted to Best Mods!"}
-            image={mod && mod.banner != null ? mod.banner : cdn + "/images/bestmods-filled.png"}
+            image={mod && mod.banner != null ? mod.banner : "/images/bestmods-filled.png"}
             webtype="article"
             author={(mod && mod.ownerName != null && mod.ownerName.length > 0) ? mod.ownerName : "Best Mods"} 
           />
           {bgFile != null ? (
             <BestModsPage
-              content={<MainContent cdn={cdn}></MainContent>}
+              content={<MainContent></MainContent>}
               image={bgPath}
             />
           ) : (
@@ -87,7 +79,15 @@ const Home: NextPage = () => {
   );
 };
 
-const MainContent: React.FC<{cdn?: string}> = ({ cdn }) => {
+const MainContent: React.FC = () => {
+  // Retrieve config and CDN.
+  const cfg = useContext(CfgCtx);
+
+  let cdn = "";
+
+  if (cfg && cfg.cdn)
+      cdn = cfg.cdn;
+
   const mod = useContext(ModCtx);
   const modView = useContext(ModViewCtx);
 
@@ -128,13 +128,10 @@ const MainContent: React.FC<{cdn?: string}> = ({ cdn }) => {
       body = <ModOverview />;
 
     // Generate image and link URLs.
-    let banner = "/images/default_mod_banner.png";
+    let banner = cdn + "/images/default_mod_banner.png";
 
     if (mod.banner != null)
-      banner = mod.banner;
-
-    if (cdn)
-      banner = cdn + banner;
+      banner = cdn + mod.banner;
 
     const overviewLink = "/view/" + mod.url;
     const installLink = "/view/" + mod.url + "/install";
