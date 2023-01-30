@@ -10,6 +10,9 @@ export const permissionRouter = router({
             perm: z.string()
         }))
         .query(({ ctx, input }) => {
+            if (input.userId.length < 1)
+                return null;
+
             return ctx.prisma.permissions.findFirst({
                 where: {
                     userId: input.userId,

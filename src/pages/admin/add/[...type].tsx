@@ -31,16 +31,17 @@ const MainContent: React.FC = () => {
     // First make sure we have access to this page.
     const session = useContext(SessionCtx);
 
-    if (session == null) {
-        return <div className="container mx-auto">
-          <h1 className="text-center text-white font-bold text-lg">You must be logged in and have permission to access this page!</h1>
-        </div>;
-    }
 
     const permCheck = trpc.permission.checkPerm.useQuery({
-        userId: session.user?.id ?? "",
+        userId: session?.user?.id ?? "",
         perm: "contributor"
     });
+
+    if (session == null) {
+      return <div className="container mx-auto">
+        <h1 className="text-center text-white font-bold text-lg">You must be logged in and have permission to access this page!</h1>
+      </div>;
+  }
 
     if (permCheck.data == null) {
         return <div className="container mx-auto">
