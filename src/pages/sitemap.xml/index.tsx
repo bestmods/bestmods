@@ -42,8 +42,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         items.push({loc: "https://bestmods.io/category/" + end, lastmod: new Date().toISOString(), priority: 0.5});
     })
 
-
-  return getServerSideSitemap(ctx, items)
+    return getServerSideSitemap(ctx, items)
 }
 
 // Default export to prevent next.js errors
