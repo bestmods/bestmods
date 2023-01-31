@@ -58,7 +58,7 @@ const Home: NextPage = () => {
           <HeadInfo
             title={mod ? mod.name + " - Best Mods" : "Viewing Mod - Best Mods"}
             description={mod != null && mod !== false ? mod.descriptionShort : "A mod submitted to Best Mods!"}
-            image={mod && mod.banner != null ? mod.banner : "/images/bestmods-filled.png"}
+            image={mod && mod.banner != null ? mod.banner : undefined}
             webtype="article"
             author={(mod && mod.ownerName != null && mod.ownerName.length > 0) ? mod.ownerName : "Best Mods"} 
           />

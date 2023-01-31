@@ -84,8 +84,12 @@ const Home: NextPage = () => {
         </div>    
         : error;
 
-    let headTitle = "Mods - Best Mods";
-    let headDesc = "Find the top mods for you!"
+    let headTitle = undefined;
+    let headDesc = undefined;
+    let headerImg = undefined;
+
+    if (bgFile)
+        headerImg = "/images/backgrounds/" + bgFile
 
     if (cat != null) {
         if (cat.parent != null) {
@@ -102,6 +106,7 @@ const Home: NextPage = () => {
             <HeadInfo 
                 title={headTitle}
                 description={headDesc}
+                image={headerImg}
             />
             {bgFile != null ? (
                 <BestModsPage
