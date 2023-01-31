@@ -81,13 +81,28 @@ const Home: NextPage = () => {
                 </h1>
             </div>
             <ModBrowser categories={categories} />
-        </div>
-        
+        </div>    
         : error;
+
+    let headTitle = "Mods - Best Mods";
+    let headDesc = "Find the top mods for you!"
+
+    if (cat != null) {
+        if (cat.parent != null) {
+            headTitle = cat.parent.name + " " + cat.name + " - Best Mods";
+            headDesc = "Browse through many mods in " + cat.parent.name + " " + cat.name + "!";
+        } else {
+            headTitle = cat.name + " - Best Mods";
+            headDesc = "Browse through many mods in " + cat.name + "!";
+        }
+    }
 
     return (
         <>
-            <HeadInfo />
+            <HeadInfo 
+                title={headTitle}
+                description={headDesc}
+            />
             {bgFile != null ? (
                 <BestModsPage
                     content={content}
