@@ -1,8 +1,6 @@
 import Head from "next/head";
 
-import { useContext } from "react";
-
-import { CfgCtx } from "./main";
+import { trpc } from "../utils/trpc";
 
 type HeadArgs = {
     title?: string
@@ -31,7 +29,13 @@ const HeadInfo: React.FC<HeadArgs> = ({
                     section="Technology",
                     tags="mod"}) => {
     // Retrieve config and CDN.
-    const cfg = useContext(CfgCtx);
+    const cfgQuery = trpc.files.getCfg.useQuery();
+
+    const cfg = cfgQuery.data;
+
+    // Check if we must prepend CDN URL.
+    if (cfg != null && cfg.cdn)
+        image = cfg.cdn + image;
 
     // If we have CDN, prepend it to image if not null.
     if (cfg && cfg.cdn)
