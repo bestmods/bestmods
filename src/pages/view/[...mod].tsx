@@ -56,11 +56,11 @@ const Home: NextPage = () => {
       <ModCtx.Provider value={mod}>
         <ModViewCtx.Provider value={modView}>
           <HeadInfo
-            title={mod ? mod.name + " - Best Mods" : "Viewing Mod - Best Mods"}
-            description={mod != null && mod !== false ? mod.descriptionShort : "A mod submitted to Best Mods!"}
-            image={mod && mod.banner != null ? mod.banner : undefined}
+            title={mod ? mod.name + " - Best Mods" : null}
+            description={mod != null && mod !== false ? mod.descriptionShort : null}
+            image={mod && mod.banner != null ? mod.banner : null}
             webtype="article"
-            author={(mod && mod.ownerName != null && mod.ownerName.length > 0) ? mod.ownerName : "Best Mods"} 
+            author={(mod && mod.ownerName != null && mod.ownerName.length > 0) ? mod.ownerName : "Best Mods"}
           />
           {bgFile != null ? (
             <BestModsPage

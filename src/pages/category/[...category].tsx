@@ -84,9 +84,9 @@ const Home: NextPage = () => {
         </div>    
         : error;
 
-    let headTitle = undefined;
-    let headDesc = undefined;
-    let headerImg = undefined;
+    let headTitle = null;
+    let headDesc = null;
+    let headerImg = null;
 
     if (bgFile)
         headerImg = "/images/backgrounds/" + bgFile
