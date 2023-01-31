@@ -37,10 +37,6 @@ const HeadInfo: React.FC<HeadArgs> = ({
     if (cfg != null && cfg.cdn)
         image = cfg.cdn + image;
 
-    // If we have CDN, prepend it to image if not null.
-    if (cfg && cfg.cdn)
-        image = cfg.cdn + image;
-
     // Retrieve URLs.
     let base_url;
     let full_url;
