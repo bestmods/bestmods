@@ -22,7 +22,7 @@ const HeadInfo: React.FC<HeadArgs> = ({
                     title = "Best Mods - Discover The Top Mods On The Internet!",
                     description="Browse the best mods in gaming from many sources on the Internet! Project ran by The Modding Community!",
                     robots="index, follow",
-                    image="https://bestmods.io/images/bestmods-filled.png", 
+                    image="/images/bestmods-filled.png", 
                     webtype="website",
                     ptime="",
                     mtime="",
@@ -40,12 +40,10 @@ const HeadInfo: React.FC<HeadArgs> = ({
     // Retrieve URLs.
     let base_url;
     let full_url;
-    let full_image_url;
 
     if (typeof window !== "undefined") {
         base_url = window.location.protocol + "//" + window.location.host;
         full_url = base_url +  window.location.pathname;
-        full_image_url = base_url + image;
     }
 
     let article_info;
@@ -80,7 +78,7 @@ const HeadInfo: React.FC<HeadArgs> = ({
             <meta property="twitter:description" content={description} key="twitterDesc" />
             <meta property="twitter:site" content="@bestmodsio" />
             <meta property="twitter:creator" content="@bestmodsio" />
-            <meta property="twitter:image" content={full_image_url} key="twitterImg" />
+            <meta property="twitter:image" content={image} key="twitterImg" />
 
             <meta property="og:locale" content="en_US" />
             <meta property="og:title" content={title} key="ogTitle" />
@@ -91,7 +89,7 @@ const HeadInfo: React.FC<HeadArgs> = ({
             {article_info}
 
             <meta property="og:url" content={full_url} key="ogUrl" />
-            <meta property="og:image" content={full_image_url} key="ogImg" />
+            <meta property="og:image" content={image} key="ogImg" />
 
             <link rel="canonical" href={full_url} key="canonical" />
 
@@ -100,7 +98,7 @@ const HeadInfo: React.FC<HeadArgs> = ({
             <meta name="apple-mobile-web-app-title" content="Best Mods" />
             <meta name="theme-color" content="#181a1b" />
             <meta name="mobile-web-app-capable" content="yes" />
-            <link rel="apple-touch-icon" href={full_image_url} key="appIcon" />
+            <link rel="apple-touch-icon" href={image} key="appIcon" />
             <meta name="apple-touch-fullscreen" content="yes" />
             <meta name="apple-mobile-web-app-capable" content="yes" />
         </Head>
