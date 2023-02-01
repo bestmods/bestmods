@@ -27,7 +27,7 @@ export const SessionCtx = React.createContext<any | null>(null);
 export const FilterCtx = React.createContext<filterArgs | null>(null);
 export const CfgCtx = React.createContext<cfg | null>(null);
 
-export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | null, background?: string, image?: string | null, overlay?: string }> = ({ content, classes, background="bg-gradient-to-b from-[#002736] to-[#00151b]", image="/images/backgrounds/default.jpg", overlay="bg-none md:bg-black/80" }) => {
+export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | null, background?: string, image?: string | null, overlay?: string, excludeCdn?: boolean }> = ({ content, classes, background="bg-gradient-to-b from-[#002736] to-[#00151b]", image="/images/backgrounds/default.jpg", overlay="bg-none md:bg-black/80", excludeCdn=false }) => {
     // Retrieve session to use in context.
     const { data: session } = useSession();
 
@@ -88,7 +88,7 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
     const cfg = cfgQuery.data;
 
     // Check if we must prepend CDN URL.
-    if (cfg != null && cfg.cdn)
+    if (cfg != null && cfg.cdn && !excludeCdn)
         image = cfg.cdn + image;
 
     return (
