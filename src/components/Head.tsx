@@ -13,7 +13,8 @@ type HeadArgs = {
     etime?: string | null
     author?: string | null
     section?: string | null
-    tags?: string | null
+    tags?: string | null,
+    excludeCdn?: boolean
 }
 
 const HeadInfo: React.FC<HeadArgs> = ({
@@ -27,14 +28,15 @@ const HeadInfo: React.FC<HeadArgs> = ({
                     etime="",
                     author="Best Mods",
                     section="Technology",
-                    tags="mod"}) => {
+                    tags="mod",
+                    excludeCdn=false}) => {
     // Retrieve config and CDN.
     const cfgQuery = trpc.files.getCfg.useQuery();
 
     const cfg = cfgQuery.data;
 
     // Check if we must prepend CDN URL.
-    if (cfg != null && cfg.cdn)
+    if (cfg != null && cfg.cdn && !excludeCdn)
         image = cfg.cdn + image;
 
     // Retrieve URLs.

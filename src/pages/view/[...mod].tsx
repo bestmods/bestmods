@@ -18,7 +18,7 @@ import { GetServerSidePropsContext } from 'next';
 const ModCtx = React.createContext<any | boolean |null>(null);
 const ModViewCtx = React.createContext<string | null>(null);
 
-const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
+const Home: NextPage<{ mod: any, modView: string, cdn?: string }> = ({ mod, modView , cdn=""}) => {
   // Load category.
   const catQuery = trpc.category.getCategory.useQuery({
     id: mod?.category?.id ?? 0,
@@ -51,9 +51,10 @@ const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
           <HeadInfo
             title={mod ? mod.name + " - Best Mods" : null}
             description={mod != null && mod !== false ? mod.descriptionShort : null}
-            image={mod && mod.banner != null ? mod.banner : null}
+            image={mod && mod.banner != null ? cdn + mod.banner : null}
             webtype="article"
             author={(mod && mod.ownerName != null && mod.ownerName.length > 0) ? mod.ownerName : "Best Mods"}
+            excludeCdn={true}
           />
           {bgFile != null ? (
             <BestModsPage
@@ -336,7 +337,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     }
   });
 
-  return { props: { mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === 'bigint' ? v.toString() : v)), modView: modView } };
+  return { props: { mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === 'bigint' ? v.toString() : v)), modView: modView, cdn: process.env.CDN_URL ?? "" } };
 }
 
 export default Home;
