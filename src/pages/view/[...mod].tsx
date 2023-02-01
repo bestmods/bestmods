@@ -59,7 +59,7 @@ const Home: NextPage<{ mod: any, modView: string, cdn?: string }> = ({ mod, modV
           {bgFile != null ? (
             <BestModsPage
               content={<MainContent></MainContent>}
-              image={bgPath}
+              image={cdn + bgPath}
             />
           ) : (
             <BestModsPage
