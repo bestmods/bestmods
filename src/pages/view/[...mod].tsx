@@ -60,6 +60,7 @@ const Home: NextPage<{ mod: any, modView: string, cdn?: string }> = ({ mod, modV
             <BestModsPage
               content={<MainContent></MainContent>}
               image={cdn + bgPath}
+              excludeCdn={true}
             />
           ) : (
             <BestModsPage
