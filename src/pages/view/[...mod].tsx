@@ -58,13 +58,13 @@ const Home: NextPage<{ mod: any, modView: string, cdn?: string }> = ({ mod, modV
           />
           {bgFile != null ? (
             <BestModsPage
-              content={<MainContent></MainContent>}
+              content={<MainContent cdn={cdn}></MainContent>}
               image={cdn + bgPath}
               excludeCdn={true}
             />
           ) : (
             <BestModsPage
-              content={<MainContent></MainContent>}
+              content={<MainContent cdn={cdn}></MainContent>}
             />
           )}
         </ModViewCtx.Provider>
@@ -73,15 +73,7 @@ const Home: NextPage<{ mod: any, modView: string, cdn?: string }> = ({ mod, modV
   );
 };
 
-const MainContent: React.FC = () => {
-  // Retrieve config and CDN.
-  const cfg = useContext(CfgCtx);
-
-  let cdn = "";
-
-  if (cfg && cfg.cdn)
-      cdn = cfg.cdn;
-
+const MainContent: React.FC<{ cdn: string }> = ({ cdn="" }) => {
   const mod = useContext(ModCtx);
   const modView = useContext(ModViewCtx);
 
