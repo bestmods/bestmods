@@ -10,7 +10,7 @@ import { prisma } from '../../server/db/client';
 import { GetServerSidePropsContext } from 'next';
 import { Category } from "@prisma/client";
 
-const Home: NextPage<{ cat: any, cdn: string}> = ({ cat, cdn="" }) => {
+const Home: NextPage<{ cat: any, cdn: string }> = ({ cat, cdn="" }) => {
     const [error, setError] = useState<JSX.Element | null>(null);
     const notFound = <div><h1 className="text-center text-white text-lg font-bold">Not Found</h1><p className="text-center text-white">Category or game within URL not found.</p></div>;
 
@@ -25,7 +25,7 @@ const Home: NextPage<{ cat: any, cdn: string}> = ({ cat, cdn="" }) => {
             bgFile = cat.parent.url + ".png";
     }
         
-    const bgPath = cdn + "/images/backgrounds/" + bgFile;
+    const bgPath = "/images/backgrounds/" + bgFile;
 
     const categories: Array<number> = [];
 
@@ -68,7 +68,7 @@ const Home: NextPage<{ cat: any, cdn: string}> = ({ cat, cdn="" }) => {
     let headerImg = null;
 
     if (bgFile)
-        headerImg = "/images/backgrounds/" + bgFile
+        headerImg = bgPath
 
     if (cat != null) {
         if (cat.parent != null) {
