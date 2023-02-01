@@ -1,39 +1,18 @@
 import { type NextPage } from "next";
 import React, { useState, useContext } from "react";
-import { useRouter } from 'next/router'
 
 import { BestModsPage } from '../../components/main';
 import HeadInfo from "../../components/Head";
 
 import ModBrowser from '../../components/modbrowser';
 
-import { trpc } from "../../utils/trpc";
+import { prisma } from '../../server/db/client';
+import { GetServerSidePropsContext } from 'next';
+import { Category } from "@prisma/client";
 
-import { CfgCtx } from "../../components/main";
-
-const Home: NextPage = () => {
-    // Retrieve config and CDN.
-    const cfg = useContext(CfgCtx);
-
-    let cdn = "";
-
-    if (cfg && cfg.cdn)
-        cdn = cfg.cdn;
-
+const Home: NextPage<{ cat: any, cdn: string}> = ({ cat, cdn="" }) => {
     const [error, setError] = useState<JSX.Element | null>(null);
     const notFound = <div><h1 className="text-center text-white text-lg font-bold">Not Found</h1><p className="text-center text-white">Category or game within URL not found.</p></div>;
-
-    const { query } = useRouter();
-
-    const category = (query.category != null) ? query.category[0] : null;
-    const category2 = (query.category != null && query.category[1] != null) ? query.category[1] : null; 
-
-    const categoryQuery = trpc.category.getCategory.useQuery({
-        url: (category2) ? category2 : category ?? null,
-        parentUrl: (category2) ? category : null
-    });
-
-    const cat = categoryQuery.data;
 
     let bgFile: string | null = null;
 
@@ -57,7 +36,7 @@ const Home: NextPage = () => {
             setError(null);
 
         if (cat.children) {
-            cat.children.map((child) => {
+            cat.children.map((child: Category) => {
                 categories.push(child.id);
             });
         }
@@ -122,5 +101,34 @@ const Home: NextPage = () => {
     );
 };
 
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+    // We need to retrieve some props.
+    if (!ctx.params || !ctx.params.category)
+      return { props: { cat: null } }
+    
+    const cat1 = ctx.params.category[0] ?? null;
+    const cat2 = ctx.params.category[1] ?? null;
+
+    if (!cat1)
+        return { props: { cat: null } }
+  
+    const cat = await prisma.category.findFirst({
+        include: {
+            children: true,
+            parent: true,
+            Mod: true
+        },
+        where: {
+            url: (cat2 != null) ? cat2 : cat1,
+            ...(cat2 != null && {
+                parent: {
+                    url: cat1
+                }
+            })
+        }
+    });
+  
+    return { props: { cat: JSON.parse(JSON.stringify(cat, (_, v) => typeof v === 'bigint' ? v.toString() : v)), cdn: process.env.CDN_URL ?? ""} };
+}  
 
 export default Home;

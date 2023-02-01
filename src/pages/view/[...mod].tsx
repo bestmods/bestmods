@@ -3,7 +3,6 @@ import { BestModsPage, CfgCtx } from '../../components/main';
 import { type ModInstaller } from "@prisma/client";
 import { type NextPage } from "next";
 import React, { useContext, useState, useEffect } from "react";
-import { useRouter } from 'next/router'
 
 import { trpc } from "../../utils/trpc";
 import { type ModSource, type ModDownload } from '@prisma/client';
@@ -11,43 +10,37 @@ import { type ModSource, type ModDownload } from '@prisma/client';
 import { marked } from 'marked';
 
 import HeadInfo from "../../components/Head";
-
 import { ModInstallerRender, ModRatingRender } from '../../components/modbrowser';
+
+import { prisma } from '../../server/db/client';
+import { GetServerSidePropsContext } from 'next';
 
 const ModCtx = React.createContext<any | boolean |null>(null);
 const ModViewCtx = React.createContext<string | null>(null);
 
-const Home: NextPage = () => {
-  const { query } = useRouter()
-  const modParam = (query.mod != null) ? query.mod[0] : null;
-  const modView = (query.mod != null && query.mod[1] != null) ? query.mod[1] : 'overview';
-
-  const modQuery = trpc.mod.getMod.useQuery({url: modParam ?? "", visible: true});
-  let mod: any | null = null;
-
-  if (modQuery.data)
-    mod = modQuery.data;
-  else if (!modQuery.data && modQuery.isFetched)
-    mod = false;
-
+const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
   // Load category.
   const catQuery = trpc.category.getCategory.useQuery({
     id: mod?.category?.id ?? 0,
     url: null,
     parent: null
   });
-
   const cat = catQuery.data;
 
-  // Handle background image.
-  let bgFile: string | null = null;
+  // Handle background.
+  const [bgFile, setBgFile] = useState<string | null>(null);
 
-  if (cat != null && cat.hasBg && cat.parent != null)
-      bgFile = cat.parent.url + "_" + cat.url + ".png";
-  else if (cat != null && cat.hasBg && cat.parent == null)
-      bgFile = cat.url + ".png";
-  else if (cat != null && cat.parent != null && cat.parent.hasBg)
-      bgFile = cat.parent.url + ".png";
+  useEffect(() => {
+    if (!cat)
+      return;
+
+    if (cat.hasBg && cat.parent != null)
+      setBgFile(cat.parent.url + "_" + cat.url + ".png");
+    else if (cat.hasBg && cat.parent == null)
+      setBgFile(cat.url + ".png");
+    else if (cat.parent != null && cat.parent.hasBg)
+      setBgFile(cat.parent.url + ".png");
+  }, [cat]);
 
   const bgPath = "/images/backgrounds/" + bgFile;
 
@@ -108,7 +101,8 @@ const MainContent: React.FC = () => {
   // Installer menu.
   const [installersMenuOpen, setInstallersMenuOpen] = useState(false);
 
-  if (mod != null && mod !== false) {
+
+  if (mod != null) {
     let body: JSX.Element = <></>;
 
     // Generate classes for buttons and such.
@@ -208,14 +202,10 @@ const MainContent: React.FC = () => {
     )
   } else {
     return (
-      <>
-        {mod === false && (
-          <div className="container mx-auto">
-            <h1 className="text-2xl font-bold mb-4 text-white text-center">Not Found</h1>
-            <p className="text-white text-center">Mod not found. Please check the URL.</p>
-          </div>
-        )}
-      </>
+      <div className="container mx-auto">
+        <h1 className="text-2xl font-bold mb-4 text-white text-center">Not Found</h1>
+        <p className="text-white text-center">Mod not found. Please check the URL.</p>
+      </div>
     );
   }
 };
@@ -328,5 +318,25 @@ const ModDownloads: React.FC = () => {
     </>
   );
 };
+
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+  // We need to retrieve some props.
+  if (!ctx.params || !ctx.params.mod)
+    return { props: { mod: null, modView: "overview" } }
+  
+  const url = ctx.params.mod[0] ?? "";
+  const modView = ctx.params.mod[1] ?? "overview";
+
+  const mod = await prisma.mod.findFirst({
+    include: {
+      category: true
+    },
+    where: {
+      url: url
+    }
+  });
+
+  return { props: { mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === 'bigint' ? v.toString() : v)), modView: modView } };
+}
 
 export default Home;
