@@ -24,6 +24,8 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
   let year: number | null = null;
   let alltime: number | null = null;
 
+  const dateAnHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+
   // Could probably make type integer for better perf, but not a big deal making it a string for readability.
   const intervals: Array<{type: string, dateBack: number | null}> = [
     {type: "hour", dateBack: 360},
@@ -36,7 +38,16 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const mods = await prisma.mod.findMany({
     where: {
-      needsRecounting: true
+      OR: [
+        {
+          needsRecounting: true,
+        },
+        {
+          updateAt: {
+            lte: dateAnHourAgo
+          }
+        }
+      ]
     },
     take: limit
   });
