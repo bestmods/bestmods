@@ -44,7 +44,7 @@ export const ModInstallerRender: React.FC<{modIns: ModInstaller}> = ({ modIns}) 
 
     return (
         <li>
-            <a rel="noreferrer" href={url} className="block px-4 hover:bg-teal-900 text-white" target="_blank">{name}</a>
+            <a rel="noreferrer" href={url} className="block px-4 hover:bg-teal-900 text-white">{name}</a>
         </li>
     );
 };
