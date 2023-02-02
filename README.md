@@ -21,6 +21,7 @@ Any help from the open source community is highly appreciated on this project! W
 * [React](https://reactjs.org/).
 * [tRPC](https://trpc.io/).
 * [Prisma](https://www.prisma.io/).
+* [Tailwind CSS](https://tailwindcss.com/).
 
 Please take a look at our [road map](https://github.com/bestmods/roadmap/issues) and join our [Discord server](https://discord.moddingcommunity.com/) for communication!
 
