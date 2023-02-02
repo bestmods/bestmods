@@ -56,7 +56,6 @@ const Home: NextPage<{ cat: any, cdn: string }> = ({ cat, cdn="" }) => {
                             {cat != null && cat.name + " "}
                         </>
                     )}
-                    Mods
                 </h1>
             </div>
             <ModBrowser categories={categories} />
