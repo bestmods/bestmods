@@ -121,6 +121,9 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
 
                     // Submit negative rating.
                     if (session?.user != null) {
+                        if (didRate && !rateIsPositive)
+                            return;
+
                         myRatingMut.mutate({
                             userId: session.user.id,
                             modId: mod.id,
@@ -149,6 +152,9 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
 
                     // Submit positive rating.
                     if (session?.user != null) {
+                        if (didRate && rateIsPositive)
+                            return;
+
                         myRatingMut.mutate({
                             userId: session.user.id,
                             modId: mod.id,
