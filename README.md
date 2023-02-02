@@ -1,28 +1,50 @@
-# Create T3 App
+# <a href="https://bestmods.io/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/bestmods.png" data-canonical-src="https://github.com/bestmods/bestmods/blob/main/gitimages/bestmods.png" /></a>
+Browse the best mods in gaming from many sources on the Internet!
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+<a href="https://bestmods.io/" target="_blank"><img src="https://github.com/BestMods/bestmods/blob/main/preview.jpeg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/preview.jpeg" /></a>
 
-## What's next? How do I make an app with this?
+## About This Project
+An open-source [website](https://bestmods.io) made by [Christian Deacon](https://github.com/gamemann) that helps users find their favorite mods.
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+Please also check out the [@modcommunity](https://github.com/modcommunity)! They are doing things that will change the direction of gaming on a large scale by using modding and open source like never seen before!
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Road Map
+A road map for the website may be found [here](https://github.com/bestmods/roadmap/issues)!
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+Each GitHub project represents a quarter and lists all things we're hoping to get completed by the end of said quarter.
 
-## Learn More
+## Contributing
+Any help from the open source community is highly appreciated on this project! We utilize the following.
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+* [Laravel](https://laravel.com/) (PHP and Back-End).
+* [Tailwind CSS](https://tailwindcss.com/) (HTML, CSS, and Front-End).
+* [jQuery](https://jquery.com/) (JavaScript and Front-End).
+* [DataTables](https://datatables.net/) (awesome jQuery library for loading millions of entries in a table).
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+Please take a look at our [road map](https://github.com/bestmods/roadmap/issues) and join our [Discord server](https://discord.moddingcommunity.com/) for communication!
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+## Our Community
+[Best Mods](https://bestmods.io) is ran by [Christian Deacon](https://github.com/gamemann) and the [The Modding Community](https://moddingcommunity.com/). We have a Discord [here](https://discord.moddingcommunity.com/) if you want to socialize and interact with others including talented modders and content creators.
 
-## How do I deploy this?
+Additionally, you may also use our discussions forum [here](https://github.com/orgs/BestMods/discussions)!
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+### Social Media
+* [TikTok](https://tiktok.com/@bestmodsio) (@bestmodsio)
+* [Twitter](https://twitter.com/bestmodsio) (@bestmodsio)
+* [Instagram](https://instagram.com/bestmodsio) (@bestmodsio)
+* [Facebook](https://facebook.com/bestmodsio)
+* [Linkedin](https://linkedin.com/company/bestmods)
+* [Steam](https://steamcommunity.com/groups/best-mods)
+* [Reddit](https://reddit.com/r/bestmods)
+
+## Installation & Deployment
+*To be continued...*
+
+## Showcase
+<a href="https://bestmods.io/view/mc-jurassicraft" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview2.jpeg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview2.jpeg" /></a>
+<a href="https://bestmods.io/view/mc-jurassicraft/install" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview3.jpeg" data-canonical-src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview3.jpeg" /></a>
+<a href="https://bestmods.io/view/mc-jurassicraft/downloads" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview4.jpeg" data-canonical-src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview4.jpeg" /></a>
+
+## Credits
+* [Christian Deacon](https://github.com/gamemann) - Creator
+* [The Modding Community](https://github.com/modcommunity)
