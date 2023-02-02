@@ -28,7 +28,7 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // Could probably make type integer for better perf, but not a big deal making it a string for readability.
   const intervals: Array<{type: string, dateBack: number | null}> = [
-    {type: "hour", dateBack: 360},
+    {type: "hour", dateBack: 3600},
     {type: "day", dateBack: 86400},
     {type: "week", dateBack: 604800},
     {type: "month", dateBack: 592000},
@@ -60,11 +60,16 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
       intervals.map(async (i) => {
         let positives = 0;
         let negatives = 0;
-  
+
         // Retrieve mod ratings.
         const ratings = await prisma.modRating.findMany({
           where: {
-            modId: mod.id
+            modId: mod.id,
+            ...(i.dateBack != null && {
+              createdAt: {
+                gte: new Date(((Date.now() / 1000) - i.dateBack) * 1000)
+              }
+            })
           }
         });
   
@@ -143,10 +148,10 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
         }
       });
 
+      updates++;
+
       if (update == null)
         console.error("Unable to update ratings on mod ID #" + mod.id);
-      else
-        updates++;
     });
   });
 
