@@ -8,6 +8,7 @@ import { type Mod, type ModSource, type ModInstaller, type Category } from "@pri
 import InfiniteScroll from 'react-infinite-scroller';
 
 import { SessionCtx, FilterCtx, CfgCtx } from './main';
+import { string } from 'zod';
 
 type ModRowArguments = {
     mod: any
@@ -212,6 +213,9 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
 
     // Generate installers.
     const [installersMenuOpen, setInstallersMenuOpen] = useState(false);
+
+    const descShort = String(mod.descriptionShort);
+    const dots = (descShort.length > 120) ? "..." : "";
     
     return (
         <div key={mod.id} className={"w-4/5 md:w-96 h-[32rem] rounded bg-gradient-to-b from-cyan-800 to-cyan-900 flex flex-col shadow-lg" + addClasses}>
@@ -224,9 +228,9 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                 )}
 
             </div>
-            <div className="mainInfo ml-8 mr-8 mb-4 max-h-20 overflow-hidden text-ellipsis">
+            <div className="mainInfo ml-8 mr-8 mb-4 max-h-24 grow">
                     <h3 className="text-white text-xl font-bold text-center">{mod.name}</h3>
-                    <p className="text-white mt-2 text-sm">{mod.descriptionShort}</p>
+                    <p className="text-white mt-2 text-sm">{descShort.substring(0, 120)}{dots}</p>
             </div>
             {catPar != null && (
                 <div className="modCategory ml-8 mr-8 mb-1 text-white flex">
