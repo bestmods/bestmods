@@ -323,7 +323,10 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
   const mod = await prisma.mod.findFirst({
     include: {
-      category: true
+      category: true,
+      ModSource: true,
+      ModDownload: true,
+      ModInstaller: true
     },
     where: {
       url: url
