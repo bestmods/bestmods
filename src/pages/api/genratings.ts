@@ -65,7 +65,7 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
         if (positives < 1)
           positives = 1;
   
-        const rating = positives - negatives;
+        const rating = (positives - negatives) + 1;
   
         // Now update mod with new values.
         switch(i.type) {
