@@ -204,7 +204,8 @@ export const categoryRouter = router({
         }),
     getCategoriesMapping: publicProcedure
         .input(z.object({
-            includeMods: z.boolean().default(false)
+            includeMods: z.boolean().default(false),
+            includeModsCnt: z.boolean().default(false)
         }))
         .query(({ ctx, input }) => {
             // First retrieve all platform categories (parent ID => 0).
@@ -216,6 +217,13 @@ export const categoryRouter = router({
                     children: true,
                     ...(input.includeMods && {
                         Mod: true
+                    }),
+                    ...(input.includeModsCnt && {
+                        _count: {
+                            select: {
+                                Mod: true 
+                            }
+                        }
                     })
                 }
             });
@@ -223,5 +231,23 @@ export const categoryRouter = router({
     getAllCategories: publicProcedure
         .query(({ ctx }) => {
             return ctx.prisma.category.findMany();
+        }),
+    getModCnt: publicProcedure
+        .input(z.object({
+            id: z.number()
+        }))
+        .query(({ ctx, input }) => {
+            return ctx.prisma.category.findFirst({
+                where: {
+                    id: input.id
+                },
+                select: {
+                    _count: {
+                        select: {
+                            Mod: true 
+                        }
+                    }
+                }
+            });
         })
 });

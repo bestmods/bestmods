@@ -6,6 +6,7 @@ import HeadInfo from "../../components/Head";
 
 import { trpc } from '../../utils/trpc';
 import Link from 'next/link';
+import { Category } from "@prisma/client";
 
 const Home: NextPage = () => {
     return (
@@ -21,6 +22,23 @@ const Home: NextPage = () => {
     );
 };
 
+const ChildRender: React.FC<{ child: Category, parent: any, cdn: string }> = ({ child, parent, cdn }) => {
+    const query = trpc.category.getModCnt.useQuery({ id: child.id });
+    const ctnData = query.data;
+
+    const viewLinkChild = "/category/" + parent.url + "/" + child.url;
+    const iconChild = (child.icon != null) ? child.icon : cdn + "/images/default_icon.png";
+
+    return (
+        <div key={"catchild-" + child.id} className="flex items-center flex-wrap ml-4 mb-4">
+            <Link href={viewLinkChild} className="flex items-center flex-wrap">
+                <img src={iconChild} className="w-8 h-8" alt="Category Child Icon" />
+                <span className="text-sm text-white ml-2">{child.name} ({ctnData?._count?.Mod ?? 0})</span>
+            </Link>
+        </div>
+    );
+}
+
 const Categories: React.FC = () => {
     // Retrieve config and CDN.
     const cfg = useContext(CfgCtx);
@@ -30,7 +48,7 @@ const Categories: React.FC = () => {
     if (cfg && cfg.cdn)
         cdn = cfg.cdn;
 
-    const catsQuery = trpc.category.getCategoriesMapping.useQuery({includeMods: true});
+    const catsQuery = trpc.category.getCategoriesMapping.useQuery({includeModsCnt: true});
     const cats = catsQuery.data;
 
     return (
@@ -47,26 +65,18 @@ const Categories: React.FC = () => {
                             <div key={"cat-" + cat.id} className="p-4">
                                 <Link href={viewLink} className="flex items-center flex-wrap">
                                     <img src={icon} className="w-8 h-8" alt="Category Icon" />
-                                    <span className="text-white ml-2">{cat.name}</span>{cat.Mod != null && cat.Mod.length > 0 && (
-                                        <span className="text-sm text-white ml-2">({cat.Mod.length})</span>
-                                    )}
+                                    <span className="text-white ml-2">{cat.name} ({cat._count?.Mod ?? 0})</span>
                                 </Link>
                                 {cat.children.length > 0 && (
                                     <div className="p-4">
                                         {cat.children.map((catChild: any) => {
-                                            const viewLinkChild = "/category/" + cat.url + "/" + catChild.url;
-                                            const iconChild = (catChild.icon != null) ? catChild.icon : cdn + "/images/default_icon.png";
-
                                             return (
-                                                <div key={"catchild-" + catChild.id} className="flex items-center flex-wrap ml-4">
-                                                    <Link href={viewLinkChild} className="flex items-center flex-wrap">
-                                                        <img src={iconChild} className="w-8 h-8" alt="Category Child Icon" />
-                                                        <span className="text-white ml-2">{catChild.name}</span>{catChild.Mod != null && catChild.Mod.length > 0 && (
-                                        <span className="text-sm text-white ml-2">({catChild.Mod.length})</span>
-                                    )}
-                                                    </Link>
-                                                </div>
-                                            )
+                                                <ChildRender 
+                                                    child={catChild}
+                                                    parent={cat}
+                                                    cdn={cdn}
+                                                />
+                                            );
                                         })}
                                     </div>
                                 )}
