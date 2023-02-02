@@ -1,7 +1,7 @@
 # <a href="https://bestmods.io/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/bestmods.png" data-canonical-src="https://github.com/bestmods/bestmods/blob/main/gitimages/bestmods.png" /></a>
 Browse the best mods in gaming from many sources on the Internet!
 
-<a href="https://bestmods.io/" target="_blank"><img src="https://github.com/BestMods/bestmods/blob/main/preview.jpeg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/preview.jpeg" /></a>
+<a href="https://bestmods.io/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview.jpeg" data-canonical-src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview.jpeg" /></a>
 
 ## About This Project
 An open-source [website](https://bestmods.io) made by [Christian Deacon](https://github.com/gamemann) that helps users find their favorite mods.
