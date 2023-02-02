@@ -115,8 +115,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const cat = await prisma.category.findFirst({
         include: {
             children: true,
-            parent: true,
-            Mod: true
+            parent: true
         },
         where: {
             url: (cat2 != null) ? cat2 : cat1,
