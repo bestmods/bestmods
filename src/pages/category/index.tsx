@@ -30,7 +30,7 @@ const ChildRender: React.FC<{ child: Category, parent: any, cdn: string }> = ({ 
     const iconChild = (child.icon != null) ? child.icon : cdn + "/images/default_icon.png";
 
     return (
-        <div key={"catchild-" + child.id} className="flex items-center flex-wrap ml-4 mb-4">
+        <div className="flex items-center flex-wrap ml-4 mb-4">
             <Link href={viewLinkChild} className="flex items-center flex-wrap">
                 <img src={iconChild} className="w-8 h-8" alt="Category Child Icon" />
                 <span className="text-sm text-white ml-2">{child.name} ({ctnData?._count?.Mod ?? 0})</span>
@@ -71,7 +71,8 @@ const Categories: React.FC = () => {
                                     <div className="p-4">
                                         {cat.children.map((catChild: any) => {
                                             return (
-                                                <ChildRender 
+                                                <ChildRender
+                                                    key={"catchild-" + catChild.id} 
                                                     child={catChild}
                                                     parent={cat}
                                                     cdn={cdn}
