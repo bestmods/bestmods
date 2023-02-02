@@ -160,7 +160,6 @@ const MainContent: React.FC<{ cdn: string, cat: any }> = ({ cdn="", cat }) => {
                         <span className="ml-2 text-white">{cat.name ?? "Category"}</span>
                       </a>
                     </>
-
                   ) : (
                     <>
                       <a href={catLink ?? "/category"} className="flex">
@@ -252,8 +251,7 @@ const ModOverview: React.FC = () => {
 
 const ModInstall: React.FC = () => {
   const mod = useContext(ModCtx);
-
-  const data = (mod.install != null) ? marked(mod.install) : "<p>No installation guide found.</p>";
+  const data = (mod.install != null) ? marked(mod.install ?? "") : "<p>No installation guide found.</p>";
 
   return (
     <>

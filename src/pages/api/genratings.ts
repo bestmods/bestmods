@@ -49,7 +49,10 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
         }
       ]
     },
-    take: limit
+    take: limit,
+    orderBy: {
+      updateAt: "asc"
+    }
   });
 
   mods.map(async (mod) => {

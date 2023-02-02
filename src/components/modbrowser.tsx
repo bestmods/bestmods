@@ -286,14 +286,14 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                             )}</button>
         
                             <ul id={"installerDropdownMenu" + mod.id} className={`absolute z-30 py-1 text-sm bg-cyan-800 ${ installersMenuOpen ? "block" : "hidden" }`} aria-labelledby={"installerDropdownBtn" + mod.id}>
-                            {mod.ModInstaller.map((ins: ModInstaller) => {
-                                return (
-                                    <ModInstallerRender
-                                        key={mod.id + "-" + ins.sourceUrl}
-                                        modIns={ins}
-                                    />
-                                );
-                            })}
+                                {mod.ModInstaller.map((ins: ModInstaller) => {
+                                    return (
+                                        <ModInstallerRender
+                                            key={mod.id + "-" + ins.sourceUrl}
+                                            modIns={ins}
+                                        />
+                                    );
+                                })}
                             </ul>
                         </div>
                     </>
