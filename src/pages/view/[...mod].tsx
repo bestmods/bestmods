@@ -280,12 +280,9 @@ const ModSources: React.FC<{cdn?: string}> = ({ cdn }) => {
 const ModDownloads: React.FC = () => {
   const mod = useContext(ModCtx);
 
-  const downloadsQuery = trpc.modDownload.getModDownloads.useQuery({
-    id: mod.id
-  });
   const modDownloadMut = trpc.modDownload.incModDownloadCnt.useMutation();
 
-  const downloads = downloadsQuery.data ?? [];
+  const downloads = mod.ModDownload ?? [];
 
   const dlCnt: number = mod.totalDownloads ?? 0;
 
