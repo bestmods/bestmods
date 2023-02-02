@@ -241,6 +241,9 @@ export const modRouter = router({
 
                 // Loop through screenshots.
                 screenshots.forEach(async ({ url }: { url: string }) => {
+                    if (url.length < 1)
+                        return
+
                     await ctx.prisma.modScreenshot.upsert({
                         where: {
                             modId_url: {
@@ -263,6 +266,9 @@ export const modRouter = router({
 
                 // Loop through sources.
                 sources.forEach(async ({ url, query }: { url: string, query: string }) => {
+                    if (url.length < 1 || query.length < 1)
+                        return;
+
                     await ctx.prisma.modSource.upsert({
                         where: {
                             modId_sourceUrl: {
@@ -286,6 +292,9 @@ export const modRouter = router({
 
                 // Loop through installers.
                 installers.forEach(async ({ srcUrl, url }: { srcUrl: string, url: string }) => {
+                    if (srcUrl.length < 1 || url.length < 1)
+                        return;
+
                     await ctx.prisma.modInstaller.upsert({
                         where: {
                             modId_sourceUrl: {
