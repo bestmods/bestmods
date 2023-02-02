@@ -1,6 +1,6 @@
 import { BestModsPage, CfgCtx } from '../../components/main';
 
-import { type ModInstaller } from "@prisma/client";
+import { Category, type ModInstaller } from "@prisma/client";
 import { type NextPage } from "next";
 import React, { useContext, useState, useEffect } from "react";
 
@@ -58,13 +58,13 @@ const Home: NextPage<{ mod: any, modView: string, cdn?: string }> = ({ mod, modV
           />
           {bgFile != null ? (
             <BestModsPage
-              content={<MainContent cdn={cdn}></MainContent>}
+              content={<MainContent cdn={cdn} cat={cat}></MainContent>}
               image={cdn + bgPath}
               excludeCdn={true}
             />
           ) : (
             <BestModsPage
-              content={<MainContent cdn={cdn}></MainContent>}
+              content={<MainContent cdn={cdn} cat={cat}></MainContent>}
             />
           )}
         </ModViewCtx.Provider>
@@ -73,7 +73,7 @@ const Home: NextPage<{ mod: any, modView: string, cdn?: string }> = ({ mod, modV
   );
 };
 
-const MainContent: React.FC<{ cdn: string }> = ({ cdn="" }) => {
+const MainContent: React.FC<{ cdn: string, cat: any }> = ({ cdn="", cat }) => {
   const mod = useContext(ModCtx);
   const modView = useContext(ModViewCtx);
 
@@ -129,6 +129,14 @@ const MainContent: React.FC<{ cdn: string }> = ({ cdn="" }) => {
     // Check rating.
     const onlyRating = ((mod.ModInstaller != null && mod.ModInstaller.length > 0) || (mod.ownerName != null && mod.ownerName.length > 0)) ? false : true;
 
+    // Generate category icons and links.
+    const defaultIcon = "/images/default_icon.png";
+    const catIcon = (cat && cat.icon) ? cdn + cat.icon : cdn + defaultIcon;
+    const catParIcon = (cat && cat.parent && cat.parent.icon) ? cdn + cat.parent.icon : cdn + defaultIcon;
+
+    const catParLink = (cat && cat.parent) ? "/category/" + cat.parent.url : null;
+    const catLink = ((cat) ? "/category" + ((cat.parent) ? "/" + cat.parent.url : "") + "/" + cat.url : null);
+
     return (
       <>
         <div className="container mx-auto w-full">
@@ -136,7 +144,34 @@ const MainContent: React.FC<{ cdn: string }> = ({ cdn="" }) => {
             <div className="flex justify-center">
               <img className="block rounded-t w-[48rem] h-[36rem]" src={banner} alt="Mod Banner" />
             </div>
-            <h1 className="text-4xl font-bold mb-4 text-white text-center">{mod.name}</h1>
+            <h1 className="text-4xl font-bold text-white text-center">{mod.name}</h1>
+            <div className="flex justify-center items-center p-5">
+              {cat != null && (
+                <>
+                  {cat.parent != null ? (
+                    <>
+                      <a href={catParLink ?? "/category"} className="flex">
+                        <img src={catParIcon} className="w-6 h-6 rounded" alt="Category Icon" />
+                        <span className="ml-2 text-white">{cat.parent.name ?? "Category"}</span>
+                      </a>
+                      <span className="text-2xl text-white text-bold ml-2 mr-2"> → </span>
+                      <a href={catLink ?? "/category"} className="flex">
+                        <img src={catIcon} className="w-6 h-6 rounded" alt="Category Icon" />
+                        <span className="ml-2 text-white">{cat.name ?? "Category"}</span>
+                      </a>
+                    </>
+
+                  ) : (
+                    <>
+                      <a href={catLink ?? "/category"} className="flex">
+                        <img src={catIcon} className="w-6 h-6 rounded" alt="Category Icon" />
+                        <span className="ml-2 text-white">{cat.name ?? "Category"}</span>
+                      </a>    
+                    </> 
+                  )}
+                </>
+              )}
+            </div>
           </div>
 
           <div id="modButtons" className="flex justify-center">
