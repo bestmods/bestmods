@@ -43,7 +43,7 @@ Additionally, you may also use our discussions forum [here](https://github.com/o
 
 ## Showcase
 <a href="https://bestmods.io/view/mc-jurassicraft" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview2.jpeg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview2.jpeg" /></a>
-<a href="https://bestmods.io/view/mc-jurassicraft/install" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview3.jpeg" data-canonical-src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview3.jpeg" /></a>
+<a href="https://bestmods.io/view/mc-jurassicraft/sources" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview3.jpeg" data-canonical-src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview3.jpeg" /></a>
 <a href="https://bestmods.io/view/mc-jurassicraft/downloads" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview4.jpeg" data-canonical-src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview4.jpeg" /></a>
 
 ## Credits
