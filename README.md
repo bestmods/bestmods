@@ -4,7 +4,7 @@ Browse the best mods in gaming from many sources on the Internet!
 <a href="https://bestmods.io/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview.jpeg" data-canonical-src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview.jpeg" /></a>
 
 ## About This Project
-An open-source [website](https://bestmods.io) made by [Christian Deacon](https://github.com/gamemann) that helps users find their favorite mods.
+An open-source [website](https://bestmods.io) made by [Christian Deacon](https://github.com/gamemann) that helps users find their favorite mods. Includes Discord login authentication and the ability to upvote or downvote mods!
 
 Please also check out the [@modcommunity](https://github.com/modcommunity)! They are doing things that will change the direction of gaming on a large scale by using modding and open source like never seen before!
 
@@ -16,10 +16,11 @@ Each GitHub project represents a quarter and lists all things we're hoping to ge
 ## Contributing
 Any help from the open source community is highly appreciated on this project! We utilize the following.
 
-* [Laravel](https://laravel.com/) (PHP and Back-End).
-* [Tailwind CSS](https://tailwindcss.com/) (HTML, CSS, and Front-End).
-* [jQuery](https://jquery.com/) (JavaScript and Front-End).
-* [DataTables](https://datatables.net/) (awesome jQuery library for loading millions of entries in a table).
+* [Create T3 App](https://create.t3.gg/) (TypeScript).
+* [Next.JS](https://nextjs.org/).
+* [React](https://reactjs.org/).
+* [tRPC](https://trpc.io/).
+* [Prisma](https://www.prisma.io/).
 
 Please take a look at our [road map](https://github.com/bestmods/roadmap/issues) and join our [Discord server](https://discord.moddingcommunity.com/) for communication!
 
