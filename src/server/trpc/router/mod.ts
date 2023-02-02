@@ -217,6 +217,9 @@ export const modRouter = router({
 
                 // Loop through downloads.
                 downloads.forEach(async ({ name, url }: { name: string, url: string }) => {
+                    if (url.length < 1)
+                        return;
+
                     await ctx.prisma.modDownload.upsert({
                         where: {
                             modId_url: {
