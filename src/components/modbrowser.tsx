@@ -228,8 +228,8 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
                 )}
 
             </div>
-            <div className="mainInfo ml-8 mr-8 mb-4 max-h-24 grow">
-                    <h3 className="text-white text-xl font-bold text-center">{mod.name}</h3>
+            <div className="mainInfo ml-8 mr-8 mb-4 max-h-24 grow overflow-hidden text-ellipsis">
+                    <h3 className="text-white text-lg md:text-xl font-bold text-center">{mod.name}</h3>
                     <p className="text-white mt-2 text-sm">{descShort.substring(0, 120)}{dots}</p>
             </div>
             {catPar != null && (
