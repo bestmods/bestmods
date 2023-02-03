@@ -6,6 +6,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { trpc } from '../utils/trpc';
 
 import Link from 'next/link'
+import Script from "next/script";
 
 export type cfg = {
     cdn: string | undefined
@@ -94,6 +95,16 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
     return (
       <>
         <main key="main" className={`flex min-h-screen flex-col pb-20 ${classes != null ? classes : ""}`}>
+            <Script id="google-tag-manager" src="https://www.googletagmanager.com/gtag/js?id=G-EZBGB6N5XL" strategy="beforeInteractive" />
+            <Script id="google-analytics" strategy="afterInteractive">
+                {`
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){window.dataLayer.push(arguments);}
+                    gtag('js', new Date());
+
+                    gtag('config', 'G-EZBGB6N5XL');
+                `}
+            </Script>
             <CfgCtx.Provider value={cfg ?? null}>
                 <SessionCtx.Provider value={session}>
                     <FilterCtx.Provider value={filters}>
