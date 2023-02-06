@@ -15,14 +15,17 @@ type ModRowArguments = {
 
 const ModSourceRender: React.FC<{modSrc: ModSource}> = ({ modSrc}) => {
     const srcQuery = trpc.source.getSource.useQuery({
-        url: modSrc.sourceUrl
+        url: modSrc.sourceUrl,
+
+        selName: true
     });
+    const src = srcQuery.data;
 
     let name = "Placeholder";
     const url = "https://" + modSrc.sourceUrl + "/" + modSrc.query;
 
-    if (srcQuery.data && srcQuery.isFetched)
-        name = srcQuery.data.name;
+    if (src)
+        name = src.name;
 
     return (
         <li>
@@ -33,14 +36,17 @@ const ModSourceRender: React.FC<{modSrc: ModSource}> = ({ modSrc}) => {
 
 export const ModInstallerRender: React.FC<{modIns: ModInstaller}> = ({ modIns}) => {
     const srcQuery = trpc.source.getSource.useQuery({
-        url: modIns.sourceUrl
+        url: modIns.sourceUrl,
+
+        selName: true
     });
+    const src = srcQuery.data;
 
     let name = "Placeholder";
     const url = modIns.url;
 
-    if (srcQuery.data && srcQuery.isFetched)
-        name = srcQuery.data.name;
+    if (src)
+        name = src.name;
 
     return (
         <li>

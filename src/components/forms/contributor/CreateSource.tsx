@@ -49,7 +49,13 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
     // Queries.
     const sourceMut = trpc.source.addSource.useMutation();
-    const sourceQuery = trpc.source.getSource.useQuery({url: preUrl ?? ""});
+    const sourceQuery = trpc.source.getSource.useQuery({
+        url: preUrl,
+
+        selName: true,
+        selUrl: true,
+        selClasses: true
+    });
 
     // Form fields.
     const [sourceFormFields, setSourceFormFields] = useState<JSX.Element>(<></>);

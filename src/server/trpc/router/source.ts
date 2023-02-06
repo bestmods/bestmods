@@ -8,19 +8,30 @@ import { TRPCError } from "@trpc/server"
 export const sourceRouter = router({
     getSource: publicProcedure
         .input(z.object({
-        url: z.string()
-        }))
-        .query(({ ctx, input}) => {
-        if (input.url.length < 1)
-            return null;
-        
-        const src = ctx.prisma.source.findFirst({
-            where: {
-                url: input.url
-            }
-        });
+            url: z.string().nullable().default(null),
 
-        return src;
+            selName: z.boolean().default(false),
+            selUrl: z.boolean().default(false),
+            selIcon: z.boolean().default(false),
+            selBanner: z.boolean().default(false),
+            selClasses: z.boolean().default(false)
+        }))
+        .query(({ ctx, input }) => {
+            if (!input.url || input.url.length < 1)
+                return null;
+            
+            return ctx.prisma.source.findFirst({
+                where: {
+                    url: input.url
+                },
+                select: {
+                    name: input.selName,
+                    url: input.selUrl,
+                    icon: input.selIcon,
+                    banner: input.selBanner,
+                    classes: input.selClasses
+                }
+            });
         }),
     addSource: contributorProcedure
         .input(z.object({
@@ -201,7 +212,23 @@ export const sourceRouter = router({
                 }
             });
         }),
-    getAllSources: publicProcedure.query(({ ctx }) => {
-        return ctx.prisma.source.findMany();
-    })
+    getAllSources: publicProcedure
+        .input(z.object({
+            selName: z.boolean().default(false),
+            selUrl: z.boolean().default(false),
+            selIcon: z.boolean().default(false),
+            selBanner: z.boolean().default(false),
+            selClasses: z.boolean().default(false)
+        }))
+        .query(({ ctx, input }) => {
+            return ctx.prisma.source.findMany({
+                select: {
+                    name: input.selName,
+                    url: input.selUrl,
+                    icon: input.selIcon,
+                    banner: input.selBanner,
+                    classes: input.selClasses
+                }
+            });
+        })
 });

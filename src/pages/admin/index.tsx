@@ -150,7 +150,11 @@ const Sources: React.FC = () => {
 
     const [success, setSuccess] = useState<string | null>(null);
 
-    const srcsQuery = trpc.source.getAllSources.useQuery();
+    const srcsQuery = trpc.source.getAllSources.useQuery({
+        selUrl: true,
+        selName: true,
+        selIcon: true
+    });
     const srcs = srcsQuery.data;
 
     const delSrcs = trpc.source.delSource.useMutation();

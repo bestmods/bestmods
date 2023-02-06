@@ -276,19 +276,22 @@ const ModSources: React.FC<{cdn?: string}> = ({ cdn }) => {
           
           {mod.ModSource.map((src: ModSource) => {
             const srcQuery = trpc.source.getSource.useQuery({
-              url: src.sourceUrl 
+              url: src.sourceUrl,
+              
+              selName: true,
+              selBanner: true
             });
 
-            const srcData = srcQuery.data;
+            const srcDirect = srcQuery.data;
 
             let name = "Placeholder";
             let banner = "/images/asdsad.png";
 
-            if (srcData != null && srcQuery.isFetched) {
-              name = srcData.name;
+            if (srcDirect) {
+              name = srcDirect.name;
               
-              if (srcData.banner != null)
-                banner = srcData.banner;
+              if (srcDirect.banner)
+                banner = srcDirect.banner;
             }
 
             if (cdn)
