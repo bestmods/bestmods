@@ -46,7 +46,7 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
           needsRecounting: true,
         },
         {
-          updateAt: {
+          recountedAt: {
             lte: dateAnHourAgo
           }
         }
@@ -54,7 +54,7 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
     },
     take: limit,
     orderBy: {
-      updateAt: "asc"
+      recountedAt: "asc"
     }
   });
 
@@ -125,6 +125,8 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
         }
       });
     }).then(async () => {
+      const now = new Date();
+
       // Update mod.
       const update = await prisma.mod.update({
         where: {
@@ -132,6 +134,7 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         data: {
           needsRecounting: false,
+          recountedAt: now,
           ...(hour != null && {
             ratingHour: hour
           }),
