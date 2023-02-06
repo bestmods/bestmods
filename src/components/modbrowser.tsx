@@ -109,7 +109,7 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
     const [didRate, setDidRate] = useState(false);
     const [rateIsPositive, setRateIsPositive] = useState(false);
 
-    if (myRatingQuery.data && myRatingQuery.isFetched && !didRate) {
+    if (myRatingQuery.data && !didRate) {
         if (myRatingQuery.data.positive)
             setRateIsPositive(true);
         
