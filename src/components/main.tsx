@@ -168,55 +168,6 @@ export const MobileMenu: React.FC = () => {
     )
 }
 
-export const Categories: React.FC = () => {
-    const [isOpen, setIsOpen] = useState(false);
-
-    const catsQuery = trpc.category.getCategoriesMapping.useQuery({includeMods: false});
-    const cats = catsQuery.data;
-
-    return (
-        <>
-            <div className={`fixed ${isOpen ? "h-full w-1/2 md:h-auto md:w-1/4 transition-all ease-in-out duration-300" : ""} z-50 top-0 left-0 rounded-br bg-cyan-800 hover:bg-cyan-900`}>
-                <button className="p-4 text-center" onClick={() => {
-                    if (isOpen)
-                        setIsOpen(false);
-                    else
-                        setIsOpen(true);
-                }}>
-                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11052)"><circle cx="17" cy="7" r="3" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="7" cy="17" r="3" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 14H20V19C20 19.5523 19.5523 20 19 20H15C14.4477 20 14 19.5523 14 19V14Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M4 4H10V9C10 9.55228 9.55228 10 9 10H5C4.44772 10 4 9.55228 4 9V4Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11052"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
-                </button>
-                <div className={`${isOpen ? "block" : "hidden"} p-4`}>
-                    <h1 className="text-white text-center text-2xl">Categories</h1>
-                    {cats != null && cats.length > 0 && (
-                        <div className="relative">
-                            {cats.map((cat) => {
-                                return (
-                                    <>
-                                        <span className="flex items-center">{cat.icon != null && (
-                                            <img src={cat.icon} className="w-4 h-4" alt="Category Icon" />
-                                        )}
-                                        <h3 className="text-white text-lg ml-2">{cat.nameShort}</h3></span>
-                                        {cat.children != null && cat.children.length > 0 && (
-                                            <ul className="list-none ml-10">
-                                                {cat.children.map((child) => {
-                                                    return (
-                                                        <li key={"catChild-" + child.id} className="text-white">{child.nameShort}</li>
-                                                    );
-                                                })}
-                                            </ul>
-                                        )}
-                                    </>
-                                );
-                            })}
-                            
-                        </div>
-                    )}
-                </div>
-            </div>
-        </>
-    )
-}
-
 export const Login: React.FC = () => {
     const session = useContext(SessionCtx);
 
