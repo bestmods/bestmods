@@ -6,14 +6,17 @@ import { TRPCError } from "@trpc/server"
 export const modRatingRouter = router({
     getModUserRating: publicProcedure
         .input(z.object({
-            userId: z.string(),
+            userId: z.string().nullable(),
             modId: z.number()
         }))
         .query(({ ctx, input}) => {
-            if (input.userId.length < 1 || input.modId < 1)
+            if (!input.userId || input.userId.length < 1 || input.modId < 1)
                 return null;
-            
+
             return ctx.prisma.modRating.findFirst({
+                select: {
+                    positive: true
+                },
                 where: {
                     userId: input.userId,
                     modId: input.modId
