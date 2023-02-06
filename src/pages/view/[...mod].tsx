@@ -1,4 +1,4 @@
-import { BestModsPage, CfgCtx } from '../../components/main';
+import { BestModsPage, SessionCtx } from '../../components/main';
 
 import { Category, type ModInstaller } from "@prisma/client";
 import { type NextPage } from "next";
@@ -81,6 +81,7 @@ const Home: NextPage<{ mod: any, modView: string, cdn?: string }> = ({ mod, modV
 const MainContent: React.FC<{ cdn: string, cat: any }> = ({ cdn="", cat }) => {
   const mod = useContext(ModCtx);
   const modView = useContext(ModViewCtx);
+  const session = useContext(SessionCtx);
 
   // View generator.
   const [isViewed, setIsViewed] = useState(false);
@@ -99,7 +100,6 @@ const MainContent: React.FC<{ cdn: string, cat: any }> = ({ cdn="", cat }) => {
 
   // Installer menu.
   const [installersMenuOpen, setInstallersMenuOpen] = useState(false);
-
 
   if (mod != null) {
     let body: JSX.Element = <></>;
@@ -225,10 +225,11 @@ const MainContent: React.FC<{ cdn: string, cat: any }> = ({ cdn="", cat }) => {
             <div className="text-white" id="viewContent">
               {body}
             </div>
-
-            <div className="flex flex-row justify-center items-center">
-              <a href={editLink} className="text-white bg-cyan-800 hover:bg-cyan-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded px-4 py-2 mt-2 max-w-xs">Edit</a>
-            </div>
+            {session && (
+              <div className="flex flex-row justify-center items-center">
+                <a href={editLink} className="text-white bg-cyan-800 hover:bg-cyan-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded px-4 py-2 mt-2 max-w-xs">Edit</a>
+              </div>
+            )}
           </div>
         </div>
       </>
