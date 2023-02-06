@@ -30,20 +30,6 @@ export const modDownloadRouter = router({
                 });
             }
         }),
-    getModDownloads: publicProcedure
-        .input(z.object({
-            id: z.number()
-        }))
-        .query(({ ctx, input }) => {
-            if (input.id < 1)
-                return null;
-            
-            return ctx.prisma.modDownload.findMany({
-                where: {
-                    modId: input.id
-                }
-            })
-        }),
     addModDownload: contributorProcedure
         .input(z.object({
             modId: z.number(),
