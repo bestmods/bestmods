@@ -4,28 +4,6 @@ import { router, publicProcedure, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server"
 
 export const modRatingRouter = router({
-    getModRatings: publicProcedure
-        .input(z.object({
-            url: z.string(),
-            dateStart: z.date().nullable(),
-            dateEnd: z.date().nullable()
-        }))
-        .query(({ ctx, input }) => {
-            return ctx.prisma.modRating.findMany({
-                where: {
-                    ...(input.dateStart != null && { 
-                        createdAt: {
-                            gte: input.dateStart
-                        }
-                    }),
-                    ...(input.dateEnd != null && {
-                        createdAt: {
-                            lte: input.dateEnd
-                        }
-                    })
-                }
-            })
-        }),
     getModUserRating: publicProcedure
         .input(z.object({
             userId: z.string(),
