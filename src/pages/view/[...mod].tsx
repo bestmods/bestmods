@@ -1,6 +1,6 @@
 import { BestModsPage, SessionCtx } from '../../components/main';
 
-import { Category, type ModInstaller } from "@prisma/client";
+import { type ModInstaller } from "@prisma/client";
 import { type NextPage } from "next";
 import React, { useContext, useState, useEffect } from "react";
 
@@ -13,7 +13,7 @@ import HeadInfo from "../../components/Head";
 import { ModInstallerRender, ModRatingRender } from '../../components/modbrowser';
 
 import { prisma } from '../../server/db/client';
-import { GetServerSidePropsContext } from 'next';
+import { type GetServerSidePropsContext } from 'next';
 
 const ModCtx = React.createContext<any | boolean |null>(null);
 const ModViewCtx = React.createContext<string | null>(null);

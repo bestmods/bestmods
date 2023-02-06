@@ -6,7 +6,7 @@ import HeadInfo from "../../components/Head";
 
 import { trpc } from '../../utils/trpc';
 import Link from 'next/link';
-import { Category } from "@prisma/client";
+import { type Category } from "@prisma/client";
 
 const Home: NextPage = () => {
     return (

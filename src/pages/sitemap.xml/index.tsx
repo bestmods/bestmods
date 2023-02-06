@@ -1,5 +1,5 @@
 import { getServerSideSitemap } from 'next-sitemap'
-import { GetServerSideProps } from 'next'
+import { type GetServerSideProps } from 'next'
 
 import { prisma } from "../../server/db/client";
 

@@ -3,7 +3,7 @@ import { trpc } from "../utils/trpc";
 
 import { signIn } from "next-auth/react";
 
-import { type Mod, type ModSource, type ModInstaller, type Category } from "@prisma/client";
+import { type ModSource, type ModInstaller, type Category } from "@prisma/client";
 
 import InfiniteScroll from 'react-infinite-scroller';
 

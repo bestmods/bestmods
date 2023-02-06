@@ -1,5 +1,5 @@
 import { type NextPage } from "next";
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 
 import { BestModsPage } from '../../components/main';
 import HeadInfo from "../../components/Head";
@@ -7,8 +7,8 @@ import HeadInfo from "../../components/Head";
 import ModBrowser from '../../components/modbrowser';
 
 import { prisma } from '../../server/db/client';
-import { GetServerSidePropsContext } from 'next';
-import { Category } from "@prisma/client";
+import { type GetServerSidePropsContext } from 'next';
+import { type Category } from "@prisma/client";
 
 const Home: NextPage<{ cat: any, cdn: string }> = ({ cat, cdn="" }) => {
     const [error, setError] = useState<JSX.Element | null>(null);
@@ -67,7 +67,7 @@ const Home: NextPage<{ cat: any, cdn: string }> = ({ cat, cdn="" }) => {
     let headerImg = null;
 
     if (bgFile)
-        headerImg = bgPath
+        headerImg = cdn + bgPath
 
     if (cat != null) {
         if (cat.parent != null) {

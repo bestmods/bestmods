@@ -95,7 +95,7 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
     return (
       <>
         <main key="main" className={`flex min-h-screen flex-col pb-20 ${classes != null ? classes : ""}`}>
-            <Script id="google-tag-manager" src="https://www.googletagmanager.com/gtag/js?id=G-EZBGB6N5XL" strategy="beforeInteractive" />
+            <Script id="google-tag-manager" src="https://www.googletagmanager.com/gtag/js?id=G-EZBGB6N5XL" strategy="afterInteractive" />
             <Script id="google-analytics" strategy="afterInteractive">
                 {`
                     window.dataLayer = window.dataLayer || [];
