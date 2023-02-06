@@ -21,9 +21,14 @@ const ModViewCtx = React.createContext<string | null>(null);
 const Home: NextPage<{ mod: any, modView: string, cdn?: string }> = ({ mod, modView , cdn=""}) => {
   // Load category.
   const catQuery = trpc.category.getCategory.useQuery({
-    id: mod?.category?.id ?? 0,
-    url: null,
-    parent: null
+    id: mod?.category?.id ?? null,
+
+    selUrl: true,
+    selIcon: true,
+    selHasBg: true,
+    selName: true,
+    
+    incParent: true
   });
   const cat = catQuery.data;
 

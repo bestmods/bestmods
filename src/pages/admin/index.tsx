@@ -66,7 +66,7 @@ const Categories: React.FC = () => {
 
     const [success, setSuccess] = useState<string | null>(null);
 
-    const catsQuery = trpc.category.getCategoriesMapping.useQuery({includeMods: false});
+    const catsQuery = trpc.category.getCategoriesMapping.useQuery({selId: true, selName: true, selIcon: true, incChildren: true});
 
     const cats = catsQuery.data;
 

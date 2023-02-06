@@ -144,7 +144,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     // Queries.
     const modMut = trpc.mod.addMod.useMutation();
     const sources = trpc.source.getAllSources.useQuery();
-    const catsWithChildren = trpc.category.getCategoriesMapping.useQuery({includeMods: false});
+    const catsWithChildren = trpc.category.getCategoriesMapping.useQuery({selId: true, selName: true, incChildren: true});
     const modQuery = trpc.mod.getMod.useQuery({url: preUrl ?? "", visible: null});
 
     const mod = modQuery.data;

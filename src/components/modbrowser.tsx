@@ -8,7 +8,6 @@ import { type Mod, type ModSource, type ModInstaller, type Category } from "@pri
 import InfiniteScroll from 'react-infinite-scroller';
 
 import { SessionCtx, FilterCtx, CfgCtx } from './main';
-import { string } from 'zod';
 
 type ModRowArguments = {
     mod: any
@@ -190,7 +189,14 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     // Retrieve category.
     const cat: Category | null = mod.category;
 
-    const catParentQuery = trpc.category.getCategory.useQuery({id: (cat != null && cat.parentId != null) ? cat.parentId : 0, url: null, parent: null});
+    const catParentQuery = trpc.category.getCategory.useQuery({
+        id: (cat != null && cat.parentId != null) ? cat.parentId : null,
+
+        selId: true,
+        selUrl: true,
+        selIcon: true,
+        selName: true
+    });
 
     const catPar = catParentQuery.data;
 
@@ -203,7 +209,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     // Generate category info.
     const defaultCatIcon = cdn + "/images/default_icon.png";
     const catIcon = (cat != null && cat.icon != null) ? cdn + cat.icon : defaultCatIcon;
-    const catParIcon = (catPar != null && catPar.icon !=  null) ? cdn + catPar.icon : defaultCatIcon;
+    const catParIcon = (catPar && catPar.icon) ? cdn + catPar.icon : defaultCatIcon;
 
     // Generating source info.
     const [sourcesMenuOpen, setSourcesMenuOpen] = useState(false);
@@ -211,11 +217,11 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
     // Generate links.
     const viewLink = "/view/" + mod.url;
 
-    const catParLink = (catPar != null) ? "/category/" + catPar.url : null;
-    const catLink = ((cat != null) ? "/category" + ((catPar != null) ? "/" + catPar.url : "") + "/" + cat.url : null);
+    const catParLink = (catPar) ? "/category/" + catPar.url : null;
+    const catLink = ((cat) ? "/category" + ((catPar) ? "/" + catPar.url : "") + "/" + cat.url : null);
 
     // Generate classes.
-    const addClasses = (cat != null && cat.classes != null) ? " " + cat.classes : "";
+    const addClasses = (cat && cat.classes) ? " " + cat.classes : "";
 
     // Generate installers.
     const [installersMenuOpen, setInstallersMenuOpen] = useState(false);

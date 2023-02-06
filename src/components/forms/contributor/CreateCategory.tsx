@@ -56,8 +56,18 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
 
     // Queries.
     const categoryMut = trpc.category.addCategory.useMutation();
-    const catsWithChildren = trpc.category.getCategoriesMapping.useQuery({includeMods: false});
-    const categoryQuery = trpc.category.getCategory.useQuery({id: id ?? 0, url: null, parent: null});
+    const catsWithChildren = trpc.category.getCategoriesMapping.useQuery({selId: true, selName: true});
+    const categoryQuery = trpc.category.getCategory.useQuery({
+        id: id ?? 0,
+
+        selId: true,
+        selParentId: true,
+        selUrl: true,
+        selName: true,
+        selNameShort: true,
+        selClasses: true,
+        selHasBg: true
+    });
 
     // Form fields.
     const [categoryFormFields, setCategoryFormFields] = useState<JSX.Element>(<></>);

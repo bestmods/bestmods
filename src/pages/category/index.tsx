@@ -48,7 +48,7 @@ const Categories: React.FC = () => {
     if (cfg && cfg.cdn)
         cdn = cfg.cdn;
 
-    const catsQuery = trpc.category.getCategoriesMapping.useQuery({includeModsCnt: true});
+    const catsQuery = trpc.category.getCategoriesMapping.useQuery({selId: true, selName: true, selUrl: true, selIcon: true, incChildren: true, incModsCnt: true});
     const cats = catsQuery.data;
 
     return (

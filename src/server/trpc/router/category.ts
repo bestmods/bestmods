@@ -12,19 +12,38 @@ export const categoryRouter = router({
             url: z.string().nullable().default(null),
             parent: z.number().nullable().default(null),
             parentUrl: z.string().nullable().default(null),
-            includeMods: z.boolean().default(false)
+
+            selId: z.boolean().default(false),
+            selParentId: z.boolean().default(false),
+            selName: z.boolean().default(false),
+            selNameShort: z.boolean().default(false),
+            selUrl: z.boolean().default(false),
+            selClasses: z.boolean().default(false),
+            selIcon: z.boolean().default(false),
+            selHasBg: z.boolean().default(false),
+
+            incParent: z.boolean().default(false),
+            incChildren: z.boolean().default(false),
+            incMods: z.boolean().default(false)
         }))
         .query(({ ctx, input}) => {
             if (input.id == null && input.url == null && input.parent == null)
                 return null;
             
             return ctx.prisma.category.findFirst({
-                include: {
-                    children: true,
-                    parent: true,
-                    ...(input.includeMods && {
-                        Mod: true
-                    })
+                select: {
+                        id: input.selId,
+                        parentId: input.selParentId,
+                        name: input.selName,
+                        nameShort: input.selNameShort,
+                        url: input.selUrl,
+                        classes: input.selClasses,
+                        icon: input.selIcon,
+                        hasBg: input.selHasBg,
+
+                        children: input.incChildren,
+                        parent: input.incParent,
+                        Mod: input.incMods
                 },
                 where: {
                     ...(input.id != null && {
@@ -189,48 +208,50 @@ export const categoryRouter = router({
                 }
             });
         }),
-    getCategoriesByParent: publicProcedure
-        .input(z.object({
-            parent_id: z.number()
-        }))
-        .query(({ ctx, input }) => {
-            const cats = ctx.prisma.category.findMany({
-                where: {
-                    parentId: input.parent_id
-                }
-            });
-
-            return cats;
-        }),
     getCategoriesMapping: publicProcedure
         .input(z.object({
-            includeMods: z.boolean().default(false),
-            includeModsCnt: z.boolean().default(false)
+            selId: z.boolean().default(false),
+            selParentId: z.boolean().default(false),
+            selName: z.boolean().default(false),
+            selNameShort: z.boolean().default(false),
+            selUrl: z.boolean().default(false),
+            selClasses: z.boolean().default(false),
+            selIcon: z.boolean().default(false),
+            selHasBg: z.boolean().default(false),
+
+            incParent: z.boolean().default(false),
+            incChildren: z.boolean().default(false),
+            incMods: z.boolean().default(false),
+            incModsCnt: z.boolean().default(false)
         }))
         .query(({ ctx, input }) => {
-            // First retrieve all platform categories (parent ID => 0).
             return ctx.prisma.category.findMany({
                 where: {
                     parentId: null
                 },
-                include: {
-                    children: true,
-                    ...(input.includeMods && {
-                        Mod: true
-                    }),
-                    ...(input.includeModsCnt && {
+                select: {
+                    id: input.selId,
+                    parentId: input.selParentId,
+                    name: input.selName,
+                    nameShort: input.selNameShort,
+                    url: input.selUrl,
+                    classes: input.selClasses,
+                    icon: input.selIcon,
+                    hasBg: input.selHasBg,
+
+                    children: input.incChildren,
+                    parent: input.incParent,
+                    Mod: input.incMods,
+                    
+                    ...(input.incModsCnt && {
                         _count: {
                             select: {
-                                Mod: true 
+                                Mod: true
                             }
                         }
                     })
-                }
+                },
             });
-        }),
-    getAllCategories: publicProcedure
-        .query(({ ctx }) => {
-            return ctx.prisma.category.findMany();
         }),
     getModCnt: publicProcedure
         .input(z.object({
