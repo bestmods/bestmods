@@ -37,6 +37,9 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
   ];
 
   const mods = await prisma.mod.findMany({
+    select: {
+      id: true
+    },
     where: {
       OR: [
         {
@@ -56,13 +59,16 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   mods.map(async (mod) => {
-    new Promise<void>( async (resolve) => {
+    new Promise<void>(async (resolve) => {
       intervals.map(async (i) => {
         let positives = 0;
         let negatives = 0;
 
         // Retrieve mod ratings.
         const ratings = await prisma.modRating.findMany({
+          select: {
+            positive: true
+          },
           where: {
             modId: mod.id,
             ...(i.dateBack != null && {
@@ -124,7 +130,6 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
         where: {
           id: mod.id
         },
-
         data: {
           needsRecounting: false,
           ...(hour != null && {

@@ -103,7 +103,7 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
     // Controls whether user rated this mod or not.
     const myRatingQuery = trpc.modRating.getModUserRating.useQuery({
         modId: mod.id,
-        userId: session?.user?.id ?? ""
+        userId: session?.user?.id ?? null
     });
 
     const [didRate, setDidRate] = useState(false);
