@@ -8,27 +8,96 @@ import { TRPCError } from "@trpc/server"
 export const modRouter = router({
     getMod: publicProcedure
         .input(z.object({
-            url: z.string(),
-            visible: z.boolean().nullable()
+            url: z.string().nullable(),
+            visible: z.boolean().nullable(),
+
+            selId: z.boolean().default(false),
+            selUrl: z.boolean().default(false),
+            selOwnerName: z.boolean().default(false),
+            selName: z.boolean().default(false),
+            selDescription: z.boolean().default(false),
+            selDescriptionShort: z.boolean().default(false),
+            selInstall: z.boolean().default(false),
+
+            selBanner: z.boolean().default(false),
+
+            selCreateAt: z.boolean().default(false),
+            selUpdateAt: z.boolean().default(false),
+            selNeedsRecounting: z.boolean().default(false),
+
+            selTotalDownloads: z.boolean().default(false),
+            selTotalViews: z.boolean().default(false),
+            selTotalRating: z.boolean().default(false),
+
+            selRatingHour: z.boolean().default(false),
+            selRatingDay: z.boolean().default(false),
+            selRatingWeek: z.boolean().default(false),
+            selRatingMonth: z.boolean().default(false),
+            selRatingYear: z.boolean().default(false),
+
+            incOwner: z.boolean().default(false),
+            incCategory: z.boolean().default(false),
+            incSources: z.boolean().default(false),
+            incDownloads: z.boolean().default(false),
+            incScreenshots: z.boolean().default(false),
+            incRatings: z.boolean().default(false),
+            incUniqueViews: z.boolean().default(false),
+            incCollections: z.boolean().default(false),
+            incComments: z.boolean().default(false),
+            incInstallers: z.boolean().default(false)
+
         }))
         .query(({ ctx, input}) => {
-            if (input.url.length < 1)
+            if (!input.url || input.url.length < 1)
                 return null;
             
             return ctx.prisma.mod.findFirst({
-                    include: {
-                        category: true,
-                        ModDownload: true,
-                        ModScreenshot: true,
-                        ModSource: true,
-                        ModInstaller: true
-                    },
-                    where: {
-                        url: input.url,
-                        ...(input.visible != null && {
-                            visible: input.visible
-                        })
-                    }
+                where: {
+                    url: input.url,
+                    ...(input.visible != null && {
+                        visible: input.visible
+                    })
+                },
+                select: {
+                    id: input.selId,
+                    url: input.selUrl,
+                    ownerName: input.selOwnerName,
+                    name: input.selName,
+                    description: input.selDescription,
+                    descriptionShort: input.selDescriptionShort,
+                    install: input.selInstall,
+
+                    banner: input.selBanner,
+
+                    updateAt: input.selUpdateAt,
+                    createAt: input.selCreateAt,
+                    needsRecounting: input.selNeedsRecounting,
+
+                    totalDownloads: input.selTotalDownloads,
+                    totalViews: input.selTotalViews,
+                    totalRating: input.selTotalRating,
+
+                    ratingHour: input.selRatingHour,
+                    ratingDay: input.selRatingDay,
+                    ratingWeek: input.selRatingWeek,
+                    ratingMonth: input.selRatingMonth,
+                    ratingYear: input.selRatingYear,
+
+                    owner: input.incOwner,
+                    ownerId: input.incOwner,
+
+                    category: input.incCategory,
+                    categoryId: input.incCategory,
+
+                    ModSource: input.incSources,
+                    ModDownload: input.incDownloads,
+                    ModScreenshot: input.incScreenshots,
+                    ModRating: input.incRatings,
+                    ModUniqueView: input.incUniqueViews,
+                    ModCollections: input.incCollections,
+                    ModComment: input.incComments,
+                    ModInstaller: input.incInstallers
+                }
             });
         }),
     addMod: contributorProcedure
@@ -327,7 +396,42 @@ export const modRouter = router({
             visible: z.boolean().nullable(),
 
             offset: z.number().nullable(),
-            count: z.number().nullable()
+            count: z.number().nullable(),
+
+            selId: z.boolean().default(false),
+            selUrl: z.boolean().default(false),
+            selOwnerName: z.boolean().default(false),
+            selName: z.boolean().default(false),
+            selDescription: z.boolean().default(false),
+            selDescriptionShort: z.boolean().default(false),
+            selInstall: z.boolean().default(false),
+
+            selBanner: z.boolean().default(false),
+
+            selCreateAt: z.boolean().default(false),
+            selUpdateAt: z.boolean().default(false),
+            selNeedsRecounting: z.boolean().default(false),
+
+            selTotalDownloads: z.boolean().default(false),
+            selTotalViews: z.boolean().default(false),
+            selTotalRating: z.boolean().default(false),
+
+            selRatingHour: z.boolean().default(false),
+            selRatingDay: z.boolean().default(false),
+            selRatingWeek: z.boolean().default(false),
+            selRatingMonth: z.boolean().default(false),
+            selRatingYear: z.boolean().default(false),
+
+            incOwner: z.boolean().default(false),
+            incCategory: z.boolean().default(false),
+            incSources: z.boolean().default(false),
+            incDownloads: z.boolean().default(false),
+            incScreenshots: z.boolean().default(false),
+            incRatings: z.boolean().default(false),
+            incUniqueViews: z.boolean().default(false),
+            incCollections: z.boolean().default(false),
+            incComments: z.boolean().default(false),
+            incInstallers: z.boolean().default(false)
         }))
         .query(({ ctx, input }) => {
             const offset = input.offset ?? 0;
@@ -337,12 +441,6 @@ export const modRouter = router({
             const catsArr = JSON.parse(input.categories ?? "[]");
 
             return ctx.prisma.mod.findMany({
-                include: {
-                    category: true,
-                    ModRating: true,
-                    ModSource: true,
-                    ModInstaller: true
-                },
                 where: {
                     ...(catsArr && catsArr.length > 0 && { categoryId: { in: catsArr } }),
                     ...(input.visible != null && { visible: input.visible }),
@@ -379,6 +477,43 @@ export const modRouter = router({
                             }
                         ]
                     })
+                },
+                select: {
+                    id: input.selId,
+                    url: input.selUrl,
+                    ownerName: input.selOwnerName,
+                    name: input.selName,
+                    description: input.selDescription,
+                    descriptionShort: input.selDescriptionShort,
+                    install: input.selInstall,
+
+                    banner: input.selBanner,
+
+                    updateAt: input.selUpdateAt,
+                    createAt: input.selCreateAt,
+                    needsRecounting: input.selNeedsRecounting,
+
+                    totalDownloads: input.selTotalDownloads,
+                    totalViews: input.selTotalViews,
+                    totalRating: input.selTotalRating,
+
+                    ratingHour: input.selRatingHour,
+                    ratingDay: input.selRatingDay,
+                    ratingWeek: input.selRatingWeek,
+                    ratingMonth: input.selRatingMonth,
+                    ratingYear: input.selRatingYear,
+
+                    owner: input.incOwner,
+                    category: input.incCategory,
+
+                    ModSource: input.incSources,
+                    ModDownload: input.incDownloads,
+                    ModScreenshot: input.incScreenshots,
+                    ModRating: input.incRatings,
+                    ModUniqueView: input.incUniqueViews,
+                    ModCollections: input.incCollections,
+                    ModComment: input.incComments,
+                    ModInstaller: input.incInstallers
                 },
                 orderBy: [
                     {
@@ -418,9 +553,5 @@ export const modRouter = router({
                     needsRecounting: true
                 }
             })
-        }),
-    getAllMods: publicProcedure
-        .query(({ ctx }) => {
-            return ctx.prisma.mod.findMany();
         })
 });

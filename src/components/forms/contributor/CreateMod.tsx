@@ -148,7 +148,24 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         selName: true
     });
     const catsWithChildren = trpc.category.getCategoriesMapping.useQuery({selId: true, selName: true, incChildren: true});
-    const modQuery = trpc.mod.getMod.useQuery({url: preUrl ?? "", visible: null});
+    const modQuery = trpc.mod.getMod.useQuery({
+        url: preUrl, 
+        visible: null,
+
+        selId: true,
+        selName: true,
+        selUrl: true,
+        selOwnerName: true,
+        selDescription: true,
+        selDescriptionShort: true,
+        selInstall: true,
+
+        incCategory: true,
+        incDownloads: true,
+        incSources: true,
+        incScreenshots: true,
+        incInstallers: true
+    });
 
     const mod = modQuery.data;
 

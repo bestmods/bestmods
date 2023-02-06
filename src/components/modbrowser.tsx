@@ -346,7 +346,7 @@ const ModRow: React.FC<ModRowArguments> = ({ mod }) => {
 const ModBrowser: React.FC<{categories?: Array<number> | null, visible?: boolean | null }> = ({ categories, visible }) => {
     const filters = useContext(FilterCtx);
 
-    const [mods, setMods] = useState<Array<Mod>>([]);
+    const [mods, setMods] = useState<Array<any>>([]);
     const [needMoreMods, setNeedMoreMods] = useState(true);
     const [modsVisible, setModsVisible] = useState(0);
     const [isFetching, setIsFetching] = useState(false);
@@ -365,7 +365,29 @@ const ModBrowser: React.FC<{categories?: Array<number> | null, visible?: boolean
         visible: (visible != null) ? visible : true,
 
         offset: modsVisible,
-        count: modsPerPage
+        count: modsPerPage,
+
+        selId: true,
+        selName: true,
+        selUrl: true,
+        selOwnerName: true,
+        selDescriptionShort: true,
+        
+        selBanner: true,
+
+        selTotalDownloads: true,
+        selTotalViews: true,
+        selTotalRating: true,
+
+        selRatingHour: true,
+        selRatingDay:  true,
+        selRatingWeek: true,
+        selRatingMonth: true,
+        selRatingYear: true,
+
+        incCategory: true,
+        incSources: true,
+        incInstallers: true
     });
 
     useEffect(() => {
