@@ -1,5 +1,4 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
-import { promise } from "zod";
 
 import { prisma } from "../../server/db/client";
 
