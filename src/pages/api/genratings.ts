@@ -1,4 +1,5 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
+import { promise } from "zod";
 
 import { prisma } from "../../server/db/client";
 
@@ -58,110 +59,110 @@ const genRatings = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   });
 
-  mods.map(async (mod) => {
-    new Promise<void>(async (resolve) => {
-      intervals.map(async (i) => {
-        let positives = 0;
-        let negatives = 0;
+  const modsPromise = mods.map(async (mod) => {
+    const intervalsPromise = intervals.map(async (i) => {
+      let positives = 0;
+      let negatives = 0;
 
-        // Retrieve mod ratings.
-        const ratings = await prisma.modRating.findMany({
-          select: {
-            positive: true
-          },
-          where: {
-            modId: mod.id,
-            ...(i.dateBack != null && {
-              createdAt: {
-                gte: new Date(((Date.now() / 1000) - i.dateBack) * 1000)
-              }
-            })
-          }
-        });
-  
-        // Loop through each rating and decide whether upvote or downvote.
-        ratings.map((rating) => {
-          if (rating.positive)
-            positives++;
-          else
-            negatives++;
-        });
-  
-        positives++;
-  
-        const rating = (positives - negatives);
-  
-        // Now update mod with new values.
-        switch(i.type) {
-          case "hour":
-            hour = rating;
-  
-            break;
-  
-          case "day":
-            day = rating;
-  
-            break;
-  
-          case "week":
-            week = rating;
-  
-            break;
-  
-          case "month":
-            month = rating;
-            
-            break;
-  
-          case "year":
-            year = rating;
-  
-            break;
-  
-          default:
-            alltime = rating;
-
-            resolve();
-        }
-      });
-    }).then(async () => {
-      const now = new Date();
-
-      // Update mod.
-      const update = await prisma.mod.update({
-        where: {
-          id: mod.id
+      // Retrieve mod ratings.
+      const ratings = await prisma.modRating.findMany({
+        select: {
+          positive: true
         },
-        data: {
-          needsRecounting: false,
-          recountedAt: now,
-          ...(hour != null && {
-            ratingHour: hour
-          }),
-          ...(day != null && {
-            ratingDay: day
-          }),
-          ...(week != null && {
-            ratingWeek: week
-          }),
-          ...(month != null && {
-            ratingMonth: month
-          }),
-          ...(year != null && {
-            ratingYear: year
-          }),
-          ...(alltime != null && {
-            totalRating: alltime
+        where: {
+          modId: mod.id,
+          ...(i.dateBack != null && {
+            createdAt: {
+              gte: new Date(((Date.now() / 1000) - i.dateBack) * 1000)
+            }
           })
         }
       });
 
-      updates++;
+      // Loop through each rating and decide whether upvote or downvote.
+      ratings.map((rating) => {
+        if (rating.positive)
+          positives++;
+        else
+          negatives++;
+      });
 
-      if (update == null)
-        console.error("Unable to update ratings on mod ID #" + mod.id);
+      positives++;
+
+      const rating = (positives - negatives);
+
+      // Now update mod with new values.
+      switch(i.type) {
+        case "hour":
+          hour = rating;
+
+          break;
+
+        case "day":
+          day = rating;
+
+          break;
+
+        case "week":
+          week = rating;
+
+          break;
+
+        case "month":
+          month = rating;
+          
+          break;
+
+        case "year":
+          year = rating;
+
+          break;
+
+        default:
+          alltime = rating;
+      }
     });
+
+    await Promise.all(intervalsPromise);
+    
+    const now = new Date();
+
+    // Update mod.
+    const update = await prisma.mod.update({
+      where: {
+        id: mod.id
+      },
+      data: {
+        needsRecounting: false,
+        recountedAt: now,
+        ...(hour != null && {
+          ratingHour: hour
+        }),
+        ...(day != null && {
+          ratingDay: day
+        }),
+        ...(week != null && {
+          ratingWeek: week
+        }),
+        ...(month != null && {
+          ratingMonth: month
+        }),
+        ...(year != null && {
+          ratingYear: year
+        }),
+        ...(alltime != null && {
+          totalRating: alltime
+        })
+      }
+    });
+
+    updates++;
+
+    if (update == null)
+      console.error("Unable to update ratings on mod ID #" + mod.id);
   });
+
+  await Promise.all(modsPromise);
 
   return res.status(200).json({code: 200, message: "Success!", updates: updates, limit: limit});
 };
