@@ -411,16 +411,13 @@ const ModBrowser: React.FC<{categories?: Array<number> | null, visible?: boolean
         }
     }, [isFetching, modQuery.data, modQuery.isFetched, modsPerPage, modsVisible]);
 
-    useEffect(() => {
-        if (filters?.categories == null || filters.timeframe == null || filters.search == null || filters.sort == null)
-            return;
-        
+    useEffect(() => {        
         setMods([]);
         setModsVisible(0);
 
         setIsFetching(true);
         setNeedMoreMods(true);
-    }, [filters?.categories, filters?.timeframe, filters?.sort, filters?.search]);
+    }, [filters?.timeframe, filters?.sort, filters?.search]);
 
     const fetchMods = async () => {
         if (isFetching)
