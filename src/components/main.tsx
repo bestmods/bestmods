@@ -13,12 +13,10 @@ export type cfg = {
 }
 
 export type filterArgs = {
-    categories: Array<number> | null
     timeframe: number | null
     sort: number | null
     search: string | null
-    
-    categoriesCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void) | null 
+ 
     timeframeCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void) | null 
     sortCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void) | null
     searchCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void) | null
@@ -33,30 +31,10 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
     const { data: session } = useSession();
 
     // Handle filtering options.
-    const [categories, setCategories] = useState<Array<number> | null>(null);
     const [timeframe, setTimeframe] = useState<number | null>(0);
     const [sort, setSort] = useState<number | null>(0);
     const [search, setSearch] = useState<string | null>(null);
   
-    const categoriesCb = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        let val = categories;
-
-        if (!val)
-            val = [];
-
-        const idInQ = Number(e.target.value);
-
-        if (val.includes(idInQ)) {
-            const idxToRem = val.findIndex(id => id === idInQ);
-
-            if (idxToRem > -1)
-                val.splice(idxToRem, 1);
-        } else
-            val.push(idInQ);
-            
-        setCategories(val);
-    };
-
     const timeframeCb = (e: React.ChangeEvent<HTMLSelectElement>) => {
       setTimeframe(Number(e.target.value));
     };
@@ -73,11 +51,9 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
     };
   
     const filters: filterArgs = {
-      categories: categories,
       timeframe: timeframe,
       sort: sort,
       search: search,
-      categoriesCb: categoriesCb,
       timeframeCb: timeframeCb,
       sortCb: sortCb,
       searchCb: searchCb

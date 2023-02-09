@@ -358,7 +358,7 @@ const ModBrowser: React.FC<{categories?: Array<number> | null, visible?: boolean
         modsPerPage = 10;
 
     const modQuery = trpc.mod.getAllModsBrowser.useQuery({
-        categories: ((categories != null) ? JSON.stringify(categories) : (filters?.categories != null ) ? JSON.stringify(filters.categories) : null),
+        categories: (categories) ? JSON.stringify(categories) : null,
         timeframe: filters?.timeframe ?? null,
         sort: filters?.sort ?? null,
         search: filters?.search ?? null,
