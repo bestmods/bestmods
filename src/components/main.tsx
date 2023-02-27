@@ -7,6 +7,7 @@ import { trpc } from '../utils/trpc';
 
 import Link from 'next/link'
 import Script from "next/script";
+import { setCookie, getCookie } from "typescript-cookie";
 
 export type cfg = {
     cdn: string | undefined
@@ -22,18 +23,26 @@ export type filterArgs = {
     searchCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void) | null
 }
 
+export type displayArgs = {
+    display: string
+
+    displayCb: React.MouseEventHandler<HTMLAnchorElement> | undefined
+}
+
 export const SessionCtx = React.createContext<any | null>(null);
 export const FilterCtx = React.createContext<filterArgs | null>(null);
 export const CfgCtx = React.createContext<cfg | null>(null);
+export const DisplayCtx = React.createContext<displayArgs | null>(null);
 
 export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | null, background?: string, image?: string | null, overlay?: string, excludeCdn?: boolean }> = ({ content, classes, background="bg-gradient-to-b from-[#002736] to-[#00151b]", image="/images/backgrounds/default.jpg", overlay="bg-none md:bg-black/80", excludeCdn=false }) => {
     // Retrieve session to use in context.
     const { data: session } = useSession();
 
-    // Handle filtering options.
+    // Handle filtering and display options.
     const [timeframe, setTimeframe] = useState<number | null>(0);
     const [sort, setSort] = useState<number | null>(0);
     const [search, setSearch] = useState<string | null>(null);
+    const [displayStr, setDisplay] = useState("grid");
   
     const timeframeCb = (e: React.ChangeEvent<HTMLSelectElement>) => {
       setTimeframe(Number(e.target.value));
@@ -49,6 +58,27 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
       else
         setSearch(null);
     };
+
+    let currentDisplay = (typeof Document !== "undefined") ? getCookie("bm_display") ?? displayStr : displayStr;
+
+    const displayCb = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        if (typeof Document === "undefined")
+            return;
+
+        e.preventDefault();
+
+        // We treat this like a switch.
+        if (currentDisplay == "table") {
+            setDisplay("grid");
+            setCookie("bm_display", "grid");
+            currentDisplay = "grid";
+        }
+        else {
+            setDisplay("table");
+            setCookie("bm_display", "table");
+            currentDisplay = "table";
+        }
+    }
   
     const filters: filterArgs = {
       timeframe: timeframe,
@@ -57,6 +87,11 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
       timeframeCb: timeframeCb,
       sortCb: sortCb,
       searchCb: searchCb
+    };
+
+    const display: displayArgs = {
+        display: currentDisplay,
+        displayCb: displayCb
     };
 
     // Retrieve config (e.g. CDN URL).
@@ -84,24 +119,26 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
             <CfgCtx.Provider value={cfg ?? null}>
                 <SessionCtx.Provider value={session}>
                     <FilterCtx.Provider value={filters}>
-                        <div className="flex flex-wrap justify-between">
-                            <MobileMenu />
-                            <Login />
-                        </div>
-                    
-                        <Background 
-                            background={background}
-                            image={image}
-                            overlay={overlay}
-                        />
+                        <DisplayCtx.Provider value={display}>
+                            <div className="flex flex-wrap justify-between">
+                                <MobileMenu />
+                                <Login />
+                            </div>
+                        
+                            <Background 
+                                background={background}
+                                image={image}
+                                overlay={overlay}
+                            />
 
-                        <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-                            <Header />
-                        </div>
+                            <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+                                <Header />
+                            </div>
 
-                        <div className="relative">
-                            {content}
-                        </div>
+                            <div className="relative">
+                                {content}
+                            </div>
+                        </DisplayCtx.Provider>
                     </FilterCtx.Provider>
                 </SessionCtx.Provider>
             </CfgCtx.Provider>
@@ -199,6 +236,7 @@ export const Header: React.FC = () => {
 
 const Filters: React.FC<{classes?: string}> = ({ classes="w-full flex justify-center items-center gap-2 flex-wrap" }) => {
     const filters = useContext(FilterCtx);
+    const display = useContext(DisplayCtx);
 
     return (
         <Formik
@@ -251,6 +289,17 @@ const Filters: React.FC<{classes?: string}> = ({ classes="w-full flex justify-ce
                             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11052)"><circle cx="17" cy="7" r="3" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="7" cy="17" r="3" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 14H20V19C20 19.5523 19.5523 20 19 20H15C14.4477 20 14 19.5523 14 19V14Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M4 4H10V9C10 9.55228 9.55228 10 9 10H5C4.44772 10 4 9.55228 4 9V4Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11052"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
                         </div>
                     </Link>
+                </div>
+                <div className="relative w-full sm:w-16 flex items-center justify-center">
+                    <a href="#" onClick={display?.displayCb}>
+                        <div className="block p-4 w-full text-lg text-gray-100 bg-gray-700 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                            {display?.display == "grid" ? (
+                                <svg fill="#FFFFFF" className="w-6 h-6" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg"><path d="M1740 0c99.24 0 180 80.76 180 180v1560c0 99.24-80.76 180-180 180H180c-99.24 0-180-80.76-180-180V180C0 80.76 80.76 0 180 0h1560Zm-420 1200h480V720h-480v480Zm480 540v-420h-480v480h420c33 0 60-27 60-60ZM720 1200h480V720H720v480Zm0 600h480v-480H720v480Zm-600-600h480V720H120v480Zm480 600v-480H120v420c0 33 27 60 60 60h420Z" fill-rule="evenodd"/></svg>
+                            ) : (
+                                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" fill="white"/><path d="M2 8.976C2 7.72287 2.06584 6.64762 2.26552 5.74916C2.46772 4.83933 2.82021 4.05065 3.43543 3.43543C4.05065 2.82021 4.83933 2.46772 5.74915 2.26552C6.64762 2.06584 7.72287 2 8.976 2L9 2C10.1046 2 11 2.89543 11 4L11 9C11 10.1046 10.1046 11 9 11L4 11C2.89543 11 2 10.1046 2 9L2 8.976Z" fill="#323232"/><path d="M22 15.024C22 16.2771 21.9342 17.3524 21.7345 18.2508C21.5323 19.1607 21.1798 19.9494 20.5646 20.5646C19.9494 21.1798 19.1607 21.5323 18.2508 21.7345C17.3524 21.9342 16.2771 22 15.024 22L15 22C13.8954 22 13 21.1046 13 20L13 15C13 13.8954 13.8954 13 15 13L20 13C21.1046 13 22 13.8954 22 15L22 15.024Z" fill="#323232"/><path d="M2 15.024C2 16.2771 2.06584 17.3524 2.26552 18.2508C2.46772 19.1607 2.82021 19.9494 3.43543 20.5646C4.05065 21.1798 4.83933 21.5323 5.74915 21.7345C6.64762 21.9342 7.72287 22 8.976 22L9 22C10.1046 22 11 21.1046 11 20L11 15C11 13.8954 10.1046 13 9 13L4 13C2.89543 13 2 13.8954 2 15L2 15.024Z" fill="#323232"/><path d="M22 8.976C22 7.72287 21.9342 6.64762 21.7345 5.74916C21.5323 4.83933 21.1798 4.05065 20.5646 3.43543C19.9494 2.82021 19.1607 2.46772 18.2508 2.26552C17.3524 2.06584 16.2771 2 15.024 2L15 2C13.8954 2 13 2.89543 13 4L13 9C13 10.1046 13.8954 11 15 11L20 11C21.1046 11 22 10.1046 22 9L22 8.976Z" fill="#323232"/></svg>
+                            )}
+                        </div>
+                    </a>
                 </div>
             </Form>
         </Formik>

@@ -7,7 +7,7 @@ import { type ModSource, type ModInstaller, type Category } from "@prisma/client
 
 import InfiniteScroll from 'react-infinite-scroller';
 
-import { SessionCtx, FilterCtx, CfgCtx } from './main';
+import { SessionCtx, FilterCtx, CfgCtx, DisplayCtx } from './main';
 
 type ModRowArguments = {
     mod: any
@@ -59,6 +59,7 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
     // Retrieve session.
     const session = useContext(SessionCtx);
     const filters = useContext(FilterCtx);
+    const display = useContext(DisplayCtx);
 
     // Retrieve rating.
     const [rating, setRating] = useState(1);
