@@ -49,12 +49,22 @@ const Home: NextPage<{ mod: any, modView: string, cdn?: string }> = ({ mod, modV
 
   const bgPath = "/images/backgrounds/" + bgFile;
 
+  // Determine title name.
+  let titleName = mod.name;
+
+  if (modView == "install")
+    titleName += " (Installation)";
+  else if (modView == "sources")
+    titleName += " (Sources)";
+  else if (modView == "downloads")
+    titleName += " (Downloads)";
+
   return (
     <>
       <ModCtx.Provider value={mod}>
         <ModViewCtx.Provider value={modView}>
           <HeadInfo
-            title={mod ? mod.name + " - Best Mods" : null}
+            title={mod ? titleName + " - Best Mods" : null}
             description={mod != null && mod !== false ? mod.descriptionShort : null}
             image={mod && mod.banner != null ? cdn + mod.banner : null}
             webtype="article"
