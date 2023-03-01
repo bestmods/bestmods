@@ -768,12 +768,12 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             <AlertForm
                 error={error}
                 success={success}
-            ></AlertForm>
+            />
             <FormTemplate
                 form={form}
                 content={modFormFields}
                 submitBtn={submitBtn}
-            ></FormTemplate>
+            />
         </>
     );
 };

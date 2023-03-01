@@ -16,8 +16,8 @@ const Home: NextPage = () => {
             description="Choose what games and categories you want to see mods in!"
         />
         <BestModsPage
-            content={<Categories></Categories>}
-        ></BestModsPage>
+            content={<Categories />}
+        />
     </>
     );
 };

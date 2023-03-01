@@ -19,8 +19,8 @@ const Home: NextPage = () => {
     <>
       <HeadInfo />
       <BestModsPage
-        content={<MainContent></MainContent>}
-      ></BestModsPage>
+        content={<MainContent />}
+      />
     </>
   );
 };

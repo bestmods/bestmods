@@ -292,12 +292,12 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
             <AlertForm
                 error={error}
                 success={success}
-            ></AlertForm>
+            />
             <FormTemplate
                 form={form}
                 content={categoryFormFields}
                 submitBtn={submitBtn}
-            ></FormTemplate>
+            />
         </>
     );
 };

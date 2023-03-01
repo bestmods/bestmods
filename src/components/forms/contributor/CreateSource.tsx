@@ -179,7 +179,6 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         setSubmit(false);
     }, [submit, values]);
 
-
     // Create form using Formik.
     const form = useFormik({
         initialValues: {
@@ -275,12 +274,12 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             <AlertForm
                 error={error}
                 success={success}
-            ></AlertForm>
+            />
             <FormTemplate
                 form={form}
                 content={sourceFormFields}
                 submitBtn={submitBtn}
-            ></FormTemplate>
+            />
         </>
     );
 };
