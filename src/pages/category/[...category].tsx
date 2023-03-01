@@ -95,6 +95,7 @@ const Home: NextPage<{ cat: any, cdn: string }> = ({ cat, cdn="" }) => {
             ) : (
                 <BestModsPage
                     content={content}
+                    showFilters={true}
                 />  
             )}
         </>

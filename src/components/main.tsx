@@ -282,16 +282,16 @@ const Filters: React.FC<{classes?: string}> = ({ classes="w-full flex justify-ce
                             window.location.href = "/?search=" + e.target.value;
                     })} className="block p-4 pl-10 w-full text-sm text-gray-100 bg-gray-700 rounded-lg border border-gray-600 focus:ring-cyan-700 focus:border-cyan-700" placeholder="Search for your favorite mods!" />
                 </div>
-                <div className="relative w-full sm:w-16 flex items-center justify-center">
+                <div className="relative w-full sm:w-16 flex items-center justify-center bg-gray-700 rounded-lg border border-gray-600 hover:bg-cyan-700">
                     <Link href="/category">
-                        <div className="block p-1 w-full text-lg text-gray-100 bg-gray-700 rounded-lg border border-gray-600 hover:bg-cyan-700">
+                        <div className="block p-2 w-full text-lg text-gray-100 ">
                             <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11052)"><circle cx="17" cy="7" r="3" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="7" cy="17" r="3" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M14 14H20V19C20 19.5523 19.5523 20 19 20H15C14.4477 20 14 19.5523 14 19V14Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M4 4H10V9C10 9.55228 9.55228 10 9 10H5C4.44772 10 4 9.55228 4 9V4Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11052"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
                         </div>
                     </Link>
                 </div>
-                <div className="relative w-full sm:w-16 flex items-center justify-center">
+                <div className="relative w-full sm:w-16 flex items-center justify-center bg-gray-700 rounded-lg border border-gray-600 hover:bg-cyan-700">
                     <button onClick={display?.displayCb}>
-                        <div className="block p-1 w-full text-lg text-gray-100 bg-gray-700 rounded-lg border border-gray-600 hover:bg-cyan-700">
+                        <div className="block p-2 w-full text-lg text-gray-100 ">
                             {display?.display == "grid" ? (
                                 <svg fill="#FFFFFF" className="w-10 h-10" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg"><path d="M1740 0c99.24 0 180 80.76 180 180v1560c0 99.24-80.76 180-180 180H180c-99.24 0-180-80.76-180-180V180C0 80.76 80.76 0 180 0h1560Zm-420 1200h480V720h-480v480Zm480 540v-420h-480v480h420c33 0 60-27 60-60ZM720 1200h480V720H720v480Zm0 600h480v-480H720v480Zm-600-600h480V720H120v480Zm480 600v-480H120v420c0 33 27 60 60 60h420Z" fill-rule="evenodd"/></svg>
                             ) : (
