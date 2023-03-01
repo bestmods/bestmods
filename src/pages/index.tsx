@@ -20,7 +20,7 @@ const Home: NextPage<{ cookies: { [key: string]: string } }> = ({ cookies }) => 
 };
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-  const cookies: { [x: string]: string | undefined; } = { ...ctx.req.cookies };
+  const cookies: { [key: string]: string | undefined; } = { ...ctx.req.cookies };
 
   return { props: { cookies: cookies } };
 }
