@@ -10,7 +10,7 @@ import { prisma } from '../../server/db/client';
 import { type GetServerSidePropsContext } from 'next';
 import { type Category } from "@prisma/client";
 
-const Home: NextPage<{ cat: any, cdn: string }> = ({ cat, cdn="" }) => {
+const Home: NextPage<{ cat: any, cdn: string, cookies: { [key: string]: string } }> = ({ cat, cdn="", cookies }) => {
     const [error, setError] = useState<JSX.Element | null>(null);
     const notFound = <div><h1 className="text-center text-white text-lg font-bold">Not Found</h1><p className="text-center text-white">Category or game within URL not found.</p></div>;
 
@@ -91,11 +91,13 @@ const Home: NextPage<{ cat: any, cdn: string }> = ({ cat, cdn="" }) => {
                     content={content}
                     image={bgPath}
                     showFilters={true}
+                    cookies={cookies}
                 />
             ) : (
                 <BestModsPage
                     content={content}
                     showFilters={true}
+                    cookies={cookies}
                 />  
             )}
         </>
@@ -127,8 +129,10 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             })
         }
     });
+
+    const cookies: { [key: string]: string | undefined; } = { ...ctx.req.cookies };
   
-    return { props: { cat: JSON.parse(JSON.stringify(cat, (_, v) => typeof v === 'bigint' ? v.toString() : v)), cdn: process.env.CDN_URL ?? ""} };
+    return { props: { cat: JSON.parse(JSON.stringify(cat, (_, v) => typeof v === 'bigint' ? v.toString() : v)), cdn: process.env.CDN_URL ?? "", cookies: cookies } };
 }  
 
 export default Home;
