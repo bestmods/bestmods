@@ -79,9 +79,6 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
                 cookies['bm_display'] = "table";
         }
     }
-
-    console.log("Display Str");
-    console.log(displayStr);
   
     const filters: filterArgs = {
       timeframe: timeframe,

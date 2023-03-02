@@ -374,15 +374,32 @@ const ModBrowser: React.FC<{categories?: Array<number> | null, visible?: boolean
                         </h3>
                 }
             >
-                {mods.map(mod => {
-                    return (
-                        <ModRow
-                            key={mod.id + "-row"}
-                            mod={mod}
-                            display={display}
-                        />
-                    );
-                })}
+                {display == "grid" ? (
+                    <>
+                        {mods.map(mod => {
+                            return (
+                                <ModRow
+                                    key={mod.id + "-row"}
+                                    mod={mod}
+                                    display={display}
+                                />
+                            );
+                        })}
+                    </>
+                ) : (
+                    <table className="w-full table-auto border-spacing-y-5 border-separate">
+                        {mods.map(mod => {
+                            return (
+                                <ModRow
+                                    key={mod.id + "-row"}
+                                    mod={mod}
+                                    display={display}
+                                />
+                            );
+                        })}
+                    </table>
+                )}
+
             </InfiniteScroll>
         </div>
     );
