@@ -224,3 +224,17 @@
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
 	@apply bg-cyan-700;
 }
+
+/* Views */
+.gridView {
+    @apply grid;
+    @apply grid-cols-[repeat(auto-fill,minmax(theme(width.full),1fr))];
+    @apply sm:grid-cols-[repeat(auto-fill,minmax(theme(width.96),1fr))];
+    @apply justify-items-center;
+    @apply gap-8;
+}
+
+.tableView {
+    @apply block;
+}
+
