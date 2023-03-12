@@ -3,7 +3,7 @@ import React, { useState, useContext } from "react";
 
 import { BestModsPage } from '../../components/main';
 import HeadInfo from "../../components/Head";
-import { SessionCtx, CfgCtx } from "../../components/main";
+import { SessionCtx } from "../../components/main";
 
 import { AlertForm } from '../../components/alert';
 
@@ -56,13 +56,7 @@ const MainContent: React.FC = () => {
 }
 
 const Categories: React.FC = () => {
-    // Retrieve config and CDN.
-    const cfg = useContext(CfgCtx);
-
-    let cdn = "";
-
-    if (cfg && cfg.cdn)
-        cdn = cfg.cdn;
+    const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
     const [success, setSuccess] = useState<string | null>(null);
 
@@ -140,13 +134,7 @@ const Categories: React.FC = () => {
 }
 
 const Sources: React.FC = () => {
-    // Retrieve config and CDN.
-    const cfg = useContext(CfgCtx);
-
-    let cdn = "";
-
-    if (cfg && cfg.cdn)
-        cdn = cfg.cdn;
+    const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
     const [success, setSuccess] = useState<string | null>(null);
 

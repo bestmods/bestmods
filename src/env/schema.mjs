@@ -22,7 +22,6 @@ export const serverSchema = z.object({
   DISCORD_CLIENT_ID: z.string(),
   DISCORD_CLIENT_SECRET: z.string(),
   UPLOADS_DIR: z.string().optional(),
-  CDN_URL: z.string().optional(),
   MODS_PER_PAGE: z.string().default("15"),
   API_AUTH_KEY: z.string().optional()
 });
@@ -33,6 +32,7 @@ export const serverSchema = z.object({
  * To expose them to the client, prefix them with `NEXT_PUBLIC_`.
  */
 export const clientSchema = z.object({
+  NEXT_PUBLIC_CDN_URL: z.string().optional()
   // NEXT_PUBLIC_CLIENTVAR: z.string(),
 });
 

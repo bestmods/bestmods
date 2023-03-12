@@ -3,15 +3,9 @@ import React, { useState, useContext } from "react";
 
 import { signIn, signOut, useSession } from "next-auth/react";
 
-import { trpc } from '../utils/trpc';
-
 import Link from 'next/link'
 import Script from "next/script";
 import { setCookie, getCookie } from 'cookies-next';
-
-export type cfg = {
-    cdn: string | undefined
-}
 
 export type filterArgs = {
     timeframe: number | null
@@ -31,7 +25,6 @@ export type displayArgs = {
 
 export const SessionCtx = React.createContext<any | null>(null);
 export const FilterCtx = React.createContext<filterArgs | null>(null);
-export const CfgCtx = React.createContext<cfg | null>(null);
 export const DisplayCtx = React.createContext<displayArgs | null>(null);
 export const CookiesCtx = React.createContext<{ [key: string]: string }>({}); 
 
@@ -94,14 +87,9 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
         displayCb: displayCb
     };
 
-    // Retrieve config (e.g. CDN URL).
-    const cfgQuery = trpc.files.getCfg.useQuery();
-
-    const cfg = cfgQuery.data;
-
     // Check if we must prepend CDN URL.
-    if (cfg != null && cfg.cdn && !excludeCdn)
-        image = cfg.cdn + image;
+    if (process.env.NEXT_PUBLIC_CDN_URL && !excludeCdn)
+        image = process.env.NEXT_PUBLIC_CDN_URL + image;
 
     return (
         <main key="main" className={`flex min-h-screen flex-col pb-20 ${classes != null ? classes : ""}`}>
@@ -115,36 +103,34 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
                     gtag('config', 'G-EZBGB6N5XL');
                 `}
             </Script>
-            <CfgCtx.Provider value={cfg ?? null}>
-                <SessionCtx.Provider value={session}>
-                    <FilterCtx.Provider value={filters}>
-                        <DisplayCtx.Provider value={display}>
-                            <CookiesCtx.Provider value={cookies ?? {}}>
-                                <div className="flex flex-wrap justify-between">
-                                    <MobileMenu />
-                                    <Login />
-                                </div>
-                            
-                                <Background 
-                                    background={background}
-                                    image={image}
-                                    overlay={overlay}
+            <SessionCtx.Provider value={session}>
+                <FilterCtx.Provider value={filters}>
+                    <DisplayCtx.Provider value={display}>
+                        <CookiesCtx.Provider value={cookies ?? {}}>
+                            <div className="flex flex-wrap justify-between">
+                                <MobileMenu />
+                                <Login />
+                            </div>
+                        
+                            <Background 
+                                background={background}
+                                image={image}
+                                overlay={overlay}
+                            />
+
+                            <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+                                <Header 
+                                    showFilters={showFilters}
                                 />
+                            </div>
 
-                                <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-                                    <Header 
-                                        showFilters={showFilters}
-                                    />
-                                </div>
-
-                                <div className="relative">
-                                    {content}
-                                </div>
-                            </CookiesCtx.Provider>
-                        </DisplayCtx.Provider>
-                    </FilterCtx.Provider>
-                </SessionCtx.Provider>
-            </CfgCtx.Provider>
+                            <div className="relative">
+                                {content}
+                            </div>
+                        </CookiesCtx.Provider>
+                    </DisplayCtx.Provider>
+                </FilterCtx.Provider>
+            </SessionCtx.Provider>
         </main>
     )
 };

@@ -15,11 +15,5 @@ export const filesRouter = router({
                 exists = true;
 
             return exists;
-        }),
-    getCfg: publicProcedure
-        .query(() => {
-            return {
-                cdn: process.env.CDN_URL
-            };
         })
 });
