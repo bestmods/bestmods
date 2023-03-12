@@ -6,14 +6,14 @@ export const userRouter = router({
         .input(z.object({
             name: z.string()
         }))
-        .query( async ({ ctx, input }) => {
+        .query(async ({ ctx, input }) => {
             const results = await ctx.prisma.permissions.findFirst({
                 where: {
                     perm: input.name,
                     userId: ctx.session?.user?.id ?? ""
                 }
             });
-            
+
             if (results)
                 return true;
 

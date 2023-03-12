@@ -1,4 +1,4 @@
-import { BestModsPage} from '../../../components/main';
+import { BestModsPage } from '../../../components/main';
 
 import { type NextPage } from "next";
 import React, { useContext } from "react";
@@ -15,14 +15,14 @@ import { SessionCtx } from '../../../components/main';
 import { trpc } from '../../../utils/trpc';
 
 const Home: NextPage = () => {
-  return (
-    <>
-      <HeadInfo />
-      <BestModsPage
-        content={<MainContent />}
-      />
-    </>
-  );
+    return (
+        <>
+            <HeadInfo />
+            <BestModsPage
+                content={<MainContent />}
+            />
+        </>
+    );
 };
 
 const MainContent: React.FC = () => {
@@ -37,17 +37,17 @@ const MainContent: React.FC = () => {
     });
 
     if (session == null) {
-      return <div className="container mx-auto">
-        <h1 className="text-center text-white font-bold text-lg">You must be logged in and have permission to access this page!</h1>
-      </div>;
+        return <div className="container mx-auto">
+            <h1 className="text-center text-white font-bold text-lg">You must be logged in and have permission to access this page!</h1>
+        </div>;
     }
 
     if (permCheck.data == null) {
         return <div className="container mx-auto">
-          <h1 className="text-center text-white font-bold text-lg">You are not authorized to view this page!</h1>
+            <h1 className="text-center text-white font-bold text-lg">You are not authorized to view this page!</h1>
         </div>;
     }
-   
+
     const typeParam: string | null = (query.type != null && query.type[0] != null) ? query.type[0] : null;
     const typeId: string | null = (query.type != null && query.type[1] != null) ? query.type[1] : null;
 
@@ -61,11 +61,11 @@ const MainContent: React.FC = () => {
         formComponent = <CategoryForm id={typeIdNum} />;
 
     return (
-      <>
-        <div className="container mx-auto">
-          {formComponent}
-        </div>
-      </>
+        <>
+            <div className="container mx-auto">
+                {formComponent}
+            </div>
+        </>
     );
 };
 

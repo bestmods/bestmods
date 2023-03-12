@@ -19,7 +19,7 @@ export const sourceRouter = router({
         .query(({ ctx, input }) => {
             if (!input.url || input.url.length < 1)
                 return null;
-            
+
             return ctx.prisma.source.findFirst({
                 where: {
                     url: input.url
@@ -46,7 +46,7 @@ export const sourceRouter = router({
         .mutation(async ({ ctx, input }) => {
             // Make sure our URL is valid.
             if (input.url.length < 2) {
-                throw new TRPCError({ 
+                throw new TRPCError({
                     code: "PARSE_ERROR",
                     message: "Error parsing URL - URL length is below 2 bytes in size."
                 });
@@ -87,7 +87,7 @@ export const sourceRouter = router({
                             console.error("Error writing icon to disk.");
                             console.error(error);
 
-                            throw new TRPCError({ 
+                            throw new TRPCError({
                                 code: "PARSE_ERROR",
                                 message: (typeof error == "string") ? error : ""
                             });
@@ -95,7 +95,7 @@ export const sourceRouter = router({
                     } else {
                         console.error("Icon's file extension is unknown.");
 
-                        throw new TRPCError({ 
+                        throw new TRPCError({
                             code: "PARSE_ERROR",
                             message: "Icon's file extension is unknown."
                         });
@@ -103,12 +103,12 @@ export const sourceRouter = router({
                 } else {
                     console.error("Parsing base64 data is null.");
 
-                    throw new TRPCError({ 
+                    throw new TRPCError({
                         code: "PARSE_ERROR",
                         message: "Unable to process banner's Base64 data."
                     });
                 }
-            }  
+            }
 
             if (input.banner != null && input.banner.length > 0 && !input.bremove) {
                 const base64Data = input.banner.split(',')[1];
@@ -130,12 +130,12 @@ export const sourceRouter = router({
 
                         // Write file to disk.
                         try {
-                            fs.writeFileSync(process.env.UPLOADS_DIR + "/" +  bannerPath, buffer);
+                            fs.writeFileSync(process.env.UPLOADS_DIR + "/" + bannerPath, buffer);
                         } catch (error) {
                             console.error("Error writing banner to disk.");
                             console.error(error);
 
-                            throw new TRPCError({ 
+                            throw new TRPCError({
                                 code: "PARSE_ERROR",
                                 message: (typeof error == "string") ? error : ""
                             });
@@ -143,7 +143,7 @@ export const sourceRouter = router({
                     } else {
                         console.error("Banner's file extension is unknown.");
 
-                        throw new TRPCError({ 
+                        throw new TRPCError({
                             code: "PARSE_ERROR",
                             message: "Banner's file extension is unknown/not valid."
                         });
@@ -151,7 +151,7 @@ export const sourceRouter = router({
                 } else {
                     console.error("Parsing base64 data is null.");
 
-                    throw new TRPCError({ 
+                    throw new TRPCError({
                         code: "PARSE_ERROR",
                         message: "Unable to process banner's Base64 data."
                     });
@@ -167,7 +167,7 @@ export const sourceRouter = router({
                         name: input.name,
                         url: input.url,
                         classes: input.classes ?? null,
-                        
+
                         ...(iconPath !== false && {
                             icon: iconPath
                         }),
@@ -192,7 +192,7 @@ export const sourceRouter = router({
                 console.error("Error creating or updating source.");
                 console.error(error);
 
-                throw new TRPCError({ 
+                throw new TRPCError({
                     code: "CONFLICT",
                     message: (typeof error == "string") ? error : ""
                 });

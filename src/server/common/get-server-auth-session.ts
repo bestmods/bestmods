@@ -8,8 +8,8 @@ import { authOptions } from "../../pages/api/auth/[...nextauth]";
  * See example usage in trpc createContext or the restricted API route
  */
 export const getServerAuthSession = async (ctx: {
-  req: GetServerSidePropsContext["req"];
-  res: GetServerSidePropsContext["res"];
+    req: GetServerSidePropsContext["req"];
+    res: GetServerSidePropsContext["res"];
 }) => {
-  return await getServerSession(ctx.req, ctx.res, authOptions);
+    return await getServerSession(ctx.req, ctx.res, authOptions);
 };

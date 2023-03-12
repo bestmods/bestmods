@@ -9,7 +9,7 @@ const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 import FormTemplate from '../main';
 import { AlertForm } from '../../alert';
 
-const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
+const SourceForm: React.FC<{ preUrl: string | null }> = ({ preUrl }) => {
     const [dataReceived, setDataReceived] = useState(false);
 
     // Errors and success handles.
@@ -34,7 +34,7 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             </div>
         </>);
     }, [preUrl]);
-    
+
     // For editing (prefilled fields).
     const [name, setName] = useState("");
     const [url, setUrl] = useState("");
@@ -137,16 +137,16 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         if (!dataReceived) {
             // Retrieve source.
             const source = sourceQuery.data;
-    
+
             // Check if our source is null.
             if (source != null) {
                 setName(source.name);
                 setUrl(source.url);
-    
+
                 // Classes is optional; Check if null.
                 if (source.classes != null)
                     setClasses(source.classes);
-                
+
                 setDataReceived(true);
             }
         }
@@ -168,10 +168,10 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
         // Scroll to top.
         if (typeof window !== undefined) {
-            window.scroll({ 
-                top: 0, 
-                left: 0, 
-                behavior: 'smooth' 
+            window.scroll({
+                top: 0,
+                left: 0,
+                behavior: 'smooth'
             });
         }
 
@@ -196,49 +196,49 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 // We have uploads / total uploads.
                 let uploads = 0;
                 let totalUploads = 0;
-                
+
                 // Check icon and handle upload.
                 if (icon != null) {
                     // Increase our total uploads count.
                     totalUploads++;
-        
+
                     // Create new reader.
                     const reader = new FileReader();
-        
+
                     // On file uploaded.
-                    reader.onload = () => {        
+                    reader.onload = () => {
                         // Set Base64 data to iconData.
                         setIconData(reader.result);
-        
+
                         // We're done; Increment uploads.
                         uploads++;
                     };
-        
+
                     // Read icon file.
                     reader.readAsDataURL(icon);
                 }
-        
+
                 // Check banner and handle upload.
                 if (banner != null) {
                     // Increase our total uploads count.
                     totalUploads++;
-        
+
                     // Create new reader.
                     const reader = new FileReader();
-        
+
                     // On file uploaded.
                     reader.onload = () => {
                         // Set Base64 data to bannerData.
                         setBannerData(reader.result);
-        
+
                         // We're done; Increment uploads.
                         uploads++;
                     };
-        
+
                     // Read banner file.
                     reader.readAsDataURL(banner);
                 }
-                
+
                 // Create a for loop for 30 seconds to allow files to upload. We could make a while loop, but I'd prefer having a 30 second timeout (these are image files).
                 for (let i = 0; i < 30; i++) {
                     // If we're done, break to get to resolve().
@@ -248,7 +248,7 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                     // Wait 1 second to save CPU cycles.
                     await delay(1000);
                 }
-        
+
                 // We're done uploading files.
                 resolve();
             }).then(() => {
@@ -261,7 +261,7 @@ const SourceForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
                     icon: null,
                     banner: null,
-        
+
                     iremove: values.iremove,
                     bremove: values.bremove
                 });

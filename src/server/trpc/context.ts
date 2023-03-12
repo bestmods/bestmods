@@ -6,7 +6,7 @@ import { getServerAuthSession } from "../common/get-server-auth-session";
 import { prisma } from "../db/client";
 
 type CreateContextOptions = {
-  session: Session | null;
+    session: Session | null;
 };
 
 /** Use this helper for:
@@ -15,10 +15,10 @@ type CreateContextOptions = {
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  **/
 export const createContextInner = async (opts: CreateContextOptions) => {
-  return {
-    session: opts.session,
-    prisma,
-  };
+    return {
+        session: opts.session,
+        prisma,
+    };
 };
 
 /**
@@ -26,14 +26,14 @@ export const createContextInner = async (opts: CreateContextOptions) => {
  * @link https://trpc.io/docs/context
  **/
 export const createContext = async (opts: CreateNextContextOptions) => {
-  const { req, res } = opts;
+    const { req, res } = opts;
 
-  // Get the session from the server using the unstable_getServerSession wrapper function
-  const session = await getServerAuthSession({ req, res });
+    // Get the session from the server using the unstable_getServerSession wrapper function
+    const session = await getServerAuthSession({ req, res });
 
-  return await createContextInner({
-    session,
-  });
+    return await createContextInner({
+        session,
+    });
 };
 
 export type Context = inferAsyncReturnType<typeof createContext>;

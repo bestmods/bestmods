@@ -9,7 +9,7 @@ export const modRatingRouter = router({
             userId: z.string().nullable(),
             modId: z.number()
         }))
-        .query(({ ctx, input}) => {
+        .query(({ ctx, input }) => {
             if (!input.userId || input.userId.length < 1 || input.modId < 1)
                 return null;
 

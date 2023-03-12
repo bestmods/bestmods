@@ -1,8 +1,8 @@
 import React from "react";
 
-import {FormikProvider} from "formik";
+import { FormikProvider } from "formik";
 
-const FormTemplate: React.FC<{form: any, submitBtn: JSX.Element, content: JSX.Element}> = ({ form, submitBtn, content }) => {
+const FormTemplate: React.FC<{ form: any, submitBtn: JSX.Element, content: JSX.Element }> = ({ form, submitBtn, content }) => {
     return (
         <>
             {form != null && (

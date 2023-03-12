@@ -47,10 +47,10 @@ export const modRouter = router({
             incInstallers: z.boolean().default(false)
 
         }))
-        .query(({ ctx, input}) => {
+        .query(({ ctx, input }) => {
             if (!input.url || input.url.length < 1)
                 return null;
-            
+
             return ctx.prisma.mod.findFirst({
                 where: {
                     url: input.url,
@@ -131,7 +131,7 @@ export const modRouter = router({
             // Make sure we have text in required fields.
             if (input.url.length < 1 || input.name.length < 1 || input.description.length < 1) {
                 let err = "URL is empty.";
-                
+
                 if (input.name.length < 1)
                     err = "Name is empty.";
 
@@ -140,7 +140,7 @@ export const modRouter = router({
 
                 console.error(err);
 
-                throw new TRPCError({ 
+                throw new TRPCError({
                     code: "CONFLICT",
                     message: err
                 });
@@ -177,7 +177,7 @@ export const modRouter = router({
                             console.error("Error writing banner to disk.");
                             console.error(error);
 
-                            throw new TRPCError({ 
+                            throw new TRPCError({
                                 code: "PARSE_ERROR",
                                 message: (typeof error == "string") ? error : ""
                             });
@@ -185,7 +185,7 @@ export const modRouter = router({
                     } else {
                         console.error("Banner's file extension is unknown.");
 
-                        throw new TRPCError({ 
+                        throw new TRPCError({
                             code: "PARSE_ERROR",
                             message: "Unknown file extension for banner."
                         });
@@ -193,7 +193,7 @@ export const modRouter = router({
                 } else {
                     console.error("Parsing base64 data is null.");
 
-                    throw new TRPCError({ 
+                    throw new TRPCError({
                         code: "PARSE_ERROR",
                         message: "Unable to process banner's Base64 data."
                     });
@@ -209,7 +209,7 @@ export const modRouter = router({
                         ...(input.ownerName != null && input.ownerName.length > 0 && {
                             ownerName: input.ownerName
                         }),
-                        
+
                         name: input.name,
                         url: input.url,
                         categoryId: input.category,
@@ -226,7 +226,7 @@ export const modRouter = router({
                         ...(input.ownerName != null && input.ownerName.length > 0 && {
                             ownerName: input.ownerName
                         }),
-                        
+
                         name: input.name,
                         url: input.url,
                         categoryId: input.category,
@@ -244,7 +244,7 @@ export const modRouter = router({
                 console.error("Error creating or updating mod.");
                 console.error(error);
 
-                throw new TRPCError({ 
+                throw new TRPCError({
                     code: "CONFLICT",
                     message: (typeof error == "string") ? error : ""
                 });
@@ -255,7 +255,7 @@ export const modRouter = router({
                 try {
                     await ctx.prisma.modDownload.deleteMany({
                         where: {
-                           modId: mod.id
+                            modId: mod.id
                         }
                     });
 
@@ -358,7 +358,7 @@ export const modRouter = router({
                         }
                     });
                 });
-                
+
                 // Handle installers relation.
                 const installers = JSON.parse(input.installers ?? "[]");
 
@@ -383,7 +383,7 @@ export const modRouter = router({
                             url: url
                         }
                     });
-                });  
+                });
             }
         }),
     getAllModsBrowser: publicProcedure
@@ -446,32 +446,33 @@ export const modRouter = router({
                     ...(input.visible != null && { visible: input.visible }),
                     ...(input.search && {
                         OR: [
-                            { 
-                                name: { 
-                                    contains: input.search, 
-                                    mode: "insensitive" 
-                                } 
+                            {
+                                name: {
+                                    contains: input.search,
+                                    mode: "insensitive"
+                                }
                             },
-                            { 
-                                descriptionShort: { 
-                                    contains: input.search, 
-                                    mode: "insensitive" 
-                                } 
+                            {
+                                descriptionShort: {
+                                    contains: input.search,
+                                    mode: "insensitive"
+                                }
                             },
-                            { 
-                                ownerName: { 
-                                    contains: input.search, 
-                                    mode: "insensitive" 
-                                } 
+                            {
+                                ownerName: {
+                                    contains: input.search,
+                                    mode: "insensitive"
+                                }
                             },
                             {
                                 category: {
-                                    name: { 
-                                        contains: input.search, 
-                                        mode: "insensitive" },
-                                    nameShort: { 
-                                        contains: input.search, 
-                                        mode: "insensitive" 
+                                    name: {
+                                        contains: input.search,
+                                        mode: "insensitive"
+                                    },
+                                    nameShort: {
+                                        contains: input.search,
+                                        mode: "insensitive"
                                     }
                                 }
                             }
@@ -538,7 +539,7 @@ export const modRouter = router({
                 ],
                 skip: offset,
                 take: count
-              });
+            });
         }),
     requireUpdate: protectedProcedure
         .input(z.object({
@@ -547,7 +548,7 @@ export const modRouter = router({
         .mutation(async ({ ctx, input }) => {
             await ctx.prisma.mod.update({
                 where: {
-                    id: input.id 
+                    id: input.id
                 },
                 data: {
                     needsRecounting: true

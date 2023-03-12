@@ -10,10 +10,10 @@ import FormTemplate from '../main';
 import { AlertForm } from '../../alert';
 import { type Source } from "@prisma/client";
 
-const SourceForm: React.FC<{mod: any, num: number, sources: Source[]}> = ({ mod, num, sources }) => {
+const SourceForm: React.FC<{ mod: any, num: number, sources: Source[] }> = ({ mod, num, sources }) => {
     const srcUrl = "sources-" + num + "-url";
     const srcQuery = "sources-" + num + "-query";
-    
+
     const curUrl = mod != null && mod.ModSource != null && mod.ModSource[num - 1] != null ? mod.ModSource[num - 1]?.sourceUrl ?? "" : "";
 
     const [srcUrlVal, setSrcUrlVal] = useState(curUrl);
@@ -45,10 +45,10 @@ const SourceForm: React.FC<{mod: any, num: number, sources: Source[]}> = ({ mod,
     )
 };
 
-const InstallerForm: React.FC<{mod: any, num: number, sources: Source[]}> = ({ mod, num, sources }) => {
+const InstallerForm: React.FC<{ mod: any, num: number, sources: Source[] }> = ({ mod, num, sources }) => {
     const srcUrl = "installers-" + num + "-srcurl";
     const url = "installers-" + num + "-url";
-    
+
     const curUrl = mod != null && mod.ModInstaller != null && mod.ModInstaller[num - 1] != null ? mod.ModInstaller[num - 1]?.sourceUrl ?? "" : "";
 
     const [srcUrlVal, setSrcUrlVal] = useState(curUrl);
@@ -81,7 +81,7 @@ const InstallerForm: React.FC<{mod: any, num: number, sources: Source[]}> = ({ m
     )
 };
 
-const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
+const ModForm: React.FC<{ preUrl: string | null }> = ({ preUrl }) => {
     const [id, setId] = useState(0);
     const [dataReceived, setDataReceived] = useState(false);
 
@@ -105,7 +105,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         downloads: string | null;
         screenshots: string | null;
         sources: string | null;
-        installers: string  | null;
+        installers: string | null;
     }>();
     const submitBtn = useMemo(() => {
         return (<>
@@ -147,9 +147,9 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         selUrl: true,
         selName: true
     });
-    const catsWithChildren = trpc.category.getCategoriesMapping.useQuery({selId: true, selName: true, incChildren: true});
+    const catsWithChildren = trpc.category.getCategoriesMapping.useQuery({ selId: true, selName: true, incChildren: true });
     const modQuery = trpc.mod.getMod.useQuery({
-        url: preUrl, 
+        url: preUrl,
         visible: null,
 
         selId: true,
@@ -223,7 +223,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
                     setCategory(val ?? 0);
                 }}>
-                    {catsWithChildren?.data?.map((cat) => {                        
+                    {catsWithChildren?.data?.map((cat) => {
                         return (
                             <React.Fragment key={cat.id}>
                                 <option value={cat.id}>{cat.name}</option>
@@ -251,7 +251,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Installation</label>
                 <Field rows="16" cols="32" className="shadow appearance-none border-blue-900 rounded w-full p-6 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="install" name="install" as="textarea" placeholder="Mod Installation" />
             </div>
-            
+
             <h2 className="text-white text-2xl font-bold">Sources</h2>
             {sourceForm}
 
@@ -265,7 +265,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             {screenShotForm}
         </>);
     }, [catsWithChildren.data, sourceForm, downloadForm, screenShotForm, installerForm, category]);
-    
+
 
     // Handle error messages to client.
     useMemo(() => {
@@ -314,7 +314,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
         const arr: Array<dlArrType> = [];
 
-        for (let i = 1; i <= 50; i++) {   
+        for (let i = 1; i <= 50; i++) {
             const nameEle = document.getElementById("downloads-" + i + "-name");
             const urlEle = document.getElementById("downloads-" + i + "-url");
 
@@ -327,9 +327,9 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             if (urlVal.length < 1)
                 continue;
 
-            arr.push({name: nameVal, url: urlVal});
+            arr.push({ name: nameVal, url: urlVal });
         }
-        
+
         // Add to our array.
         if (arr.length > 0)
             setDlsArr(arr);
@@ -366,7 +366,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             if (urlVal.length < 1)
                 continue;
 
-            arr.push({url: urlVal});
+            arr.push({ url: urlVal });
         }
 
         // Add to our array.
@@ -394,7 +394,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         for (let i = 1; i <= 50; i++) {
             if (typeof window === 'undefined')
                 break
-    
+
             const urlEle = document.getElementById("sources-" + i + "-url");
             const queryEle = document.getElementById("sources-" + i + "-query");
 
@@ -407,7 +407,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             if (urlVal.length < 1)
                 continue;
 
-            arr.push({url: urlVal, query: queryVal});
+            arr.push({ url: urlVal, query: queryVal });
         }
 
         if (arr.length > 0)
@@ -434,7 +434,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         for (let i = 1; i <= 50; i++) {
             if (typeof window === 'undefined')
                 break
-    
+
             const srcUrlEle = document.getElementById("installers-" + i + "-srcurl");
             const urlEle = document.getElementById("installers-" + i + "-url");
 
@@ -447,7 +447,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
             if (urlVal.length < 1)
                 continue;
 
-            arr.push({srcUrl: srcUrlVal, url: urlVal});
+            arr.push({ srcUrl: srcUrlVal, url: urlVal });
         }
 
         if (arr.length > 0)
@@ -460,8 +460,8 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     // Handle dynamic download form.
     useMemo(() => {
         // Create a range from 1 to download count.
-        const range = Array.from({length: downloadCount}, (value, index) => index + 1);
-        
+        const range = Array.from({ length: downloadCount }, (value, index) => index + 1);
+
         setDownloadForm(<>
             {range.map((num) => {
                 const nameId = "downloads-" + num + "-name";
@@ -500,7 +500,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     // Handle dynamic dynamic screenshot form.
     useMemo(() => {
         // Create a range from 1 to screenshot count.
-        const range = Array.from({length: screenShotCount}, (value, index) => index + 1);
+        const range = Array.from({ length: screenShotCount }, (value, index) => index + 1);
 
         setScreenShotForm(<>
             {range.map((num) => {
@@ -536,7 +536,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     // Handle dynamic sources.
     useEffect(() => {
         // Create a range from 1 to sources count.
-        const range = Array.from({length: sourceCount}, (value, index) => index + 1);
+        const range = Array.from({ length: sourceCount }, (value, index) => index + 1);
 
         // Fetch pre-existing source data for URL select box.
         const sourcesArr = sources.data;
@@ -546,7 +546,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 return (
                     <>
                         <div key={num} className="mb-4">
-                            <SourceForm 
+                            <SourceForm
                                 mod={mod}
                                 num={num}
                                 sources={sourcesArr ?? []}
@@ -577,7 +577,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
     // Handle dynamic installers.
     useEffect(() => {
         // Create a range from 1 to sources count.
-        const range = Array.from({length: installerCount}, (value, index) => index + 1);
+        const range = Array.from({ length: installerCount }, (value, index) => index + 1);
 
         // Fetch pre-existing source data for URL select box.
         const sourcesArr = sources.data;
@@ -587,7 +587,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 return (
                     <>
                         <div key={"installer-" + num} className="mb-4">
-                            <InstallerForm 
+                            <InstallerForm
                                 mod={mod}
                                 num={num}
                                 sources={sourcesArr ?? []}
@@ -619,7 +619,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
         if (!dataReceived) {
             // Retrieve mod.
             const mod = modQuery.data;
-    
+
             // Check if our mod is null.
             if (mod != null) {
                 setId(mod.id);
@@ -634,7 +634,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 setDataReceived(true);
             }
         }
-    
+
     }, [modQuery.data]);
 
     useEffect(() => {
@@ -659,16 +659,16 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
 
         // Assign banner data.
         newVals.banner = bannerData?.toString() ?? null;
-        
+
         // Insert into database.
         modMut.mutate(newVals);
 
         // Scroll to top.
         if (typeof window !== undefined) {
-            window.scroll({ 
-                top: 0, 
-                left: 0, 
-                behavior: 'smooth' 
+            window.scroll({
+                top: 0,
+                left: 0,
+                behavior: 'smooth'
             });
         }
 
@@ -706,23 +706,23 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                 if (banner != null) {
                     // Increase our total uploads count.
                     totalUploads++;
-        
+
                     // Create new reader.
                     const reader = new FileReader();
-        
+
                     // On file uploaded.
-                    reader.onload = () => {        
+                    reader.onload = () => {
                         // Set Base64 data to bannerData.
                         setBannerData(reader.result);
-        
+
                         // We're done; Increment uploads.
                         uploads++;
                     };
-        
+
                     // Read banner file.
                     reader.readAsDataURL(banner);
                 }
-                
+
                 // Create a for loop for 30 seconds to allow files to upload. We could make a while loop, but I'd prefer having a 30 second timeout (these are image files).
                 for (let i = 0; i < 30; i++) {
                     // If we're done, break to get to resolve().
@@ -732,7 +732,7 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                     // Wait 1 second to save CPU cycles.
                     await delay(1000);
                 }
-        
+
                 // We're done uploading files.
                 resolve();
             }).then(() => {
@@ -747,16 +747,16 @@ const ModForm: React.FC<{preUrl: string | null}> = ({ preUrl }) => {
                     url: values.url,
                     category: category,
                     banner: null,
-        
+
                     description: values.description,
                     descriptionShort: values.descriptionShort,
                     install: values.install,
-        
+
                     downloads: null,
                     screenshots: null,
                     sources: null,
                     installers: null,
-        
+
                     bremove: values.bremove
                 });
             });

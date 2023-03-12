@@ -26,7 +26,7 @@ const Home: NextPage<{ cat: any, cookies: { [key: string]: string } }> = ({ cat,
         else if (cat.parent != null && cat.parent.hasBg)
             bgFile = cat.parent.url + ".png";
     }
-        
+
     const bgPath = "/images/backgrounds/" + bgFile;
 
     const categories: Array<number> = [];
@@ -61,7 +61,7 @@ const Home: NextPage<{ cat: any, cookies: { [key: string]: string } }> = ({ cat,
                 </h1>
             </div>
             <ModBrowser categories={categories} />
-        </div>    
+        </div>
         : error;
 
     let headTitle = null;
@@ -83,7 +83,7 @@ const Home: NextPage<{ cat: any, cookies: { [key: string]: string } }> = ({ cat,
 
     return (
         <>
-            <HeadInfo 
+            <HeadInfo
                 title={headTitle}
                 description={headDesc}
                 image={headerImg}
@@ -100,7 +100,7 @@ const Home: NextPage<{ cat: any, cookies: { [key: string]: string } }> = ({ cat,
                     content={content}
                     showFilters={true}
                     cookies={cookies}
-                />  
+                />
             )}
         </>
     );
@@ -109,14 +109,14 @@ const Home: NextPage<{ cat: any, cookies: { [key: string]: string } }> = ({ cat,
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     // We need to retrieve some props.
     if (!ctx.params || !ctx.params.category)
-      return { props: { cat: null } }
-    
+        return { props: { cat: null } }
+
     const cat1 = ctx.params.category[0] ?? null;
     const cat2 = ctx.params.category[1] ?? null;
 
     if (!cat1)
         return { props: { cat: null } }
-  
+
     const cat = await prisma.category.findFirst({
         include: {
             children: true,
@@ -133,8 +133,8 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     });
 
     const cookies: { [key: string]: string | undefined; } = { ...ctx.req.cookies };
-  
+
     return { props: { cat: JSON.parse(JSON.stringify(cat, (_, v) => typeof v === 'bigint' ? v.toString() : v)), cookies: cookies } };
-}  
+}
 
 export default Home;

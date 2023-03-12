@@ -10,15 +10,15 @@ import { type Category } from "@prisma/client";
 
 const Home: NextPage = () => {
     return (
-    <>
-        <HeadInfo 
-            title="All Games & Categories - Best Mods"
-            description="Choose what games and categories you want to see mods in!"
-        />
-        <BestModsPage
-            content={<Categories />}
-        />
-    </>
+        <>
+            <HeadInfo
+                title="All Games & Categories - Best Mods"
+                description="Choose what games and categories you want to see mods in!"
+            />
+            <BestModsPage
+                content={<Categories />}
+            />
+        </>
     );
 };
 
@@ -42,7 +42,7 @@ const ChildRender: React.FC<{ child: Category, parent: any, cdn: string }> = ({ 
 const Categories: React.FC = () => {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
-    const catsQuery = trpc.category.getCategoriesMapping.useQuery({selId: true, selName: true, selUrl: true, selIcon: true, incChildren: true, incModsCnt: true});
+    const catsQuery = trpc.category.getCategoriesMapping.useQuery({ selId: true, selName: true, selUrl: true, selIcon: true, incChildren: true, incModsCnt: true });
     const cats = catsQuery.data;
 
     return (
@@ -54,7 +54,7 @@ const Categories: React.FC = () => {
                     {cats.map((cat) => {
                         const viewLink = "/category/" + cat.url;
                         const icon = (cat.icon != null) ? cdn + cat.icon : cdn + "/images/default_icon.png"
-                        
+
                         return (
                             <div key={"cat-" + cat.id} className="p-4">
                                 <Link href={viewLink} className="flex items-center flex-wrap">
@@ -66,7 +66,7 @@ const Categories: React.FC = () => {
                                         {cat.children.map((catChild: any) => {
                                             return (
                                                 <ChildRender
-                                                    key={"catchild-" + catChild.id} 
+                                                    key={"catchild-" + catChild.id}
                                                     child={catChild}
                                                     parent={cat}
                                                     cdn={cdn}
