@@ -7,7 +7,7 @@ import { type ModSource, type ModInstaller, type Category } from "@prisma/client
 
 import InfiniteScroll from 'react-infinite-scroller';
 
-import { SessionCtx, FilterCtx, CfgCtx, DisplayCtx, CookiesCtx } from './main';
+import { SessionCtx, FilterCtx, DisplayCtx, CookiesCtx } from './main';
 import GridRow from './modbrowser/gridrow';
 import TableRow from './modbrowser/tablerow';
 
@@ -188,13 +188,7 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
 };
 
 const ModRow: React.FC<ModRowArguments> = ({ mod, display="grid" }) => {
-    // Retrieve config and CDN.
-    const cfg = useContext(CfgCtx);
-
-    let cdn = "";
-
-    if (cfg && cfg.cdn)
-        cdn = cfg.cdn;
+    const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
     // Retrieve category.
     const cat: Category | null = mod.category;

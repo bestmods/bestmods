@@ -18,7 +18,9 @@ import { type GetServerSidePropsContext } from 'next';
 const ModCtx = React.createContext<any | boolean |null>(null);
 const ModViewCtx = React.createContext<string | null>(null);
 
-const Home: NextPage<{ mod: any, modView: string, cdn?: string }> = ({ mod, modView , cdn=""}) => {
+const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
+  const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
+
   // Load category.
   const catQuery = trpc.category.getCategory.useQuery({
     id: mod?.category?.id ?? null,
@@ -382,7 +384,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     }
   });
 
-  return { props: { mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === 'bigint' ? v.toString() : v)), modView: modView, cdn: process.env.CDN_URL ?? "" } };
+  return { props: { mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === 'bigint' ? v.toString() : v)), modView: modView } };
 }
 
 export default Home;

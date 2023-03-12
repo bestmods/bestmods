@@ -1,7 +1,7 @@
 import { type NextPage } from "next";
-import React, { useContext } from "react";
+import React from "react";
 
-import { BestModsPage, CfgCtx } from '../../components/main';
+import { BestModsPage } from '../../components/main';
 import HeadInfo from "../../components/Head";
 
 import { trpc } from '../../utils/trpc';
@@ -40,13 +40,7 @@ const ChildRender: React.FC<{ child: Category, parent: any, cdn: string }> = ({ 
 }
 
 const Categories: React.FC = () => {
-    // Retrieve config and CDN.
-    const cfg = useContext(CfgCtx);
-
-    let cdn = "";
-
-    if (cfg && cfg.cdn)
-        cdn = cfg.cdn;
+    const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
     const catsQuery = trpc.category.getCategoriesMapping.useQuery({selId: true, selName: true, selUrl: true, selIcon: true, incChildren: true, incModsCnt: true});
     const cats = catsQuery.data;
