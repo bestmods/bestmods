@@ -3,15 +3,9 @@ import React, { useState, useContext } from "react";
 
 import { signIn, signOut, useSession } from "next-auth/react";
 
-import { trpc } from '../utils/trpc';
-
 import Link from 'next/link'
 import Script from "next/script";
 import { setCookie, getCookie } from 'cookies-next';
-
-export type cfg = {
-    cdn: string | undefined
-}
 
 export type filterArgs = {
     timeframe: number | null
@@ -31,7 +25,6 @@ export type displayArgs = {
 
 export const SessionCtx = React.createContext<any | null>(null);
 export const FilterCtx = React.createContext<filterArgs | null>(null);
-export const CfgCtx = React.createContext<cfg | null>(null);
 export const DisplayCtx = React.createContext<displayArgs | null>(null);
 export const CookiesCtx = React.createContext<{ [key: string]: string }>({}); 
 
@@ -94,17 +87,11 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
         displayCb: displayCb
     };
 
-    // Retrieve config (e.g. CDN URL).
-    const cfgQuery = trpc.files.getCfg.useQuery();
-
-    const cfg = cfgQuery.data;
-
     // Check if we must prepend CDN URL.
-    if (cfg != null && cfg.cdn && !excludeCdn)
-        image = cfg.cdn + image;
+    if (process.env.NEXT_PUBLIC_CDN_URL && !excludeCdn)
+        image = process.env.NEXT_PUBLIC_CDN_URL + image;
 
     return (
-      <>
         <main key="main" className={`flex min-h-screen flex-col pb-20 ${classes != null ? classes : ""}`}>
             <Script id="google-tag-manager" src="https://www.googletagmanager.com/gtag/js?id=G-EZBGB6N5XL" strategy="afterInteractive" />
             <Script id="google-analytics" strategy="afterInteractive">
@@ -116,38 +103,35 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
                     gtag('config', 'G-EZBGB6N5XL');
                 `}
             </Script>
-            <CfgCtx.Provider value={cfg ?? null}>
-                <SessionCtx.Provider value={session}>
-                    <FilterCtx.Provider value={filters}>
-                        <DisplayCtx.Provider value={display}>
-                            <CookiesCtx.Provider value={cookies ?? {}}>
-                                <div className="flex flex-wrap justify-between">
-                                    <MobileMenu />
-                                    <Login />
-                                </div>
-                            
-                                <Background 
-                                    background={background}
-                                    image={image}
-                                    overlay={overlay}
+            <SessionCtx.Provider value={session}>
+                <FilterCtx.Provider value={filters}>
+                    <DisplayCtx.Provider value={display}>
+                        <CookiesCtx.Provider value={cookies ?? {}}>
+                            <div className="flex flex-wrap justify-between">
+                                <MobileMenu />
+                                <Login />
+                            </div>
+                        
+                            <Background 
+                                background={background}
+                                image={image}
+                                overlay={overlay}
+                            />
+
+                            <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+                                <Header 
+                                    showFilters={showFilters}
                                 />
+                            </div>
 
-                                <div className="container mx-auto flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-                                    <Header 
-                                        showFilters={showFilters}
-                                    />
-                                </div>
-
-                                <div className="relative">
-                                    {content}
-                                </div>
-                            </CookiesCtx.Provider>
-                        </DisplayCtx.Provider>
-                    </FilterCtx.Provider>
-                </SessionCtx.Provider>
-            </CfgCtx.Provider>
+                            <div className="relative">
+                                {content}
+                            </div>
+                        </CookiesCtx.Provider>
+                    </DisplayCtx.Provider>
+                </FilterCtx.Provider>
+            </SessionCtx.Provider>
         </main>
-      </>
     )
 };
 
@@ -155,33 +139,31 @@ export const MobileMenu: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <>
-            <div className={`absolute sm:hidden ${isOpen ? "min-h-full h-auto w-2/3 md:h-auto md:w-1/4 transition-all ease-in-out duration-300" : ""} z-50 top-0 left-0 rounded-br bg-cyan-800 hover:bg-cyan-900`}>
-                <div className={isOpen ? "flex justify-end" : ""}>
-                    <button className="p-4 text-center" onClick={() => {
-                        if (isOpen)
-                            setIsOpen(false);
-                        else
-                            setIsOpen(true);
-                    }}>
-                        {isOpen ? (
-                            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M11.7071 5.29289C12.0976 5.68342 12.0976 6.31658 11.7071 6.70711L7.41421 11H19C19.5523 11 20 11.4477 20 12C20 12.5523 19.5523 13 19 13H7.41421L11.7071 17.2929C12.0976 17.6834 12.0976 18.3166 11.7071 18.7071C11.3166 19.0976 10.6834 19.0976 10.2929 18.7071L4.29289 12.7071C3.90237 12.3166 3.90237 11.6834 4.29289 11.2929L10.2929 5.29289C10.6834 4.90237 11.3166 4.90237 11.7071 5.29289Z" fill="#FFFFFF"/></svg>
-                        ): (
-                            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11066)"><path d="M3 6.00092H21M3 12.0009H21M3 18.0009H21" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11066"><rect width="24" height="24" fill="white" transform="translate(0 0.000915527)"/></clipPath></defs></svg>
-                        )}
-                    </button>
-                </div>
-                <div className={`${isOpen ? "block" : "hidden"} p-4`}>
-                    <div className=" text-white">
-                        <MainNavItems 
-                            classes="block p-5 text-gray-300 hover:text-white" 
-                        />
-                    </div>
-
-                    <Filters />
-                </div>
+        <div className={`absolute sm:hidden ${isOpen ? "min-h-full h-auto w-2/3 md:h-auto md:w-1/4 transition-all ease-in-out duration-300" : ""} z-50 top-0 left-0 rounded-br bg-cyan-800 hover:bg-cyan-900`}>
+            <div className={isOpen ? "flex justify-end" : ""}>
+                <button className="p-4 text-center" onClick={() => {
+                    if (isOpen)
+                        setIsOpen(false);
+                    else
+                        setIsOpen(true);
+                }}>
+                    {isOpen ? (
+                        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M11.7071 5.29289C12.0976 5.68342 12.0976 6.31658 11.7071 6.70711L7.41421 11H19C19.5523 11 20 11.4477 20 12C20 12.5523 19.5523 13 19 13H7.41421L11.7071 17.2929C12.0976 17.6834 12.0976 18.3166 11.7071 18.7071C11.3166 19.0976 10.6834 19.0976 10.2929 18.7071L4.29289 12.7071C3.90237 12.3166 3.90237 11.6834 4.29289 11.2929L10.2929 5.29289C10.6834 4.90237 11.3166 4.90237 11.7071 5.29289Z" fill="#FFFFFF"/></svg>
+                    ): (
+                        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11066)"><path d="M3 6.00092H21M3 12.0009H21M3 18.0009H21" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></g><defs><clipPath id="clip0_429_11066"><rect width="24" height="24" fill="white" transform="translate(0 0.000915527)"/></clipPath></defs></svg>
+                    )}
+                </button>
             </div>
-        </>
+            <div className={`${isOpen ? "block" : "hidden"} p-4`}>
+                <div className=" text-white">
+                    <MainNavItems 
+                        classes="block p-5 text-gray-300 hover:text-white" 
+                    />
+                </div>
+
+                <Filters />
+            </div>
+        </div>
     )
 }
 

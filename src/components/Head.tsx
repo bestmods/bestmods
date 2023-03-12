@@ -30,14 +30,9 @@ const HeadInfo: React.FC<HeadArgs> = ({
                     section="Technology",
                     tags="mod",
                     excludeCdn=false}) => {
-    // Retrieve config and CDN.
-    const cfgQuery = trpc.files.getCfg.useQuery();
-
-    const cfg = cfgQuery.data;
-
     // Check if we must prepend CDN URL.
-    if (cfg != null && cfg.cdn && !excludeCdn)
-        image = cfg.cdn + image;
+    if (process.env.NEXT_PUBLIC_CDN_URL && !excludeCdn)
+        image = process.env.NEXT_PUBLIC_CDN_URL + image;
 
     // Retrieve URLs.
     let base_url;
