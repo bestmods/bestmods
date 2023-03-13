@@ -388,15 +388,15 @@ export const modRouter = router({
         }),
     getAllModsBrowser: publicProcedure
         .input(z.object({
+            cursor: z.number().nullish(),
+            count: z.number().nullable(),
+
             categories: z.string().nullable(),
             search: z.string().nullable(),
             timeframe: z.number().nullable(),
             sort: z.number().nullable(),
 
             visible: z.boolean().nullable(),
-
-            offset: z.number().nullable(),
-            count: z.number().nullable(),
 
             selId: z.boolean().default(false),
             selUrl: z.boolean().default(false),
@@ -433,14 +433,13 @@ export const modRouter = router({
             incComments: z.boolean().default(false),
             incInstallers: z.boolean().default(false)
         }))
-        .query(({ ctx, input }) => {
-            const offset = input.offset ?? 0;
+        .query(async ({ ctx, input }) => {
             const count = (typeof input.count === 'number' && !isNaN(input.count)) ? input.count : 10;
 
             // Process categories.
             const catsArr = JSON.parse(input.categories ?? "[]");
 
-            return ctx.prisma.mod.findMany({
+            const items = await ctx.prisma.mod.findMany({
                 where: {
                     ...(catsArr && catsArr.length > 0 && { categoryId: { in: catsArr } }),
                     ...(input.visible != null && { visible: input.visible }),
@@ -537,9 +536,21 @@ export const modRouter = router({
                         id: "desc"
                     }
                 ],
-                skip: offset,
-                take: count
+                cursor: (input.cursor) ? { id: input.cursor } : undefined,
+                take: count + 1
             });
+
+            let nextCur: typeof input.cursor | undefined = undefined;
+
+            if (items.length > count) {
+                const nextItem = items.pop();
+                nextCur = nextItem?.id;
+            }
+
+            return {
+                items,
+                nextCur
+            };
         }),
     requireUpdate: protectedProcedure
         .input(z.object({
