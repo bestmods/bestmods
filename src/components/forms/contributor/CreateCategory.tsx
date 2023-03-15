@@ -9,7 +9,7 @@ const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 import FormTemplate from '../main';
 import { AlertForm } from '../../alert';
 
-const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
+const CategoryForm: React.FC<{ id: number | null }> = ({ id }) => {
     const [dataRetrieved, setDataReceived] = useState(false);
 
     // Errors and success handles.
@@ -56,7 +56,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
 
     // Queries.
     const categoryMut = trpc.category.addCategory.useMutation();
-    const catsWithChildren = trpc.category.getCategoriesMapping.useQuery({selId: true, selName: true});
+    const catsWithChildren = trpc.category.getCategoriesMapping.useQuery({ selId: true, selName: true });
     const categoryQuery = trpc.category.getCategory.useQuery({
         id: id ?? 0,
 
@@ -93,7 +93,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
             <div className="mb-4">
                 <label className="block text-gray-200 text-sm font-bold mb-2">Parent</label>
                 <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="parent" name="parent" placeholder="Category Parent" onChange={(e) => {
-                    
+
                     const val = (Number(e.target.value) > 0) ? Number(e.target.value) : null;
 
                     setParent(val);
@@ -109,7 +109,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                                 })}
                             </React.Fragment>
                         );
-                        })}
+                    })}
                 </select>
             </div>
 
@@ -157,7 +157,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
             setError(err);
         else
             setError("Unable to create or edit category!");
-            
+
         setSuccess(null);
 
         // Send alert and log full error to client's console.
@@ -169,7 +169,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
         if (!dataRetrieved) {
             // Retrieve category.
             const category = categoryQuery.data;
-    
+
             // Check if our category is null.
             if (category != null) {
                 setName(category.name);
@@ -177,11 +177,11 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                 setParent(category.parentId);
                 setUrl(category.url ?? "");
                 setHasBg(category.hasBg);
-    
+
                 // Classes is optional; Check if null.
                 if (category.classes != null)
                     setClasses(category.classes);
-    
+
                 setDataReceived(true);
             }
         }
@@ -196,16 +196,16 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
         const newVals = values;
 
         newVals.icon = iconData?.toString() ?? null;
-        
+
         // Insert into database.
         categoryMut.mutate(newVals);
 
         // Scroll to top.
         if (typeof window !== undefined) {
-            window.scroll({ 
-                top: 0, 
-                left: 0, 
-                behavior: 'smooth' 
+            window.scroll({
+                top: 0,
+                left: 0,
+                behavior: 'smooth'
             });
         }
 
@@ -231,28 +231,28 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                 // We have uploads / total uploads.
                 let uploads = 0;
                 let totalUploads = 0;
-                
+
                 // Check icon and handle upload.
                 if (icon != null) {
                     // Increase our total uploads count.
                     totalUploads++;
-        
+
                     // Create new reader.
                     const reader = new FileReader();
-        
+
                     // On file uploaded.
                     reader.onload = () => {
                         // Set Base64 data to iconData.
                         setIconData(reader.result);
-        
+
                         // We're done; Increment uploads.
                         uploads++;
                     };
-        
+
                     // Read icon file.
                     reader.readAsDataURL(icon);
                 }
-                
+
                 // Create a for loop for 30 seconds to allow files to upload. We could make a while loop, but I'd prefer having a 30 second timeout (these are image files).
                 for (let i = 0; i < 30; i++) {
                     // If we're done, break to get to resolve().
@@ -262,7 +262,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                     // Wait 1 second to save CPU cycles.
                     await delay(1000);
                 }
-        
+
                 // We're done uploading files.
                 resolve();
             }).then(() => {
@@ -278,7 +278,7 @@ const CategoryForm: React.FC<{id: number | null}> = ({ id }) => {
                     classes: values.classes,
 
                     icon: null,
-        
+
                     iremove: values.iremove,
 
                     hasBg: values.hasBg

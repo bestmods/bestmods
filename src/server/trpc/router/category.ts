@@ -26,24 +26,24 @@ export const categoryRouter = router({
             incChildren: z.boolean().default(false),
             incMods: z.boolean().default(false)
         }))
-        .query(({ ctx, input}) => {
+        .query(({ ctx, input }) => {
             if (input.id == null && input.url == null && input.parent == null)
                 return null;
-            
+
             return ctx.prisma.category.findFirst({
                 select: {
-                        id: input.selId,
-                        parentId: input.selParentId,
-                        name: input.selName,
-                        nameShort: input.selNameShort,
-                        url: input.selUrl,
-                        classes: input.selClasses,
-                        icon: input.selIcon,
-                        hasBg: input.selHasBg,
+                    id: input.selId,
+                    parentId: input.selParentId,
+                    name: input.selName,
+                    nameShort: input.selNameShort,
+                    url: input.selUrl,
+                    classes: input.selClasses,
+                    icon: input.selIcon,
+                    hasBg: input.selHasBg,
 
-                        children: input.incChildren,
-                        parent: input.incParent,
-                        Mod: input.incMods
+                    children: input.incChildren,
+                    parent: input.incParent,
+                    Mod: input.incMods
                 },
                 where: {
                     ...(input.id != null && {
@@ -91,7 +91,7 @@ export const categoryRouter = router({
                         nameShort: input.nameShort,
                         url: input.url,
                         classes: input.classes ?? null,
-                        
+
                         hasBg: input.hasBg
                     },
                     create: {
@@ -108,7 +108,7 @@ export const categoryRouter = router({
                 console.error("Error creating or updating category.");
                 console.error(error);
 
-                throw new TRPCError({ 
+                throw new TRPCError({
                     code: "CONFLICT",
                     message: (typeof error == "string") ? error : ""
                 });
@@ -143,7 +143,7 @@ export const categoryRouter = router({
                                 console.error("Error writing icon to disk.");
                                 console.error(error);
 
-                                throw new TRPCError({ 
+                                throw new TRPCError({
                                     code: "PARSE_ERROR",
                                     message: (typeof error == "string") ? error : ""
                                 });
@@ -151,7 +151,7 @@ export const categoryRouter = router({
                         } else {
                             console.error("Icon's file extension is unknown.");
 
-                            throw new TRPCError({ 
+                            throw new TRPCError({
                                 code: "PARSE_ERROR",
                                 message: "Icon's file extension is unknown."
                             });
@@ -159,7 +159,7 @@ export const categoryRouter = router({
                     } else {
                         console.error("Parsing base64 data is null.");
 
-                        throw new TRPCError({ 
+                        throw new TRPCError({
                             code: "PARSE_ERROR",
                             message: "Unable to process banner's Base64 data."
                         });
@@ -186,12 +186,12 @@ export const categoryRouter = router({
                         console.error("Error updating category when adding icon and banner.");
                         console.error(error);
 
-                        throw new TRPCError({ 
+                        throw new TRPCError({
                             code: "BAD_REQUEST",
                             message: "Error updating category with icon and banner data. " + error
                         });
                     }
-                }                
+                }
             }
         }),
     delCategory: contributorProcedure
@@ -242,7 +242,7 @@ export const categoryRouter = router({
                     children: input.incChildren,
                     parent: input.incParent,
                     Mod: input.incMods,
-                    
+
                     ...(input.incModsCnt && {
                         _count: {
                             select: {
@@ -265,7 +265,7 @@ export const categoryRouter = router({
                 select: {
                     _count: {
                         select: {
-                            Mod: true 
+                            Mod: true
                         }
                     }
                 }

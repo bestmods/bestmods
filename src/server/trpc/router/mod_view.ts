@@ -11,7 +11,7 @@ export const modViewRouter = router({
         .mutation(async ({ ctx, input }) => {
             if (input.url.length < 1)
                 return;
-                
+
             try {
                 await ctx.prisma.mod.update({
                     where: {
@@ -30,27 +30,27 @@ export const modViewRouter = router({
                 });
             }
         }),
-        addModUniqueView: protectedProcedure
-            .input(z.object({
-                userId: z.string(),
-                modId: z.number()
-            }))
-            .mutation(async ({ ctx, input}) => {
-                try {
-                    await ctx.prisma.modUniqueView.create({
-                        data: {
-                            modId: input.modId,
-                            userId: input.userId
-                        }
-                    });
-                } catch (error) {
-                    if (typeof error === "string" && error.includes("constraint"))
-                        return;
+    addModUniqueView: protectedProcedure
+        .input(z.object({
+            userId: z.string(),
+            modId: z.number()
+        }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                await ctx.prisma.modUniqueView.create({
+                    data: {
+                        modId: input.modId,
+                        userId: input.userId
+                    }
+                });
+            } catch (error) {
+                if (typeof error === "string" && error.includes("constraint"))
+                    return;
 
-                    throw new TRPCError({
-                        message: (typeof error == "string") ? error : "",
-                        code: "BAD_REQUEST"
-                    });
-                }
-            })
+                throw new TRPCError({
+                    message: (typeof error == "string") ? error : "",
+                    code: "BAD_REQUEST"
+                });
+            }
+        })
 });

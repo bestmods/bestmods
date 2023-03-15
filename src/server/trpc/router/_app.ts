@@ -1,7 +1,7 @@
 import { router } from "../trpc";
 import { authRouter } from "./auth";
 
-import  { categoryRouter } from './category';
+import { categoryRouter } from './category';
 import { sourceRouter } from "./source";
 import { modRouter } from "./mod";
 import { userRouter } from './user';
@@ -12,16 +12,16 @@ import { permissionRouter } from "./permission";
 import { filesRouter } from "./files";
 
 export const appRouter = router({
-  source: sourceRouter,
-  category: categoryRouter,
-  mod: modRouter,
-  modRating: modRatingRouter,
-  modDownload: modDownloadRouter,
-  modView: modViewRouter,
-  auth: authRouter,
-  user: userRouter,
-  permission: permissionRouter,
-  files: filesRouter
+    source: sourceRouter,
+    category: categoryRouter,
+    mod: modRouter,
+    modRating: modRatingRouter,
+    modDownload: modDownloadRouter,
+    modView: modViewRouter,
+    auth: authRouter,
+    user: userRouter,
+    permission: permissionRouter,
+    files: filesRouter
 });
 
 // export type definition of API

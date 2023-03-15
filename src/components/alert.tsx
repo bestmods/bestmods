@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const AlertForm: React.FC<{error?: string | null, success?: string | null}> = ({ error, success }) => {
+export const AlertForm: React.FC<{ error?: string | null, success?: string | null }> = ({ error, success }) => {
 
     return (<>
         <div id="alertbox">
@@ -12,7 +12,7 @@ export const AlertForm: React.FC<{error?: string | null, success?: string | null
             )}
 
             {success != null && (
-                    <div className="p-4 bg-lime-500/50 text-white">
+                <div className="p-4 bg-lime-500/50 text-white">
                     <h3 className="text-xl font-bold">Success!</h3>
                     <p>{success}</p>
                 </div>
