@@ -5,7 +5,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 import Link from 'next/link'
 import Script from "next/script";
-import { setCookie, getCookie } from 'cookies-next';
+import { setCookie } from 'cookies-next';
 
 export type filterArgs = {
     timeframe: number | null
@@ -132,7 +132,7 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
                 </FilterCtx.Provider>
             </SessionCtx.Provider>
         </main>
-    )
+    );
 };
 
 export const MobileMenu: React.FC = () => {
@@ -164,7 +164,7 @@ export const MobileMenu: React.FC = () => {
                 <Filters />
             </div>
         </div>
-    )
+    );
 }
 
 export const Login: React.FC = () => {

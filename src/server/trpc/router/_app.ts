@@ -9,7 +9,6 @@ import { modRatingRouter } from './mod_rating';
 import { modDownloadRouter } from './mod_download';
 import { modViewRouter } from "./mod_view";
 import { permissionRouter } from "./permission";
-import { filesRouter } from "./files";
 
 export const appRouter = router({
     source: sourceRouter,
@@ -20,8 +19,7 @@ export const appRouter = router({
     modView: modViewRouter,
     auth: authRouter,
     user: userRouter,
-    permission: permissionRouter,
-    files: filesRouter
+    permission: permissionRouter
 });
 
 // export type definition of API
