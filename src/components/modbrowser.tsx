@@ -62,7 +62,6 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
     // Retrieve session.
     const session = useContext(SessionCtx);
     const filters = useContext(FilterCtx);
-    const display = useContext(DisplayCtx);
 
     // Retrieve rating.
     const [rating, setRating] = useState(1);

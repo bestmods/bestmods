@@ -1,7 +1,5 @@
 import Head from "next/head";
 
-import { trpc } from "../utils/trpc";
-
 type HeadArgs = {
     title?: string | null
     description?: string | null
