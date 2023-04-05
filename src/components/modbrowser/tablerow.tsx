@@ -64,12 +64,12 @@ const TableRow: React.FC<{ mod: any, addClasses: string, banner: string, descSho
                     mod={mod}
                 />
             </td>
-            <td className="h-full bg-cyan-700">
-                <div className="h-full flex text-center justify-between items-end">
-                    <a href={viewLink} className="self-end text-white font-bold p-2 w-1/3">View</a>
+            <td className="h-full">
+                <div className="flex text-center justify-between items-end">
+                    <a href={viewLink} className="bg-cyan-700 hover:bg-cyan-600 p-3 rounded self-end text-white font-bold w-1/3">View</a>
                     {mod.ModInstaller != null && mod.ModInstaller.length > 0 && (
                         <>
-                            <div className="p-2 w-1/3">
+                            <div className="bg-cyan-700 hover:bg-cyan-600 p-3 rounded">
                                 <button id={"installerDropdownBtn" + mod.id} onClick={() => {
                                     setInstallersMenuOpen(!installersMenuOpen);
                                 }} className="text-white font-bold flex items-center mx-auto" type="button"><span>Install</span> {!installersMenuOpen ? (
@@ -92,7 +92,7 @@ const TableRow: React.FC<{ mod: any, addClasses: string, banner: string, descSho
                         </>
                     )}
                     {mod.ModSource != null && mod.ModSource.length > 0 && (
-                        <div className="p-2 w-1/3">
+                        <div className="bg-cyan-700 hover:bg-cyan-600 p-3 rounded">
                             <button id={"sourceDropdownBtn" + mod.id} onClick={() => {
                                 setSourcesMenuOpen(!sourcesMenuOpen);
                             }} className="text-white font-bold flex items-center mx-auto" type="button"><span>Sources</span> {!sourcesMenuOpen ? (
