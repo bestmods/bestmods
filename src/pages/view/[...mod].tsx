@@ -75,20 +75,21 @@ const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
                     />
                     {bgFile != null ? (
                         <BestModsPage
-                            content={<MainContent 
-                                cdn={cdn} 
-                                cat={cat}
-                            />}
                             image={cdn + bgPath}
                             excludeCdn={true}
-                        />
+                        >
+                            <MainContent 
+                                cdn={cdn} 
+                                cat={cat}
+                            />
+                        </BestModsPage>
                     ) : (
-                        <BestModsPage
-                            content={<MainContent 
+                        <BestModsPage>
+                            <MainContent 
                                 cdn={cdn}
                                 cat={cat}
-                            />}
-                        />
+                            />
+                        </BestModsPage>
                     )}
                 </ModViewCtx.Provider>
             </ModCtx.Provider>

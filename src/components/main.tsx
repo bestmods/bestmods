@@ -1,5 +1,5 @@
 import { Field, Form, Formik } from "formik";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, ReactNode } from "react";
 
 import { signIn, signOut, useSession } from "next-auth/react";
 
@@ -28,7 +28,7 @@ export const FilterCtx = React.createContext<filterArgs | null>(null);
 export const DisplayCtx = React.createContext<displayArgs | null>(null);
 export const CookiesCtx = React.createContext<{ [key: string]: string }>({});
 
-export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | null, background?: string, image?: string | null, overlay?: string, excludeCdn?: boolean, cookies?: { [key: string]: string }, showFilters?: boolean }> = ({ content, classes, background = "bg-gradient-to-b from-[#002736] to-[#00151b]", image = "/images/backgrounds/default.jpg", overlay = "bg-none md:bg-black/80", excludeCdn = false, cookies, showFilters = false }) => {
+export const BestModsPage: React.FC<{ children: ReactNode, classes?: string | null, background?: string, image?: string | null, overlay?: string, excludeCdn?: boolean, cookies?: { [key: string]: string }, showFilters?: boolean }> = ({ children, classes, background = "bg-gradient-to-b from-[#002736] to-[#00151b]", image = "/images/backgrounds/default.jpg", overlay = "bg-none md:bg-black/80", excludeCdn = false, cookies, showFilters = false }) => {
     // Retrieve session to use in context.
     const { data: session } = useSession();
 
@@ -125,7 +125,7 @@ export const BestModsPage: React.FC<{ content: JSX.Element, classes?: string | n
                             </div>
 
                             <div className="relative">
-                                {content}
+                                {children}
                             </div>
                         </CookiesCtx.Provider>
                     </DisplayCtx.Provider>

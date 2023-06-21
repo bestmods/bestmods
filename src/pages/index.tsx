@@ -11,10 +11,11 @@ const Home: NextPage<{ cookies: { [key: string]: string } }> = ({ cookies }) => 
         <>
             <HeadInfo />
             <BestModsPage
-                content={<ModBrowser />}
                 cookies={cookies}
                 showFilters={true}
-            />
+            >
+                <ModBrowser />
+            </BestModsPage>
         </>
     );
 };

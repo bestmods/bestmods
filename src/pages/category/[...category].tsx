@@ -90,17 +90,19 @@ const Home: NextPage<{ cat: any, cookies: { [key: string]: string } }> = ({ cat,
             />
             {bgFile != null ? (
                 <BestModsPage
-                    content={content}
                     image={bgPath}
                     showFilters={true}
                     cookies={cookies}
-                />
+                >
+                    {content}
+                </BestModsPage>
             ) : (
                 <BestModsPage
-                    content={content}
                     showFilters={true}
                     cookies={cookies}
-                />
+                >
+                    {content}
+                </BestModsPage>
             )}
         </>
     );
