@@ -8,8 +8,8 @@ import { type ModSource, type ModInstaller, type Category } from "@prisma/client
 import InfiniteScroll from 'react-infinite-scroller';
 
 import { SessionCtx, FilterCtx, CookiesCtx } from './main';
-import GridRow from './modbrowser/gridrow';
-import TableRow from './modbrowser/tablerow';
+import GridRow from './modbrowser/grid_row';
+import TableRow from './modbrowser/table_row';
 
 type ModRowArguments = {
     mod: any

@@ -4,7 +4,7 @@ import React from "react";
 import { BestModsPage } from '../components/main';
 import HeadInfo from "../components/head";
 
-import ModBrowser from '../components/modbrowser';
+import ModBrowser from '../components/mod_browser';
 
 const Home: NextPage<{ cookies: { [key: string]: string } }> = ({ cookies }) => {
     return (

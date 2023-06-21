@@ -10,7 +10,7 @@ import { type ModSource, type ModDownload } from '@prisma/client';
 import { marked } from 'marked';
 
 import HeadInfo from "../../components/head";
-import { ModInstallerRender, ModRatingRender } from '../../components/modbrowser';
+import { ModInstallerRender, ModRatingRender } from '../../components/mod_browser';
 
 import { prisma } from '../../server/db/client';
 import { type GetServerSidePropsContext } from 'next';

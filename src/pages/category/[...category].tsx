@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { BestModsPage } from '../../components/main';
 import HeadInfo from "../../components/head";
 
-import ModBrowser from '../../components/modbrowser';
+import ModBrowser from '../../components/mod_browser';
 
 import { prisma } from '../../server/db/client';
 import { type GetServerSidePropsContext } from 'next';

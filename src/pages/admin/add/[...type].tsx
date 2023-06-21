@@ -3,9 +3,9 @@ import { BestModsPage } from '../../../components/main';
 import { type NextPage } from "next";
 import React, { useContext } from "react";
 
-import SourceForm from "../../../components/forms/contributor/CreateSource";
-import CategoryForm from "../../../components/forms/contributor/CreateCategory";
-import ModForm from "../../../components/forms/contributor/CreateMod";
+import SourceForm from "../../../components/forms/contributor/create_source";
+import CategoryForm from "../../../components/forms/contributor/create_category";
+import ModForm from "../../../components/forms/contributor/create_mod";
 
 import { useRouter } from 'next/router'
 
