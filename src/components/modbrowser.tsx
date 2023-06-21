@@ -330,7 +330,7 @@ const ModBrowser: React.FC<{ categories?: Array<number> | null, visible?: boolea
         <div className="mx-auto w-full sm:w-4/5">
             <InfiniteScroll
                 pageStart={0}
-                className={display + "View"}
+                className={display + `View${(items.length < 1) ? " !grid-cols-1 sm:!grid-cols-1" : ""}`}
                 loadMore={loadMore}
                 hasMore={requireItems}
                 loader={
