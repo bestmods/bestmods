@@ -342,28 +342,40 @@ const ModBrowser: React.FC<{ categories?: Array<number> | null, visible?: boolea
             >
                 {display == "grid" ? (
                     <>
-                        {items.map((mod: any) => {
-                            return (
-                                <ModRow
-                                    key={mod.id + "-row"}
-                                    mod={mod}
-                                    display={display}
-                                />
-                            );
-                        })}
+                        {items.length > 0 ? (
+                            <>
+                                {items.map((mod: any) => {
+                                    return (
+                                        <ModRow
+                                            key={mod.id + "-row"}
+                                            mod={mod}
+                                            display={display}
+                                        />
+                                    );
+                                })}
+                            </>
+                        ) : (
+                            <p className="mods-not-found">No mods found.</p>
+                        )}
                     </>
                 ) : (
-                    <table className="w-full table-auto border-spacing-y-5 border-separate">
-                        {items.map((mod: any) => {
-                            return (
-                                <ModRow
-                                    key={mod.id + "-row"}
-                                    mod={mod}
-                                    display={display}
-                                />
-                            );
-                        })}
-                    </table>
+                    <>
+                        {items.length > 0 ? (
+                            <table className="w-full table-auto border-spacing-y-5 border-separate">
+                                {items.map((mod: any) => {
+                                    return (
+                                        <ModRow
+                                            key={mod.id + "-row"}
+                                            mod={mod}
+                                            display={display}
+                                        />
+                                    );
+                                })}
+                            </table>
+                        ) : (
+                            <p className="mods-not-found">No mods founds.</p>
+                        )}
+                    </>
                 )}
             </InfiniteScroll>
         </div>
