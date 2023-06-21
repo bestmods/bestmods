@@ -2,7 +2,7 @@ import { type NextPage } from "next";
 import React from "react";
 
 import { BestModsPage } from '../../components/main';
-import HeadInfo from "../../components/Head";
+import HeadInfo from "../../components/head";
 
 import { trpc } from '../../utils/trpc';
 import Link from 'next/link';

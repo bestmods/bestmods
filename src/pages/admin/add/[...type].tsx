@@ -9,7 +9,7 @@ import ModForm from "../../../components/forms/contributor/CreateMod";
 
 import { useRouter } from 'next/router'
 
-import HeadInfo from "../../../components/Head";
+import HeadInfo from "../../../components/head";
 import { SessionCtx } from '../../../components/main';
 
 import { trpc } from '../../../utils/trpc';

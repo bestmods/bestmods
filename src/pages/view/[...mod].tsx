@@ -9,7 +9,7 @@ import { type ModSource, type ModDownload } from '@prisma/client';
 
 import { marked } from 'marked';
 
-import HeadInfo from "../../components/Head";
+import HeadInfo from "../../components/head";
 import { ModInstallerRender, ModRatingRender } from '../../components/modbrowser';
 
 import { prisma } from '../../server/db/client';
