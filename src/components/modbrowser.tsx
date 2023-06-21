@@ -323,7 +323,7 @@ const ModBrowser: React.FC<{ categories?: Array<number> | null, visible?: boolea
     let display = "grid";
     const cookies = useContext(CookiesCtx);
 
-    if (cookies && cookies['bm_display'] != "grid")
+    if (cookies && cookies['bm_display'] != undefined && cookies['bm_display'] != "grid")
         display = "table";
 
     return (
