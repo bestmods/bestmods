@@ -373,7 +373,7 @@ const ModBrowser: React.FC<{ categories?: Array<number> | null, visible?: boolea
                                 })}
                             </table>
                         ) : (
-                            <p className="mods-not-found">No mods founds.</p>
+                            <p className="mods-not-found">No mods found.</p>
                         )}
                     </>
                 )}
