@@ -365,7 +365,7 @@ const ModBrowser: React.FC<{ categories?: Array<number> | null, visible?: boolea
                 ) : (
                     <>
                         {items.length > 0 ? (
-                            <table className="w-full table-auto border-spacing-y-5 border-separate">
+                            <table className="modbrowser-table">
                                 <tbody>
                                     {items.map((mod: any) => {
                                         return (
