@@ -40,7 +40,42 @@ Additionally, you may also use our discussions forum [here](https://github.com/o
 * [Reddit](https://reddit.com/r/bestmods)
 
 ## Installation & Deployment
-*To be continued...*
+### Requirements
+* PostgreSQL (unless you choose SQLite; See below).
+* Node >=14
+* NPM
+
+### Using SQLite
+To use a local SQLite database, perform the following steps.
+1. In `prisma/schema.prisma`, replace `provider = "postgresql"` with `provider = "sqlite"`.
+1. In `prisma/schema.prisma`, remove all instances of `@db.Text` because PostgreSQL and SQLite have different column definitions for string.
+1. In `.env`, set `DATABASE_URL` to `file:./db.sqlite`.
+
+### Installation & Running Dev Server
+You may perform the following commands to run the dev web server.
+
+```bash
+# Clone respository.
+git clone https://github.com/bestmods/bestmods.git
+
+# Change directory.
+cd bestmods
+
+# Update and install NPM packages.
+npm update
+npm install
+
+# Migrate database.
+npx prisma db push
+
+# Run dev server.
+npm run dev
+```
+
+### Production
+To run in production, you can use the `npx next build` command to build the web application. Make sure to add `output: "standalone"` to the config variable in `next.config.mjs`.
+
+With that said, you may then run `node server.js`.
 
 ## Showcase
 <a href="https://bestmods.io/view/mc-jurassicraft" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview2.jpeg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview2.jpeg" /></a>
