@@ -2,9 +2,9 @@ import { type NextPage } from "next";
 import React, { useState } from "react";
 
 import { BestModsPage } from '../../components/main';
-import HeadInfo from "../../components/Head";
+import HeadInfo from "../../components/head";
 
-import ModBrowser from '../../components/modbrowser';
+import ModBrowser from '../../components/mod_browser';
 
 import { prisma } from '../../server/db/client';
 import { type GetServerSidePropsContext } from 'next';
@@ -90,17 +90,19 @@ const Home: NextPage<{ cat: any, cookies: { [key: string]: string } }> = ({ cat,
             />
             {bgFile != null ? (
                 <BestModsPage
-                    content={content}
                     image={bgPath}
                     showFilters={true}
                     cookies={cookies}
-                />
+                >
+                    {content}
+                </BestModsPage>
             ) : (
                 <BestModsPage
-                    content={content}
                     showFilters={true}
                     cookies={cookies}
-                />
+                >
+                    {content}
+                </BestModsPage>
             )}
         </>
     );

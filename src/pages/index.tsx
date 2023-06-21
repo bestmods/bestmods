@@ -2,19 +2,20 @@ import { type GetServerSidePropsContext, type NextPage } from "next";
 import React from "react";
 
 import { BestModsPage } from '../components/main';
-import HeadInfo from "../components/Head";
+import HeadInfo from "../components/head";
 
-import ModBrowser from '../components/modbrowser';
+import ModBrowser from '../components/mod_browser';
 
 const Home: NextPage<{ cookies: { [key: string]: string } }> = ({ cookies }) => {
     return (
         <>
             <HeadInfo />
             <BestModsPage
-                content={<ModBrowser />}
                 cookies={cookies}
                 showFilters={true}
-            />
+            >
+                <ModBrowser />
+            </BestModsPage>
         </>
     );
 };
