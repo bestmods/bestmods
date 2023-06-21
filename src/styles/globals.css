@@ -238,3 +238,6 @@
     @apply block;
 }
 
+.mods-not-found {
+    @apply font-bold;
+}
