@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, protectedProcedure, contributorProcedure } from "../trpc";
+import { router, protectedProcedure, adminProcedure } from "../trpc";
 
 import { TRPCError } from "@trpc/server"
 
@@ -20,7 +20,7 @@ export const permissionRouter = router({
                 }
             });
         }),
-    addUserPerm: contributorProcedure
+    addUserPerm: adminProcedure
         .input(z.object({
             userId: z.string(),
             perm: z.string()
