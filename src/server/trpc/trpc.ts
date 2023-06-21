@@ -111,7 +111,7 @@ const ownsMod = t.middleware(async ({ ctx, rawInput, next }) => {
     const modId = input.modId ?? input.id;
 
     // Now retrieve our mod and compare to user ID.
-    const mod = ctx.prisma.mod.findFirst({
+    const mod: any = ctx.prisma.mod.findFirst({
         select: {
             owner: true
         },
