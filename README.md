@@ -41,8 +41,8 @@ Additionally, you may also use our discussions forum [here](https://github.com/o
 
 ## Installation & Deployment
 ### Requirements
-* PostgreSQL (unless you choose SQLite; See below).
-* Node >=14
+* PostgreSQL (unless you choose SQLite; See below)
+* Node ^14
 * NPM
 
 ### Using SQLite
@@ -81,6 +81,9 @@ With that said, you may then run `node server.js`.
 <a href="https://bestmods.io/view/mc-jurassicraft" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview2.jpeg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview2.jpeg" /></a>
 <a href="https://bestmods.io/view/mc-jurassicraft/sources" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview3.jpeg" data-canonical-src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview3.jpeg" /></a>
 <a href="https://bestmods.io/view/mc-jurassicraft/downloads" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview4.jpeg" data-canonical-src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview4.jpeg" /></a>
+
+## Permissions
+While this project is open source, if you use this full project publicly, please add a link back to Best Mods' [website](https://bestmods.io/) that is visible to the public user. You don't need to do this if you're using *<30%* of the project's code. This is to attempt to mitigate people blatantly copying the project for their own use publicly.
 
 ## Credits
 * [Christian Deacon](https://github.com/gamemann) - Creator
