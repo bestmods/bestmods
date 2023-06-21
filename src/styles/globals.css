@@ -240,4 +240,6 @@
 
 .mods-not-found {
     @apply font-bold;
+    @apply text-white;
+    @apply text-center;
 }
