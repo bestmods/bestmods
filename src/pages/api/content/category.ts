@@ -64,57 +64,76 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
             });
         }
 
-        const cat = await prisma.category.upsert({
-            where: {
-                id: id ? Number(id) : 0
-            },
-            create: {
-                parentId: (parent_id) ? Number(parent_id) : undefined,
-                name: name ?? "",
-                nameShort: name_short ?? "",
-                url: url,
-                classes: classes,
-                icon: icon,
-                hasBg: (has_bg) ? Boolean(has_bg) : false
-            },
-            update: {
-                ...(parent_id && {
-                    parentId: parent_id ? Number(parent_id) : undefined
-                }),
-                ...(name && {
-                    name: name
-                }),
-                ...(name_short && {
-                    nameShort: name_short
-                }),
-                ...(url && {
-                    url: url,
-                }),
-                ...(classes && {
-                    classes: classes
-                }),
-                ...(icon && {
-                    icon: icon
-                }),
-                ...(has_bg && {
-                    hasBg: Boolean(has_bg)
-                })
-            }
-        });
+        if (id) {
+            const cat = await prisma.category.update({
+                where: {
+                    id: id ? Number(id) : 0
+                },
+                data: {
+                    ...(parent_id && {
+                        parentId: Number(parent_id)
+                    }),
+                    ...(name && {
+                        name: name
+                    }),
+                    ...(name_short && {
+                        nameShort: name_short
+                    }),
+                    ...(url && {
+                        url: url,
+                    }),
+                    ...(classes && {
+                        classes: classes
+                    }),
+                    ...(icon && {
+                        icon: icon
+                    }),
+                    ...(has_bg && {
+                        hasBg: Boolean(has_bg)
+                    })
+                }
+            });
 
-        if (!cat) {
-            return res.status(400).json({
-                message: "Did not insert or update category successfully.",
-                data: null
+            if (!cat) {
+                return res.status(400).json({
+                    message: "Did not update category successfully.",
+                    data: null
+                });
+            }
+
+            return res.status(200).json({
+                message: "Updated category successfully!",
+                data: {
+                    category: cat
+                }
+            });
+        } else {
+            const cat = await prisma.category.create({
+                data: {
+                    parentId: (parent_id) ? Number(parent_id) : null,
+                    name: name,
+                    nameShort: name_short,
+                    url: url,
+                    classes: classes,
+                    icon: icon,
+                    hasBg: (has_bg) ? Boolean(has_bg) : false
+                },
+            });
+
+            if (!cat) {
+                return res.status(400).json({
+                    message: "Did not create category successfully.",
+                    data: null
+                });
+            }
+
+            return res.status(200).json({
+                message: "Created category successfully!",
+                data: {
+                    category: cat
+                }
             });
         }
-
-        return res.status(200).json({
-            message: "Created or updated category successfully!",
-            data: {
-                category: cat
-            }
-        })
     }
 
     return res.status(405).json({
