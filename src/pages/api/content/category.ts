@@ -1,6 +1,7 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 
 import { prisma } from "../../../server/db/client";
+import { Insert_Or_Update_Category } from "../../../utils/content/category";
 
 const category = async (req: NextApiRequest, res: NextApiResponse) => {
     // Check API key.
@@ -52,7 +53,7 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
         });
     } else if (req.method == "POST") {
         // Retrieve POST data.
-        const { parent_id, name, name_short, url, classes, icon, has_bg } = req.body;
+        const { parent_id, name, name_short, url, classes, icon, iremove, has_bg } : { parent_id: number, name: string, name_short: string, url: string, classes: string, icon: string, iremove: boolean, has_bg: boolean} = req.body;
 
         // Retrieve ID if any.
         const { id } = req.query;
@@ -64,76 +65,37 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
             });
         }
 
+        // If the ID is specified, do a lookup here.
         if (id) {
-            const cat = await prisma.category.update({
+            const cat = await prisma.category.findFirst({
                 where: {
-                    id: id ? Number(id) : 0
-                },
-                data: {
-                    ...(parent_id && {
-                        parentId: Number(parent_id)
-                    }),
-                    ...(name && {
-                        name: name
-                    }),
-                    ...(name_short && {
-                        nameShort: name_short
-                    }),
-                    ...(url && {
-                        url: url,
-                    }),
-                    ...(classes && {
-                        classes: classes
-                    }),
-                    ...(icon && {
-                        icon: icon
-                    }),
-                    ...(has_bg && {
-                        hasBg: Boolean(has_bg)
-                    })
+                    id: Number(id)
                 }
             });
 
             if (!cat) {
-                return res.status(400).json({
-                    message: "Did not update category successfully.",
+                return res.status(404).json({
+                    message: "Couldn't retrieve category (ID " + id + "). Category not found.",
                     data: null
                 });
             }
+        }
 
-            return res.status(200).json({
-                message: "Updated category successfully!",
-                data: {
-                    category: cat
-                }
-            });
-        } else {
-            const cat = await prisma.category.create({
-                data: {
-                    parentId: (parent_id) ? Number(parent_id) : null,
-                    name: name,
-                    nameShort: name_short,
-                    url: url,
-                    classes: classes,
-                    icon: icon,
-                    hasBg: (has_bg) ? Boolean(has_bg) : false
-                },
-            });
+        const [cat, success, err] = await Insert_Or_Update_Category(prisma, name, name_short, url, (id) ? Number(id) : undefined, icon, iremove, parent_id, classes, has_bg);
 
-            if (!cat) {
-                return res.status(400).json({
-                    message: "Did not create category successfully.",
-                    data: null
-                });
-            }
-
-            return res.status(200).json({
-                message: "Created category successfully!",
-                data: {
-                    category: cat
-                }
+        if (!success || !cat) {
+            return res.status(400).json({
+                message: `Category ${id ? "update" : "insert"} not successful. Error => ` + err,
+                data: null
             });
         }
+
+        return res.status(200).json({
+            message: `${id ? "Updated" : "Inserted"} category successfully!`,
+            data: {
+                category: cat
+            }
+        })
     }
 
     return res.status(405).json({
