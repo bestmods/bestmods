@@ -118,6 +118,9 @@ export const Insert_Or_Update_Source = async (
                 }
             });
         } else {
+            if (!name)
+                return [null, false, "Name is empty on creation."];
+            
             src = await prisma.source.create({
                 data: {
                     name: name,
