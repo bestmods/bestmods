@@ -104,20 +104,20 @@ export const modRouter = router({
         }),
     addMod: contributorProcedure
         .input(z.object({
-            id: z.number().nullable(),
+            id: z.number().nullable().default(null),
             visible: z.boolean().default(true),
 
-            ownerId: z.string().nullable().default(null),
-            ownerName: z.string().nullable().default(null),
+            owner_id: z.string().nullable().default(null),
+            owner_name: z.string().nullable().default(null),
 
             name: z.string(),
-            banner: z.string().nullable(),
+            banner: z.string().nullable().default(null),
             url: z.string(),
-            category: z.number(),
+            category: z.number().nullable().default(null),
 
             // The following should be parsed via Markdown Syntax.
             description: z.string(),
-            descriptionShort: z.string(),
+            description_short: z.string(),
             install: z.string().nullable().default(null),
 
             // The following should be parsed via JSON.
@@ -199,7 +199,7 @@ export const modRouter = router({
             }
 
             // Insert ot update mod.
-            const [mod, success, err] = await Insert_Or_Update_Mod(ctx.prisma, input.name, input.url, input.description, input.visible, input.id ?? undefined, undefined, input.ownerId ?? undefined, input.ownerName ?? undefined, input.banner ?? undefined, input.bremove, input.category, input.descriptionShort, input.install ?? undefined, downloads, screenshots, sources, installers);
+            const [mod, success, err] = await Insert_Or_Update_Mod(ctx.prisma, input.name, input.url, input.description, input.visible, input.id ?? undefined, undefined, input.owner_id ?? undefined, input.owner_name ?? undefined, input.banner ?? undefined, input.bremove, input.category, input.description_short, input.install ?? undefined, downloads, screenshots, sources, installers);
 
             // Check for error.
             if (!success || !mod) {
