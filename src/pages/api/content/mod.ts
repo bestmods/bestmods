@@ -1,7 +1,7 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 
 import { prisma } from "../../../server/db/client";
-import { Insert_Or_Update_Mod } from "../../../utils/content/mod";
+import { Delete_Mod, Insert_Or_Update_Mod } from "../../../utils/content/mod";
 import { ModDownload, ModInstaller, ModScreenshot, ModSource } from "@prisma/client";
 
 const mod = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -136,6 +136,44 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
             data: {
                 mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === 'bigint' ? v.toString() : v))
             }
+        });
+    } else if (req.method == "DELETE") {
+        const { id, url } = req.query;
+
+        if (!id && !url) {
+            return res.status(404).json({
+                message: "Mod ID and URL both not present."
+            });
+        }
+
+        // Check if exists.
+        const mod = await prisma.mod.findFirst({
+            where: {
+                ...(id && {
+                    id: Number(id.toString())
+                }),
+                ...(url && {
+                    url: url.toString()
+                })
+            }
+        });
+
+        if (!mod) {
+            return res.status(400).json({
+                message: "Mod not found. ID => " + id?.toString() ?? "N/A" + ". URL => " + url?.toString() ?? "N/A" + "."
+            });
+        }
+
+        const [success, err] = await Delete_Mod(prisma, (id) ? Number(id.toString()) : undefined, (url) ? url.toString() : undefined);
+
+        if (!success) {
+            return res.status(400).json({
+                message: err
+            });
+        }
+
+        return res.status(200).json({
+            message: "Mod deleted!"
         });
     }
 
