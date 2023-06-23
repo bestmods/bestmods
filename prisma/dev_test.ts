@@ -12,7 +12,7 @@ async function main() {
         parent_id: null,
 
         name: "Minecraft",
-        nameShort: "Minecraft",
+        name_short: "Minecraft",
         url: "minecraft",
 
         icon: null,
@@ -27,7 +27,7 @@ async function main() {
         parent_id: 1,
 
         name: "Models",
-        nameShort: "Models",
+        name_short: "Models",
         url: "models",
 
         icon: null,
@@ -42,7 +42,7 @@ async function main() {
         parent_id: null,
 
         name: "Counter-Strike: Source",
-        nameShort: "CS:S",
+        name_short: "CS:S",
         url: "css",
 
         icon: null,
@@ -57,7 +57,7 @@ async function main() {
         parent_id: 3,
 
         name: "Maps",
-        nameShort: "Maps",
+        name_short: "Maps",
         url: "css-maps",
 
         icon: null,
@@ -72,7 +72,7 @@ async function main() {
         parent_id: null,
 
         name: "Grand Theft Auto V",
-        nameShort: "GTA V",
+        name_short: "GTA V",
         url: "gtav",
 
         icon: null,
@@ -87,7 +87,7 @@ async function main() {
         parent_id: 5,
 
         name: "Vehicles",
-        nameShort: "vehicles",
+        name_short: "vehicles",
         url: "vehicles",
 
         icon: null,

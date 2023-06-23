@@ -1,8 +1,6 @@
 import { z } from "zod";
 import { router, publicProcedure, contributorProcedure } from "../trpc";
 
-import fs from 'fs';
-import FileType from '../../../utils/base64';
 import { TRPCError } from "@trpc/server"
 import { Delete_Category, Insert_Or_Update_Category } from "../../../utils/content/category";
 
@@ -66,21 +64,21 @@ export const categoryRouter = router({
         }),
     addCategory: contributorProcedure
         .input(z.object({
-            id: z.number().nullable(),
-            parent_id: z.number().nullable(),
+            id: z.number().nullable().default(null),
+            parent_id: z.number().nullable().default(null),
             name: z.string(),
-            nameShort: z.string(),
+            name_short: z.string(),
             url: z.string(),
-            icon: z.string().nullable(),
-            classes: z.string().nullable(),
+            icon: z.string().nullable().default(null),
+            classes: z.string().nullable().default(null),
 
-            iremove: z.boolean().nullable(),
+            iremove: z.boolean().nullable().default(false),
 
-            hasBg: z.boolean().default(false)
+            has_bg: z.boolean().default(false)
         }))
         .mutation(async ({ ctx, input }) => {
             // Use our helper funtion to insert our update category.
-            const [cat, success, err] = await Insert_Or_Update_Category(ctx.prisma, input.name, input.nameShort, input.url, input.id ?? 0, input.icon ?? undefined, input.iremove ?? undefined, input.parent_id, input.classes, input.hasBg);
+            const [cat, success, err] = await Insert_Or_Update_Category(ctx.prisma, input.name, input.name_short, input.url, input.id ?? 0, input.icon ?? undefined, input.iremove ?? undefined, input.parent_id, input.classes, input.has_bg);
 
             if (!success || !cat) {
                 throw new TRPCError({
