@@ -18,37 +18,34 @@ const source = async (req: NextApiRequest, res: NextApiResponse) => {
     // If this is a GET request, we are retrieving an item.
     if (req.method == "GET") {
         // Retrieve ID and check.
-        const { id } = req.query;
+        const { url } = req.query;
 
-        if (!id) {
+        if (!url) {
             return res.status(400).json({
-                message: "No ID present.",
+                message: "No URL present.",
                 data: null
             });
         }
 
-        // Retrieve category and check.
-        const cat = await prisma.category.findFirst({
-            include: {
-                parent: true
-            },
+        // Retrieve source and check.
+        const src = await prisma.source.findFirst({
             where: {
-                id: Number(id)
+                url: url.toString()
             }
         });
 
-        if (!cat) {
+        if (!src) {
             return res.status(404).json({
-                message: "Category ID " + id + " not found.",
+                message: "Source URL " + url + " not found.",
                 data: null
             });
         }
 
-        // Return category.
+        // Return source.
         return res.status(200).json({
-            "message": "Category fetched!",
+            "message": "Source fetched!",
             data: {
-                category: cat
+                src: src
             }
         });
     } else if (req.method == "POST") {
@@ -106,7 +103,7 @@ const source = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         return res.status(200).json({
-            message: `${preUrl ? "Updated" : "Inserted"} category successfully!`,
+            message: `${preUrl ? "Updated" : "Inserted"} source successfully!`,
             data: {
                 source: src
             }
