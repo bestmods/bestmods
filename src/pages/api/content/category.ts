@@ -1,7 +1,7 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 
 import { prisma } from "../../../server/db/client";
-import { Insert_Or_Update_Category } from "../../../utils/content/category";
+import { Delete_Category, Insert_Or_Update_Category } from "../../../utils/content/category";
 
 const category = async (req: NextApiRequest, res: NextApiResponse) => {
     // Check API key.
@@ -96,6 +96,39 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
                 category: cat
             }
         })
+    } else if (req.method == "DELETE") {
+        const { id } = req.query;
+
+        if (!id) {
+            return res.status(404).json({
+                message: "Category ID not present."
+            });
+        }
+
+        // Check if exists.
+        const cat = await prisma.category.findFirst({
+            where: {
+                id: Number(id.toString())
+            }
+        });
+
+        if (!cat) {
+            return res.status(400).json({
+                message: "Category ID " + id.toString() + " not found."
+            });
+        }
+
+        const [success, err] = await Delete_Category(prisma, Number(id.toString()));
+
+        if (!success) {
+            return res.status(400).json({
+                message: err
+            });
+        }
+
+        return res.status(200).json({
+            message: "Category deleted!"
+        });
     }
 
     return res.status(405).json({
