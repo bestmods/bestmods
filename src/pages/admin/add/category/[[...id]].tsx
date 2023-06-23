@@ -11,11 +11,12 @@ import { Category } from '@prisma/client';
 
 import { prisma } from '../../../../server/db/client'
 import { getSession } from 'next-auth/react';
+import { CategoriesWithChildren } from '../../../../components/types';
 
 const Home: NextPage<{
     authed: boolean,
     cat: Category,
-    cats: Category[]
+    cats: CategoriesWithChildren[]
 }> = ({
     authed,
     cat,
@@ -45,7 +46,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     // Props to pass.
     let cat: Category | null = null;
-    let cats: Category[] | null = null;
+    let cats: CategoriesWithChildren[] | null = null;
     let authed = false;
 
     // See if we have a slug.
