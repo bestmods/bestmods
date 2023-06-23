@@ -133,11 +133,11 @@ export const Insert_Or_Update_Mod = async (
                     ownerName: owner_name,
                     ownerId: owner_id,
 
-                    name: name,
-                    url: url,
+                    name: name ?? "",
+                    url: url ?? "",
                     categoryId: category_id ?? null,
 
-                    description: description,
+                    description: description ?? "",
                     descriptionShort: description_short,
                     install: install,
 
@@ -325,7 +325,7 @@ export const Delete_Mod = async (
         return [false, "ID and URL both not specified!"];
 
     try {
-        await prisma.category.delete({
+        await prisma.mod.delete({
             where: {
                 ...(id && {
                     id: id
