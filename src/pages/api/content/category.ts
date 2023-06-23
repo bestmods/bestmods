@@ -63,14 +63,14 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
             iremove,
             has_bg 
         } : { 
-            parent_id: number,
-            name: string,
-            name_short: string,
-            url: string,
-            classes: string,
-            icon: string,
-            iremove: boolean,
-            has_bg: boolean
+            parent_id?: number,
+            name?: string,
+            name_short?: string,
+            url?: string,
+            classes?: string,
+            icon?: string,
+            iremove?: boolean,
+            has_bg?: boolean
         } = req.body;
 
         // Retrieve ID if any.
