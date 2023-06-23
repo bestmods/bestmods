@@ -4,7 +4,7 @@ import FileType from '../base64';
 import fs from 'fs';
 
 export const Insert_Or_Update_Source = async (
-    ctx: any,
+    prisma: any,
 
     url: string,
     
@@ -34,10 +34,10 @@ export const Insert_Or_Update_Source = async (
     let banner_path: string | boolean | null = false;
 
     if (iremove)
-    icon_path = null;
+        icon_path = null;
 
     if (bremove)
-    banner_path = null;
+        banner_path = null;
 
     if (icon != null && icon.length > 0 && !iremove) {
         const base64Data = icon.split(',')[1];
@@ -122,7 +122,7 @@ export const Insert_Or_Update_Source = async (
     }
 
     try {
-        await ctx.prisma.source.upsert({
+        await prisma.source.upsert({
             where: {
                 url: url
             },

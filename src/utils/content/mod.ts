@@ -23,7 +23,7 @@ type installers = {
 };
 
 export const Insert_Or_Update_Mod = async (
-    ctx: any,
+    prisma: any,
 
     name: string,
     url: string,
@@ -115,7 +115,7 @@ export const Insert_Or_Update_Mod = async (
     }
 
     try {
-        mod = await ctx.prisma.mod.upsert({
+        mod = await prisma.mod.upsert({
             where: {
                 ...(lookup_id && {
                     id: lookup_id
@@ -181,25 +181,25 @@ export const Insert_Or_Update_Mod = async (
 
     // For now, we want to clear out all relation data to our mod before re-updating with how our form and React setup works.
     try {
-        await ctx.prisma.modDownload.deleteMany({
+        await prisma.modDownload.deleteMany({
             where: {
                 modId: mod.id
             }
         });
 
-        await ctx.prisma.modScreenshot.deleteMany({
+        await prisma.modScreenshot.deleteMany({
             where: {
                 modId: mod.id
             }
         });
 
-        await ctx.prisma.modSource.deleteMany({
+        await prisma.modSource.deleteMany({
             where: {
                 modId: mod.id
             }
         });
 
-        await ctx.prisma.modInstaller.deleteMany({
+        await prisma.modInstaller.deleteMany({
             where: {
                 modId: mod.id
             }
@@ -217,7 +217,7 @@ export const Insert_Or_Update_Mod = async (
                 return;
 
             try {
-                await ctx.prisma.modDownload.upsert({
+                await prisma.modDownload.upsert({
                     where: {
                         modId_url: {
                             modId: mod.id,
@@ -248,7 +248,7 @@ export const Insert_Or_Update_Mod = async (
                 return
 
             try {
-                await ctx.prisma.modScreenshot.upsert({
+                await prisma.modScreenshot.upsert({
                     where: {
                         modId_url: {
                             modId: mod.id,
@@ -277,7 +277,7 @@ export const Insert_Or_Update_Mod = async (
                 return;
 
             try {
-                await ctx.prisma.modSource.upsert({
+                await prisma.modSource.upsert({
                     where: {
                         modId_sourceUrl: {
                             modId: mod.id,
@@ -307,7 +307,7 @@ export const Insert_Or_Update_Mod = async (
                 return;
 
             try {
-                await ctx.prisma.modInstaller.upsert({
+                await prisma.modInstaller.upsert({
                     where: {
                         modId_sourceUrl: {
                             modId: mod.id,

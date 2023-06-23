@@ -4,7 +4,7 @@ import FileType from '../base64';
 import fs from 'fs';
 
 export const Insert_Or_Update_Category = async (
-    ctx: any,
+    prisma: any,
 
     name?: string,
     name_short?: string,
@@ -41,7 +41,7 @@ export const Insert_Or_Update_Category = async (
 
     // We must insert/update our category first.
     try {
-        cat = await ctx.prisma.category.upsert({
+        cat = await prisma.category.upsert({
             where: {
                 id: lookup_id ?? 0
             },
@@ -142,7 +142,7 @@ export const Insert_Or_Update_Category = async (
             icon_path = null;
 
         try {
-            await ctx.prisma.category.update({
+            await prisma.category.update({
                 where: {
                     id: cat.id
                 },
