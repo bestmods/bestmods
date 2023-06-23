@@ -66,10 +66,10 @@ export const Insert_Or_Update_Category = async (
                 })
             },
             create: {
-                parentId: parent_id || null,
-                name: name,
-                nameShort: name_short,
-                url: url,
+                parentId: parent_id ?? null,
+                name: name ?? "",
+                nameShort: name_short ?? "",
+                url: url ?? "",
                 ...(classes && {
                     classes: classes
                 }),
