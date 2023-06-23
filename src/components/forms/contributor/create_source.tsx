@@ -36,10 +36,6 @@ const SourceForm: React.FC<{
             <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{!src ? "Add Source!" : "Edit Source!"}</button>
         </div>;
 
-    // File uploads.
-    const [icon, setIcon] = useState<File | null>(null);
-    const [banner, setBanner] = useState<File | null>(null);
-
     const [iconData, setIconData] = useState<string | ArrayBuffer | null>(null);
     const [bannerData, setBannerData] = useState<string | ArrayBuffer | null>(null);
 
@@ -83,86 +79,24 @@ const SourceForm: React.FC<{
         enableReinitialize: true,
 
         onSubmit: (values) => {
-            // First, handle file uploads via a promise. Not sure of any other way to do it at the moment (though I am new to TypeScript, Next.JS, and React).
-            new Promise<void>(async (resolve) => {
-                // We have uploads / total uploads.
-                let uploads = 0;
-                let totalUploads = 0;
+            // Create new values.
+            const newVals: values_type = values;
 
-                // Check icon and handle upload.
-                if (icon != null) {
-                    // Increase our total uploads count.
-                    totalUploads++;
+            newVals.icon = iconData?.toString() ?? null;
+            newVals.banner = bannerData?.toString() ?? null;
+            newVals.update = (src) ? true : false;
 
-                    // Create new reader.
-                    const reader = new FileReader();
+            // Insert into database.
+            sourceMut.mutate(newVals);
 
-                    // On file uploaded.
-                    reader.onload = () => {
-                        // Set Base64 data to iconData.
-                        setIconData(reader.result);
-
-                        // We're done; Increment uploads.
-                        uploads++;
-                    };
-
-                    // Read icon file.
-                    reader.readAsDataURL(icon);
-                }
-
-                // Check banner and handle upload.
-                if (banner != null) {
-                    // Increase our total uploads count.
-                    totalUploads++;
-
-                    // Create new reader.
-                    const reader = new FileReader();
-
-                    // On file uploaded.
-                    reader.onload = () => {
-                        // Set Base64 data to bannerData.
-                        setBannerData(reader.result);
-
-                        // We're done; Increment uploads.
-                        uploads++;
-                    };
-
-                    // Read banner file.
-                    reader.readAsDataURL(banner);
-                }
-
-                // Create a for loop for 30 seconds to allow files to upload. We could make a while loop, but I'd prefer having a 30 second timeout (these are image files).
-                for (let i = 0; i < 30; i++) {
-                    // If we're done, break to get to resolve().
-                    if (uploads >= totalUploads)
-                        break;
-
-                    // Wait 1 second to save CPU cycles.
-                    await delay(1000);
-                }
-
-                // We're done uploading files.
-                resolve();
-            }).then(() => {
-                // Create new values.
-                const newVals: values_type = values;
-
-                newVals.icon = iconData?.toString() ?? null;
-                newVals.banner = bannerData?.toString() ?? null;
-                newVals.update = (src) ? true : false;
-
-                // Insert into database.
-                sourceMut.mutate(newVals);
-
-                // Scroll to top.
-                if (typeof window !== undefined) {
-                    window.scroll({
-                        top: 0,
-                        left: 0,
-                        behavior: 'smooth'
-                    });
-                }
-            });
+            // Scroll to top.
+            if (typeof window !== undefined) {
+                window.scroll({
+                    top: 0,
+                    left: 0,
+                    behavior: 'smooth'
+                });
+            }
         }
     });
 
@@ -179,9 +113,18 @@ const SourceForm: React.FC<{
                 <div className="mb-4">
                     <label className="block text-gray-200 text-sm font-bold mb-2">Image</label>
                     <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image" name="image" type="file" placeholder="Source Image" onChange={(e) => {
-                        const val = (e?.currentTarget?.files != null) ? e.currentTarget.files[0] : null;
+                        const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
 
-                        setIcon(val ?? null);
+                        if (file) {
+
+                            const reader = new FileReader();
+
+                            reader.onloadend = () => {
+                                setIconData(reader.result);
+                            };
+                            
+                            reader.readAsDataURL(file);
+                        }
                     }} />
 
                     <Field className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image-remove" name="iremove" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Remove Current</label>
@@ -190,9 +133,18 @@ const SourceForm: React.FC<{
                 <div className="mb-4">
                     <label className="block text-gray-200 text-sm font-bold mb-2">Image Banner</label>
                     <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image_banner" name="image_banner" type="file" placeholder="Source Image Banner" onChange={(e) => {
-                        const val = (e?.currentTarget?.files != null) ? e.currentTarget.files[0] : null;
+                        const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
 
-                        setBanner(val ?? null);
+                        if (file) {
+
+                            const reader = new FileReader();
+
+                            reader.onloadend = () => {
+                                setBannerData(reader.result);
+                            };
+                            
+                            reader.readAsDataURL(file);
+                        }
                     }} />
 
                     <input className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="bremove" name="image_banner-remove" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Remove Current</label>
