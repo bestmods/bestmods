@@ -1,7 +1,7 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 
 import { prisma } from "../../../server/db/client";
-import { Insert_Or_Update_Source } from "../../../utils/content/source";
+import { Delete_Source, Insert_Or_Update_Source } from "../../../utils/content/source";
 
 const source = async (req: NextApiRequest, res: NextApiResponse) => {
     // Check API key.
@@ -108,6 +108,39 @@ const source = async (req: NextApiRequest, res: NextApiResponse) => {
                 source: src
             }
         })
+    } else if (req.method == "DELETE") {
+        const { url } = req.query;
+
+        if (!url) {
+            return res.status(404).json({
+                message: "Source URL not present."
+            });
+        }
+
+        // Check if exists.
+        const src = await prisma.source.findFirst({
+            where: {
+                url: url.toString()
+            }
+        });
+
+        if (!src) {
+            return res.status(400).json({
+                message: "Source URL " + url.toString() + " not found."
+            });
+        }
+
+        const [success, err] = await Delete_Source(prisma, url.toString());
+
+        if (!success) {
+            return res.status(400).json({
+                message: err
+            });
+        }
+
+        return res.status(200).json({
+            message: "Source deleted!"
+        });
     }
 
     return res.status(405).json({
