@@ -1,8 +1,6 @@
 import { z } from "zod";
 import { router, publicProcedure, contributorProcedure } from "../trpc";
 
-import fs from 'fs';
-import FileType from '../../../utils/base64';
 import { TRPCError } from "@trpc/server"
 import { Delete_Source, Insert_Or_Update_Source } from "../../../utils/content/source";
 
@@ -39,11 +37,11 @@ export const sourceRouter = router({
             update: z.boolean().default(false),
             name: z.string(),
             url: z.string(),
-            icon: z.string().nullable(),
-            banner: z.string().nullable(),
-            classes: z.string().nullable(),
-            iremove: z.boolean(),
-            bremove: z.boolean()
+            icon: z.string().nullable().default(null),
+            banner: z.string().nullable().default(null),
+            classes: z.string().nullable().default(null),
+            iremove: z.boolean().default(false),
+            bremove: z.boolean().default(false)
         }))
         .mutation(async ({ ctx, input }) => {
             const [src, success, err] = await Insert_Or_Update_Source(ctx.prisma, input.url, input.update, input.icon ?? undefined, input.iremove, input.banner ?? undefined, input.bremove, input.name, input.classes);
