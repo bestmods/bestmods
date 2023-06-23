@@ -20,7 +20,7 @@ const CategoryForm: React.FC<{ id: number | null }> = ({ id }) => {
     const [submit, setSubmit] = useState(false);
     const [values, setValues] = useState<{
         id: number;
-        parent_id: number;
+        parent_id: number | null;
 
         name: string;
         nameShort: string;
@@ -91,8 +91,8 @@ const CategoryForm: React.FC<{ id: number | null }> = ({ id }) => {
             </div>
 
             <div className="mb-4">
-                <label className="block text-gray-200 text-sm font-bold mb-2">Parent</label>
-                <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="parent" name="parent" placeholder="Category Parent" onChange={(e) => {
+                <label className="block text-gray-200 text-sm font-bold mb-2">Parent</label> 
+                <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="parent" name="parent" placeholder="Category Parent" value={parent_id ?? 0} onChange={(e) => {
 
                     const val = (Number(e.target.value) > 0) ? Number(e.target.value) : null;
 
@@ -133,7 +133,7 @@ const CategoryForm: React.FC<{ id: number | null }> = ({ id }) => {
                 <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="classes" name="classes" type="text" placeholder="CSS Classes" />
             </div>
         </>);
-    }, [catsWithChildren.data]);
+    }, [catsWithChildren.data, parent_id]);
 
     // Handle error messages to client.
     useMemo(() => {
