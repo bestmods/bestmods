@@ -6,9 +6,9 @@ import fs from 'fs';
 export const Insert_Or_Update_Mod = async (
     prisma: any,
 
-    name: string,
-    url: string,
-    description: string,
+    name?: string,
+    url?: string,
+    description?: string,
     visible?: boolean,
     
     lookup_id?: number,
@@ -34,13 +34,13 @@ export const Insert_Or_Update_Mod = async (
     let mod: Mod | null = null;
 
     // Make sure we have text in required fields.
-    if (url.length < 1 || name.length < 1 || description.length < 1) {
+    if (!lookup_id && !lookup_url && (!url || url.length < 1 || !name || name.length < 1 || !description || description.length < 1)) {
         let err = "URL is empty.";
 
-        if (name.length < 1)
+        if (!name || name.length < 1)
             err = "Name is empty.";
 
-        if (description.length < 1)
+        if (!description || description.length < 1)
             err = "Description is empty.";
 
         return [null, false, err]
@@ -129,6 +129,7 @@ export const Insert_Or_Update_Mod = async (
         } else {
             mod = await prisma.mod.create({
                 data: {
+                    visible: visible,
                     ownerName: owner_name,
                     ownerId: owner_id,
 
