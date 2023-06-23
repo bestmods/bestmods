@@ -1,8 +1,6 @@
 import { z } from "zod";
 import { router, publicProcedure, contributorProcedure } from "../trpc";
 
-import fs from 'fs';
-import FileType from '../../../utils/base64';
 import { TRPCError } from "@trpc/server"
 import { Delete_Category, Insert_Or_Update_Category } from "../../../utils/content/category";
 
