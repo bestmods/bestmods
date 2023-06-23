@@ -1,4 +1,4 @@
-import { Source } from "@prisma/client";
+import { PrismaClient, Source } from "@prisma/client";
 
 import FileType from '../base64';
 import fs from 'fs';
@@ -138,4 +138,21 @@ export const Insert_Or_Update_Source = async (
     }
    
     return [src, true, null];
+}
+
+export const Delete_Source = async (
+    prisma: PrismaClient,
+    url: string
+): Promise<[boolean, string | any | null]> => {
+    try {
+        await prisma.source.delete({
+            where: {
+                url: url
+            }
+        });
+    } catch (error) {
+        return [false, error];
+    }
+
+    return [true, null];
 }

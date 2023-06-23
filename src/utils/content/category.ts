@@ -1,10 +1,10 @@
-import { Category } from "@prisma/client";
+import { Category, PrismaClient } from "@prisma/client";
 
 import FileType from '../base64';
 import fs from 'fs';
 
 export const Insert_Or_Update_Category = async (
-    prisma: any,
+    prisma: PrismaClient,
 
     name?: string,
     name_short?: string,
@@ -142,4 +142,21 @@ export const Insert_Or_Update_Category = async (
     }
    
     return [cat, true, null];
+}
+
+export const Delete_Category = async (
+    prisma: PrismaClient,
+    id: number
+): Promise<[boolean, string | any | null]> => {
+    try {
+        await prisma.category.delete({
+            where: {
+                id: id
+            }
+        });
+    } catch (error) {
+        return [false, error];
+    }
+
+    return [true, null];
 }

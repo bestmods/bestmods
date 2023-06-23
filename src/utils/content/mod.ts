@@ -1,4 +1,4 @@
-import { Mod, ModDownload, ModInstaller, ModScreenshot, ModSource } from "@prisma/client";
+import { Mod, ModDownload, ModInstaller, ModScreenshot, ModSource, PrismaClient } from "@prisma/client";
 
 import FileType from '../base64';
 import fs from 'fs';
@@ -314,4 +314,30 @@ export const Insert_Or_Update_Mod = async (
     }
 
     return [mod, true, null];
+}
+
+export const Delete_Mod = async (
+    prisma: PrismaClient,
+    id?: number,
+    url?: string
+): Promise<[boolean, string | any | null]> => {
+    if (!id && !url)
+        return [false, "ID and URL both not specified!"];
+
+    try {
+        await prisma.category.delete({
+            where: {
+                ...(id && {
+                    id: id
+                }),
+                ...(url && {
+                    url: url
+                })
+            }
+        });
+    } catch (error) {
+        return [false, error];
+    }
+
+    return [true, null];
 }
