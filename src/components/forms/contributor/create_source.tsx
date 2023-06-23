@@ -19,6 +19,7 @@ const SourceForm: React.FC<{ preUrl: string | null }> = ({ preUrl }) => {
     // For submissions.
     const [submit, setSubmit] = useState(false);
     const [values, setValues] = useState<{
+        update?: boolean,
         name: string;
         url: string;
         classes: string | null,
@@ -162,6 +163,7 @@ const SourceForm: React.FC<{ preUrl: string | null }> = ({ preUrl }) => {
 
         newVals.icon = iconData?.toString() ?? null;
         newVals.banner = bannerData?.toString() ?? null;
+        newVals.update = (preUrl) ? true : false;
 
         // Insert into database.
         sourceMut.mutate(newVals);

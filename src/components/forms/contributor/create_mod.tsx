@@ -101,7 +101,7 @@ const ModForm: React.FC<{ preUrl: string | null }> = ({ preUrl }) => {
         banner: string | null;
         descriptionShort: string;
         install: string | null;
-        bremove: boolean | null;
+        bremove?: boolean;
         downloads: string | null;
         screenshots: string | null;
         sources: string | null;

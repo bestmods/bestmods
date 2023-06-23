@@ -1,9 +1,11 @@
-import { z } from "zod";
+import { string, z } from "zod";
 import { router, publicProcedure, protectedProcedure, contributorProcedure } from "../trpc";
 
 import fs from 'fs';
 import FileType from '../../../utils/base64';
 import { TRPCError } from "@trpc/server"
+import { ModDownload, ModInstaller, ModScreenshot, ModSource } from "@prisma/client";
+import { Insert_Or_Update_Mod } from "../../../utils/content/mod";
 
 export const modRouter = router({
     getMod: publicProcedure
@@ -102,9 +104,11 @@ export const modRouter = router({
         }),
     addMod: contributorProcedure
         .input(z.object({
-            id: z.number(),
+            id: z.number().nullable(),
+            visible: z.boolean().default(true),
 
-            ownerName: z.string().nullable(),
+            ownerId: z.string().nullable().default(null),
+            ownerName: z.string().nullable().default(null),
 
             name: z.string(),
             banner: z.string().nullable(),
@@ -114,275 +118,94 @@ export const modRouter = router({
             // The following should be parsed via Markdown Syntax.
             description: z.string(),
             descriptionShort: z.string(),
-            install: z.string().nullable(),
+            install: z.string().nullable().default(null),
 
             // The following should be parsed via JSON.
-            downloads: z.string().nullable(),
-            screenshots: z.string().nullable(),
-            sources: z.string().nullable(),
-            installers: z.string().nullable(),
+            downloads: z.string().nullable().default(null),
+            screenshots: z.string().nullable().default(null),
+            sources: z.string().nullable().default(null),
+            installers: z.string().nullable().default(null),
 
-            bremove: z.boolean().nullable()
+            bremove: z.boolean().default(false)
         }))
         .mutation(async ({ ctx, input }) => {
-            // First, we want to insert the mod into the database.
-            let mod: any | null = null;
+            /* To Do: Perhaps simplify the below and create globally used types so we don't have to reparse? */
+            // Parse downloads from input and put it into ModDownload type.
+            const downloads: ModDownload[] = [];
+            
+            if (input.downloads) {
+                const json = JSON.parse(input.downloads ?? "[]");
 
-            // Make sure we have text in required fields.
-            if (input.url.length < 1 || input.name.length < 1 || input.description.length < 1) {
-                let err = "URL is empty.";
+                json.forEach(({name, url} : { name: string, url: string}) => {
+                    const new_item: ModDownload = {
+                        modId: 0,
+                        name: name,
+                        url: url
+                    };
 
-                if (input.name.length < 1)
-                    err = "Name is empty.";
+                    downloads.push(new_item)
+                });
+            }
 
-                if (input.description.length < 1)
-                    err = "Description is empty.";
+            // Parse screenshots from input and put into ModScreenshot type.
+            const screenshots: ModScreenshot[] = [];
 
-                console.error(err);
+            if (input.screenshots) {
+                const json = JSON.parse(input.screenshots ?? "[]");
 
+                json.forEach(({ url } : { url: string }) => {
+                    const new_item: ModScreenshot = {
+                        modId: 0,
+                        url: url
+                    };
+
+                    screenshots.push(new_item);
+                });
+            }
+
+            // Parse sources from input and put into ModSource type.
+            const sources: ModSource[] = [];
+
+            if (input.sources) {
+                const json = JSON.parse(input.sources ?? "[]");
+
+                json.forEach(({ url, query } : { url: string, query: string }) => {
+                    const new_item: ModSource = {
+                        modId: 0,
+                        primary: false,
+                        sourceUrl: url,
+                        query: query
+                    };
+
+                    sources.push(new_item);
+                })
+            }
+
+            // Parse installers from input and put into ModInstaller type.
+            const installers: ModInstaller[] = [];
+
+            if (input.installers) {
+                const json = JSON.parse(input.installers ?? "[]");
+
+                json.forEach(({ srcUrl, url } : { srcUrl: string, url: string }) => {
+                    const new_item: ModInstaller = {
+                        modId: 0,
+                        sourceUrl: srcUrl,
+                        url: url
+                    };
+
+                    installers.push(new_item);
+                })
+            }
+
+            // Insert ot update mod.
+            const [mod, success, err] = await Insert_Or_Update_Mod(ctx.prisma, input.name, input.url, input.description, input.visible, input.id ?? undefined, undefined, input.ownerId ?? undefined, input.ownerName ?? undefined, input.banner ?? undefined, input.bremove, input.category, input.descriptionShort, input.install ?? undefined, downloads, screenshots, sources, installers);
+
+            // Check for error.
+            if (!success || !mod) {
                 throw new TRPCError({
-                    code: "CONFLICT",
+                    code: "PARSE_ERROR",
                     message: err
-                });
-            }
-
-            // Let's now handle file uploads.
-            let bannerPath: string | boolean | null = false;
-
-            if (input.bremove)
-                bannerPath = null;
-
-            if (input.banner != null && input.banner.length > 0 && !input.bremove) {
-                const base64Data = input.banner.split(',')[1];
-
-                if (base64Data != null) {
-                    // Retrieve file type.
-                    const fileExt = FileType(base64Data);
-
-                    // Make sure we don't have an-++ unknown file type.
-                    if (fileExt != "unknown") {
-                        // Now let's compile our file name.
-                        const fileName = input.url + "." + fileExt;
-
-                        // Set icon path.
-                        bannerPath = "/images/mod/" + fileName;
-
-                        // Convert to binary from base64.
-                        const buffer = Buffer.from(base64Data, 'base64');
-
-                        // Write file to disk.
-                        try {
-                            fs.writeFileSync(process.env.UPLOADS_DIR + "/" + bannerPath, buffer);
-                        } catch (error) {
-                            console.error("Error writing banner to disk.");
-                            console.error(error);
-
-                            throw new TRPCError({
-                                code: "PARSE_ERROR",
-                                message: (typeof error == "string") ? error : ""
-                            });
-                        }
-                    } else {
-                        console.error("Banner's file extension is unknown.");
-
-                        throw new TRPCError({
-                            code: "PARSE_ERROR",
-                            message: "Unknown file extension for banner."
-                        });
-                    }
-                } else {
-                    console.error("Parsing base64 data is null.");
-
-                    throw new TRPCError({
-                        code: "PARSE_ERROR",
-                        message: "Unable to process banner's Base64 data."
-                    });
-                }
-            }
-
-            try {
-                mod = await ctx.prisma.mod.upsert({
-                    where: {
-                        id: input.id
-                    },
-                    update: {
-                        ...(input.ownerName != null && input.ownerName.length > 0 && {
-                            ownerName: input.ownerName
-                        }),
-
-                        name: input.name,
-                        url: input.url,
-                        categoryId: input.category,
-
-                        description: input.description,
-                        descriptionShort: input.descriptionShort,
-                        install: input.install,
-
-                        ...(bannerPath !== false && {
-                            banner: bannerPath
-                        })
-                    },
-                    create: {
-                        ...(input.ownerName != null && input.ownerName.length > 0 && {
-                            ownerName: input.ownerName
-                        }),
-
-                        name: input.name,
-                        url: input.url,
-                        categoryId: input.category,
-
-                        description: input.description,
-                        descriptionShort: input.descriptionShort,
-                        install: input.install,
-
-                        ...(bannerPath !== false && {
-                            banner: bannerPath
-                        })
-                    }
-                });
-            } catch (error) {
-                console.error("Error creating or updating mod.");
-                console.error(error);
-
-                throw new TRPCError({
-                    code: "CONFLICT",
-                    message: (typeof error == "string") ? error : ""
-                });
-            }
-
-            if (mod != null) {
-                // For now, we want to clear out all relation data to our mod before re-updating with how our form and React setup works.
-                try {
-                    await ctx.prisma.modDownload.deleteMany({
-                        where: {
-                            modId: mod.id
-                        }
-                    });
-
-                    await ctx.prisma.modScreenshot.deleteMany({
-                        where: {
-                            modId: mod.id
-                        }
-                    });
-
-                    await ctx.prisma.modSource.deleteMany({
-                        where: {
-                            modId: mod.id
-                        }
-                    });
-
-                    await ctx.prisma.modInstaller.deleteMany({
-                        where: {
-                            modId: mod.id
-                        }
-                    });
-                } catch (error) {
-                    // Log, but keep continuing.
-                    console.error("Error deleting relations for Mod ID #" + mod.id);
-                }
-
-                // Handle downloads relation.
-                const downloads = JSON.parse(input.downloads ?? "[]");
-
-                // Loop through downloads.
-                downloads.forEach(async ({ name, url }: { name: string, url: string }) => {
-                    if (url.length < 1)
-                        return;
-
-                    await ctx.prisma.modDownload.upsert({
-                        where: {
-                            modId_url: {
-                                modId: mod.id,
-                                url: url
-                            }
-                        },
-                        create: {
-                            modId: mod.id,
-                            name: name,
-                            url: url
-                        },
-                        update: {
-                            name: name,
-                            url: url
-                        }
-                    });
-                });
-
-                // Handle screenshots relation.
-                const screenshots = JSON.parse(input.screenshots ?? "[]");
-
-                // Loop through screenshots.
-                screenshots.forEach(async ({ url }: { url: string }) => {
-                    if (url.length < 1)
-                        return
-
-                    await ctx.prisma.modScreenshot.upsert({
-                        where: {
-                            modId_url: {
-                                modId: mod.id,
-                                url: url
-                            }
-                        },
-                        create: {
-                            modId: mod.id,
-                            url: url
-                        },
-                        update: {
-                            url: url
-                        }
-                    });
-                });
-
-                // Handle sources relation.
-                const sources = JSON.parse(input.sources ?? "[]");
-
-                // Loop through sources.
-                sources.forEach(async ({ url, query }: { url: string, query: string }) => {
-                    if (url.length < 1 || query.length < 1)
-                        return;
-
-                    await ctx.prisma.modSource.upsert({
-                        where: {
-                            modId_sourceUrl: {
-                                modId: mod.id,
-                                sourceUrl: url
-                            }
-                        },
-                        create: {
-                            modId: mod.id,
-                            sourceUrl: url,
-                            query: query,
-                        },
-                        update: {
-                            query: query
-                        }
-                    });
-                });
-
-                // Handle installers relation.
-                const installers = JSON.parse(input.installers ?? "[]");
-
-                // Loop through installers.
-                installers.forEach(async ({ srcUrl, url }: { srcUrl: string, url: string }) => {
-                    if (srcUrl.length < 1 || url.length < 1)
-                        return;
-
-                    await ctx.prisma.modInstaller.upsert({
-                        where: {
-                            modId_sourceUrl: {
-                                modId: mod.id,
-                                sourceUrl: srcUrl
-                            }
-                        },
-                        create: {
-                            modId: mod.id,
-                            sourceUrl: srcUrl,
-                            url: url
-                        },
-                        update: {
-                            url: url
-                        }
-                    });
                 });
             }
         }),

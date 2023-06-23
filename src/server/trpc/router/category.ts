@@ -4,6 +4,7 @@ import { router, publicProcedure, contributorProcedure } from "../trpc";
 import fs from 'fs';
 import FileType from '../../../utils/base64';
 import { TRPCError } from "@trpc/server"
+import { Delete_Category, Insert_Or_Update_Category } from "../../../utils/content/category";
 
 export const categoryRouter = router({
     getCategory: publicProcedure
@@ -78,120 +79,14 @@ export const categoryRouter = router({
             hasBg: z.boolean().default(false)
         }))
         .mutation(async ({ ctx, input }) => {
-            let cat = null;
+            // Use our helper funtion to insert our update category.
+            const [cat, success, err] = await Insert_Or_Update_Category(ctx.prisma, input.name, input.nameShort, input.url, input.id ?? 0, input.icon ?? undefined, input.iremove ?? undefined, input.parent_id, input.classes, input.hasBg);
 
-            try {
-                cat = await ctx.prisma.category.upsert({
-                    where: {
-                        id: input.id ?? 0
-                    },
-                    update: {
-                        parentId: input.parent_id || null,
-                        name: input.name,
-                        nameShort: input.nameShort,
-                        url: input.url,
-                        classes: input.classes ?? null,
-
-                        hasBg: input.hasBg
-                    },
-                    create: {
-                        parentId: input.parent_id || null,
-                        name: input.name,
-                        nameShort: input.nameShort,
-                        url: input.url,
-                        classes: input.classes ?? null,
-
-                        hasBg: input.hasBg
-                    }
-                });
-            } catch (error) {
-                console.error("Error creating or updating category.");
-                console.error(error);
-
+            if (!success || !cat) {
                 throw new TRPCError({
-                    code: "CONFLICT",
-                    message: (typeof error == "string") ? error : ""
+                    code: "PARSE_ERROR",
+                    message: err
                 });
-            }
-
-            if (cat != null) {
-                // Let's now handle file uploads.
-                let iconPath = null;
-
-                if (input.icon != null && input.icon.length > 0) {
-                    const base64Data = input.icon.split(',')[1];
-
-                    if (base64Data != null) {
-                        // Retrieve file type.
-                        const fileExt = FileType(base64Data);
-
-                        // Make sure we don't have an unknown file type.
-                        if (fileExt != "unknown") {
-                            // Now let's compile our file name.
-                            const fileName = cat.id + "." + fileExt;
-
-                            // Set icon path.
-                            iconPath = "/images/category/" + fileName;
-
-                            // Convert to binary from base64.
-                            const buffer = Buffer.from(base64Data, 'base64');
-
-                            // Write file to disk.
-                            try {
-                                fs.writeFileSync(process.env.UPLOADS_DIR + "/" + iconPath, buffer);
-                            } catch (error) {
-                                console.error("Error writing icon to disk.");
-                                console.error(error);
-
-                                throw new TRPCError({
-                                    code: "PARSE_ERROR",
-                                    message: (typeof error == "string") ? error : ""
-                                });
-                            }
-                        } else {
-                            console.error("Icon's file extension is unknown.");
-
-                            throw new TRPCError({
-                                code: "PARSE_ERROR",
-                                message: "Icon's file extension is unknown."
-                            });
-                        }
-                    } else {
-                        console.error("Parsing base64 data is null.");
-
-                        throw new TRPCError({
-                            code: "PARSE_ERROR",
-                            message: "Unable to process banner's Base64 data."
-                        });
-                    }
-                }
-
-                // If we have a file upload, update database.
-                if (iconPath != null || input.iremove) {
-                    // If we're removing the icon or banner, make sure our data is null before updating again.
-                    if (input.iremove) {
-                        iconPath = null;
-                    }
-
-                    try {
-                        await ctx.prisma.category.update({
-                            where: {
-                                id: cat.id
-                            },
-                            data: {
-                                icon: iconPath
-                            }
-                        })
-                    } catch (error) {
-                        console.error("Error updating category when adding icon and banner.");
-                        console.error(error);
-
-                        throw new TRPCError({
-                            code: "BAD_REQUEST",
-                            message: "Error updating category with icon and banner data. " + error
-                        });
-                    }
-                }
             }
         }),
     delCategory: contributorProcedure
@@ -199,14 +94,14 @@ export const categoryRouter = router({
             id: z.number()
         }))
         .mutation(async ({ ctx, input }) => {
-            if (input.id < 1)
-                return;
+            const [success, error] = await Delete_Category(ctx.prisma, input.id);
 
-            return await ctx.prisma.category.delete({
-                where: {
-                    id: input.id
-                }
-            });
+            if (!success) {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: error
+                });
+            }
         }),
     getCategoriesMapping: publicProcedure
         .input(z.object({
