@@ -4,7 +4,7 @@ import FileType from '../base64';
 import fs from 'fs';
 
 export const Insert_Or_Update_Source = async (
-    prisma: any,
+    prisma: PrismaClient,
 
     url: string,
     
