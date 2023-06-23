@@ -22,13 +22,10 @@ export const Insert_Or_Update_Category = async (
 ): Promise<[Category | null, boolean, string | null | any]> => {
     // Returns.
     let cat: Category | null = null;
-    let success: boolean = true;
-    let err: string | null | any = null;
 
     // Make sure we have text in required fields.
     if (!lookup_id && (!name || name.length < 1 || !name_short || name_short.length < 1 || !url || url.length < 1)) {
-        err = "URL is empty.";
-        success = false;
+        let err = "URL is empty.";
 
         if (!name || name.length < 1)
             err = "Name is empty.";
@@ -36,60 +33,59 @@ export const Insert_Or_Update_Category = async (
         if (!name_short || name_short.length < 1)
             err = "Short name is empty.";
 
-        return [cat, success, err]
+        return [cat, false, err]
     }
 
     // We must insert/update our category first.
     try {
-        cat = await prisma.category.upsert({
-            where: {
-                id: lookup_id ?? 0
-            },
-            update: {
-                ...(parent_id != undefined && {
-                    parentId: (parent_id > 0) ? parent_id : null
-                }),
-                ...(name && {
-                    name: name
-                }),
-                ...(name_short && {
-                    nameShort: name_short
-                }),
-                ...(url && {
-                    url: url
-                }),
-                ...(classes && {
-                    classes: classes ?? null,
-                }),
-                ...(has_bg && {
-                    hasBg: has_bg
-                })
-            },
-            create: {
-                parentId: parent_id ?? null,
-                name: name ?? "",
-                nameShort: name_short ?? "",
-                url: url ?? "",
-                ...(classes && {
-                    classes: classes
-                }),
-                ...(has_bg && {
-                    hasBg: has_bg
-                })
-            }
-        });
+        if (lookup_id) {
+            cat = await prisma.category.update({
+                where: {
+                    id: lookup_id
+                },
+                data: {
+                    ...(parent_id != undefined && {
+                        parentId: (parent_id > 0) ? parent_id : null
+                    }),
+                    ...(name && {
+                        name: name
+                    }),
+                    ...(name_short && {
+                        nameShort: name_short
+                    }),
+                    ...(url && {
+                        url: url
+                    }),
+                    ...(classes && {
+                        classes: classes ?? null,
+                    }),
+                    ...(has_bg && {
+                        hasBg: has_bg
+                    })
+                }
+            });
+        } else {
+            cat = await prisma.category.create({
+                data: {
+                    parentId: parent_id ?? null,
+                    name: name ?? "",
+                    nameShort: name_short ?? "",
+                    url: url ?? "",
+                    ...(classes && {
+                        classes: classes
+                    }),
+                    ...(has_bg && {
+                        hasBg: has_bg
+                    })
+                }
+            });
+        }
     } catch (error) {
-        err = error;
-        success = false;
-
-        return [cat, success, err];
+        return [cat, false, error];
     }
 
     if (!cat) {
-        err = "Category is null.";
-        success = false;
-
-        return [cat, success, err];
+        return [cat, false, "Category is null."];
     }
     // Let's now handle file uploads.
     let icon_path = null;
@@ -115,24 +111,14 @@ export const Insert_Or_Update_Category = async (
                 // Write file to disk.
                 try {
                     fs.writeFileSync(process.env.UPLOADS_DIR + "/" + icon_path, buffer);
-                } catch (error) {
-                    err = error;
-                    success = false;
-                    
-                    return [cat, success, err];
+                } catch (error) {                 
+                    return [cat, false, error];
                 }
             } else {
-                err = "Icon's file extension is unknown.";
-                success = false;
-
-                return [err, success, err];
+                return [cat, false, "Icon's file extension is unknown."];
             }
-        } else {
-            err = "Parsing base64 data is null.";
-            success = false;
-
-            return [cat, success, err];
-        }
+        } else
+            return [cat, false, "Parsing base64 data is null."];
     }
 
     // If we have a file upload, update database.
@@ -151,12 +137,9 @@ export const Insert_Or_Update_Category = async (
                 }
             })
         } catch (error) {
-            err = error;
-            success = false;
-
-            return [cat, success, err];
+            return [cat, false, error];
         }
     }
    
-    return [cat, success, err];
+    return [cat, true, null];
 }
