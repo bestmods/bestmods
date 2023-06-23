@@ -47,7 +47,7 @@ export const Insert_Or_Update_Category = async (
             },
             update: {
                 ...(parent_id != undefined && {
-                    parentId: parent_id
+                    parentId: (parent_id > 0) ? parent_id : null
                 }),
                 ...(name && {
                     name: name
