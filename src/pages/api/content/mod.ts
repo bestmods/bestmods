@@ -1,6 +1,8 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 
 import { prisma } from "../../../server/db/client";
+import { Insert_Or_Update_Mod } from "../../../utils/content/mod";
+import { ModDownload, ModInstaller, ModScreenshot, ModSource } from "@prisma/client";
 
 const mod = async (req: NextApiRequest, res: NextApiResponse) => {
     // Check API key.
@@ -53,10 +55,43 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
         });
     } else if (req.method == "POST") {
         // Retrieve POST data.
-        const { url, visible, owner_id, owner_name, name, banner, description, description_short, install, category_id, downloads, screenshots, sources, installers } = req.body;
+        const { 
+            url,
+            visible,
+            owner_id,
+            owner_name,
+            name,
+            banner,
+            bremove,
+            description,
+            description_short,
+            install,
+            category_id,
+            downloads,
+            screenshots,
+            sources,
+            installers
+        } : {
+            url?: string,
+            visible?: boolean,
+            owner_id?: string,
+            owner_name?: string,
+            name?: string,
+            banner?: string,
+            bremove?: boolean
+            description?: string,
+            description_short?: string,
+            install?: string,
+            category_id?: number | null,
+            downloads?: ModDownload[]
+            screenshots?: ModScreenshot[],
+            sources?: ModSource[],
+            installers?: ModInstaller[]
+        } = req.body;
 
         // Retrieve ID if any.
         const { id } = req.query;
+        const preUrl = req.query.url;
 
         if (!id && (!name || !description || !url)) {
             return res.status(400).json({
@@ -65,185 +100,43 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
             });
         }
 
-        if (id) {
-            const mod = await prisma.mod.update({
+        // If we have an ID, try to find it first.
+        if (id || preUrl) {
+            const mod = await prisma.mod.findFirst({
                 where: {
-                    id: id ? Number(id) : 0
-                },
-                data: {
-                    ...(url && {
-                        url: url
+                    ...(id && {
+                        id: Number(id.toString())
                     }),
-                    ...(visible && {
-                        visible: Boolean(visible)
-                    }),
-                    ...(owner_id && {
-                        ownerId: owner_id
-                    }),
-                    ...(owner_name && {
-                        ownerName: owner_name
-                    }),
-                    ...(name && {
-                        name: name
-                    }),
-                    ...(description && {
-                        description: description
-                    }),
-                    ...(description_short && {
-                        descriptionShort: description_short,
-                    }),
-                    ...(install && {
-                        install: install
-                    }),
-                    ...(category_id && {
-                        categoryId: Number(category_id)
+                    ...(preUrl && {
+                        url: preUrl.toString()
                     })
                 }
             });
 
             if (!mod) {
-                return res.status(400).json({
-                    message: "Did not update mod successfully.",
-                    data: null
+                return res.status(404).json({
+                    message:"Mod not found. Mod ID =>" + id?.toString() ?? "N/A" + ". URL => " + preUrl?.toString() ?? "N/A"
                 });
             }
-
-            // Insert downloads.
-            if (downloads) {
-                downloads.forEach(async ({ name, url }: { name: string, url: string }) => {
-                    if (url.length < 1)
-                        return;
-
-                    await prisma.modDownload.upsert({
-                        where: {
-                            modId_url: {
-                                modId: mod.id,
-                                url: url
-                            }
-                        },
-                        create: {
-                            modId: mod.id,
-                            name: name,
-                            url: url
-                        },
-                        update: {
-                            name: name,
-                            url: url
-                        }
-                    });
-                });
-            }
-
-            // Insert screenshots.
-            if (screenshots) {
-                // Loop through screenshots.
-                screenshots.forEach(async ({ url }: { url: string }) => {
-                    if (url.length < 1)
-                        return
-
-                    await prisma.modScreenshot.upsert({
-                        where: {
-                            modId_url: {
-                                modId: mod.id,
-                                url: url
-                            }
-                        },
-                        create: {
-                            modId: mod.id,
-                            url: url
-                        },
-                        update: {
-                            url: url
-                        }
-                    });
-                });
-            }
-
-            // Insert sources.
-            if (sources) {
-                sources.forEach(async ({ url, query }: { url: string, query: string }) => {
-                    if (url.length < 1 || query.length < 1)
-                        return;
-
-                    await prisma.modSource.upsert({
-                        where: {
-                            modId_sourceUrl: {
-                                modId: mod.id,
-                                sourceUrl: url
-                            }
-                        },
-                        create: {
-                            modId: mod.id,
-                            sourceUrl: url,
-                            query: query,
-                        },
-                        update: {
-                            query: query
-                        }
-                    });
-                });
-            }
-
-            // Insert installers.
-            if (installers) {
-                installers.forEach(async ({ src_url, url }: { src_url: string, url: string }) => {
-                    if (src_url.length < 1 || url.length < 1)
-                        return;
-
-                    await prisma.modInstaller.upsert({
-                        where: {
-                            modId_sourceUrl: {
-                                modId: mod.id,
-                                sourceUrl: src_url
-                            }
-                        },
-                        create: {
-                            modId: mod.id,
-                            sourceUrl: src_url,
-                            url: url
-                        },
-                        update: {
-                            url: url
-                        }
-                    });
-                });
-            }
-
-            return res.status(200).json({
-                message: "Updated mod successfully!",
-                data: {
-                    mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === 'bigint' ? v.toString() : v))
-                }
-            });
-        } else {
-            const mod = await prisma.mod.create({
-                data: {
-                    url: url,
-                    visible: visible,
-                    ownerId: (owner_id) ? owner_id : null,
-                    ownerName: owner_name,
-                    name: name,
-                    description: description,
-                    descriptionShort: description_short,
-                    install: install,
-                    categoryId: (category_id) ? Number(category_id) : null
-                },
-            });
-
-            if (!mod) {
-                return res.status(400).json({
-                    message: "Did not create mod successfully.",
-                    data: null
-                });
-            }
-
-            return res.status(200).json({
-                message: "Created mod successfully!",
-                data: {
-                    mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === 'bigint' ? v.toString() : v))
-                }
-            });
         }
+
+        // Update mod.
+        const [mod, success, err] = await Insert_Or_Update_Mod(prisma, name, url, description, visible, (id) ? Number(id) : undefined, undefined, owner_id, owner_name, banner, bremove, category_id, description_short, install, downloads, screenshots, sources, installers);
+
+        // Check for error.
+        if (!success || !mod) {
+            return res.status(400).json({
+                message: err,
+                data: null
+            })
+        }
+
+        return res.status(200).json({
+            message: "Updated mod successfully!",
+            data: {
+                mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === 'bigint' ? v.toString() : v))
+            }
+        });
     }
 
     return res.status(405).json({
