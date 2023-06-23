@@ -156,29 +156,37 @@ export const Insert_Or_Update_Mod = async (
 
     // For now, we want to clear out all relation data to our mod before re-updating with how our form and React setup works.
     try {
-        await prisma.modDownload.deleteMany({
-            where: {
-                modId: mod.id
-            }
-        });
+        if (downloads){
+            await prisma.modDownload.deleteMany({
+                where: {
+                    modId: mod.id
+                }
+            });
+        }
 
-        await prisma.modScreenshot.deleteMany({
-            where: {
-                modId: mod.id
-            }
-        });
+        if (screenshots) {
+            await prisma.modScreenshot.deleteMany({
+                where: {
+                    modId: mod.id
+                }
+            });
+        }
 
-        await prisma.modSource.deleteMany({
-            where: {
-                modId: mod.id
-            }
-        });
+        if (sources) {
+            await prisma.modSource.deleteMany({
+                where: {
+                    modId: mod.id
+                }
+            });
+        }
 
-        await prisma.modInstaller.deleteMany({
-            where: {
-                modId: mod.id
-            }
-        });
+        if (installers) {
+            await prisma.modInstaller.deleteMany({
+                where: {
+                    modId: mod.id
+                }
+            });
+        }
     } catch (error) {
         // Log, but continue.
         console.error("Error deleting relations for Mod ID #" + mod.id)
