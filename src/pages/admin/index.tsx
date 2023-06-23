@@ -97,7 +97,7 @@ const Categories: React.FC = () => {
                                 {cat.children.length > 0 && (
                                     <div className="p-4">
                                         {cat.children.map((catChild) => {
-                                            const editLinkChild = "/view/add/category/" + catChild.id;
+                                            const editLinkChild = "/admin/add/category/" + catChild.id;
                                             const iconChild = (catChild.icon != null) ? cdn + catChild.icon : cdn + "/images/default_icon.png";
 
                                             return (
