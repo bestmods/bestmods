@@ -28,7 +28,7 @@ const Home: NextPage<{
                     </div>
                 ) : (
                     <div className="container mx-auto">
-                        <h1 className="text-center text-white font-bold text-lg">You are not authorized to add or edit a category!</h1>
+                        <h1 className="text-center text-white font-bold text-lg">You are not authorized to add or edit a source!</h1>
                     </div>                    
                 )}
             </BestModsPage>
