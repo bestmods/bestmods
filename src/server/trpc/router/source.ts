@@ -4,7 +4,7 @@ import { router, publicProcedure, contributorProcedure } from "../trpc";
 import fs from 'fs';
 import FileType from '../../../utils/base64';
 import { TRPCError } from "@trpc/server"
-import { Insert_Or_Update_Source } from "../../../utils/content/source";
+import { Delete_Source, Insert_Or_Update_Source } from "../../../utils/content/source";
 
 export const sourceRouter = router({
     getSource: publicProcedure
@@ -60,14 +60,14 @@ export const sourceRouter = router({
             url: z.string()
         }))
         .mutation(async ({ ctx, input }) => {
-            if (input.url.length < 1)
-                return;
+            const [success, error] = await Delete_Source(ctx.prisma, input.url);
 
-            return await ctx.prisma.source.delete({
-                where: {
-                    url: input.url
-                }
-            });
+            if (!success) {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: error
+                });
+            }
         }),
     getAllSources: publicProcedure
         .input(z.object({

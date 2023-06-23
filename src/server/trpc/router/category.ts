@@ -4,7 +4,7 @@ import { router, publicProcedure, contributorProcedure } from "../trpc";
 import fs from 'fs';
 import FileType from '../../../utils/base64';
 import { TRPCError } from "@trpc/server"
-import { Insert_Or_Update_Category } from "../../../utils/content/category";
+import { Delete_Category, Insert_Or_Update_Category } from "../../../utils/content/category";
 
 export const categoryRouter = router({
     getCategory: publicProcedure
@@ -94,14 +94,14 @@ export const categoryRouter = router({
             id: z.number()
         }))
         .mutation(async ({ ctx, input }) => {
-            if (input.id < 1)
-                return;
+            const [success, error] = await Delete_Category(ctx.prisma, input.id);
 
-            return await ctx.prisma.category.delete({
-                where: {
-                    id: input.id
-                }
-            });
+            if (!success) {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: error
+                });
+            }
         }),
     getCategoriesMapping: publicProcedure
         .input(z.object({
