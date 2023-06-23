@@ -1,26 +1,7 @@
-import { Mod } from "@prisma/client";
+import { Mod, ModDownload, ModInstaller, ModScreenshot, ModSource } from "@prisma/client";
 
 import FileType from '../base64';
 import fs from 'fs';
-
-type downloads = {
-    name: string,
-    url: string
-};
-
-type screenshots = {
-    url: string
-};
-
-type sources = {
-    url: string
-    query: string
-};
-
-type installers = {
-    src_url: string
-    url: string
-};
 
 export const Insert_Or_Update_Mod = async (
     prisma: any,
@@ -28,6 +9,7 @@ export const Insert_Or_Update_Mod = async (
     name: string,
     url: string,
     description: string,
+    visible?: boolean,
     
     lookup_id?: number,
     lookup_url?: string,
@@ -38,25 +20,22 @@ export const Insert_Or_Update_Mod = async (
     banner?: string,
     bremove?: boolean,
     
-    category_id?: number,
+    category_id?: number | null,
 
     description_short?: string,
     install?: string,
 
-    downloads?: downloads[],
-    screenshots?: screenshots[],
-    sources?: sources[],
-    installers?: installers[]
+    downloads?: ModDownload[],
+    screenshots?: ModScreenshot[],
+    sources?: ModSource[],
+    installers?: ModInstaller[]
 ): Promise<[Mod | null, boolean, string | null | any]> => {
     // Returns.
     let mod: Mod | null = null;
-    let success: boolean = true;
-    let err: string | null | any = null;
 
     // Make sure we have text in required fields.
     if (url.length < 1 || name.length < 1 || description.length < 1) {
-        err = "URL is empty.";
-        success = false;
+        let err = "URL is empty.";
 
         if (name.length < 1)
             err = "Name is empty.";
@@ -64,7 +43,7 @@ export const Insert_Or_Update_Mod = async (
         if (description.length < 1)
             err = "Description is empty.";
 
-        return [mod, success, err]
+        return [null, false, err]
     }
 
     // Let's now handle file uploads.
@@ -95,89 +74,84 @@ export const Insert_Or_Update_Mod = async (
                 try {
                     fs.writeFileSync(process.env.UPLOADS_DIR + "/" + banner_path, buffer);
                 } catch (error) {
-                    err = "Error writing banner to disk."
-                    success = false;
-
-                    return [mod, success, err];
+                    return [null, false, error];
                 }
-            } else {
-                err = "Banner's file extension is unknown.";
-                success = false;
-
-                return [mod, success, err];
-            }
-        } else {
-            err = "Parsing base64 data is null.";
-            success = false;
-
-            return [mod, success, err];
-        }
+            } else
+                return [null, false, "Banner's file extension is unknown."];
+        } else
+            return [null, false, "Parsing base64 data is null."];
     }
 
     try {
-        mod = await prisma.mod.upsert({
-            where: {
-                ...(lookup_id && {
-                    id: lookup_id
-                }),
-                ...(lookup_url && {
-                    url: lookup_url
-                })
-            },
-            update: {
-                ...(owner_name && owner_name.length > 0 && {
-                    ownerName: owner_name
-                }),
-                ...(owner_id && {
-                    ownerId: owner_id
-                }),
+        if (lookup_id || lookup_url) {
+            mod = await prisma.mod.update({
+                where: {
+                    ...(lookup_id && {
+                        id: lookup_id
+                    }),
+                    ...(lookup_url && {
+                        url: lookup_url
+                    })
+                },
+                data: {
+                    ...(visible !== undefined && {
+                        visible: visible
+                    }),
+                    ...(owner_name && owner_name.length > 0 && {
+                        ownerName: owner_name
+                    }),
+                    ...(owner_id && {
+                        ownerId: owner_id
+                    }),
+                    ...(name && {
+                        name: name
+                    }),
+                    ...(url && {
+                        url: url
+                    }),
+                    ...(category_id !== undefined && {
+                        categoryId: category_id
+                    }),
+                    ...(description && {
+                        description: description
+                    }),
+                    ...(description && {
+                        descriptionShort: description_short
+                    }),
+                    ...(install && {
+                        install: install
+                    }),
+                    ...(banner_path !== false && {
+                        banner: banner_path
+                    })
+                }
+            });
+        } else {
+            mod = await prisma.mod.create({
+                data: {
+                    ownerName: owner_name,
+                    ownerId: owner_id,
 
-                name: name,
-                url: url,
-                categoryId: category_id ?? null,
+                    name: name,
+                    url: url,
+                    categoryId: category_id ?? null,
 
-                description: description,
-                descriptionShort: description_short,
-                install: install,
+                    description: description,
+                    descriptionShort: description_short,
+                    install: install,
 
-                ...(banner_path !== false && {
-                    banner: banner_path
-                })
-            },
-            create: {
-                ...(owner_name && owner_name.length > 0 && {
-                    ownerName: owner_name
-                }),
-                ...(owner_id && {
-                    ownerId: owner_id
-                }),
-
-                name: name,
-                url: url,
-                categoryId: category_id ?? null,
-
-                description: description,
-                descriptionShort: description_short,
-                install: install,
-
-                ...(banner_path !== false && {
-                    banner: banner_path
-                })
-            }
-        });
+                    ...(banner_path !== false && {
+                        banner: banner_path
+                    })
+                }
+            });
+        }
     } catch (error) {
-        err = error;
-        success = false;
-
-        return [mod, success, err];
+        return [null, false, error];
     }
 
-    if (mod == null) {
-        err = "Mod is null.";
-        success = false;
-
-        return [mod, success, err];
-    }
+    if (mod == null)
+        return [null, false, "Mod is null."];
 
     // For now, we want to clear out all relation data to our mod before re-updating with how our form and React setup works.
     try {
@@ -212,7 +186,7 @@ export const Insert_Or_Update_Mod = async (
 
     // Loop through downloads.
     if (downloads) {
-        downloads.forEach(async ({ name, url }: { name: string, url: string }) => {
+        downloads.forEach(async ({ name, url }) => {
             if (url.length < 1 || !mod)
                 return;
 
@@ -243,7 +217,7 @@ export const Insert_Or_Update_Mod = async (
 
     // Loop through screenshots.
     if (screenshots) {
-        screenshots.forEach(async ({ url }: { url: string }) => {
+        screenshots.forEach(async ({ url }) => {
             if (url.length < 1 || !mod)
                 return
 
@@ -272,8 +246,8 @@ export const Insert_Or_Update_Mod = async (
 
     // Loop through sources.
     if (sources) {
-        sources.forEach(async ({ url, query }: { url: string, query: string }) => {
-            if (url.length < 1 || query.length < 1 || !mod)
+        sources.forEach(async ({ sourceUrl, query }) => {
+            if (sourceUrl.length < 1 || query.length < 1 || !mod)
                 return;
 
             try {
@@ -281,12 +255,12 @@ export const Insert_Or_Update_Mod = async (
                     where: {
                         modId_sourceUrl: {
                             modId: mod.id,
-                            sourceUrl: url
+                            sourceUrl: sourceUrl
                         }
                     },
                     create: {
                         modId: mod.id,
-                        sourceUrl: url,
+                        sourceUrl: sourceUrl,
                         query: query,
                     },
                     update: {
@@ -294,7 +268,7 @@ export const Insert_Or_Update_Mod = async (
                     }
                 });
             } catch (error) {
-                console.error("Error inserting source for mod ID #" + mod.id + " (URL => " + url + ". Query => " + query);
+                console.error("Error inserting source for mod ID #" + mod.id + " (URL => " + sourceUrl + ". Query => " + query);
                 console.error(error);
             }
         });
@@ -302,8 +276,8 @@ export const Insert_Or_Update_Mod = async (
 
     // Loop through installers.
     if (installers) {
-        installers.forEach(async ({ src_url, url }: { src_url: string, url: string }) => {
-            if (src_url.length < 1 || url.length < 1 || !mod)
+        installers.forEach(async ({ sourceUrl, url }) => {
+            if (sourceUrl.length < 1 || url.length < 1 || !mod)
                 return;
 
             try {
@@ -311,12 +285,12 @@ export const Insert_Or_Update_Mod = async (
                     where: {
                         modId_sourceUrl: {
                             modId: mod.id,
-                            sourceUrl: src_url
+                            sourceUrl: sourceUrl
                         }
                     },
                     create: {
                         modId: mod.id,
-                        sourceUrl: src_url,
+                        sourceUrl: sourceUrl,
                         url: url
                     },
                     update: {
@@ -324,11 +298,11 @@ export const Insert_Or_Update_Mod = async (
                     }
                 });
             } catch (error) {
-                console.error("Error inserting installer for mod ID #" + mod.id + " (source URL => " + src_url + ". URL => " + url);
+                console.error("Error inserting installer for mod ID #" + mod.id + " (source URL => " + sourceUrl + ". URL => " + url);
                 console.error(error);
             }
         });
     }
 
-    return [mod, success, err];
+    return [mod, true, null];
 }
