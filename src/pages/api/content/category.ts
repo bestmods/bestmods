@@ -53,7 +53,25 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
         });
     } else if (req.method == "POST") {
         // Retrieve POST data.
-        const { parent_id, name, name_short, url, classes, icon, iremove, has_bg } : { parent_id: number, name: string, name_short: string, url: string, classes: string, icon: string, iremove: boolean, has_bg: boolean} = req.body;
+        const {
+            parent_id,
+            name,
+            name_short,
+            url,
+            classes,
+            icon,
+            iremove,
+            has_bg 
+        } : { 
+            parent_id: number,
+            name: string,
+            name_short: string,
+            url: string,
+            classes: string,
+            icon: string,
+            iremove: boolean,
+            has_bg: boolean
+        } = req.body;
 
         // Retrieve ID if any.
         const { id } = req.query;

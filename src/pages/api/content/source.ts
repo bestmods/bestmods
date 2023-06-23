@@ -57,15 +57,16 @@ const source = async (req: NextApiRequest, res: NextApiResponse) => {
             banner, 
             bremove, 
             name, 
-            classes } : { 
-                name?: string, 
-                url: string, 
-                classes?: string, 
-                icon?: string,
-                iremove?: boolean,
-                banner?: string,
-                bremove?: boolean 
-            } = req.body;
+            classes 
+        } : { 
+            name?: string, 
+            url: string, 
+            classes?: string, 
+            icon?: string,
+            iremove?: boolean,
+            banner?: string,
+            bremove?: boolean 
+        } = req.body;
 
         // Retrieve pre URL if any.
         const { preUrl } = req.query;
