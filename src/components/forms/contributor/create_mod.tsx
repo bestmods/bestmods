@@ -4,13 +4,95 @@ import React, { useState, useEffect, useMemo } from "react";
 
 import { trpc } from "../../../utils/trpc";
 
-const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
-
 import FormTemplate from '../main';
 import { AlertForm } from '../../alert';
 import { type Source } from "@prisma/client";
+import { CategoriesWithChildren, ModWithRelations } from "../../types";
 
-const SourceForm: React.FC<{ mod: any, num: number, sources: Source[] }> = ({ mod, num, sources }) => {
+type values_type = {
+    owner_name?: string | null
+    description: string
+    category?: number | null
+    id?: number | null
+    name: string
+    url: string
+    banner?: string | null
+    description_short: string
+    install: string | null
+    bremove?: boolean
+    downloads?: string | null
+    screenshots?: string | null
+    sources?: string | null
+    installers?: string | null
+};
+
+type dl_arr_type = {
+    name: string
+    url: string
+};
+
+type ss_arr_type = {
+    url: string
+};
+
+type src_arr_type = {
+    url: string
+    query: string
+};
+
+type ins_arr_type = {
+    srcUrl: string
+    url: string
+}
+
+const DownloadForm: React.FC<{
+    mod: ModWithRelations | null,
+    num: number
+}> = ({
+    mod,
+    num
+}) => {
+    const nameId = "downloads-" + num + "-name";
+    const urlId = "downloads-" + num + "-url";
+
+    return (<>
+        <div className="mb-4">
+            <h3 className="text-gray-200 text-lg font-bold mb-2">Download #{num}</h3>
+
+            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Name</label>
+            <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={nameId} id={nameId} defaultValue={mod != null && mod.ModDownload != null && mod.ModDownload[num - 1] != null ? mod.ModDownload[num - 1]?.name ?? "" : ""} type="text" />
+
+            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
+            <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={urlId} id={urlId} defaultValue={mod != null && mod.ModDownload != null && mod.ModDownload[num - 1] != null ? mod.ModDownload[num - 1]?.url ?? "" : ""} type="text" />
+        </div>
+    </>);
+};
+
+const ScreenshotForm: React.FC<{
+    mod: ModWithRelations | null,
+    num: number
+}> = ({
+    mod,
+    num
+}) => {
+    const url_id = "screenshots-" + num + "-url";
+
+    return (<>
+        <h3 className="text-gray-200 text-lg font-bold mb-2">Screenshot #{num}</h3>
+
+        <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
+        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={url_id} id={url_id} defaultValue={mod && mod.ModScreenshot && mod.ModScreenshot[num - 1] != null ? mod.ModScreenshot[num - 1]?.url ?? "" : ""} type="text" />
+    </>);
+}
+
+const SourceForm: React.FC<{ 
+    mod: ModWithRelations | null, 
+    num: number,
+    srcs: Source[] 
+}> = ({ mod,
+    num,
+    srcs 
+}) => {
     const srcUrl = "sources-" + num + "-url";
     const srcQuery = "sources-" + num + "-query";
 
@@ -32,7 +114,7 @@ const SourceForm: React.FC<{ mod: any, num: number, sources: Source[] }> = ({ mo
 
                 setSrcUrlVal(val);
             }}>
-                {sources?.map((src) => {
+                {srcs.map((src) => {
                     return (
                         <option key={src.url} value={src.url}>{src.name}</option>
                     );
@@ -45,11 +127,19 @@ const SourceForm: React.FC<{ mod: any, num: number, sources: Source[] }> = ({ mo
     )
 };
 
-const InstallerForm: React.FC<{ mod: any, num: number, sources: Source[] }> = ({ mod, num, sources }) => {
+const InstallerForm: React.FC<{ 
+    mod: ModWithRelations | null, 
+    num: number, 
+    srcs: Source[] 
+}> = ({ 
+    mod, 
+    num, 
+    srcs 
+}) => {
     const srcUrl = "installers-" + num + "-srcurl";
     const url = "installers-" + num + "-url";
 
-    const curUrl = mod != null && mod.ModInstaller != null && mod.ModInstaller[num - 1] != null ? mod.ModInstaller[num - 1]?.sourceUrl ?? "" : "";
+    const curUrl = mod && mod.ModInstaller && mod.ModInstaller[num - 1] ? mod.ModInstaller[num - 1]?.sourceUrl ?? "" : "";
 
     const [srcUrlVal, setSrcUrlVal] = useState(curUrl);
 
@@ -67,7 +157,7 @@ const InstallerForm: React.FC<{ mod: any, num: number, sources: Source[] }> = ({
 
                 setSrcUrlVal(val);
             }}>
-                {sources?.map((src) => {
+                {srcs.map((src) => {
                     return (
                         <option key={src.url} value={src.url}>{src.name}</option>
                     );
@@ -76,406 +166,82 @@ const InstallerForm: React.FC<{ mod: any, num: number, sources: Source[] }> = ({
 
             <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
             <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={url} id={url} defaultValue={mod != null && mod.ModInstaller != null && mod.ModInstaller[num - 1] != null ? mod.ModInstaller[num - 1]?.url ?? "" : ""} type="text" />
-
         </>
     )
 };
 
-const ModForm: React.FC<{ preUrl: string | null }> = ({ preUrl }) => {
-    const [id, setId] = useState(0);
-    const [dataReceived, setDataReceived] = useState(false);
-
+const ModForm: React.FC<{
+    cats: CategoriesWithChildren[],
+    srcs: Source[],
+    mod: ModWithRelations | null 
+}> = ({
+    cats,
+    srcs,
+    mod
+ }) => {
     // Errors and success handles.
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState<string | null>(null);
+    let error: string | null = null;
+    let success: string | null = null;
 
-    // For submissions.
-    const [submit, setSubmit] = useState(false);
-    const [values, setValues] = useState<{
-        ownerName: string | null,
-        description: string;
-        category: number;
-        id: number;
-        name: string;
-        url: string;
-        banner: string | null;
-        descriptionShort: string;
-        install: string | null;
-        bremove?: boolean;
-        downloads: string | null;
-        screenshots: string | null;
-        sources: string | null;
-        installers: string | null;
-    }>();
-    const submitBtn = useMemo(() => {
-        return (<>
-            <div className="text-center">
-                <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{preUrl == null ? "Add Mod!" : "Edit Mod!"}</button>
-            </div>
-        </>);
-    }, [preUrl]);
+    // Submit button.
+    const submitBtn =
+        <div className="text-center">
+            <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{!mod ? "Add Mod!" : "Edit Mod!"}</button>
+        </div>;
 
     // State values we cannot extract from Formik.
-    const [category, setCategory] = useState(0);
+    const [category, setCategory] = useState<number | null>(mod?.categoryId ?? null);
 
     // States for number of download and screenshot forms to show.
-    const [downloadCount, setDownloadCount] = useState(1);
-    const [screenShotCount, setScreenShotCount] = useState(1);
-    const [sourceCount, setSourceCount] = useState(1);
-    const [installerCount, setInstallerCount] = useState(1);
-
-    const [downloadForm, setDownloadForm] = useState<JSX.Element>(<></>);
-    const [screenShotForm, setScreenShotForm] = useState<JSX.Element>(<></>);
-    const [sourceForm, setSourceForm] = useState<JSX.Element>(<></>);
-    const [installerForm, setInstallerForm] = useState<JSX.Element>(<></>);
-
-    // For editing (prefilled fields).
-    const [ownerName, setOwnerName] = useState<string | null>("");
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [descriptionShort, setDescriptionShort] = useState("");
-    const [url, setUrl] = useState("");
-    const [install, setInstall] = useState("");
+    const [downloadCount, setDownloadCount] = useState(mod?.ModDownload?.length ?? 1);
+    const [screenShotCount, setScreenShotCount] = useState(mod?.ModScreenshot?.length ?? 1);
+    const [sourceCount, setSourceCount] = useState(mod?.ModSource?.length ?? 1);
+    const [installerCount, setInstallerCount] = useState(mod?.ModInstaller?.length ?? 1);
 
     // File uploads.
-    const [banner, setBanner] = useState<File | null>(null);
     const [bannerData, setBannerData] = useState<string | ArrayBuffer | null>(null);
 
     // Queries.
     const modMut = trpc.mod.addMod.useMutation();
-    const sources = trpc.source.getAllSources.useQuery({
-        selUrl: true,
-        selName: true
-    });
-    const catsWithChildren = trpc.category.getCategoriesMapping.useQuery({ selId: true, selName: true, incChildren: true });
-    const modQuery = trpc.mod.getMod.useQuery({
-        url: preUrl,
-        visible: null,
 
-        selId: true,
-        selName: true,
-        selUrl: true,
-        selOwnerName: true,
-        selDescription: true,
-        selDescriptionShort: true,
-        selInstall: true,
-
-        incCategory: true,
-        incDownloads: true,
-        incSources: true,
-        incScreenshots: true,
-        incInstallers: true
-    });
-
-    const mod = modQuery.data;
-
-    useEffect(() => {
-        if (mod) {
-            if (mod.ModDownload != null && mod.ModDownload.length > 1)
-                setDownloadCount(mod.ModDownload.length);
-            else if (mod.ModScreenshot != null && mod.ModScreenshot.length > 1)
-                setScreenShotCount(mod.ModScreenshot.length);
-            else if (mod.ModSource != null && mod.ModSource.length > 1)
-                setSourceCount(mod.ModSource.length);
-            else if (mod.ModInstaller != null && mod.ModInstaller.length > 1)
-                setInstallerCount(mod.ModInstaller.length);
-
-            setCategory(mod.categoryId ?? 0);
-        }
-    }, [mod]);
-
-    // Form fields.
-    const [modFormFields, setModFormFields] = useState<JSX.Element>(<></>);
-
-    useEffect(() => {
-        setModFormFields(<>
-            <h2 className="text-white text-2xl font-bold">General Information</h2>
-            <div className="mb-4">
-                <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Image Banner</label>
-                <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image_banner" name="image_banner" type="file" placeholder="Mod Image Banner" onChange={(e) => {
-                    const val = (e?.currentTarget?.files != null) ? e.currentTarget.files[0] : null;
-
-                    setBanner(val ?? null);
-                }} />
-
-                <Field className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="bremove" name="bremove" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Remove Current</label>
-            </div>
-
-            <div className="mb-4">
-                <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Name</label>
-                <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="name" name="name" type="text" placeholder="Mod Name" />
-            </div>
-
-            <div className="mb-4">
-                <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Owner Name</label>
-                <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="ownerName" name="ownerName" type="text" placeholder="Owner Name If Any" />
-            </div>
-
-            <div className="mb-4">
-                <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
-                <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="url" name="url" type="text" placeholder="bestmods.io/view/value" />
-            </div>
-
-            <div className="mb-4">
-                <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Category</label>
-                <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" value={category} onChange={(e) => {
-                    const val = (Number(e.target.value) > 0) ? Number(e.target.value) : null;
-
-                    setCategory(val ?? 0);
-                }}>
-                    {catsWithChildren?.data?.map((cat) => {
-                        return (
-                            <React.Fragment key={cat.id}>
-                                <option value={cat.id}>{cat.name}</option>
-
-                                {cat.children?.map((child) => {
-                                    return <option key={child.id} value={child.id}>-- {child.name}</option>
-                                })}
-                            </React.Fragment>
-                        );
-                    })}
-                </select>
-            </div>
-
-            <div className="mb-4">
-                <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Short Description</label>
-                <Field rows="16" cols="32" className="shadow appearance-none border-blue-900 rounded w-full p-6 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="descriptionShort" name="descriptionShort" as="textarea" placeholder="Mod Short Description" />
-            </div>
-
-            <div className="mb-4">
-                <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Description</label>
-                <Field rows="16" cols="32" className="shadow appearance-none border-blue-900 rounded w-full p-6 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="description" name="description" as="textarea" placeholder="Mod Description" />
-            </div>
-
-            <div className="mb-4">
-                <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Installation</label>
-                <Field rows="16" cols="32" className="shadow appearance-none border-blue-900 rounded w-full p-6 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="install" name="install" as="textarea" placeholder="Mod Installation" />
-            </div>
-
-            <h2 className="text-white text-2xl font-bold">Sources</h2>
-            {sourceForm}
-
-            <h2 className="text-white text-2xl font-bold">Installers</h2>
-            {installerForm}
-
-            <h2 className="text-white text-2xl font-bold">Downloads</h2>
-            {downloadForm}
-
-            <h2 className="text-white text-2xl font-bold">Screenshots</h2>
-            {screenShotForm}
-        </>);
-    }, [catsWithChildren.data, sourceForm, downloadForm, screenShotForm, installerForm, category]);
-
-
-    // Handle error messages to client.
-    useMemo(() => {
-        if (!modMut.isError && modMut.isSuccess) {
-            setSuccess("Successfully added or edited mod!");
-            setError(null);
-        }
-
-        // Make sure we have an actual error.
-        if (!modMut.isError)
-            return;
-
-        const err = modMut.error.message;
+    // Handle success and error messages.
+    if (modMut.isSuccess) {
+        success = "Successfully added or edited mod!";
+        error = null;
+    } else if (modMut.isError) {
+        const err_msg = modMut.error.message;
 
         // Check if we can simplify the error message for client.
-        if (err.includes("Error parsing URL"))
-            setError("Mod URL is too short or empty (<2 bytes).");
-        else if (err.includes("file extension is unknown"))
-            setError(err);
-        else if (err.includes("base64 data is null"))
-            setError("Banner file corrupt/invalid.");
-        else if (err.includes("is empty"))
-            setError(err);
+        if (err_msg.includes("Error parsing URL"))
+            error = "Mod URL is too short or empty (<2 bytes).";
+        else if (err_msg.includes("file extension is unknown"))
+            error = err_msg;
+        else if (err_msg.includes("base64 data is null"))
+            error = "Banner file corrupt/invalid.";
+        else if (err_msg.includes("is empty"))
+            error = err_msg;
         else
-            setError("Unable to create or edit mod!");
+            error = "Unable to create or edit mod!";
 
-        setSuccess(null);
+        success = null;
 
         // Send alert and log full error to client's console.
         console.error(modMut.error);
-
-    }, [modMut.isError, modMut.isSuccess]);
-
-    // Handle dynamic downloads fields/array (uncontrolled input).
-    type dlArrType = {
-        name: string,
-        url: string
     }
 
-    const [dlsArr, setDlsArr] = useState<Array<dlArrType>>([]);
-    const [fetchDls, setFetchDls] = useState(false);
+    //  Handle downloads form.
+    const downloads_form = useMemo(() => {
+       // Create a range from 1 to download count.
+       const range = Array.from({ length: downloadCount }, (_, index) => index + 1);
 
-    useEffect(() => {
-        if (!fetchDls || typeof window === 'undefined')
-            return;
-
-        const arr: Array<dlArrType> = [];
-
-        for (let i = 1; i <= 50; i++) {
-            const nameEle = document.getElementById("downloads-" + i + "-name");
-            const urlEle = document.getElementById("downloads-" + i + "-url");
-
-            if (nameEle == null || urlEle == null)
-                continue;
-
-            const nameVal = (document.getElementById(nameEle.id) as HTMLInputElement).value;
-            const urlVal = (document.getElementById(urlEle.id) as HTMLInputElement).value;
-
-            if (urlVal.length < 1)
-                continue;
-
-            arr.push({ name: nameVal, url: urlVal });
-        }
-
-        // Add to our array.
-        if (arr.length > 0)
-            setDlsArr(arr);
-
-        setFetchDls(false);
-    }, [fetchDls]);
-
-
-    // Handle dynamic screenshots fields/array (uncontrolled input).
-    type ssArrType = {
-        url: string
-    }
-
-    const [sssArr, setSssArr] = useState<Array<ssArrType>>([]);
-    const [fetchSss, setFetchSss] = useState(false);
-
-    useEffect(() => {
-        if (!fetchSss || typeof window === 'undefined')
-            return;
-
-        const arr: Array<ssArrType> = [];
-
-        for (let i = 1; i <= 50; i++) {
-            if (typeof window === 'undefined')
-                break
-
-            const urlEle = document.getElementById("screenshots-" + i + "-url");
-
-            if (urlEle == null)
-                break;
-
-            const urlVal = (document.getElementById(urlEle.id) as HTMLInputElement).value;
-
-            if (urlVal.length < 1)
-                continue;
-
-            arr.push({ url: urlVal });
-        }
-
-        // Add to our array.
-        if (arr.length > 0)
-            setSssArr(arr);
-
-        setFetchSss(false);
-    }, [fetchSss]);
-
-    // Handle dynamic sources (uncontrolled input).
-    type srcArrType = {
-        url: string
-        query: string
-    }
-
-    const [srcsArr, setSrcsArr] = useState<Array<srcArrType>>([]);
-    const [fetchSrcs, setFetchSrcs] = useState(false);
-
-    useEffect(() => {
-        if (!fetchSrcs || typeof window === 'undefined')
-            return;
-
-        const arr: Array<srcArrType> = [];
-
-        for (let i = 1; i <= 50; i++) {
-            if (typeof window === 'undefined')
-                break
-
-            const urlEle = document.getElementById("sources-" + i + "-url");
-            const queryEle = document.getElementById("sources-" + i + "-query");
-
-            if (urlEle == null || queryEle == null)
-                continue;
-
-            const urlVal = (document.getElementById(urlEle.id) as HTMLInputElement).value;
-            const queryVal = (document.getElementById(queryEle.id) as HTMLInputElement).value;
-
-            if (urlVal.length < 1)
-                continue;
-
-            arr.push({ url: urlVal, query: queryVal });
-        }
-
-        if (arr.length > 0)
-            setSrcsArr(arr);
-
-        setFetchSrcs(false);
-    }, [fetchSrcs]);
-
-    // Handle dynamic installers (uncontrolled input).
-    type insArrType = {
-        srcUrl: string
-        url: string
-    }
-
-    const [inssArr, setInssArr] = useState<Array<insArrType>>([]);
-    const [fetchInss, setFetchInss] = useState(false);
-
-    useEffect(() => {
-        if (!fetchInss || typeof window === 'undefined')
-            return;
-
-        const arr: Array<insArrType> = [];
-
-        for (let i = 1; i <= 50; i++) {
-            if (typeof window === 'undefined')
-                break
-
-            const srcUrlEle = document.getElementById("installers-" + i + "-srcurl");
-            const urlEle = document.getElementById("installers-" + i + "-url");
-
-            if (srcUrlEle == null || urlEle == null)
-                continue;
-
-            const srcUrlVal = (document.getElementById(srcUrlEle.id) as HTMLInputElement).value;
-            const urlVal = (document.getElementById(urlEle.id) as HTMLInputElement).value;
-
-            if (urlVal.length < 1)
-                continue;
-
-            arr.push({ srcUrl: srcUrlVal, url: urlVal });
-        }
-
-        if (arr.length > 0)
-            setInssArr(arr);
-
-        setFetchInss(false);
-    }, [fetchInss]);
-
-
-    // Handle dynamic download form.
-    useMemo(() => {
-        // Create a range from 1 to download count.
-        const range = Array.from({ length: downloadCount }, (value, index) => index + 1);
-
-        setDownloadForm(<>
-            {range.map((num) => {
-                const nameId = "downloads-" + num + "-name";
-                const urlId = "downloads-" + num + "-url";
-
-                return (<div key={"download-" + num} className="mb-4">
-                    <div className="mb-4">
-                        <h3 className="text-gray-200 text-lg font-bold mb-2">Download #{num}</h3>
-
-                        <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Name</label>
-                        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={nameId} id={nameId} defaultValue={mod != null && mod.ModDownload != null && mod.ModDownload[num - 1] != null ? mod.ModDownload[num - 1]?.name ?? "" : ""} type="text" />
-
-                        <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
-                        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={urlId} id={urlId} defaultValue={mod != null && mod.ModDownload != null && mod.ModDownload[num - 1] != null ? mod.ModDownload[num - 1]?.url ?? "" : ""} type="text" />
+        return (<>
+            {range.map((num) => {                
+                return (
+                    <div key={"download-" + num} className="mb-4">
+                        <DownloadForm
+                            mod={mod}
+                            num={num}
+                        />
 
                         <button onClick={(e) => {
                             e.preventDefault();
@@ -484,7 +250,7 @@ const ModForm: React.FC<{ preUrl: string | null }> = ({ preUrl }) => {
                             setDownloadCount(downloadCount - 1);
                         }} className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
                     </div>
-                </div>);
+                );
             })}
             <div className="mb-4">
                 <button onClick={(e) => {
@@ -495,23 +261,21 @@ const ModForm: React.FC<{ preUrl: string | null }> = ({ preUrl }) => {
                 }} className="text-white bg-green-800 hover:bg-green-900 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
             </div>
         </>);
-    }, [downloadCount, mod]);
+    }, [downloadCount])
 
-    // Handle dynamic dynamic screenshot form.
-    useMemo(() => {
-        // Create a range from 1 to screenshot count.
+
+    // Handle screenshots form.
+    const screenshots_form = useMemo(() => {
         const range = Array.from({ length: screenShotCount }, (value, index) => index + 1);
 
-        setScreenShotForm(<>
+        return (<>
             {range.map((num) => {
-                const urlId = "screenshots-" + num + "-url";
-
-                return (<div key={"screenshot-" + num} className="mb-4">
-                    <div className="mb-4">
-                        <h3 className="text-gray-200 text-lg font-bold mb-2">Screenshot #{num}</h3>
-
-                        <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
-                        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={urlId} id={urlId} defaultValue={mod != null && mod.ModScreenshot != null && mod.ModScreenshot[num - 1] != null ? mod.ModScreenshot[num - 1]?.url ?? "" : ""} type="text" />
+                return (
+                    <div key={"screenshot-" + num} className="mb-4">
+                        <ScreenshotForm
+                            mod={mod}
+                            num={num}
+                        />
 
                         <button onClick={(e) => {
                             e.preventDefault();
@@ -520,8 +284,9 @@ const ModForm: React.FC<{ preUrl: string | null }> = ({ preUrl }) => {
                             setScreenShotCount(screenShotCount - 1);
                         }} className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
                     </div>
-                </div>);
+                );
             })}
+
             <div className="mb-4">
                 <button onClick={(e) => {
                     e.preventDefault();
@@ -531,35 +296,31 @@ const ModForm: React.FC<{ preUrl: string | null }> = ({ preUrl }) => {
                 }} className="text-white bg-green-800 hover:bg-green-900 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
             </div>
         </>);
-    }, [screenShotCount, mod]);
+    }, [screenShotCount]);
 
-    // Handle dynamic sources.
-    useEffect(() => {
+    // Handle sources form.
+    const sources_form = useMemo(() => {
         // Create a range from 1 to sources count.
-        const range = Array.from({ length: sourceCount }, (value, index) => index + 1);
+        const range = Array.from({ length: sourceCount }, (_, index) => index + 1);
 
-        // Fetch pre-existing source data for URL select box.
-        const sourcesArr = sources.data;
-
-        setSourceForm(<>
+        return (<>
             {range.map((num) => {
+
                 return (
-                    <>
-                        <div key={num} className="mb-4">
-                            <SourceForm
-                                mod={mod}
-                                num={num}
-                                sources={sourcesArr ?? []}
-                            />
+                    <div key={num} className="mb-4">
+                        <SourceForm
+                            mod={mod}
+                            num={num}
+                            srcs={srcs}
+                        />
 
-                            <button onClick={(e) => {
-                                e.preventDefault();
+                        <button onClick={(e) => {
+                            e.preventDefault();
 
-                                // Subtract count.
-                                setSourceCount(sourceCount - 1);
-                            }} className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
-                        </div>
-                    </>
+                            // Subtract count.
+                            setSourceCount(sourceCount - 1);
+                        }} className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
+                    </div>
                 );
             })}
             <div className="mb-4">
@@ -571,36 +332,30 @@ const ModForm: React.FC<{ preUrl: string | null }> = ({ preUrl }) => {
                 }} className="text-white bg-green-800 hover:bg-green-900 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
             </div>
         </>);
+    }, [sourceCount]);
 
-    }, [sourceCount, sources.data, mod]);
-
-    // Handle dynamic installers.
-    useEffect(() => {
+    // Handle installers form.
+    const installers_form = useMemo(() => {
         // Create a range from 1 to sources count.
-        const range = Array.from({ length: installerCount }, (value, index) => index + 1);
+        const range = Array.from({ length: installerCount }, (_, index) => index + 1);
 
-        // Fetch pre-existing source data for URL select box.
-        const sourcesArr = sources.data;
-
-        setInstallerForm(<>
+        return (<>
             {range.map((num) => {
                 return (
-                    <>
-                        <div key={"installer-" + num} className="mb-4">
-                            <InstallerForm
-                                mod={mod}
-                                num={num}
-                                sources={sourcesArr ?? []}
-                            />
+                    <div key={"installer-" + num} className="mb-4">
+                        <InstallerForm
+                            mod={mod}
+                            num={num}
+                            srcs={srcs}
+                        />
 
-                            <button onClick={(e) => {
-                                e.preventDefault();
+                        <button onClick={(e) => {
+                            e.preventDefault();
 
-                                // Subtract count.
-                                setInstallerCount(installerCount - 1);
-                            }} className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
-                        </div>
-                    </>
+                            // Subtract count.
+                            setInstallerCount(installerCount - 1);
+                        }} className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
+                    </div>
                 );
             })}
             <div className="mb-4">
@@ -612,154 +367,134 @@ const ModForm: React.FC<{ preUrl: string | null }> = ({ preUrl }) => {
                 }} className="text-white bg-green-800 hover:bg-green-900 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
             </div>
         </>);
-
-    }, [installerCount, sources.data, mod]);
-
-    useEffect(() => {
-        if (!dataReceived) {
-            // Retrieve mod.
-            const mod = modQuery.data;
-
-            // Check if our mod is null.
-            if (mod != null) {
-                setId(mod.id);
-
-                setOwnerName(mod.ownerName);
-                setName(mod.name);
-                setUrl(mod.url);
-                setDescription(mod.description);
-                setDescriptionShort(mod.descriptionShort ?? "");
-                setInstall(mod.install ?? "");
-
-                setDataReceived(true);
-            }
-        }
-
-    }, [modQuery.data]);
-
-    useEffect(() => {
-        // Make sure we are submitting, values are valid, and we aren't still fetching relation data.
-        if (!submit || !values || fetchDls || fetchSss || fetchSrcs || fetchInss)
-            return;
-
-        // Create new values.
-        const newVals = values;
-
-        // Convert relation arrays to JSON string.
-        const dlsStr = JSON.stringify(dlsArr);
-        const sssStr = JSON.stringify(sssArr);
-        const srcsStr = JSON.stringify(srcsArr);
-        const inssStr = JSON.stringify(inssArr);
-
-        // Assign relation data to new values now.
-        newVals.downloads = dlsStr;
-        newVals.screenshots = sssStr;
-        newVals.sources = srcsStr;
-        newVals.installers = inssStr;
-
-        // Assign banner data.
-        newVals.banner = bannerData?.toString() ?? null;
-
-        // Insert into database.
-        modMut.mutate(newVals);
-
-        // Scroll to top.
-        if (typeof window !== undefined) {
-            window.scroll({
-                top: 0,
-                left: 0,
-                behavior: 'smooth'
-            });
-        }
-
-        // We are no longer submitting.
-        setSubmit(false);
-    }, [submit, values, fetchDls, fetchSss, fetchSrcs, fetchInss]);
-
+    }, [installerCount]);
 
     // Create form using Formik.
     const form = useFormik({
         initialValues: {
-            name: name,
-            ownerName: ownerName,
-            description: description,
-            descriptionShort: descriptionShort,
-            install: install,
-            url: url,
+            name: mod?.name ?? "",
+            owner_name: mod?.ownerName ?? "",
+            description: mod?.description ?? "",
+            description_short: mod?.descriptionShort ?? "",
+            install: mod?.install ?? "",
+            url: mod?.url ?? "",
             bremove: false
         },
         enableReinitialize: true,
 
         onSubmit: (values) => {
-            setFetchDls(true);
-            setFetchSss(true);
-            setFetchSrcs(true);
-            setFetchInss(true);
+            // Create new values.
+            const new_vals: values_type = values;
 
-            // First, handle file uploads via a promise. Not sure of any other way to do it at the moment (though I am new to TypeScript, Next.JS, and React).
-            new Promise<void>(async (resolve) => {
-                // We have uploads / total uploads.
-                let uploads = 0;
-                let totalUploads = 0;
+            // Retrieve values from downloads.
+            const dls_arr: Array<dl_arr_type> = [];
 
-                // Check banner and handle upload.
-                if (banner != null) {
-                    // Increase our total uploads count.
-                    totalUploads++;
+            for (let i = 1; i <= 50; i++) {
+                const nameEle = document.getElementById("downloads-" + i + "-name");
+                const urlEle = document.getElementById("downloads-" + i + "-url");
+    
+                if (nameEle == null || urlEle == null)
+                    continue;
+    
+                const nameVal = (document.getElementById(nameEle.id) as HTMLInputElement).value;
+                const urlVal = (document.getElementById(urlEle.id) as HTMLInputElement).value;
+    
+                if (urlVal.length < 1)
+                    continue;
+    
+                    dls_arr.push({ name: nameVal, url: urlVal });
+            }
 
-                    // Create new reader.
-                    const reader = new FileReader();
+            new_vals.downloads = JSON.stringify(dls_arr);
 
-                    // On file uploaded.
-                    reader.onload = () => {
-                        // Set Base64 data to bannerData.
-                        setBannerData(reader.result);
+            // Retrieve values from screenshots.
+            const sss_arr: Array<ss_arr_type> = [];
 
-                        // We're done; Increment uploads.
-                        uploads++;
-                    };
+            for (let i = 1; i <= 50; i++) {
+                if (typeof window === 'undefined')
+                    break
+    
+                const urlEle = document.getElementById("screenshots-" + i + "-url");
+    
+                if (urlEle == null)
+                    break;
+    
+                const urlVal = (document.getElementById(urlEle.id) as HTMLInputElement).value;
+    
+                if (urlVal.length < 1)
+                    continue;
+    
+                    sss_arr.push({ url: urlVal });
+            }
 
-                    // Read banner file.
-                    reader.readAsDataURL(banner);
-                }
+            new_vals.screenshots = JSON.stringify(sss_arr);
 
-                // Create a for loop for 30 seconds to allow files to upload. We could make a while loop, but I'd prefer having a 30 second timeout (these are image files).
-                for (let i = 0; i < 30; i++) {
-                    // If we're done, break to get to resolve().
-                    if (uploads >= totalUploads)
-                        break;
+            // Retrieve values from sources.
+            const srcs_arr: Array<src_arr_type> = [];
 
-                    // Wait 1 second to save CPU cycles.
-                    await delay(1000);
-                }
+            for (let i = 1; i <= 50; i++) {
+                if (typeof window === 'undefined')
+                    break
+    
+                const urlEle = document.getElementById("sources-" + i + "-url");
+                const queryEle = document.getElementById("sources-" + i + "-query");
+    
+                if (urlEle == null || queryEle == null)
+                    continue;
+    
+                const urlVal = (document.getElementById(urlEle.id) as HTMLInputElement).value;
+                const queryVal = (document.getElementById(queryEle.id) as HTMLInputElement).value;
+    
+                if (urlVal.length < 1)
+                    continue;
+    
+                    srcs_arr.push({ url: urlVal, query: queryVal });
+            }
 
-                // We're done uploading files.
-                resolve();
-            }).then(() => {
-                // Insert into the database via mutation.
-                setSubmit(true);
-                setValues({
-                    id: id,
+            new_vals.sources = JSON.stringify(srcs_arr);
 
-                    ownerName: values.ownerName,
+            // Retrieve values from installers.
+            const ins_arr: Array<ins_arr_type> = [];
 
-                    name: values.name,
-                    url: values.url,
-                    category: category,
-                    banner: null,
+            for (let i = 1; i <= 50; i++) {
+                if (typeof window === 'undefined')
+                    break
+    
+                const srcUrlEle = document.getElementById("installers-" + i + "-srcurl");
+                const urlEle = document.getElementById("installers-" + i + "-url");
+    
+                if (srcUrlEle == null || urlEle == null)
+                    continue;
+    
+                const srcUrlVal = (document.getElementById(srcUrlEle.id) as HTMLInputElement).value;
+                const urlVal = (document.getElementById(urlEle.id) as HTMLInputElement).value;
+    
+                if (urlVal.length < 1)
+                    continue;
+    
+                ins_arr.push({ srcUrl: srcUrlVal, url: urlVal });
+            }
 
-                    description: values.description,
-                    descriptionShort: values.descriptionShort,
-                    install: values.install,
+            new_vals.installers = JSON.stringify(ins_arr);
 
-                    downloads: null,
-                    screenshots: null,
-                    sources: null,
-                    installers: null,
+            // Assign category and ID if any.
+            new_vals.id = mod?.id ?? null;
+            new_vals.category = category;
 
-                    bremove: values.bremove
+            // Assign banner data.
+            new_vals.banner = bannerData?.toString() ?? null;
+
+            // Insert into database.
+            modMut.mutate(new_vals);
+
+            // Scroll to top.
+            if (typeof window !== undefined) {
+                window.scroll({
+                    top: 0,
+                    left: 0,
+                    behavior: 'smooth'
                 });
-            });
+            }
         }
     });
 
@@ -771,9 +506,94 @@ const ModForm: React.FC<{ preUrl: string | null }> = ({ preUrl }) => {
             />
             <FormTemplate
                 form={form}
-                content={modFormFields}
                 submitBtn={submitBtn}
-            />
+            >
+                <h2 className="text-white text-2xl font-bold">General Information</h2>
+                <div className="mb-4">
+                    <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Image Banner</label>
+                    <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="image_banner" type="file" placeholder="Mod Image Banner" onChange={(e) => {
+                          const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
+
+                          if (file) {
+  
+                              const reader = new FileReader();
+  
+                              reader.onloadend = () => {
+                                  setBannerData(reader.result);
+                              };
+                              
+                              reader.readAsDataURL(file);
+                          }
+                    }} />
+
+                    <Field className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="bremove" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Remove Current</label>
+                </div>
+
+                <div className="mb-4">
+                    <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Name</label>
+                    <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="name" type="text" placeholder="Mod Name" />
+                </div>
+
+                <div className="mb-4">
+                    <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Owner Name</label>
+                    <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="owner_name" type="text" placeholder="Owner Name If Any" />
+                </div>
+
+                <div className="mb-4">
+                    <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
+                    <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="url" type="text" placeholder="bestmods.io/view/value" />
+                </div>
+
+                <div className="mb-4">
+                    <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Category</label>
+                    <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" value={category ?? 0} onChange={(e) => {
+                        const val = e.target.value;
+
+                        if (val)
+                            setCategory(Number(val));
+                    }}>
+                        <option value="0">None</option>
+                        {cats.map((cat) => {
+                            return (
+                                <React.Fragment key={cat.id}>
+                                    <option value={cat.id}>{cat.name}</option>
+
+                                    {cat.children?.map((child) => {
+                                        return <option key={child.id} value={child.id}>-- {child.name}</option>
+                                    })}
+                                </React.Fragment>
+                            );
+                        })}
+                    </select>
+                </div>
+
+                <div className="mb-4">
+                    <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Short Description</label>
+                    <Field rows="16" cols="32" className="shadow appearance-none border-blue-900 rounded w-full p-6 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="description_short" as="textarea" placeholder="Mod Short Description" />
+                </div>
+
+                <div className="mb-4">
+                    <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Description</label>
+                    <Field rows="16" cols="32" className="shadow appearance-none border-blue-900 rounded w-full p-6 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="description" as="textarea" placeholder="Mod Description" />
+                </div>
+
+                <div className="mb-4">
+                    <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Installation</label>
+                    <Field rows="16" cols="32" className="shadow appearance-none border-blue-900 rounded w-full p-6 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="install" as="textarea" placeholder="Mod Installation" />
+                </div>
+
+                <h2 className="text-white text-2xl font-bold">Sources</h2>
+                {sources_form}
+
+                <h2 className="text-white text-2xl font-bold">Installers</h2>
+                {installers_form}
+
+                <h2 className="text-white text-2xl font-bold">Downloads</h2>
+                {downloads_form}
+
+                <h2 className="text-white text-2xl font-bold">Screenshots</h2>
+                {screenshots_form}
+            </FormTemplate>
         </>
     );
 };
