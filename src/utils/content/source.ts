@@ -2,12 +2,15 @@ import { Source } from "@prisma/client";
 
 import FileType from '../base64';
 import fs from 'fs';
+import { FilterCtx } from "../../components/main";
 
 export const Insert_Or_Update_Source = async (
     prisma: any,
 
     url: string,
     
+    update?: boolean,
+
     icon?: string,
     iremove?: boolean,
 
@@ -19,16 +22,10 @@ export const Insert_Or_Update_Source = async (
 ): Promise<[Source | null, boolean, string | null | any]> => {
     // Returns.
     let src: Source | null = null;
-    let success: boolean = true;
-    let err: string | null | any = null;
 
     // Make sure we have text in required fields.
-    if (!url || url.length < 2) {
-        err = "URL is empty or far too short.";
-        success = false;
-
-        return [src, success, err]
-    }
+    if (!url || url.length < 2)
+        return [null, false, "URL is empty or far too short."]
 
     let icon_path: string | boolean | null = false;
     let banner_path: string | boolean | null = false;
@@ -61,23 +58,12 @@ export const Insert_Or_Update_Source = async (
                 try {
                     fs.writeFileSync(process.env.UPLOADS_DIR + "/" + icon_path, buffer);
                 } catch (error) {
-                    err = error;
-                    success = false;
-
-                    return [src, success, err];
+                    return [null, false, error];
                 }
-            } else {
-                err = "Icon's file extension is unknown.";
-                success = false;
-
-                return [src, success, err];
-            }
-        } else {
-            err = "Parsing base64 data is null.";
-            success = false;
-
-            return [src, success, err];
-        }
+            } else
+                return [null, false, "Icon's file extension is unknown."];
+        } else
+            return [null, false, "Parsing base64 data is null."];
     }
 
     if (banner != null && banner.length > 0 && !bremove) {
@@ -102,64 +88,55 @@ export const Insert_Or_Update_Source = async (
                 try {
                     fs.writeFileSync(process.env.UPLOADS_DIR + "/" + banner_path, buffer);
                 } catch (error) {
-                    err = error;
-                    success = false;
-
-                    return [src, success, err];
+                    return [null, false, error];
                 }
-            } else {
-                err = "Banner's file extension is unknown.";
-                success = false;
-
-                return [src, success, err];
-            }
-        } else {
-            err = "Parsing base64 data is null.";
-            success = false;
-
-            return [src, success, err];
-        }
+            } else
+                return [null, false, "Banner's file extension is unknown."];
+        } else
+            return [src, false, "Parsing base64 data is null."];
     }
 
     try {
-        await prisma.source.upsert({
-            where: {
-                url: url
-            },
-            update: {
-                ...(name && {
-                    name: name
-                }),
-                url: url,
-                ...(classes != undefined && {
-                    classes: classes
-                }),
-                ...(icon_path !== false && {
-                    icon: icon_path
-                }),
-                ...(banner_path !== false && {
-                    banner: banner_path
-                })
-            },
-            create: {
-                name: name,
-                url: url,
-                classes: classes ?? null,
-
-                ...(icon_path !== false && {
-                    icon: icon_path
-                }),
-                ...(banner_path !== false && {
-                    banner: banner_path
-                })
-            }
-        });
+        if (update) {
+            src = await prisma.source.update({
+                where: {
+                    url: url
+                },
+                data: {
+                    ...(name && {
+                        name: name
+                    }),
+                    url: url,
+                    ...(classes != undefined && {
+                        classes: classes
+                    }),
+                    ...(icon_path !== false && {
+                        icon: icon_path
+                    }),
+                    ...(banner_path !== false && {
+                        banner: banner_path
+                    })
+                }
+            });
+        } else {
+            src = await prisma.source.create({
+                data: {
+                    name: name,
+                    url: url,
+                    classes: classes ?? null,
+    
+                    ...(icon_path !== false && {
+                        icon: icon_path
+                    }),
+                    ...(banner_path !== false && {
+                        banner: banner_path
+                    })
+                }
+            });
+        }
     } catch (error) {
-        err = error;
-        success = false;
-
-        return [src, success, err];
+        return [src, false, error];
     }
    
-    return [src, success, err];
+    return [src, true, null];
 }
