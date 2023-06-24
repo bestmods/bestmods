@@ -1,0 +1,89 @@
+.card-style-default
+{
+    @apply !bg-black/50;
+}
+
+.card-style-1
+{
+    @apply !bg-red-900/50;
+}
+
+.card-style-2
+{
+    @apply !bg-green-900/50;
+}
+
+.card-style-2
+{
+    @apply !bg-sky-900/50;
+}
+
+.card-style-3
+{
+    @apply !bg-slate-900/50;
+}
+
+.card-style-4
+{
+    @apply !bg-cyan-900/50;
+}
+
+.card-style-5
+{
+    @apply !bg-orange-800/50;
+}
+
+.card-style-6
+{
+    @apply !bg-yellow-700/50;
+}
+
+.card-style-7
+{
+    @apply !bg-blue-900/50;
+}
+
+.card-style-8
+{
+    @apply !bg-green-500/20;
+}
+
+.card-style-9
+{
+    @apply !bg-orange-600/50;
+}
+
+.card-style-10
+{
+    @apply !bg-yellow-600/50;
+}
+
+.card-style-11
+{
+    @apply !bg-green-600/50;
+}
+
+.card-style-12
+{
+    @apply !bg-blue-600/50;
+}
+
+.card-style-13
+{
+    @apply !bg-sky-600/50;
+}
+
+.card-style-14
+{
+    @apply !bg-cyan-600/50;
+}
+
+.card-style-15
+{
+    @apply !bg-purple-600/50;
+}
+
+.card-style-16
+{
+    @apply !bg-lime-600/50;
+}
