@@ -15,6 +15,14 @@
 @import 'utils/notfound.css';
 @import 'utils/scrollbar.css';
 @import 'utils/unauthorized.css';
+@import 'utils/buttons.css';
+
+/* Forms */
+@import 'forms/main.css';
+
+@import 'forms/content/mod.css';
+@import 'forms/content/category.css';
+@import 'forms/content/source.css';
 
 /* Background And Overlay */
 #bgol
