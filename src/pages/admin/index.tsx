@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext, type NextPage } from "next";
+import { type GetServerSidePropsContext, type NextPage } from "next";
 import React, { useState } from "react";
 
 import { BestModsPage } from '../../components/main';

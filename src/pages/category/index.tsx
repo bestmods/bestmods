@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext, type NextPage } from "next";
+import { type GetServerSidePropsContext, type NextPage } from "next";
 import React from "react";
 
 import { BestModsPage } from '../../components/main';
@@ -66,7 +66,7 @@ const Categories: React.FC<{
 
             {cats ? (
                 <>
-                    {cats.map((cat) => {
+                    {cats.map((cat: any) => {
                         const viewLink = "/category/" + cat.url;
                         const icon = (cat.icon != null) ? cdn + cat.icon : cdn + "/images/default_icon.png"
 
