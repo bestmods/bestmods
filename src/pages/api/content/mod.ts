@@ -101,7 +101,7 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
 
             if (!id && !pre_url) {
                 return res.status(400).json({
-                    message: "Cannot update mod. Missing both ID and pre URL parameters. Please use one."
+                    message: "Cannot update mod. Missing both ID and URL parameters. Please use one."
                 });
             }
         }
