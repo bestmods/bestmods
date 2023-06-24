@@ -202,36 +202,26 @@ const ModRow: React.FC<ModRowArguments> = ({
 }) => {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
-    // Retrieve category.
-    const cat: Category | null = mod.category;
-
-    const catParentQuery = trpc.category.getCategory.useQuery({
-        id: (cat != null && cat.parentId != null) ? cat.parentId : null,
-
-        selId: true,
-        selUrl: true,
-        selIcon: true,
-        selName: true
-    });
-
-    const catPar = catParentQuery.data;
-
     // Generate correct banner.   
     let banner = cdn + "/images/default_mod_banner.png";
 
-    if (mod.banner != null && mod.banner.length > 0)
+    if (mod.banner && mod.banner.length > 0)
         banner = cdn + mod.banner;
+
+    // Categories.
+    const cat = mod.category;
+    const cat_par = cat.parent;
 
     // Generate category info.
     const defaultCatIcon = cdn + "/images/default_icon.png";
-    const catIcon = (cat != null && cat.icon != null) ? cdn + cat.icon : defaultCatIcon;
-    const catParIcon = (catPar && catPar.icon) ? cdn + catPar.icon : defaultCatIcon;
+    const catIcon = (cat && cat.icon) ? cdn + cat.icon : defaultCatIcon;
+    const catParIcon = (cat_par && cat_par.icon) ? cdn + cat_par.icon : defaultCatIcon;
 
     // Generate links.
     const viewLink = "/view/" + mod.url;
 
-    const catParLink = (catPar) ? "/category/" + catPar.url : null;
-    const catLink = ((cat) ? "/category" + ((catPar) ? "/" + catPar.url : "") + "/" + cat.url : null);
+    const catParLink = (cat_par) ? "/category/" + cat_par.url : null;
+    const catLink = ((cat) ? "/category" + ((cat_par) ? "/" + cat_par.url : "") + "/" + cat.url : null);
 
     // Generate classes.
     const addClasses = (cat && cat.classes) ? " " + cat.classes : "";
@@ -252,7 +242,7 @@ const ModRow: React.FC<ModRowArguments> = ({
                     cat={cat}
                     catIcon={catIcon}
                     catLink={catLink}
-                    catPar={catPar}
+                    catPar={cat_par}
                     catParIcon={catParIcon}
                     catParLink={catParLink}
                     viewLink={viewLink}
@@ -267,7 +257,7 @@ const ModRow: React.FC<ModRowArguments> = ({
                     cat={cat}
                     catIcon={catIcon}
                     catLink={catLink}
-                    catPar={catPar}
+                    catPar={cat_par}
                     catParIcon={catParIcon}
                     catParLink={catParLink}
                     viewLink={viewLink}
@@ -288,38 +278,13 @@ const ModBrowser: React.FC<{
 
     let requireItems = true;
     const items: any = [];
-    const itemsPerLoad = 10;
 
     const { data, fetchNextPage } = trpc.mod.getAllModsBrowser.useInfiniteQuery({
-        count: itemsPerLoad,
-
         categories: (categories) ? JSON.stringify(categories) : null,
         timeframe: filters?.timeframe ?? null,
         sort: filters?.sort ?? null,
         search: filters?.search ?? null,
-        visible: (visible != null) ? visible : true,
-
-        selId: true,
-        selName: true,
-        selUrl: true,
-        selOwnerName: true,
-        selDescriptionShort: true,
-
-        selBanner: true,
-
-        selTotalDownloads: true,
-        selTotalViews: true,
-        selTotalRating: true,
-
-        selRatingHour: true,
-        selRatingDay: true,
-        selRatingWeek: true,
-        selRatingMonth: true,
-        selRatingYear: true,
-
-        incCategory: true,
-        incSources: true,
-        incInstallers: true
+        visible: (visible != null) ? visible : true
     }, {
         getNextPageParam: (lastPage) => lastPage.nextCur,
     });
