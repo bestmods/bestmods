@@ -1,9 +1,8 @@
 import { GetServerSidePropsContext, type NextPage } from "next";
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 
 import { BestModsPage } from '../../components/main';
 import HeadInfo from "../../components/head";
-import { SessionCtx } from "../../components/main";
 
 import { AlertForm } from '../../components/alert';
 
@@ -12,8 +11,8 @@ import { trpc } from '../../utils/trpc';
 import Link from 'next/link';
 
 import { prisma } from "../../server/db/client";
-import { CategoriesWithChildren } from "../../components/types";
-import { Source } from "@prisma/client";
+import { type CategoriesWithChildren } from "../../components/types";
+import { type Source } from "@prisma/client";
 import { getSession } from "next-auth/react";
 
 const Home: NextPage<{
