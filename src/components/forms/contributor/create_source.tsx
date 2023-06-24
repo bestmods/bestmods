@@ -31,7 +31,7 @@ const SourceForm: React.FC<{
     // Submit button.
     const submitBtn = 
         <div className="text-center">
-            <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{!src ? "Add Source!" : "Edit Source!"}</button>
+            <button type="submit" className="btn btn-blue">{!src ? "Add Source!" : "Edit Source!"}</button>
         </div>;
 
     const [iconData, setIconData] = useState<string | ArrayBuffer | null>(null);
@@ -108,9 +108,9 @@ const SourceForm: React.FC<{
                 form={form}
                 submitBtn={submitBtn}
             >
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm font-bold mb-2">Image</label>
-                    <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image" name="image" type="file" placeholder="Source Image" onChange={(e) => {
+                <div className="form-container">
+                    <label className="form-label">Image</label>
+                    <input className="form-input" name="image" type="file" placeholder="Source Image" onChange={(e) => {
                         const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
 
                         if (file) {
@@ -125,12 +125,12 @@ const SourceForm: React.FC<{
                         }
                     }} />
 
-                    <Field className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image-remove" name="iremove" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Remove Current</label>
+                    <Field className="form-checkbox" name="iremove" type="checkbox" /> <label className="form-checkbox-label">Remove Current</label>
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm font-bold mb-2">Image Banner</label>
-                    <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="image_banner" name="image_banner" type="file" placeholder="Source Image Banner" onChange={(e) => {
+                <div className="form-container">
+                    <label className="form-label">Image Banner</label>
+                    <input className="form-input" name="image_banner" type="file" placeholder="Source Image Banner" onChange={(e) => {
                         const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
 
                         if (file) {
@@ -145,22 +145,22 @@ const SourceForm: React.FC<{
                         }
                     }} />
 
-                    <input className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="bremove" name="image_banner-remove" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Remove Current</label>
+                    <input className="form-checkbox" name="image_banner-remove" type="checkbox" /> <label className="form-checkbox-label">Remove Current</label>
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm font-bold mb-2">Name</label>
-                    <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="name" name="name" type="text" placeholder="Source Name" />
+                <div className="form-container">
+                    <label className="form-label">Name</label>
+                    <Field className="form-input" name="name" type="text" placeholder="Source Name" />
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm font-bold mb-2">URL</label>
-                    <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="url" name="url" type="text" placeholder="moddingcommunity.com" />
+                <div className="form-container">
+                    <label className="form-label">URL</label>
+                    <Field className="form-input" name="url" type="text" placeholder="moddingcommunity.com" />
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm font-bold mb-2">Classes</label>
-                    <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" id="classes" name="classes" type="text" placeholder="CSS Classes" />
+                <div className="form-container">
+                    <label className="form-label">Classes</label>
+                    <Field className="form-input" name="classes" type="text" placeholder="CSS Classes" />
                 </div>
             </FormTemplate>
         </>
