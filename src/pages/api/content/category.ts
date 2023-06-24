@@ -51,8 +51,11 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
                 category: cat
             }
         });
-    } else if (req.method == "POST") {
-        // Retrieve POST data.
+    } else if (["POST", "PATCH", "PUT"].includes(req.method ?? "")) {
+        // Check if this should be an update.
+        const update = ["PATCH", "PUT"].includes(req.method ?? "");
+
+        // Retrieve body data.
         const {
             parent_id,
             name,
@@ -73,10 +76,19 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
             has_bg?: boolean
         } = req.body;
 
-        // Retrieve ID if any.
-        const { id } = req.query;
+        let id: string | undefined = undefined;
 
-        if (!id && (!name || !name_short)) {
+        if (update)
+            id = req.query.id?.toString();
+
+        if (update && !id) {
+            return res.status(400).json({
+                message: "Cannot update category. Missing ID query parameter."
+            })
+        }
+
+        // If we're not updating, make sure we have a name and name short.
+        if (!update && (!name || !name_short)) {
             return res.status(400).json({
                 message: "Name or short name not found in POST data for new entry.",
                 data: null
@@ -84,7 +96,7 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         // If the ID is specified, do a lookup here.
-        if (id) {
+        if (update) {
             const cat = await prisma.category.findFirst({
                 where: {
                     id: Number(id)
@@ -99,17 +111,17 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
             }
         }
 
-        const [cat, success, err] = await Insert_Or_Update_Category(prisma, name, name_short, url, (id) ? Number(id) : undefined, icon, iremove, parent_id, classes, has_bg);
+        const [cat, success, err] = await Insert_Or_Update_Category(prisma, name, name_short, url, (update && id) ? Number(id) : undefined, icon, iremove, parent_id, classes, has_bg);
 
         if (!success || !cat) {
             return res.status(400).json({
-                message: `Category ${id ? "update" : "insert"} not successful. Error => ` + err,
+                message: `Unable to ${update ? "update" : "insert"} category. Error => ${err}`,
                 data: null
             });
         }
 
         return res.status(200).json({
-            message: `${id ? "Updated" : "Inserted"} category successfully!`,
+            message: `${update ? "Updated" : "Inserted"} category successfully!`,
             data: {
                 category: cat
             }
