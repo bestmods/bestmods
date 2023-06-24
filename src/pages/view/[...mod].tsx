@@ -349,8 +349,14 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const session = await getSession(ctx);
 
     // We need to retrieve some props.
-    if (!ctx.params || !ctx.params.mod)
-        return { props: { mod: null, modView: "overview" } }
+    if (!ctx.params || !ctx.params.mod) {
+        return {
+            props: {
+                mod: null,
+                modView: "overview"
+            }
+        };
+    }
 
     const url = ctx.params.mod[0] ?? "";
     const modView = ctx.params.mod[1] ?? "overview";
