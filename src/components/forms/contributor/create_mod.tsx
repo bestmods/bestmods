@@ -185,10 +185,10 @@ const ModForm: React.FC<{
     const [category, setCategory] = useState<number | null>(mod?.categoryId ?? null);
 
     // States for number of download and screenshot forms to show.
-    const [downloadCount, setDownloadCount] = useState(mod?.ModDownload?.length ?? 1);
-    const [screenShotCount, setScreenShotCount] = useState(mod?.ModScreenshot?.length ?? 1);
-    const [sourceCount, setSourceCount] = useState(mod?.ModSource?.length ?? 1);
-    const [installerCount, setInstallerCount] = useState(mod?.ModInstaller?.length ?? 1);
+    const [downloadCount, setDownloadCount] = useState(mod?.ModDownload?.length || 1);
+    const [screenShotCount, setScreenShotCount] = useState(mod?.ModScreenshot?.length || 1);
+    const [sourceCount, setSourceCount] = useState(mod?.ModSource?.length || 1);
+    const [installerCount, setInstallerCount] = useState(mod?.ModInstaller?.length || 1);
 
     // File uploads.
     const [bannerData, setBannerData] = useState<string | ArrayBuffer | null>(null);
