@@ -370,7 +370,11 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             },
             ModSource: true,
             ModDownload: true,
-            ModInstaller: true,
+            ModInstaller: {
+                include: {
+                    source: true
+                }
+            },
             ModRating: {
                 where: {
                     userId: session?.user?.id ?? ""
