@@ -1,0 +1,74 @@
+.form-main {
+    @apply w-full;
+    @apply flex;
+    @apply flex-col;
+    @apply bg-black;
+    @apply bg-opacity-50;
+    @apply shadow-md;
+    @apply rounded;
+    @apply px-8;
+    @apply pt-6;
+    @apply pb-8;
+    @apply mb-4;
+}
+
+.form-main > h2 {
+    @apply text-white;
+    @apply text-2xl;
+    @apply font-bold;
+}
+
+.form-container {
+    @apply mb-4;
+}
+
+.form-container > h3 {
+    @apply text-gray-200;
+    @apply text-lg;
+    @apply font-bold;
+    @apply mb-2;
+}
+
+.form-label {
+    @apply block;
+    @apply text-gray-200;
+    @apply text-sm;
+    @apply font-bold;
+    @apply mb-2;
+}
+
+.form-input {
+    @apply shadow;
+    @apply appearance-none;
+    @apply border-blue-900;
+    @apply rounded;
+    @apply w-full;
+    @apply py-2;
+    @apply px-3;
+    @apply text-gray-200;
+    @apply bg-gray-800;
+    @apply leading-tight;
+    @apply focus:outline-none;
+}
+
+.form-checkbox {
+    @apply inline;
+    @apply align-middle;
+    @apply border-blue-900;
+    @apply rounded;
+    @apply py-2;
+    @apply px-3;
+    @apply text-gray-200;
+    @apply bg-gray-800;
+    @apply leading-tight;
+    @apply focus:outline-none;
+}
+
+.form-checkbox-label {
+    @apply inline;
+    @apply align-middle;
+    @apply text-gray-200;
+    @apply text-sm;
+    @apply font-bold;
+    @apply mb-2
+}
