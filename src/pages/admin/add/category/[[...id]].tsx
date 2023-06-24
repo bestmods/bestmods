@@ -46,7 +46,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     // Props to pass.
     let cat: Category | null = null;
-    let cats: CategoriesWithChildren[] | null = null;
+    let cats: CategoriesWithChildren[] = [];
     let authed = false;
 
     // See if we have a slug.
