@@ -41,7 +41,7 @@ type src_arr_type = {
 };
 
 type ins_arr_type = {
-    srcUrl: string
+    src_url: string
     url: string
 }
 
@@ -93,19 +93,19 @@ const SourceForm: React.FC<{
     num,
     srcs 
 }) => {
-    const srcUrl = "sources-" + num + "-url";
+    const src_url = "sources-" + num + "-url";
     const srcQuery = "sources-" + num + "-query";
 
-    const curUrl = mod && mod.ModSource ? mod.ModSource[num - 1]?.sourceUrl ?? "" : "";
+    const cur_url = mod && mod.ModSource ? mod.ModSource[num - 1]?.sourceUrl ?? "" : "";
 
-    const [srcUrlVal, setSrcUrlVal] = useState(curUrl);
+    const [srcUrlVal, setSrcUrlVal] = useState(cur_url);
 
     return (
         <>
             <h3 className="text-gray-200 text-lg font-bold mb-2">Source #{num}</h3>
 
             <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Source</label>
-            <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcUrl} id={srcUrl} value={srcUrlVal} onChange={(e) => {
+            <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={src_url} id={src_url} value={srcUrlVal} onChange={(e) => {
                 const val = e.target.value;
 
                 setSrcUrlVal(val);
@@ -132,19 +132,19 @@ const InstallerForm: React.FC<{
     num, 
     srcs 
 }) => {
-    const srcUrl = "installers-" + num + "-srcurl";
+    const src_url = "installers-" + num + "-srcurl";
     const url = "installers-" + num + "-url";
 
-    const curUrl = mod && mod.ModInstaller && mod.ModInstaller[num - 1] ? mod.ModInstaller[num - 1]?.sourceUrl ?? "" : "";
+    const cur_url = mod && mod.ModInstaller && mod.ModInstaller[num - 1] ? mod.ModInstaller[num - 1]?.sourceUrl ?? "" : "";
 
-    const [srcUrlVal, setSrcUrlVal] = useState(curUrl);
+    const [srcUrlVal, setSrcUrlVal] = useState(cur_url);
 
     return (
         <>
             <h3 className="text-gray-200 text-lg font-bold mb-2">Installer #{num}</h3>
 
             <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Source</label>
-            <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcUrl} id={srcUrl} value={srcUrlVal} onChange={(e) => {
+            <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={src_url} id={src_url} value={srcUrlVal} onChange={(e) => {
                 const val = e.target.value;
 
                 setSrcUrlVal(val);
@@ -382,19 +382,22 @@ const ModForm: React.FC<{
             const dls_arr: Array<dl_arr_type> = [];
 
             for (let i = 1; i <= 50; i++) {
-                const nameEle = document.getElementById("downloads-" + i + "-name");
-                const urlEle = document.getElementById("downloads-" + i + "-url");
+                const name_ele = document.getElementById("downloads-" + i + "-name");
+                const url_ele = document.getElementById("downloads-" + i + "-url");
     
-                if (nameEle == null || urlEle == null)
+                if (!name_ele || !url_ele)
                     continue;
     
-                const nameVal = (document.getElementById(nameEle.id) as HTMLInputElement).value;
-                const urlVal = (document.getElementById(urlEle.id) as HTMLInputElement).value;
+                const nam_val = (document.getElementById(name_ele.id) as HTMLInputElement).value;
+                const url_val = (document.getElementById(url_ele.id) as HTMLInputElement).value;
     
-                if (urlVal.length < 1)
+                if (url_val.length < 1)
                     continue;
     
-                    dls_arr.push({ name: nameVal, url: urlVal });
+                    dls_arr.push({ 
+                        name: nam_val,
+                        url: url_val
+                    });
             }
 
             new_vals.downloads = JSON.stringify(dls_arr);
@@ -406,17 +409,17 @@ const ModForm: React.FC<{
                 if (typeof window === 'undefined')
                     break
     
-                const urlEle = document.getElementById("screenshots-" + i + "-url");
+                const url_ele = document.getElementById("screenshots-" + i + "-url");
     
-                if (urlEle == null)
+                if (!url_ele)
                     break;
     
-                const urlVal = (document.getElementById(urlEle.id) as HTMLInputElement).value;
+                const url_val = (document.getElementById(url_ele.id) as HTMLInputElement).value;
     
-                if (urlVal.length < 1)
+                if (url_val.length < 1)
                     continue;
     
-                    sss_arr.push({ url: urlVal });
+                    sss_arr.push({ url: url_val });
             }
 
             new_vals.screenshots = JSON.stringify(sss_arr);
@@ -428,19 +431,22 @@ const ModForm: React.FC<{
                 if (typeof window === 'undefined')
                     break
     
-                const urlEle = document.getElementById("sources-" + i + "-url");
-                const queryEle = document.getElementById("sources-" + i + "-query");
+                const url_ele = document.getElementById("sources-" + i + "-url");
+                const query_ele = document.getElementById("sources-" + i + "-query");
     
-                if (urlEle == null || queryEle == null)
+                if (!url_ele || !query_ele)
                     continue;
     
-                const urlVal = (document.getElementById(urlEle.id) as HTMLInputElement).value;
-                const queryVal = (document.getElementById(queryEle.id) as HTMLInputElement).value;
+                const url_val = (document.getElementById(url_ele.id) as HTMLInputElement).value;
+                const query_val = (document.getElementById(query_ele.id) as HTMLInputElement).value;
     
-                if (urlVal.length < 1)
+                if (url_val.length < 1)
                     continue;
     
-                    srcs_arr.push({ url: urlVal, query: queryVal });
+                    srcs_arr.push({ 
+                        url: url_val,
+                        query: query_val 
+                    });
             }
 
             new_vals.sources = JSON.stringify(srcs_arr);
@@ -452,19 +458,22 @@ const ModForm: React.FC<{
                 if (typeof window === 'undefined')
                     break
     
-                const srcUrlEle = document.getElementById("installers-" + i + "-srcurl");
-                const urlEle = document.getElementById("installers-" + i + "-url");
+                const src_url_ele = document.getElementById("installers-" + i + "-srcurl");
+                const url_ele = document.getElementById("installers-" + i + "-url");
     
-                if (srcUrlEle == null || urlEle == null)
+                if (!src_url_ele || !url_ele)
                     continue;
     
-                const srcUrlVal = (document.getElementById(srcUrlEle.id) as HTMLInputElement).value;
-                const urlVal = (document.getElementById(urlEle.id) as HTMLInputElement).value;
+                const src_url_val = (document.getElementById(src_url_ele.id) as HTMLInputElement).value;
+                const url_val = (document.getElementById(url_ele.id) as HTMLInputElement).value;
     
-                if (urlVal.length < 1)
+                if (url_val.length < 1)
                     continue;
     
-                ins_arr.push({ srcUrl: srcUrlVal, url: urlVal });
+                ins_arr.push({ 
+                    src_url: src_url_val,
+                    url: url_val
+                });
             }
 
             new_vals.installers = JSON.stringify(ins_arr);
@@ -507,7 +516,6 @@ const ModForm: React.FC<{
                           const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
 
                           if (file) {
-  
                               const reader = new FileReader();
   
                               reader.onloadend = () => {
