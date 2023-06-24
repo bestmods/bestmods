@@ -74,6 +74,8 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({
     const filters = useContext(FilterCtx);
 
     // Retrieve rating.
+    const cur_rating = mod.ModRating[0] ?? null;
+
     const [rating, setRating] = useState(1);
     const [receivedRating, setReceivedRating] = useState(false);
 
@@ -114,16 +116,11 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({
     }
 
     // Controls whether user rated this mod or not.
-    const myRatingQuery = trpc.modRating.getModUserRating.useQuery({
-        modId: mod.id,
-        userId: session?.user?.id ?? null
-    });
-
     const [didRate, setDidRate] = useState(false);
     const [rateIsPositive, setRateIsPositive] = useState(false);
 
-    if (myRatingQuery.data && !didRate) {
-        if (myRatingQuery.data.positive)
+    if (cur_rating && !didRate) {
+        if (cur_rating.positive)
             setRateIsPositive(true);
 
         setDidRate(true);
@@ -169,7 +166,7 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({
                     e.preventDefault();
 
                     // Submit positive rating.
-                    if (session?.user != null) {
+                    if (session?.user) {
                         if (didRate && rateIsPositive)
                             return;
 

@@ -45,7 +45,6 @@ export const modRouter = router({
             incCollections: z.boolean().default(false),
             incComments: z.boolean().default(false),
             incInstallers: z.boolean().default(false)
-
         }))
         .query(({ ctx, input }) => {
             if (!input.url || input.url.length < 1)
@@ -305,7 +304,12 @@ export const modRouter = router({
                     ModSource: true,
                     ModDownload: true,
                     ModScreenshot: true,
-                    ModInstaller: true
+                    ModInstaller: true,
+                    ModRating: {
+                        where: {
+                            userId: ctx.session?.user?.id ?? ""
+                        }
+                    }
                 },
                 orderBy: [
                     {
