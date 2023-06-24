@@ -38,14 +38,14 @@ const SourceForm: React.FC<{
     const [bannerData, setBannerData] = useState<string | ArrayBuffer | null>(null);
 
     // Queries.
-    const sourceMut = trpc.source.addSource.useMutation();
+    const src_mut = trpc.source.addSource.useMutation();
 
     // Handle errors and success.
-    if (sourceMut.isSuccess) {
+    if (src_mut.isSuccess) {
         success = "Successfully added or edited source!";
         error = null;
-    } else if (sourceMut.isError) {
-        const err_msg = sourceMut.error.message;
+    } else if (src_mut.isError) {
+        const err_msg = src_mut.error.message;
 
         // Check if we can simplify the error message for client.
         if (err_msg.includes("Error parsing URL"))
@@ -62,7 +62,7 @@ const SourceForm: React.FC<{
         success = null;
 
         // Send alert and log full error to client's console.
-        console.error(sourceMut.error);
+        console.error(src_mut.error);
     }
 
     // Create form using Formik.
@@ -78,14 +78,14 @@ const SourceForm: React.FC<{
 
         onSubmit: (values) => {
             // Create new values.
-            const newVals: values_type = values;
+            const new_vals: values_type = values;
 
-            newVals.icon = iconData?.toString() ?? null;
-            newVals.banner = bannerData?.toString() ?? null;
-            newVals.update = (src) ? true : false;
+            new_vals.icon = iconData?.toString() ?? null;
+            new_vals.banner = bannerData?.toString() ?? null;
+            new_vals.update = (src) ? true : false;
 
             // Insert into database.
-            sourceMut.mutate(newVals);
+            src_mut.mutate(new_vals);
 
             // Scroll to top.
             if (typeof window !== undefined) {
