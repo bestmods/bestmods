@@ -110,7 +110,7 @@ export const BestModsPage: React.FC<{
         image = process.env.NEXT_PUBLIC_CDN_URL + image;
 
     return (
-        <main key="main" className={`flex min-h-screen flex-col pb-20 ${classes != null ? classes : ""}`}>
+        <main key="main" className={`flex min-h-screen flex-col pb-20 ${classes ?? ""}`}>
             <Script id="google-tag-manager" src="https://www.googletagmanager.com/gtag/js?id=G-EZBGB6N5XL" strategy="afterInteractive" />
             <Script id="google-analytics" strategy="afterInteractive">
                 {`

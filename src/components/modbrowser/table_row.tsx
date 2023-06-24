@@ -47,18 +47,18 @@ const TableRow: React.FC<{
             </td>
             <td className="modbrowser-table-data">
                 <div className="modbrowser-table-owner">
-                    {mod.ownerName != null && mod.ownerName.length > 0 && (
+                    {mod.ownerName && mod.ownerName.length > 0 && (
                         <p>By {mod.ownerName}</p>
                     )}
                 </div>
             </td>
             <td className="modbrowser-table-data">
                 <div className="modbrowser-table-cats">
-                    {catPar != null && (
+                    {catPar && (
                         <div>
                             <img src={catParIcon} alt="Category Icon" />
                             <span>
-                                {catParLink != null ? (
+                                {catParLink ? (
                                     <a href={catParLink}>{catPar.name}</a>
                                 ) : (
                                     <span>{catPar.name}</span>
@@ -66,11 +66,11 @@ const TableRow: React.FC<{
                             </span>
                         </div>
                     )}
-                    {cat != null && (
+                    {cat && (
                         <div>
                             <img src={catIcon} alt="Category Icon" />
                             <span>
-                                {catLink != null ? (
+                                {catLink ? (
                                     <a href={catLink}>{cat.name}</a>
                                 ) : (
                                     <span>{cat.name}</span>

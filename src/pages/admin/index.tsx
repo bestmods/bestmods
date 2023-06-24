@@ -70,7 +70,7 @@ const Categories: React.FC<{
                 <>
                     {cats.map((cat) => {
                         const editLink = "/admin/add/category/" + cat.id;
-                        const icon = (cat.icon != null) ? cdn + cat.icon : cdn + "/images/default_icon.png"
+                        const icon = (cat.icon) ? cdn + cat.icon : cdn + "/images/default_icon.png"
 
                         return (
                             <div key={"cat-" + cat.id} className="p-4">
@@ -90,7 +90,7 @@ const Categories: React.FC<{
                                     <div className="p-4">
                                         {cat.children.map((catChild) => {
                                             const editLinkChild = "/admin/add/category/" + catChild.id;
-                                            const iconChild = (catChild.icon != null) ? cdn + catChild.icon : cdn + "/images/default_icon.png";
+                                            const iconChild = (catChild.icon) ? cdn + catChild.icon : cdn + "/images/default_icon.png";
 
                                             return (
                                                 <div key={"catchild-" + catChild.id} className="flex items-center flex-wrap ml-4">
@@ -148,7 +148,7 @@ const Sources: React.FC<{
                 <>
                     {srcs.map((src) => {
                         const editLink = "/admin/add/source/" + src.url;
-                        const icon = (src.icon != null) ? cdn + src.icon : cdn + "/images/default_icon.png"
+                        const icon = (src.icon) ? cdn + src.icon : cdn + "/images/default_icon.png"
 
                         return (
                             <div key={"src-" + src.url} className="p-4">

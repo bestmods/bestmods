@@ -1,6 +1,5 @@
 import { BestModsPage, SessionCtx } from '../../components/main';
 
-import { type ModInstaller } from "@prisma/client";
 import { type NextPage } from "next";
 import React, { useContext, useState, useEffect } from "react";
 
@@ -62,10 +61,10 @@ const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
                 <ModViewCtx.Provider value={modView}>
                     <HeadInfo
                         title={mod ? titleName + " - Best Mods" : null}
-                        description={mod != null && mod !== false ? mod.descriptionShort : null}
-                        image={mod && mod.banner != null ? cdn + mod.banner : null}
+                        description={mod ? mod.descriptionShort : null}
+                        image={mod && mod.banner ? cdn + mod.banner : null}
                         webtype="article"
-                        author={(mod && mod.ownerName != null && mod.ownerName.length > 0) ? mod.ownerName : "Best Mods"}
+                        author={(mod && mod.ownerName && mod.ownerName.length > 0) ? mod.ownerName : "Best Mods"}
                         excludeCdn={true}
                     />
                         <BestModsPage
@@ -115,7 +114,7 @@ const MainContent: React.FC<{
         // Generate image and link URLs.
         let banner = cdn + "/images/default_mod_banner.png";
 
-        if (mod.banner != null)
+        if (mod.banner)
             banner = cdn + mod.banner;
 
         const overviewLink = "/view/" + mod.url;
@@ -125,7 +124,7 @@ const MainContent: React.FC<{
         const editLink = "/admin/add/mod/" + mod.url;
 
         // Check rating.
-        const onlyRating = ((mod.ModInstaller != null && mod.ModInstaller.length > 0) || (mod.ownerName != null && mod.ownerName.length > 0)) ? false : true;
+        const onlyRating = ((mod.ModInstaller && mod.ModInstaller.length > 0) || (mod.ownerName && mod.ownerName.length > 0)) ? false : true;
 
         // Generate category icons and links.
         const defaultIcon = "/images/default_icon.png";
@@ -136,97 +135,95 @@ const MainContent: React.FC<{
         const catLink = ((mod.category) ? "/category" + ((mod.category.parent) ? "/" + mod.category.parent.url : "") + "/" + mod.category.url : null);
 
         return (
-            <>
-                <div className="container mx-auto w-full">
-                    <div id="modHeader">
-                        <div className="flex justify-center">
-                            <img className="block rounded-t w-[48rem] h-[36rem]" src={banner} alt="Mod Banner" />
-                        </div>
-                        <h1 className="text-4xl font-bold text-white text-center">{mod.name}</h1>
-                        <div className="flex justify-center items-center p-5">
-                            {mod.category && (
-                                <>
-                                    {mod.category.parent ? (
-                                        <>
-                                            <a href={catParLink ?? "/category"} className="flex">
-                                                <img src={catParIcon} className="w-6 h-6 rounded" alt="Category Icon" />
-                                                <span className="ml-2 text-white">{mod.category.parent.name ?? "Category"}</span>
-                                            </a>
-                                            <span className="text-2xl text-white text-bold ml-2 mr-2"> → </span>
-                                            <a href={catLink ?? "/category"} className="flex">
-                                                <img src={catIcon} className="w-6 h-6 rounded" alt="Category Icon" />
-                                                <span className="ml-2 text-white">{mod.category.name ?? "Category"}</span>
-                                            </a>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <a href={catLink ?? "/category"} className="flex">
-                                                <img src={catIcon} className="w-6 h-6 rounded" alt="Category Icon" />
-                                                <span className="ml-2 text-white">{mod.category.name ?? "Category"}</span>
-                                            </a>
-                                        </>
-                                    )}
-                                </>
-                            )}
-                        </div>
+            <div className="container mx-auto w-full">
+                <div id="modHeader">
+                    <div className="flex justify-center">
+                        <img className="block rounded-t w-[48rem] h-[36rem]" src={banner} alt="Mod Banner" />
                     </div>
-
-                    <div id="modButtons" className="flex justify-center">
-                        <a href={overviewLink} className={`${btnBaseClasses} ${modView == "overview" ? activeStyle : defaultStyle}`}>Overview</a>
-                        <a href={installLink} className={`${btnBaseClasses} ${modView == "install" ? activeStyle : defaultStyle}`}>Installation</a>
-                        <a href={sourcesLink} className={`${btnBaseClasses} ${modView == "sources" ? activeStyle : defaultStyle}`}>Sources</a>
-                        <a href={downloadsLink} className={`${btnBaseClasses} ${modView == "downloads" ? activeStyle : defaultStyle}`}>Downloads</a>
-                    </div>
-
-                    <div className="p-12 w-full rounded-b bg-cyan-900/80">
-                        <div className={`flex flex-wrap mb-4 ${onlyRating ? "justify-end" : "justify-between"}`}>
-                            {mod.ownerName != null && mod.ownerName.length > 0 && (
-                                <div className="">
-                                    <p className="text-white">Maintained By <span className="font-bold">{mod.ownerName}</span></p>
-                                </div>
-                            )}
-                            {mod.ModInstaller != null && mod.ModInstaller.length > 0 && (
-                                <div className="relative">
-                                    <div className="p-2 flex items-center bg-cyan-800 hover:bg-cyan-900 rounded-t">
-                                        <button id="installerDropdownBtn" onClick={() => {
-                                            setInstallersMenuOpen(!installersMenuOpen);
-                                        }} className="text-white font-bold flex items-center mx-auto" type="button"><span>Install</span> {!installersMenuOpen ? (
-                                            <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
-                                        ) : (
-                                            <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
-                                        )}</button>
-                                    </div>
-
-                                    <ul id="installerDropdownMenu" className={`absolute py-2 text-sm bg-cyan-700 ${installersMenuOpen ? "block" : "hidden"}`} aria-labelledby="installerDropdownBtn">
-                                        {mod.ModInstaller.map((ins: ModInstaller) => {
-                                            return (
-                                                <ModInstallerRender
-                                                    key={mod.id + "-" + ins.sourceUrl}
-                                                    modIns={ins}
-                                                />
-                                            );
-                                        })}
-                                    </ul>
-                                </div>
-                            )}
-                            <div className="relative flex justify-center">
-                                <ModRatingRender
-                                    mod={mod}
-                                />
-                            </div>
-                        </div>
-                        <div className="text-white" id="viewContent">
-                            {body}
-                        </div>
-                        {session && (
-                            <div className="flex flex-row justify-center items-center">
-                                <a href={editLink} className="text-white bg-cyan-800 hover:bg-cyan-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded px-4 py-2 mt-2 max-w-xs">Edit</a>
-                            </div>
+                    <h1 className="text-4xl font-bold text-white text-center">{mod.name}</h1>
+                    <div className="flex justify-center items-center p-5">
+                        {mod.category && (
+                            <>
+                                {mod.category.parent ? (
+                                    <>
+                                        <a href={catParLink ?? "/category"} className="flex">
+                                            <img src={catParIcon} className="w-6 h-6 rounded" alt="Category Icon" />
+                                            <span className="ml-2 text-white">{mod.category.parent.name ?? "Category"}</span>
+                                        </a>
+                                        <span className="text-2xl text-white text-bold ml-2 mr-2"> → </span>
+                                        <a href={catLink ?? "/category"} className="flex">
+                                            <img src={catIcon} className="w-6 h-6 rounded" alt="Category Icon" />
+                                            <span className="ml-2 text-white">{mod.category.name ?? "Category"}</span>
+                                        </a>
+                                    </>
+                                ) : (
+                                    <>
+                                        <a href={catLink ?? "/category"} className="flex">
+                                            <img src={catIcon} className="w-6 h-6 rounded" alt="Category Icon" />
+                                            <span className="ml-2 text-white">{mod.category.name ?? "Category"}</span>
+                                        </a>
+                                    </>
+                                )}
+                            </>
                         )}
                     </div>
                 </div>
-            </>
-        )
+
+                <div id="modButtons" className="flex justify-center">
+                    <a href={overviewLink} className={`${btnBaseClasses} ${modView == "overview" ? activeStyle : defaultStyle}`}>Overview</a>
+                    <a href={installLink} className={`${btnBaseClasses} ${modView == "install" ? activeStyle : defaultStyle}`}>Installation</a>
+                    <a href={sourcesLink} className={`${btnBaseClasses} ${modView == "sources" ? activeStyle : defaultStyle}`}>Sources</a>
+                    <a href={downloadsLink} className={`${btnBaseClasses} ${modView == "downloads" ? activeStyle : defaultStyle}`}>Downloads</a>
+                </div>
+
+                <div className="p-12 w-full rounded-b bg-cyan-900/80">
+                    <div className={`flex flex-wrap mb-4 ${onlyRating ? "justify-end" : "justify-between"}`}>
+                        {mod.ownerName && mod.ownerName.length > 0 && (
+                            <div className="">
+                                <p className="text-white">Maintained By <span className="font-bold">{mod.ownerName}</span></p>
+                            </div>
+                        )}
+                        {mod.ModInstaller && mod.ModInstaller.length > 0 && (
+                            <div className="relative">
+                                <div className="p-2 flex items-center bg-cyan-800 hover:bg-cyan-900 rounded-t">
+                                    <button id="installerDropdownBtn" onClick={() => {
+                                        setInstallersMenuOpen(!installersMenuOpen);
+                                    }} className="text-white font-bold flex items-center mx-auto" type="button"><span>Install</span> {!installersMenuOpen ? (
+                                        <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
+                                    ) : (
+                                        <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
+                                    )}</button>
+                                </div>
+
+                                <ul id="installerDropdownMenu" className={`absolute py-2 text-sm bg-cyan-700 ${installersMenuOpen ? "block" : "hidden"}`} aria-labelledby="installerDropdownBtn">
+                                    {mod.ModInstaller.map((ins: any) => {
+                                        return (
+                                            <ModInstallerRender
+                                                key={mod.id + "-" + ins.sourceUrl}
+                                                modIns={ins}
+                                            />
+                                        );
+                                    })}
+                                </ul>
+                            </div>
+                        )}
+                        <div className="relative flex justify-center">
+                            <ModRatingRender
+                                mod={mod}
+                            />
+                        </div>
+                    </div>
+                    <div className="text-white" id="viewContent">
+                        {body}
+                    </div>
+                    {session && (
+                        <div className="flex flex-row justify-center items-center">
+                            <a href={editLink} className="text-white bg-cyan-800 hover:bg-cyan-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded px-4 py-2 mt-2 max-w-xs">Edit</a>
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
     } else {
         return (
             <div className="container mx-auto">

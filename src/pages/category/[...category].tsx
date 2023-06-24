@@ -24,12 +24,12 @@ const Home: NextPage<{
 
     let bgFile: string | null = null;
 
-    if (cat != null) {
-        if (cat.hasBg && cat.parent != null)
+    if (cat) {
+        if (cat.hasBg && cat.parent)
             bgFile = cat.parent.url + "_" + cat.url + ".png";
         else if (cat.hasBg && cat.parent == null)
             bgFile = cat.url + ".png";
-        else if (cat.parent != null && cat.parent.hasBg)
+        else if (cat.parent && cat.parent.hasBg)
             bgFile = cat.parent.url + ".png";
     }
 
@@ -94,7 +94,7 @@ const Home: NextPage<{
                 description={headDesc}
                 image={headerImg}
             />
-            {bgFile != null ? (
+            {bgFile ? (
                 <BestModsPage
                     image={bgPath}
                     showFilters={true}
@@ -116,14 +116,24 @@ const Home: NextPage<{
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     // We need to retrieve some props.
-    if (!ctx.params || !ctx.params.category)
-        return { props: { cat: null } }
+    if (!ctx.params || !ctx.params.category) {
+        return { 
+            props: {
+                cat: null
+            }
+        };
+    }
 
     const cat1 = ctx.params.category[0] ?? null;
     const cat2 = ctx.params.category[1] ?? null;
 
-    if (!cat1)
-        return { props: { cat: null } }
+    if (!cat1) {
+        return {
+            props: {
+                cat: null
+            }
+        };
+    }
 
     const cat = await prisma.category.findFirst({
         include: {
@@ -131,8 +141,8 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             parent: true
         },
         where: {
-            url: (cat2 != null) ? cat2 : cat1,
-            ...(cat2 != null && {
+            url: (cat2) ? cat2 : cat1,
+            ...(cat2 && {
                 parent: {
                     url: cat1
                 }
@@ -142,7 +152,12 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     const cookies: { [key: string]: string | undefined; } = { ...ctx.req.cookies };
 
-    return { props: { cat: JSON.parse(JSON.stringify(cat, (_, v) => typeof v === 'bigint' ? v.toString() : v)), cookies: cookies } };
+    return { 
+        props: {
+            cat: JSON.parse(JSON.stringify(cat, (_, v) => typeof v === 'bigint' ? v.toString() : v)),
+            cookies: cookies
+        }
+    };
 }
 
 export default Home;

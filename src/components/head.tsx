@@ -46,27 +46,27 @@ const HeadInfo: React.FC<HeadArgs> = ({
 
     if (webtype == "article") {
         article_info = <>
-            {ptime != null && (
+            {ptime && (
                 <meta key="meta_apt" property="article:published_time" content={ptime} />
             )}
 
-            {mtime != null && (
+            {mtime && (
                 <meta key="meta_amt" property="article:modified_time" content={mtime} />
             )}
 
-            {etime != null && (
+            {etime && (
                 <meta key="meta_aet" property="article:expiration_time" content={etime} />
             )}
 
-            {author != null && (
+            {author && (
                 <meta key="meta_aa" property="article:author" content={author} />
             )}
 
-            {section != null && (
+            {section && (
                 <meta key="meta_as" property="article:section" content={section} />
             )}
 
-            {tags != null && (
+            {tags && (
                 <meta key="meta_t" property="article:tag" content={tags} />
             )}
         </>;
@@ -76,7 +76,7 @@ const HeadInfo: React.FC<HeadArgs> = ({
         <Head>
             <link rel="canonical" href={full_url} key="canonical" />
 
-            {title != null && (
+            {title && (
                 <>
                     <title>{title}</title>
                     <meta property="twitter:title" content={title} key="meta_twitterTitle" />
@@ -84,7 +84,7 @@ const HeadInfo: React.FC<HeadArgs> = ({
                 </>
             )}
 
-            {image != null && (
+            {image && (
                 <>
                     <link rel="apple-touch-icon" href={image} key="meta_appIcon" />
                     <meta property="og:image" content={image} key="meta_ogImg" />
@@ -92,11 +92,11 @@ const HeadInfo: React.FC<HeadArgs> = ({
                 </>
             )}
 
-            {robots != null && (
+            {robots && (
                 <meta name="robots" content={robots} key="meta_robots" />
             )}
 
-            {description != null && (
+            {description && (
                 <>
                     <meta name="description" content={description} key="meta_desc" />
                     <meta property="twitter:description" content={description} key="meta_twitterDesc" />
@@ -104,7 +104,7 @@ const HeadInfo: React.FC<HeadArgs> = ({
                 </>
             )}
 
-            {webtype != null && (
+            {webtype && (
                 <meta property="og:type" content={webtype} key="meta_ogWebType" />
             )}
 

@@ -115,7 +115,7 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({
                     e.preventDefault();
 
                     // Submit negative rating.
-                    if (session?.user != null) {
+                    if (session?.user) {
                         if (didRate && !rateIsPositive)
                             return;
 

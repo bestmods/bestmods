@@ -36,7 +36,7 @@ const GridRow: React.FC<{
         <div key={mod.id} className={"w-4/5 md:w-96 h-[32rem] rounded bg-gradient-to-b from-cyan-800 to-cyan-900 flex flex-col shadow-lg" + addClasses}>
             <div className="relative modImage w-full max-h-64 h-64">
                 <img className="w-full h-full max-h-full rounded-t" src={banner} alt="Mod Banner" />
-                {mod.ownerName != null && mod.ownerName.length > 0 && (
+                {mod.ownerName && mod.ownerName.length > 0 && (
                     <div className="absolute bottom-0 left-0 h-8 pr-4 rounded-tr bg-cyan-900/60 hover:bg-cyan-900 flex items-center">
                         <p className="text-white text-sm ml-1">{mod.ownerName}</p>
                     </div>
@@ -47,11 +47,11 @@ const GridRow: React.FC<{
                 <h3 className="text-white text-lg md:text-xl font-bold text-center">{mod.name}</h3>
                 <p className="text-white mt-2 text-sm">{descShort.substring(0, 120)}{dots}</p>
             </div>
-            {catPar != null && (
+            {catPar && (
                 <div className="modCategory ml-8 mr-8 mb-1 text-white flex">
                     <img src={catParIcon} className="w-6 h-6 rounded" alt="Category Icon" />
                     <span className="ml-2 mr-2">
-                        {catParLink != null ? (
+                        {catParLink ? (
                             <a href={catParLink}>{catPar.name}</a>
                         ) : (
                             <span>{catPar.name}</span>
@@ -59,11 +59,11 @@ const GridRow: React.FC<{
                     </span>
                 </div>
             )}
-            {cat != null && (
+            {cat && (
                 <div className="modCategory ml-8 mr-8 mb-1 text-white flex">
                     <img src={catIcon} className="w-6 h-6 rounded" alt="Category Icon" />
                     <span className="ml-2">
-                        {catLink != null ? (
+                        {catLink ? (
                             <a href={catLink}>{cat.name}</a>
                         ) : (
                             <span>{cat.name}</span>

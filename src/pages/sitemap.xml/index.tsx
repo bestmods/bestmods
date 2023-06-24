@@ -36,7 +36,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     cats.map((cat) => {
         let end = cat.url;
 
-        if (cat.parent != null)
+        if (cat.parent)
             end = cat.parent.url + "/" + cat.url;
 
         items.push({ loc: "https://bestmods.io/category/" + end, lastmod: new Date().toISOString(), priority: 0.5 });

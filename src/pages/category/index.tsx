@@ -41,7 +41,7 @@ const ChildRender: React.FC<{
     const ctnData = query.data;
 
     const viewLinkChild = "/category/" + parent.url + "/" + child.url;
-    const iconChild = (child.icon != null) ? child.icon : cdn + "/images/default_icon.png";
+    const iconChild = (child.icon) ? child.icon : cdn + "/images/default_icon.png";
 
     return (
         <div className="flex items-center flex-wrap ml-4 mb-4">
@@ -68,7 +68,7 @@ const Categories: React.FC<{
                 <>
                     {cats.map((cat: any) => {
                         const viewLink = "/category/" + cat.url;
-                        const icon = (cat.icon != null) ? cdn + cat.icon : cdn + "/images/default_icon.png"
+                        const icon = (cat.icon) ? cdn + cat.icon : cdn + "/images/default_icon.png"
 
                         return (
                             <div key={"cat-" + cat.id} className="p-4">
