@@ -27,7 +27,8 @@ const HeadInfo: React.FC<HeadArgs> = ({
     author = "Best Mods",
     section = "Technology",
     tags = "mod",
-    excludeCdn = false }) => {
+    excludeCdn = false 
+}) => {
     // Check if we must prepend CDN URL.
     if (process.env.NEXT_PUBLIC_CDN_URL && !excludeCdn)
         image = process.env.NEXT_PUBLIC_CDN_URL + image;

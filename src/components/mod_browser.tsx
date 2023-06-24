@@ -16,7 +16,11 @@ type ModRowArguments = {
     display?: string
 };
 
-export const ModSourceRender: React.FC<{ modSrc: ModSource }> = ({ modSrc }) => {
+export const ModSourceRender: React.FC<{
+    modSrc: ModSource
+}> = ({
+    modSrc
+}) => {
     const srcQuery = trpc.source.getSource.useQuery({
         url: modSrc.sourceUrl,
 
@@ -37,7 +41,11 @@ export const ModSourceRender: React.FC<{ modSrc: ModSource }> = ({ modSrc }) => 
     );
 };
 
-export const ModInstallerRender: React.FC<{ modIns: ModInstaller }> = ({ modIns }) => {
+export const ModInstallerRender: React.FC<{
+    modIns: ModInstaller
+}> = ({
+    modIns
+}) => {
     const srcQuery = trpc.source.getSource.useQuery({
         url: modIns.sourceUrl,
 
@@ -58,7 +66,9 @@ export const ModInstallerRender: React.FC<{ modIns: ModInstaller }> = ({ modIns 
     );
 };
 
-export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
+export const ModRatingRender: React.FC<ModRowArguments> = ({
+    mod
+}) => {
     // Retrieve session.
     const session = useContext(SessionCtx);
     const filters = useContext(FilterCtx);
@@ -178,7 +188,7 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
 
                         setDidRate(true);
                         setRateIsPositive(true);
-                    } else if (session?.user == null)
+                    } else if (!session?.user)
                         signIn("discord");
                 }}><svg className={`w-12 h-12 text-center${(didRate && !rateIsPositive) ? " opacity-20" : ""}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#60A5FA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 9L7 14" stroke="#60A5FA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white" /></clipPath></defs></svg></a>
             </div>
@@ -186,7 +196,10 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
     );
 };
 
-const ModRow: React.FC<ModRowArguments> = ({ mod, display = "grid" }) => {
+const ModRow: React.FC<ModRowArguments> = ({
+    mod,
+    display = "grid"
+}) => {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
     // Retrieve category.
@@ -264,7 +277,13 @@ const ModRow: React.FC<ModRowArguments> = ({ mod, display = "grid" }) => {
     );
 };
 
-const ModBrowser: React.FC<{ categories?: Array<number> | null, visible?: boolean | null }> = ({ categories, visible }) => {
+const ModBrowser: React.FC<{
+    categories?: Array<number> | null,
+    visible?: boolean | null
+}> = ({
+    categories,
+    visible
+}) => {
     const filters = useContext(FilterCtx);
 
     let requireItems = true;

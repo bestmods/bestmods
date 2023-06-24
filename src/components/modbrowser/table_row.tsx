@@ -2,7 +2,33 @@ import { type Category, type ModInstaller, type ModSource } from "@prisma/client
 import { useState } from "react";
 import { ModInstallerRender, ModRatingRender, ModSourceRender } from "../mod_browser";
 
-const TableRow: React.FC<{ mod: any, addClasses: string, banner: string, descShort: string, dots: string, cat: any, catPar?: Category | null, catParIcon: string, catParLink: string | null, catIcon: string, catLink: string | null, viewLink: string }> = ({ mod, addClasses, banner, descShort, dots, cat, catPar, catParIcon, catParLink, catIcon, catLink, viewLink }) => {
+const TableRow: React.FC<{
+    mod: any,
+    addClasses: string,
+    banner: string,
+    descShort: string,
+    dots: string,
+    cat: any,
+    catPar?: Category | null,
+    catParIcon: string,
+    catParLink: string | null,
+    catIcon: string,
+    catLink: string | null,
+    viewLink: string
+}> = ({
+    mod,
+    addClasses,
+    banner,
+    descShort,
+    dots,
+    cat,
+    catPar,
+    catParIcon,
+    catParLink,
+    catIcon,
+    catLink,
+    viewLink
+}) => {
     const [sourcesMenuOpen, setSourcesMenuOpen] = useState(false);
     const [installersMenuOpen, setInstallersMenuOpen] = useState(false);
 

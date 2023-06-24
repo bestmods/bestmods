@@ -28,7 +28,25 @@ export const FilterCtx = React.createContext<filterArgs | null>(null);
 export const DisplayCtx = React.createContext<displayArgs | null>(null);
 export const CookiesCtx = React.createContext<{ [key: string]: string }>({});
 
-export const BestModsPage: React.FC<{ children: ReactNode, classes?: string | null, background?: string, image?: string | null, overlay?: string, excludeCdn?: boolean, cookies?: { [key: string]: string }, showFilters?: boolean }> = ({ children, classes, background = "bg-gradient-to-b from-[#002736] to-[#00151b]", image = "/images/backgrounds/default.jpg", overlay = "bg-none md:bg-black/80", excludeCdn = false, cookies, showFilters = false }) => {
+export const BestModsPage: React.FC<{
+    children: ReactNode,
+    classes?: string | null,
+    background?: string,
+    image?: string | null,
+    overlay?: string,
+    excludeCdn?: boolean,
+    cookies?: { [key: string]: string },
+    showFilters?: boolean
+}> = ({
+    children,
+    classes,
+    background = "bg-gradient-to-b from-[#002736] to-[#00151b]",
+    image = "/images/backgrounds/default.jpg",
+    overlay = "bg-none md:bg-black/80",
+    excludeCdn = false,
+    cookies,
+    showFilters = false
+}) => {
     // Retrieve session to use in context.
     const { data: session } = useSession();
 
@@ -188,21 +206,33 @@ export const Login: React.FC = () => {
     );
 };
 
-export const Background: React.FC<{ background?: string, image?: string | null, overlay?: boolean | string }> = ({ background = "bg-gradient-to-b from-[#002736] to-[#00151b]", image = null, overlay = true }) => {
+export const Background: React.FC<{
+    background?: string,
+    image?: string | null,
+    overlay?: boolean | string
+}> = ({
+    background = "bg-gradient-to-b from-[#002736] to-[#00151b]",
+    image = null,
+    overlay = true 
+}) => {
     return (<>
         {overlay && (
             <div id="bgol" className={typeof (overlay) === "string" ? overlay : "bg-black/80"}></div>
         )}
 
         <div id="bg" className={background}>
-            {image != null && (
+            {image && (
                 <img src={image} className="hidden md:block w-full h-full" alt="background" />
             )}
         </div>
     </>);
 };
 
-export const Header: React.FC<{ showFilters?: boolean }> = ({ showFilters = false }) => {
+export const Header: React.FC<{
+    showFilters?: boolean
+}> = ({
+    showFilters = false
+}) => {
     return (<>
         <div className="relative">
             <h1 className="text-center text-[3rem] font-extrabold tracking-tight text-white sm:text-[5rem]">
@@ -221,7 +251,11 @@ export const Header: React.FC<{ showFilters?: boolean }> = ({ showFilters = fals
     </>);
 };
 
-const Filters: React.FC<{ classes?: string }> = ({ classes = "w-full flex justify-center items-center gap-2 flex-wrap" }) => {
+const Filters: React.FC<{
+    classes?: string
+}> = ({
+    classes = "w-full flex justify-center items-center gap-2 flex-wrap"
+}) => {
     const filters = useContext(FilterCtx);
     const display = useContext(DisplayCtx);
 
@@ -293,14 +327,18 @@ const Filters: React.FC<{ classes?: string }> = ({ classes = "w-full flex justif
     );
 };
 
-export const MainNavItems: React.FC<{ classes?: string | null }> = ({ classes }) => {
+export const MainNavItems: React.FC<{
+    classes?: string | null
+}> = ({
+    classes
+}) => {
     return (
         <>
-            <a rel="noreferrer" className={classes != null ? classes : "text-gray-300 hover:text-white"} href="https://github.com/orgs/bestmods/discussions/categories/feedback-ideas" target="_blank">Feedback</a>
-            <a rel="noreferrer" className={classes != null ? classes : "text-gray-300 hover:text-white"} href="https://github.com/bestmods/roadmap/milestones" target="_blank">Roadmap</a>
-            <a rel="noreferrer" className={classes != null ? classes : "text-gray-300 hover:text-white"} href="https://github.com/BestMods/bestmods" target="_blank">Source Code</a>
-            <a rel="noreferrer" className={classes != null ? classes : "text-gray-300 hover:text-white"} href="https://github.com/orgs/bestmods/discussions/2" target="_blank">Removals</a>
-            <a rel="noreferrer" className={classes != null ? classes : "text-gray-300 hover:text-white"} href="https://moddingcommunity.com/" target="_blank">Community</a>
+            <a rel="noreferrer" className={classes ? classes : "text-gray-300 hover:text-white"} href="https://github.com/orgs/bestmods/discussions/categories/feedback-ideas" target="_blank">Feedback</a>
+            <a rel="noreferrer" className={classes ? classes : "text-gray-300 hover:text-white"} href="https://github.com/bestmods/roadmap/milestones" target="_blank">Roadmap</a>
+            <a rel="noreferrer" className={classes ? classes : "text-gray-300 hover:text-white"} href="https://github.com/BestMods/bestmods" target="_blank">Source Code</a>
+            <a rel="noreferrer" className={classes ? classes : "text-gray-300 hover:text-white"} href="https://github.com/orgs/bestmods/discussions/2" target="_blank">Removals</a>
+            <a rel="noreferrer" className={classes ? classes : "text-gray-300 hover:text-white"} href="https://moddingcommunity.com/" target="_blank">Community</a>
         </>
     );
 }
