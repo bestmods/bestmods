@@ -60,10 +60,10 @@ const DownloadForm: React.FC<{
             <h3 className="text-gray-200 text-lg font-bold mb-2">Download #{num}</h3>
 
             <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Name</label>
-            <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={nameId} id={nameId} defaultValue={mod != null && mod.ModDownload != null && mod.ModDownload[num - 1] != null ? mod.ModDownload[num - 1]?.name ?? "" : ""} type="text" />
+            <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={nameId} id={nameId} defaultValue={mod && mod.ModDownload ? mod.ModDownload[num - 1]?.name ?? "" : ""} type="text" />
 
             <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
-            <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={urlId} id={urlId} defaultValue={mod != null && mod.ModDownload != null && mod.ModDownload[num - 1] != null ? mod.ModDownload[num - 1]?.url ?? "" : ""} type="text" />
+            <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={urlId} id={urlId} defaultValue={mod && mod.ModDownload ? mod.ModDownload[num - 1]?.url ?? "" : ""} type="text" />
         </div>
     </>);
 };
@@ -81,7 +81,7 @@ const ScreenshotForm: React.FC<{
         <h3 className="text-gray-200 text-lg font-bold mb-2">Screenshot #{num}</h3>
 
         <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
-        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={url_id} id={url_id} defaultValue={mod && mod.ModScreenshot && mod.ModScreenshot[num - 1] != null ? mod.ModScreenshot[num - 1]?.url ?? "" : ""} type="text" />
+        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={url_id} id={url_id} defaultValue={mod && mod.ModScreenshot ? mod.ModScreenshot[num - 1]?.url ?? "" : ""} type="text" />
     </>);
 }
 
@@ -96,7 +96,7 @@ const SourceForm: React.FC<{
     const srcUrl = "sources-" + num + "-url";
     const srcQuery = "sources-" + num + "-query";
 
-    const curUrl = mod && mod.ModSource && mod.ModSource[num - 1] != undefined ? mod.ModSource[num - 1]?.sourceUrl ?? "" : "";
+    const curUrl = mod && mod.ModSource ? mod.ModSource[num - 1]?.sourceUrl ?? "" : "";
 
     const [srcUrlVal, setSrcUrlVal] = useState(curUrl);
 
@@ -118,7 +118,7 @@ const SourceForm: React.FC<{
             </select>
 
             <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Query URL</label>
-            <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcQuery} id={srcQuery} defaultValue={mod != null && mod.ModSource != null && mod.ModSource[num - 1] != null ? mod.ModSource[num - 1]?.query ?? "" : ""} type="text" />
+            <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcQuery} id={srcQuery} defaultValue={mod && mod.ModSource  ? mod.ModSource[num - 1]?.query ?? "" : ""} type="text" />
         </>
     )
 };
@@ -157,7 +157,7 @@ const InstallerForm: React.FC<{
             </select>
 
             <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
-            <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={url} id={url} defaultValue={mod != null && mod.ModInstaller != null && mod.ModInstaller[num - 1] != null ? mod.ModInstaller[num - 1]?.url ?? "" : ""} type="text" />
+            <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={url} id={url} defaultValue={mod && mod.ModInstaller ? mod.ModInstaller[num - 1]?.url ?? "" : ""} type="text" />
         </>
     )
 };
