@@ -301,10 +301,18 @@ export const modRouter = router({
                         }
                     },
 
-                    ModSource: true,
+                    ModSource: {
+                        include: {
+                            source: true
+                        }
+                    },
                     ModDownload: true,
                     ModScreenshot: true,
-                    ModInstaller: true,
+                    ModInstaller: {
+                        include: {
+                            source: true
+                        }
+                    },
                     ModRating: {
                         where: {
                             userId: ctx.session?.user?.id ?? ""
