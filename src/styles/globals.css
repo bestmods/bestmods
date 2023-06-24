@@ -408,3 +408,9 @@
     @apply text-white;
     @apply font-bold;
 }
+
+.loading-bar {
+    @apply text-center;
+    @apply text-white;
+    @apply text-2xl;
+}
