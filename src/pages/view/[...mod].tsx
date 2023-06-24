@@ -21,6 +21,18 @@ const ModViewCtx = React.createContext<string | null>(null);
 const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
+    // View generator.
+    const [isViewed, setIsViewed] = useState(false);
+    const modViewMut = trpc.modView.incModViewCnt.useMutation();
+
+    if (!isViewed && mod && modView == "overview") {
+        modViewMut.mutate({
+            url: mod.url
+        });
+
+        setIsViewed(true);
+    }
+
     // Load category.
     const catQuery = trpc.category.getCategory.useQuery({
         id: mod?.category?.id ?? null,
@@ -101,21 +113,6 @@ const MainContent: React.FC<{ cdn: string, cat: any }> = ({ cdn = "", cat }) => 
     const mod = useContext(ModCtx);
     const modView = useContext(ModViewCtx);
     const session = useContext(SessionCtx);
-
-    // View generator.
-    const [isViewed, setIsViewed] = useState(false);
-    const modViewMut = trpc.modView.incModViewCnt.useMutation();
-
-    useEffect(() => {
-        if (!mod || isViewed || modView != "overview")
-            return;
-
-        modViewMut.mutate({
-            url: mod.url
-        });
-
-        setIsViewed(true);
-    }, [mod]);
 
     // Installer menu.
     const [installersMenuOpen, setInstallersMenuOpen] = useState(false);
