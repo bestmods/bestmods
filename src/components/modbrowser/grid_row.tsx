@@ -1,4 +1,4 @@
-import { type Category, type ModInstaller, type ModSource } from "@prisma/client";
+import { type Category } from "@prisma/client";
 import { useState } from "react";
 import { ModInstallerRender, ModRatingRender, ModSourceRender } from "../mod_browser";
 
@@ -89,7 +89,7 @@ const GridRow: React.FC<{
             </div>
             <div className="modLinks justify-between flex text-center bg-cyan-700 rounded-b">
                 <a href={viewLink} className="text-white font-bold p-2 w-1/3">View</a>
-                {mod.ModInstaller != null && mod.ModInstaller.length > 0 && (
+                {mod.ModInstaller && mod.ModInstaller.length > 0 && (
                     <>
                         <div className="relative p-2 w-1/3">
                             <button id={"installerDropdownBtn" + mod.id} onClick={() => {
@@ -101,7 +101,7 @@ const GridRow: React.FC<{
                             )}</button>
 
                             <ul id={"installerDropdownMenu" + mod.id} className={`absolute z-30 py-1 text-sm bg-cyan-800 ${installersMenuOpen ? "block" : "hidden"}`} aria-labelledby={"installerDropdownBtn" + mod.id}>
-                                {mod.ModInstaller.map((ins: ModInstaller) => {
+                                {mod.ModInstaller.map((ins: any) => {
                                     return (
                                         <ModInstallerRender
                                             key={mod.id + "-" + ins.sourceUrl}
@@ -113,7 +113,7 @@ const GridRow: React.FC<{
                         </div>
                     </>
                 )}
-                {mod.ModSource != null && mod.ModSource.length > 0 && (
+                {mod.ModSource && mod.ModSource.length > 0 && (
                     <div className="relative p-2 w-1/3">
                         <button id={"sourceDropdownBtn" + mod.id} onClick={() => {
                             setSourcesMenuOpen(!sourcesMenuOpen);
@@ -124,7 +124,7 @@ const GridRow: React.FC<{
                         )}</button>
 
                         <ul id={"sourceDropdownMenu" + mod.id} className={`absolute z-30 py-1 text-sm bg-cyan-800 ${sourcesMenuOpen ? "block" : "hidden"}`} aria-labelledby={"installerDropdownBtn" + mod.id}>
-                            {mod.ModSource.map((src: ModSource) => {
+                            {mod.ModSource.map((src: any) => {
                                 return (
                                     <ModSourceRender
                                         key={mod.id + "-" + src.sourceUrl}

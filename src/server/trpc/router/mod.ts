@@ -45,7 +45,6 @@ export const modRouter = router({
             incCollections: z.boolean().default(false),
             incComments: z.boolean().default(false),
             incInstallers: z.boolean().default(false)
-
         }))
         .query(({ ctx, input }) => {
             if (!input.url || input.url.length < 1)
@@ -210,60 +209,31 @@ export const modRouter = router({
     getAllModsBrowser: publicProcedure
         .input(z.object({
             cursor: z.number().nullish(),
-            count: z.number().nullable(),
+            count: z.number().default(10),
 
-            categories: z.string().nullable(),
-            search: z.string().nullable(),
-            timeframe: z.number().nullable(),
-            sort: z.number().nullable(),
+            categories: z.string().nullable().default(null),
+            search: z.string().nullable().default(null),
+            timeframe: z.number().nullable().default(null),
+            sort: z.number().nullable().default(null),
 
-            visible: z.boolean().nullable(),
-
-            selId: z.boolean().default(false),
-            selUrl: z.boolean().default(false),
-            selOwnerName: z.boolean().default(false),
-            selName: z.boolean().default(false),
-            selDescription: z.boolean().default(false),
-            selDescriptionShort: z.boolean().default(false),
-            selInstall: z.boolean().default(false),
-
-            selBanner: z.boolean().default(false),
-
-            selCreateAt: z.boolean().default(false),
-            selUpdateAt: z.boolean().default(false),
-            selNeedsRecounting: z.boolean().default(false),
-
-            selTotalDownloads: z.boolean().default(false),
-            selTotalViews: z.boolean().default(false),
-            selTotalRating: z.boolean().default(false),
-
-            selRatingHour: z.boolean().default(false),
-            selRatingDay: z.boolean().default(false),
-            selRatingWeek: z.boolean().default(false),
-            selRatingMonth: z.boolean().default(false),
-            selRatingYear: z.boolean().default(false),
-
-            incOwner: z.boolean().default(false),
-            incCategory: z.boolean().default(false),
-            incSources: z.boolean().default(false),
-            incDownloads: z.boolean().default(false),
-            incScreenshots: z.boolean().default(false),
-            incRatings: z.boolean().default(false),
-            incUniqueViews: z.boolean().default(false),
-            incCollections: z.boolean().default(false),
-            incComments: z.boolean().default(false),
-            incInstallers: z.boolean().default(false)
+            visible: z.boolean().default(false),
         }))
         .query(async ({ ctx, input }) => {
-            const count = (typeof input.count === 'number' && !isNaN(input.count)) ? input.count : 10;
+            const count = input.count;
 
             // Process categories.
             const catsArr = JSON.parse(input.categories ?? "[]");
 
             const items = await ctx.prisma.mod.findMany({
                 where: {
-                    ...(catsArr && catsArr.length > 0 && { categoryId: { in: catsArr } }),
-                    ...(input.visible != null && { visible: input.visible }),
+                    ...(catsArr && catsArr.length > 0 && {
+                        categoryId: {
+                            in: catsArr
+                        }
+                    }),
+                    ...(input.visible && {
+                        visible: input.visible
+                    }),
                     ...(input.search && {
                         OR: [
                             {
@@ -300,41 +270,54 @@ export const modRouter = router({
                     })
                 },
                 select: {
-                    id: input.selId,
-                    url: input.selUrl,
-                    ownerName: input.selOwnerName,
-                    name: input.selName,
-                    description: input.selDescription,
-                    descriptionShort: input.selDescriptionShort,
-                    install: input.selInstall,
+                    id: true,
+                    url: true,
+                    ownerName: true,
+                    name: true,
+                    description: true,
+                    descriptionShort: true,
+                    install: true,
 
-                    banner: input.selBanner,
+                    banner: true,
 
-                    updateAt: input.selUpdateAt,
-                    createAt: input.selCreateAt,
-                    needsRecounting: input.selNeedsRecounting,
+                    updateAt: true,
+                    createAt: true,
+                    needsRecounting: false,
 
-                    totalDownloads: input.selTotalDownloads,
-                    totalViews: input.selTotalViews,
-                    totalRating: input.selTotalRating,
+                    totalDownloads: true,
+                    totalViews: true,
+                    totalRating: true,
 
-                    ratingHour: input.selRatingHour,
-                    ratingDay: input.selRatingDay,
-                    ratingWeek: input.selRatingWeek,
-                    ratingMonth: input.selRatingMonth,
-                    ratingYear: input.selRatingYear,
+                    ratingHour: true,
+                    ratingDay: true,
+                    ratingWeek: true,
+                    ratingMonth: true,
+                    ratingYear: true,
 
-                    owner: input.incOwner,
-                    category: input.incCategory,
+                    owner: true,
+                    category: {
+                        include: {
+                            parent: true
+                        }
+                    },
 
-                    ModSource: input.incSources,
-                    ModDownload: input.incDownloads,
-                    ModScreenshot: input.incScreenshots,
-                    ModRating: input.incRatings,
-                    ModUniqueView: input.incUniqueViews,
-                    ModCollections: input.incCollections,
-                    ModComment: input.incComments,
-                    ModInstaller: input.incInstallers
+                    ModSource: {
+                        include: {
+                            source: true
+                        }
+                    },
+                    ModDownload: true,
+                    ModScreenshot: true,
+                    ModInstaller: {
+                        include: {
+                            source: true
+                        }
+                    },
+                    ModRating: {
+                        where: {
+                            userId: ctx.session?.user?.id ?? ""
+                        }
+                    }
                 },
                 orderBy: [
                     {

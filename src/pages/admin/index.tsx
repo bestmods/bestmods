@@ -1,9 +1,8 @@
-import { type NextPage } from "next";
-import React, { useState, useContext } from "react";
+import { type GetServerSidePropsContext, type NextPage } from "next";
+import React, { useState } from "react";
 
 import { BestModsPage } from '../../components/main';
 import HeadInfo from "../../components/head";
-import { SessionCtx } from "../../components/main";
 
 import { AlertForm } from '../../components/alert';
 
@@ -11,52 +10,51 @@ import { trpc } from '../../utils/trpc';
 
 import Link from 'next/link';
 
-const Home: NextPage = () => {
-    // First make sure we have access to this page.
-    const session = useContext(SessionCtx);
+import { prisma } from "../../server/db/client";
+import { type CategoriesWithChildren } from "../../components/types";
+import { type Source } from "@prisma/client";
+import { getSession } from "next-auth/react";
 
-    const permCheck = trpc.permission.checkPerm.useQuery({
-        userId: session?.user?.id ?? "",
-        perm: "contributor"
-    });
-
-    if (session == null) {
-        return <div className="container mx-auto">
-            <h1 className="text-center text-white font-bold text-lg">You must be logged in and have permission to access this page!</h1>
-        </div>;
-    }
-
-    if (permCheck.data == null) {
-        return <div className="container mx-auto">
-            <h1 className="text-center text-white font-bold text-lg">You are not authorized to view this page!</h1>
-        </div>;
-    }
-
+const Home: NextPage<{
+    authed: boolean,
+    cats: CategoriesWithChildren[],
+    srcs: Source[]
+}> = ({
+    authed,
+    cats,
+    srcs
+}) => {
     return (
         <>
             <HeadInfo />
             <BestModsPage>
-            <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 gap-12 justify-items-center">
-                <div className="p-10">
-                    <Categories />
-                </div>
-                <div className="p-10">
-                    <Sources />
-                </div>
-            </div>
+                {authed ? (
+                    <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 gap-12 justify-items-center">
+                        <div className="p-10">
+                            <Categories cats={cats} />
+                        </div>
+                        <div className="p-10">
+                            <Sources srcs={srcs} />
+                        </div>
+                    </div>
+                ) : (
+                    <div className="unauthorized-div">
+                        <p>You are not authorized to view this page.</p>
+                    </div>
+                )}
             </BestModsPage>
         </>
     );
 };
 
-const Categories: React.FC = () => {
+const Categories: React.FC<{
+    cats: CategoriesWithChildren[]
+}> = ({
+    cats
+}) => {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
     const [success, setSuccess] = useState<string | null>(null);
-
-    const catsQuery = trpc.category.getCategoriesMapping.useQuery({ selId: true, selName: true, selIcon: true, incChildren: true });
-
-    const cats = catsQuery.data;
 
     const delCats = trpc.category.delCategory.useMutation();
 
@@ -68,7 +66,7 @@ const Categories: React.FC = () => {
 
             <h1 className="text-white text-3xl font-bold text-center">Categories</h1>
 
-            {cats ? (
+            {cats.length > 0 ? (
                 <>
                     {cats.map((cat) => {
                         const editLink = "/admin/add/category/" + cat.id;
@@ -127,17 +125,14 @@ const Categories: React.FC = () => {
     );
 }
 
-const Sources: React.FC = () => {
+const Sources: React.FC<{
+    srcs: Source[]
+}> = ({
+    srcs
+}) => {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
     const [success, setSuccess] = useState<string | null>(null);
-
-    const srcsQuery = trpc.source.getAllSources.useQuery({
-        selUrl: true,
-        selName: true,
-        selIcon: true
-    });
-    const srcs = srcsQuery.data;
 
     const delSrcs = trpc.source.delSource.useMutation();
 
@@ -149,7 +144,7 @@ const Sources: React.FC = () => {
 
             <h1 className="text-white text-3xl font-bold text-center">Sources</h1>
 
-            {srcs ? (
+            {srcs.length > 0 ? (
                 <>
                     {srcs.map((src) => {
                         const editLink = "/admin/add/source/" + src.url;
@@ -183,6 +178,45 @@ const Sources: React.FC = () => {
             </div>
         </div>
     );
+}
+
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+    let authed = false;
+    let cats: CategoriesWithChildren[] = [];
+    let srcs: Source[] = [];
+
+    const session = await getSession(ctx);
+
+    const perm_check = await prisma.permissions.findFirst({
+        where: {
+            userId: session?.user?.id ?? "",
+            perm: "contributor"
+        }
+    });
+
+    if (session?.user && perm_check)
+        authed = true;
+
+    if (authed) {
+        cats = await prisma.category.findMany({
+            where: {
+                parentId: null
+            },
+            include: {
+                children: true
+            }
+        });
+
+        srcs = await prisma.source.findMany();
+    }
+
+    return {
+        props: {
+            authed: authed,
+            cats: cats,
+            srcs: srcs
+        }
+    };
 }
 
 export default Home;

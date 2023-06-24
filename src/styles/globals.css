@@ -398,3 +398,13 @@
     @apply text-center;
     @apply ml-1;
 }
+
+.unauthorized-div {
+    @apply text-center;
+    @apply mx-auto;
+}
+
+.unauthorized-div > p {
+    @apply text-white;
+    @apply font-bold;
+}

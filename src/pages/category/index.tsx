@@ -1,4 +1,4 @@
-import { type NextPage } from "next";
+import { type GetServerSidePropsContext, type NextPage } from "next";
 import React from "react";
 
 import { BestModsPage } from '../../components/main';
@@ -8,7 +8,13 @@ import { trpc } from '../../utils/trpc';
 import Link from 'next/link';
 import { type Category } from "@prisma/client";
 
-const Home: NextPage = () => {
+import { prisma } from '../../server/db/client';
+
+const Home: NextPage<{
+    cats: any
+}> = ({
+    cats
+}) => {
     return (
         <>
             <HeadInfo
@@ -16,7 +22,7 @@ const Home: NextPage = () => {
                 description="Choose what games and categories you want to see mods in!"
             />
             <BestModsPage>
-                <Categories />
+                <Categories cats={cats} />
             </BestModsPage>
         </>
     );
@@ -47,11 +53,12 @@ const ChildRender: React.FC<{
     );
 }
 
-const Categories: React.FC = () => {
+const Categories: React.FC<{
+    cats: any
+}> = ({
+    cats
+}) => {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
-
-    const catsQuery = trpc.category.getCategoriesMapping.useQuery({ selId: true, selName: true, selUrl: true, selIcon: true, incChildren: true, incModsCnt: true });
-    const cats = catsQuery.data;
 
     return (
         <div className="container mx-auto bg-cyan-900/80 rounded-sm p-2 sm:p-16">
@@ -59,7 +66,7 @@ const Categories: React.FC = () => {
 
             {cats ? (
                 <>
-                    {cats.map((cat) => {
+                    {cats.map((cat: any) => {
                         const viewLink = "/category/" + cat.url;
                         const icon = (cat.icon != null) ? cdn + cat.icon : cdn + "/images/default_icon.png"
 
@@ -92,6 +99,28 @@ const Categories: React.FC = () => {
             )}
         </div>
     );
+}
+
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+    const cats = await prisma.category.findMany({
+        where: {
+            parentId: null
+        },
+        include: {
+            children: true,
+            _count: {
+                select: {
+                    Mod: true
+                }
+            }
+        }
+    });
+
+    return {
+        props: {
+            cats: cats
+        }
+    };
 }
 
 

@@ -1,4 +1,4 @@
-import { type Category, type ModInstaller, type ModSource } from "@prisma/client";
+import { type Category } from "@prisma/client";
 import { useState } from "react";
 import { ModInstallerRender, ModRatingRender, ModSourceRender } from "../mod_browser";
 
@@ -103,7 +103,7 @@ const TableRow: React.FC<{
             <td className="modbrowser-table-data">
                 <div className="modbrowser-table-btns">
                     <a href={viewLink}>View</a>
-                    {mod.ModInstaller != null && mod.ModInstaller.length > 0 && (
+                    {mod.ModInstaller && mod.ModInstaller.length > 0 && (
                         <div>
                             <button id={"installerDropdownBtn" + mod.id} onClick={() => {
                                 setInstallersMenuOpen(!installersMenuOpen);
@@ -114,7 +114,7 @@ const TableRow: React.FC<{
                             )}</button>
 
                             <ul id={"installerDropdownMenu" + mod.id} className={installersMenuOpen ? "block" : "hidden"} aria-labelledby={"installerDropdownBtn" + mod.id}>
-                                {mod.ModInstaller.map((ins: ModInstaller) => {
+                                {mod.ModInstaller.map((ins: any) => {
                                     return (
                                         <ModInstallerRender
                                             key={mod.id + "-" + ins.sourceUrl}
@@ -125,7 +125,7 @@ const TableRow: React.FC<{
                             </ul>
                         </div>
                     )}
-                    {mod.ModSource != null && mod.ModSource.length > 0 && (
+                    {mod.ModSource && mod.ModSource.length > 0 && (
                         <div>
                             <button id={"sourceDropdownBtn" + mod.id} onClick={() => {
                                 setSourcesMenuOpen(!sourcesMenuOpen);
@@ -136,7 +136,7 @@ const TableRow: React.FC<{
                             )}</button>
 
                             <ul id={"sourceDropdownMenu" + mod.id} className={sourcesMenuOpen ? "block" : "hidden"} aria-labelledby={"installerDropdownBtn" + mod.id}>
-                                {mod.ModSource.map((src: ModSource) => {
+                                {mod.ModSource.map((src: any) => {
                                     return (
                                         <ModSourceRender
                                             key={mod.id + "-" + src.sourceUrl}

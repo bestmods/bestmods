@@ -14,6 +14,7 @@ import { ModInstallerRender, ModRatingRender } from '../../components/mod_browse
 
 import { prisma } from '../../server/db/client';
 import { type GetServerSidePropsContext } from 'next';
+import { getSession } from 'next-auth/react';
 
 const ModCtx = React.createContext<any | boolean | null>(null);
 const ModViewCtx = React.createContext<string | null>(null);
@@ -345,9 +346,17 @@ const ModDownloads: React.FC = () => {
 };
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+    const session = await getSession(ctx);
+
     // We need to retrieve some props.
-    if (!ctx.params || !ctx.params.mod)
-        return { props: { mod: null, modView: "overview" } }
+    if (!ctx.params || !ctx.params.mod) {
+        return {
+            props: {
+                mod: null,
+                modView: "overview"
+            }
+        };
+    }
 
     const url = ctx.params.mod[0] ?? "";
     const modView = ctx.params.mod[1] ?? "overview";
@@ -361,7 +370,12 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             },
             ModSource: true,
             ModDownload: true,
-            ModInstaller: true
+            ModInstaller: true,
+            ModRating: {
+                where: {
+                    userId: session?.user?.id ?? ""
+                }
+            }
         },
         where: {
             url: url
