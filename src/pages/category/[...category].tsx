@@ -10,7 +10,13 @@ import { prisma } from '../../server/db/client';
 import { type GetServerSidePropsContext } from 'next';
 import { type Category } from "@prisma/client";
 
-const Home: NextPage<{ cat: any, cookies: { [key: string]: string } }> = ({ cat, cookies }) => {
+const Home: NextPage<{
+    cat: any,
+    cookies: { [key: string]: string } }
+> = ({
+    cat,
+    cookies
+}) => {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
     const [error, setError] = useState<JSX.Element | null>(null);
@@ -31,7 +37,7 @@ const Home: NextPage<{ cat: any, cookies: { [key: string]: string } }> = ({ cat,
 
     const categories: Array<number> = [];
 
-    if (cat != null) {
+    if (cat) {
         categories.push(cat.id);
 
         if (error)
@@ -45,17 +51,17 @@ const Home: NextPage<{ cat: any, cookies: { [key: string]: string } }> = ({ cat,
     } else if (!error)
         setError(notFound);
 
-    const content = (error == null) ?
+    const content = (!error) ?
         <div>
             <div className="w-full sm:w-4/5 mx-auto m-4">
                 <h1 className="text-white text-3xl font-bold">
-                    {cat != null && cat.parent != null ? (
+                    {cat && cat.parent ? (
                         <>
                             {cat.parent.name} {"→"} {cat.name + " "}
                         </>
                     ) : (
                         <>
-                            {cat != null && cat.name + " "}
+                            {cat && cat.name + " "}
                         </>
                     )}
                 </h1>
@@ -71,8 +77,8 @@ const Home: NextPage<{ cat: any, cookies: { [key: string]: string } }> = ({ cat,
     if (bgFile)
         headerImg = cdn + bgPath
 
-    if (cat != null) {
-        if (cat.parent != null) {
+    if (cat) {
+        if (cat.parent) {
             headTitle = cat.parent.name + " " + cat.name + " - Best Mods";
             headDesc = "Browse through many mods in " + cat.parent.name + " " + cat.name + "!";
         } else {

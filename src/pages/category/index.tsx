@@ -22,7 +22,15 @@ const Home: NextPage = () => {
     );
 };
 
-const ChildRender: React.FC<{ child: Category, parent: any, cdn: string }> = ({ child, parent, cdn }) => {
+const ChildRender: React.FC<{
+    child: Category,
+    parent: any,
+    cdn: string
+}> = ({
+    child,
+    parent,
+    cdn
+}) => {
     const query = trpc.category.getModCnt.useQuery({ id: child.id });
     const ctnData = query.data;
 
