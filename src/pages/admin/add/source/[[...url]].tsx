@@ -1,11 +1,11 @@
 import { BestModsPage } from '../../../../components/main';
 
-import { GetServerSidePropsContext, type NextPage } from "next";
+import { type GetServerSidePropsContext, type NextPage } from "next";
 import React from "react";
 
 import HeadInfo from "../../../../components/head";
 
-import { Source } from '@prisma/client';
+import { type Source } from '@prisma/client';
 
 import { prisma } from '../../../../server/db/client'
 import { getSession } from 'next-auth/react';

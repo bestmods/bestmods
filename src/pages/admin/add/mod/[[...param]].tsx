@@ -1,15 +1,15 @@
 import { BestModsPage } from '../../../../components/main';
 
-import { GetServerSidePropsContext, type NextPage } from "next";
+import { type GetServerSidePropsContext, type NextPage } from "next";
 import React from "react";
 
 import HeadInfo from "../../../../components/head";
 
 import { prisma } from '../../../../server/db/client'
 import { getSession } from 'next-auth/react';
-import { CategoriesWithChildren, ModWithRelations } from '../../../../components/types';
+import { type CategoriesWithChildren, type ModWithRelations } from '../../../../components/types';
 import ModForm from '../../../../components/forms/contributor/create_mod';
-import { Source } from '@prisma/client';
+import { type Source } from '@prisma/client';
 
 const Home: NextPage<{
     authed: boolean,

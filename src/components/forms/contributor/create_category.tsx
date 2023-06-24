@@ -1,15 +1,13 @@
 
 import { useFormik, Field } from "formik";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState } from "react";
 
 import { trpc } from "../../../utils/trpc";
 
-const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
-
 import FormTemplate from '../main';
 import { AlertForm } from '../../alert';
-import { Category, Prisma } from "@prisma/client";
-import { CategoriesWithChildren } from "../../types";
+import { type Category } from "@prisma/client";
+import { type CategoriesWithChildren } from "../../types";
 
 type values_type = {
     id?: number;

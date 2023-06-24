@@ -7,7 +7,7 @@ import { trpc } from "../../../utils/trpc";
 import FormTemplate from '../main';
 import { AlertForm } from '../../alert';
 import { type Source } from "@prisma/client";
-import { CategoriesWithChildren, ModWithRelations } from "../../types";
+import { type CategoriesWithChildren, type ModWithRelations } from "../../types";
 
 type values_type = {
     owner_name?: string | null
