@@ -194,14 +194,14 @@ const ModForm: React.FC<{
     const [bannerData, setBannerData] = useState<string | ArrayBuffer | null>(null);
 
     // Queries.
-    const modMut = trpc.mod.addMod.useMutation();
+    const mod_mut = trpc.mod.addMod.useMutation();
 
     // Handle success and error messages.
-    if (modMut.isSuccess) {
+    if (mod_mut.isSuccess) {
         success = "Successfully added or edited mod!";
         error = null;
-    } else if (modMut.isError) {
-        const err_msg = modMut.error.message;
+    } else if (mod_mut.isError) {
+        const err_msg = mod_mut.error.message;
 
         // Check if we can simplify the error message for client.
         if (err_msg.includes("Error parsing URL"))
@@ -218,7 +218,7 @@ const ModForm: React.FC<{
         success = null;
 
         // Send alert and log full error to client's console.
-        console.error(modMut.error);
+        console.error(mod_mut.error);
     }
 
     //  Handle downloads form.
@@ -486,7 +486,7 @@ const ModForm: React.FC<{
             new_vals.banner = bannerData?.toString() ?? null;
 
             // Insert into database.
-            modMut.mutate(new_vals);
+            mod_mut.mutate(new_vals);
 
             // Scroll to top.
             if (typeof window !== undefined) {
