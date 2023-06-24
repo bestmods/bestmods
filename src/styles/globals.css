@@ -417,4 +417,9 @@
 
 .mod-download-item {
     word-break: break-all;
+    @apply bg-cyan-500/50;
+    @apply hover:bg-cyan-600/50;
+    @apply rounded;
+    @apply p-4;
+    @apply !no-underline;
 }
