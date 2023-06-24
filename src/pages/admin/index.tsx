@@ -12,17 +12,6 @@ import { trpc } from '../../utils/trpc';
 import Link from 'next/link';
 
 const Home: NextPage = () => {
-    return (
-        <>
-            <HeadInfo />
-            <BestModsPage>
-                <MainContent />
-            </BestModsPage>
-        </>
-    );
-};
-
-const MainContent: React.FC = () => {
     // First make sure we have access to this page.
     const session = useContext(SessionCtx);
 
@@ -44,16 +33,21 @@ const MainContent: React.FC = () => {
     }
 
     return (
-        <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 gap-12 justify-items-center">
-            <div className="p-10">
-                <Categories />
+        <>
+            <HeadInfo />
+            <BestModsPage>
+            <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 gap-12 justify-items-center">
+                <div className="p-10">
+                    <Categories />
+                </div>
+                <div className="p-10">
+                    <Sources />
+                </div>
             </div>
-            <div className="p-10">
-                <Sources />
-            </div>
-        </div>
+            </BestModsPage>
+        </>
     );
-}
+};
 
 const Categories: React.FC = () => {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";

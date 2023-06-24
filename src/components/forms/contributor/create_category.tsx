@@ -48,14 +48,14 @@ const CategoryForm: React.FC<{
     const [iconData, setIconData] = useState<string | ArrayBuffer | null>(null);
 
     // Queries.
-    const categoryMut = trpc.category.addCategory.useMutation();
+    const cat_mut = trpc.category.addCategory.useMutation();
 
     // Hande success and errors.
-    if (categoryMut.isSuccess) {
+    if (cat_mut.isSuccess) {
         success = "Successfully added or edited category!";
         error = null;
-    } else if (categoryMut.isError) {
-        const err_msg = categoryMut.error.message;
+    } else if (cat_mut.isError) {
+        const err_msg = cat_mut.error.message;
 
         // Check if we can simplify the error message for client.
         if (err_msg.includes("file extension is unknown"))
@@ -70,7 +70,7 @@ const CategoryForm: React.FC<{
         success = null;
 
         // Send alert and log full error to client's console.
-        console.error(categoryMut.error);
+        console.error(cat_mut.error);
     }
 
     // Create form using Formik.
@@ -87,15 +87,15 @@ const CategoryForm: React.FC<{
 
         onSubmit: (values) => {
         // Create new values.
-        const newVals: values_type = values;
+        const new_vals: values_type = values;
 
         // Assign some additional values.
-        newVals.parent_id = parent;
-        newVals.id = cat?.id;
-        newVals.icon = iconData?.toString() ?? null;
+        new_vals.parent_id = parent;
+        new_vals.id = cat?.id;
+        new_vals.icon = iconData?.toString() ?? null;
 
         // Insert into database.
-        categoryMut.mutate(newVals);
+        cat_mut.mutate(new_vals);
 
         // Scroll to top.
         if (typeof window !== undefined) {
@@ -124,7 +124,6 @@ const CategoryForm: React.FC<{
                         const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
 
                         if (file) {
-
                             const reader = new FileReader();
 
                             reader.onloadend = () => {
