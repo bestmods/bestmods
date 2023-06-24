@@ -96,13 +96,9 @@ const SourceForm: React.FC<{
     const srcUrl = "sources-" + num + "-url";
     const srcQuery = "sources-" + num + "-query";
 
-    const curUrl = mod != null && mod.ModSource != null && mod.ModSource[num - 1] != null ? mod.ModSource[num - 1]?.sourceUrl ?? "" : "";
+    const curUrl = mod && mod.ModSource && mod.ModSource[num - 1] != undefined ? mod.ModSource[num - 1]?.sourceUrl ?? "" : "";
 
     const [srcUrlVal, setSrcUrlVal] = useState(curUrl);
-
-    useEffect(() => {
-        setSrcUrlVal(curUrl);
-    }, [mod]);
 
     return (
         <>
@@ -142,10 +138,6 @@ const InstallerForm: React.FC<{
     const curUrl = mod && mod.ModInstaller && mod.ModInstaller[num - 1] ? mod.ModInstaller[num - 1]?.sourceUrl ?? "" : "";
 
     const [srcUrlVal, setSrcUrlVal] = useState(curUrl);
-
-    useEffect(() => {
-        setSrcUrlVal(curUrl);
-    }, [mod]);
 
     return (
         <>
