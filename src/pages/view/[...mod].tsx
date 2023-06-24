@@ -305,7 +305,7 @@ const ModSources: React.FC<{ cdn?: string }> = ({ cdn }) => {
                         const srcDirect = srcQuery.data;
 
                         let name = "Placeholder";
-                        let banner = "/images/asdsad.png";
+                        let banner = "/images/default_source_banner.png";
 
                         if (srcDirect) {
                             name = srcDirect.name;
