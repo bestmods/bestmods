@@ -1,4 +1,4 @@
-import { Category, PrismaClient } from "@prisma/client";
+import { type Category, type PrismaClient } from "@prisma/client";
 
 import FileType from '../base64';
 import fs from 'fs';
@@ -18,7 +18,6 @@ export const Insert_Or_Update_Category = async (
     parent_id?: number | null,
     classes?: string | null,
     has_bg?: boolean
-
 ): Promise<[Category | null, boolean, string | null | any]> => {
     // Returns.
     let cat: Category | null = null;

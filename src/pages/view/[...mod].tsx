@@ -21,35 +21,29 @@ const ModViewCtx = React.createContext<string | null>(null);
 const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
-    // Load category.
-    const catQuery = trpc.category.getCategory.useQuery({
-        id: mod?.category?.id ?? null,
+    // View generator.
+    const [isViewed, setIsViewed] = useState(false);
+    const modViewMut = trpc.modView.incModViewCnt.useMutation();
 
-        selUrl: true,
-        selIcon: true,
-        selHasBg: true,
-        selName: true,
+    if (!isViewed && mod && modView == "overview") {
+        modViewMut.mutate({
+            url: mod.url
+        });
 
-        incParent: true
-    });
-    const cat = catQuery.data;
+        setIsViewed(true);
+    }
 
     // Handle background.
-    const [bgFile, setBgFile] = useState<string | null>(null);
+    let bg_file: string | undefined = undefined;
+        
+    if (mod.category.hasBg && mod.category.parent)
+        bg_file = mod.category.parent.url + "_" + mod.category.url + ".png";
+    else if (mod.category.hasBg && !mod.category.parent)
+        bg_file = mod.category.url + ".png";
+    else if (mod.category.parent && mod.category.parent.hasBg)
+        bg_file = mod.category.parent.url + ".png";
 
-    useEffect(() => {
-        if (!cat)
-            return;
-
-        if (cat.hasBg && cat.parent != null)
-            setBgFile(cat.parent.url + "_" + cat.url + ".png");
-        else if (cat.hasBg && cat.parent == null)
-            setBgFile(cat.url + ".png");
-        else if (cat.parent != null && cat.parent.hasBg)
-            setBgFile(cat.parent.url + ".png");
-    }, [cat]);
-
-    const bgPath = "/images/backgrounds/" + bgFile;
+    const bg_path = "/images/backgrounds/" + bg_file;
 
     // Determine title name.
     let titleName = mod.name;
@@ -73,49 +67,28 @@ const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
                         author={(mod && mod.ownerName != null && mod.ownerName.length > 0) ? mod.ownerName : "Best Mods"}
                         excludeCdn={true}
                     />
-                    {bgFile != null ? (
                         <BestModsPage
-                            image={cdn + bgPath}
-                            excludeCdn={true}
+                            image={bg_file ? cdn + bg_path : undefined}
+                            excludeCdn={bg_file ? true : false}
                         >
                             <MainContent 
-                                cdn={cdn} 
-                                cat={cat}
-                            />
-                        </BestModsPage>
-                    ) : (
-                        <BestModsPage>
-                            <MainContent 
                                 cdn={cdn}
-                                cat={cat}
                             />
                         </BestModsPage>
-                    )}
                 </ModViewCtx.Provider>
             </ModCtx.Provider>
         </>
     );
 };
 
-const MainContent: React.FC<{ cdn: string, cat: any }> = ({ cdn = "", cat }) => {
+const MainContent: React.FC<{ 
+    cdn: string
+}> = ({ 
+    cdn = "" 
+}) => {
     const mod = useContext(ModCtx);
     const modView = useContext(ModViewCtx);
     const session = useContext(SessionCtx);
-
-    // View generator.
-    const [isViewed, setIsViewed] = useState(false);
-    const modViewMut = trpc.modView.incModViewCnt.useMutation();
-
-    useEffect(() => {
-        if (!mod || isViewed || modView != "overview")
-            return;
-
-        modViewMut.mutate({
-            url: mod.url
-        });
-
-        setIsViewed(true);
-    }, [mod]);
 
     // Installer menu.
     const [installersMenuOpen, setInstallersMenuOpen] = useState(false);
@@ -155,11 +128,11 @@ const MainContent: React.FC<{ cdn: string, cat: any }> = ({ cdn = "", cat }) => 
 
         // Generate category icons and links.
         const defaultIcon = "/images/default_icon.png";
-        const catIcon = (cat && cat.icon) ? cdn + cat.icon : cdn + defaultIcon;
-        const catParIcon = (cat && cat.parent && cat.parent.icon) ? cdn + cat.parent.icon : cdn + defaultIcon;
+        const catIcon = (mod.category && mod.category.icon) ? cdn + mod.category.icon : cdn + defaultIcon;
+        const catParIcon = (mod.category && mod.category.parent && mod.category.parent.icon) ? cdn + mod.category.parent.icon : cdn + defaultIcon;
 
-        const catParLink = (cat && cat.parent) ? "/category/" + cat.parent.url : null;
-        const catLink = ((cat) ? "/category" + ((cat.parent) ? "/" + cat.parent.url : "") + "/" + cat.url : null);
+        const catParLink = (mod.category && mod.category.parent) ? "/category/" + mod.category.parent.url : null;
+        const catLink = ((mod.category) ? "/category" + ((mod.category.parent) ? "/" + mod.category.parent.url : "") + "/" + mod.category.url : null);
 
         return (
             <>
@@ -170,25 +143,25 @@ const MainContent: React.FC<{ cdn: string, cat: any }> = ({ cdn = "", cat }) => 
                         </div>
                         <h1 className="text-4xl font-bold text-white text-center">{mod.name}</h1>
                         <div className="flex justify-center items-center p-5">
-                            {cat != null && (
+                            {mod.category && (
                                 <>
-                                    {cat.parent != null ? (
+                                    {mod.category.parent ? (
                                         <>
                                             <a href={catParLink ?? "/category"} className="flex">
                                                 <img src={catParIcon} className="w-6 h-6 rounded" alt="Category Icon" />
-                                                <span className="ml-2 text-white">{cat.parent.name ?? "Category"}</span>
+                                                <span className="ml-2 text-white">{mod.category.parent.name ?? "Category"}</span>
                                             </a>
                                             <span className="text-2xl text-white text-bold ml-2 mr-2"> → </span>
                                             <a href={catLink ?? "/category"} className="flex">
                                                 <img src={catIcon} className="w-6 h-6 rounded" alt="Category Icon" />
-                                                <span className="ml-2 text-white">{cat.name ?? "Category"}</span>
+                                                <span className="ml-2 text-white">{mod.category.name ?? "Category"}</span>
                                             </a>
                                         </>
                                     ) : (
                                         <>
                                             <a href={catLink ?? "/category"} className="flex">
                                                 <img src={catIcon} className="w-6 h-6 rounded" alt="Category Icon" />
-                                                <span className="ml-2 text-white">{cat.name ?? "Category"}</span>
+                                                <span className="ml-2 text-white">{mod.category.name ?? "Category"}</span>
                                             </a>
                                         </>
                                     )}
@@ -381,7 +354,11 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     const mod = await prisma.mod.findFirst({
         include: {
-            category: true,
+            category: {
+                include: {
+                    parent: true
+                }
+            },
             ModSource: true,
             ModDownload: true,
             ModInstaller: true
@@ -391,7 +368,12 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         }
     });
 
-    return { props: { mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === 'bigint' ? v.toString() : v)), modView: modView } };
+    return { 
+        props: { 
+            mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === 'bigint' ? v.toString() : v)),
+            modView: modView 
+        } 
+    };
 }
 
 export default Home;

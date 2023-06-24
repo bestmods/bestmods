@@ -1,4 +1,4 @@
-import { Mod, ModDownload, ModInstaller, ModScreenshot, ModSource, PrismaClient } from "@prisma/client";
+import { type Mod, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource, type PrismaClient } from "@prisma/client";
 
 import FileType from '../base64';
 import fs from 'fs';

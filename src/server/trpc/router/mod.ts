@@ -1,10 +1,8 @@
-import { string, z } from "zod";
+import { z } from "zod";
 import { router, publicProcedure, protectedProcedure, contributorProcedure } from "../trpc";
 
-import fs from 'fs';
-import FileType from '../../../utils/base64';
 import { TRPCError } from "@trpc/server"
-import { ModDownload, ModInstaller, ModScreenshot, ModSource } from "@prisma/client";
+import { type ModDownload, type ModInstaller, type ModScreenshot, type ModSource } from "@prisma/client";
 import { Insert_Or_Update_Mod } from "../../../utils/content/mod";
 
 export const modRouter = router({

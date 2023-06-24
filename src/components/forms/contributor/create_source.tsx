@@ -1,14 +1,12 @@
 
 import { useFormik, Field } from "formik";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState } from "react";
 
 import { trpc } from "../../../utils/trpc";
 
-const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
-
 import FormTemplate from '../main';
 import { AlertForm } from '../../alert';
-import { Source } from "@prisma/client";
+import { type Source } from "@prisma/client";
 
 type values_type = {
     update?: boolean

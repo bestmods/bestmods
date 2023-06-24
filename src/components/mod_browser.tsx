@@ -65,13 +65,11 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
 
     // Retrieve rating.
     const [rating, setRating] = useState(1);
+    const [receivedRating, setReceivedRating] = useState(false);
 
     const modRequiresUpdateMut = trpc.mod.requireUpdate.useMutation();
 
-    useEffect(() => {
-        if (filters?.timeframe == null)
-            return;
-
+    if (filters?.timeframe && !receivedRating) {
         switch (filters.timeframe) {
             case 0:
                 setRating(mod.ratingHour);
@@ -101,7 +99,9 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({ mod }) => {
             default:
                 setRating(mod.totalRating);
         }
-    }, [filters?.timeframe]);
+
+        setReceivedRating(true);
+    }
 
     // Controls whether user rated this mod or not.
     const myRatingQuery = trpc.modRating.getModUserRating.useQuery({

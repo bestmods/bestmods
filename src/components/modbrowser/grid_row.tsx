@@ -1,4 +1,4 @@
-import { Category, ModInstaller, ModSource } from "@prisma/client";
+import { type Category, type ModInstaller, type ModSource } from "@prisma/client";
 import { useState } from "react";
 import { ModInstallerRender, ModRatingRender, ModSourceRender } from "../mod_browser";
 

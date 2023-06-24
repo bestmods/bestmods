@@ -1,4 +1,4 @@
-import { PrismaClient, Source } from "@prisma/client";
+import { type PrismaClient, type Source } from "@prisma/client";
 
 import FileType from '../base64';
 import fs from 'fs';
