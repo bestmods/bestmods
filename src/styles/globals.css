@@ -414,3 +414,7 @@
     @apply text-white;
     @apply text-2xl;
 }
+
+.mod-download-item {
+    word-break: break-all;
+}

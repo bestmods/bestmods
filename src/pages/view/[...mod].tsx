@@ -324,7 +324,7 @@ const ModDownloads: React.FC = () => {
             <div className="relative flex flex-wrap gap-6">
                 {downloads.map((dl: ModDownload) => {
                     return (
-                        <a rel="noreferrer" key={mod.id + "-" + dl.url} onClick={() => {
+                        <a className="mod-download-item" rel="noreferrer" key={mod.id + "-" + dl.url} onClick={() => {
                             modDownloadMut.mutate({
                                 url: mod.url
                             });
