@@ -6,7 +6,7 @@ header {
     @apply flex-col;
     @apply items-center;
     @apply justify-center;
-    @apply gap-12;
+    @apply gap-4;
     @apply px-4;
     @apply py-16;
 }
@@ -30,4 +30,5 @@ nav {
     @apply font-mono;
     @apply text-sm;
     @apply gap-5;
+    @apply pb-6;
 }
