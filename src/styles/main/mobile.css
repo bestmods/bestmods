@@ -1,0 +1,42 @@
+#mobile-menu {
+    @apply absolute;
+    @apply sm:hidden;
+    @apply z-50;
+    @apply top-0;
+    @apply left-0;
+    @apply rounded-br;
+    @apply bg-cyan-800;
+    @apply hover:bg-cyan-900;
+}
+
+.mobile-menu-open {
+    @apply min-h-full;
+    @apply h-auto;
+    @apply w-2/3;
+    @apply md:h-auto;
+    @apply md:w-1/4;
+    @apply transition-all;
+    @apply ease-in-out;
+    @apply duration-300;
+}
+
+#mobile-menu-toggle {
+    @apply p-4;
+    @apply text-center;
+}
+
+#mobile-menu-toggle > svg {
+    @apply w-6;
+    @apply h-6;
+}
+
+.mobile-menu-nav-items {
+    @apply block;
+    @apply p-5;
+    @apply text-gray-300;
+    @apply hover:text-white;
+}
+
+#mobile-menu .header-filters > div {
+    @apply my-2;
+}
