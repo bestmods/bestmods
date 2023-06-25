@@ -6,6 +6,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Link from 'next/link'
 import Script from "next/script";
 import { setCookie } from 'cookies-next';
+import GoogleAnalytics from "./scripts/google_analytics";
 
 export type filterArgs = {
     timeframe: number | null
@@ -110,17 +111,10 @@ export const BestModsPage: React.FC<{
         image = process.env.NEXT_PUBLIC_CDN_URL + image;
 
     return (
-        <main key="main" className={`flex min-h-screen flex-col pb-20 ${classes ?? ""}`}>
-            <Script id="google-tag-manager" src="https://www.googletagmanager.com/gtag/js?id=G-EZBGB6N5XL" strategy="afterInteractive" />
-            <Script id="google-analytics" strategy="afterInteractive">
-                {`
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){window.dataLayer.push(arguments);}
-                    gtag('js', new Date());
-
-                    gtag('config', 'G-EZBGB6N5XL');
-                `}
-            </Script>
+        <main key="main" className={classes ?? ""}>
+            {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
+                <GoogleAnalytics id={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
+            )}
             <SessionCtx.Provider value={session}>
                 <FilterCtx.Provider value={filters}>
                     <DisplayCtx.Provider value={display}>
