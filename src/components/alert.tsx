@@ -10,15 +10,15 @@ export const AlertForm: React.FC<{
     return (<>
         <div id="alertbox">
             {error && (
-                <div className="p-4 bg-red-800/50 text-white">
-                    <h3 className="text-xl font-bold">Error!</h3>
+                <div className="alert-error">
+                    <h3>Error!</h3>
                     <p>{error}</p>
                 </div>
             )}
 
             {success && (
-                <div className="p-4 bg-lime-500/50 text-white">
-                    <h3 className="text-xl font-bold">Success!</h3>
+                <div className="alert-success">
+                    <h3>Success!</h3>
                     <p>{success}</p>
                 </div>
             )}

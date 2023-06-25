@@ -16,6 +16,7 @@
 @import 'utils/scrollbar.css';
 @import 'utils/unauthorized.css';
 @import 'utils/buttons.css';
+@import 'utils/alerts.css';
 
 /* Forms */
 @import 'forms/main.css';
