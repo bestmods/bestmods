@@ -29,7 +29,7 @@ const MobileMenu: React.FC = () => {
                 </div>
 
                 <Filters 
-                    classes="!block !gap-4"
+                    classes="!block"
                 />
             </div>
         </div>
