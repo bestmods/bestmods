@@ -4,9 +4,9 @@ import { type NextPage } from "next";
 import React, { useContext, useState, useEffect } from "react";
 
 import { trpc } from "../../utils/trpc";
-import { type ModSource, type ModDownload } from '@prisma/client';
+import { type ModDownload } from '@prisma/client';
 
-import { marked } from 'marked';
+import ReactMarkdown from 'react-markdown'
 
 import HeadInfo from "../../components/head";
 import { ModInstallerRender, ModRatingRender } from '../../components/mod_browser';
@@ -231,23 +231,22 @@ const MainContent: React.FC<{
 
 const ModOverview: React.FC = () => {
     const mod = useContext(ModCtx);
-    const data = marked(mod?.description ?? "");
+
 
     return (
-        <>
-            <div dangerouslySetInnerHTML={{ __html: data }} />
-        </>
+        <ReactMarkdown>
+            {mod.description}
+        </ReactMarkdown>
     );
 };
 
 const ModInstall: React.FC = () => {
     const mod = useContext(ModCtx);
-    const data = (mod.install != null) ? marked(mod.install ?? "") : "<p>No installation guide found.</p>";
 
     return (
-        <>
-            <div dangerouslySetInnerHTML={{ __html: data }} />
-        </>
+        <ReactMarkdown>
+            {mod.install ?? "<p>No installation guide found."}
+        </ReactMarkdown>
     );
 };
 
