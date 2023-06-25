@@ -174,13 +174,13 @@ const MainContent: React.FC<{
                 <div id="mod-content">
                     <div id="mod-content-top" className={`${onlyRating ? "justify-end" : "justify-between"}`}>
                         {mod.ownerName && mod.ownerName.length > 0 && (
-                            <div id="mod-content-owner">
+                            <div id="mod-owner">
                                 <p>Maintained By <span className="font-bold">{mod.ownerName}</span></p>
                             </div>
                         )}
                         {mod.ModInstaller && mod.ModInstaller.length > 0 && (
-                            <div className="relative">
-                                <div className="mod-installer">
+                            <div className="mod-installer">
+                                <div className="mod-installer-button">
                                     <button id="installerDropdownBtn" onClick={() => {
                                         setInstallersMenuOpen(!installersMenuOpen);
                                     }} type="button"><span>Install</span> {!installersMenuOpen ? (

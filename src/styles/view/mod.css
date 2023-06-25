@@ -85,11 +85,22 @@
     @apply mb-4;
 }
 
-#mod-content-owner > p {
+#mod-owner > p {
     @apply text-white;
 }
 
 .mod-installer {
+    @apply relative;
+}
+
+.mod-installer > ul {
+    @apply absolute;
+    @apply py-2;
+    @apply text-sm;
+    @apply bg-cyan-700;
+}
+
+.mod-installer-button {
     @apply p-2;
     @apply flex;
     @apply items-center;
@@ -98,7 +109,7 @@
     @apply rounded-t;
 }
 
-.mod-installer > button {
+.mod-installer-button > button {
     @apply text-white;
     @apply font-bold;
     @apply flex;
@@ -106,18 +117,11 @@
     @apply mx-auto;
 }
 
-.mod-installer > button > svg {
+.mod-installer-button > button > svg {
     @apply w-4;
     @apply h-4;
     @apply text-center;
     @apply ml-1;
-}
-
-.mod-installer > ul {
-    @apply absolute;
-    @apply py-2;
-    @apply text-sm;
-    @apply bg-cyan-700;
 }
 
 #mod-description > strong
