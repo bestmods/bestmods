@@ -96,11 +96,6 @@ const MainContent: React.FC<{
     if (mod != null) {
         let body: JSX.Element = <></>;
 
-        // Generate classes for buttons and such.
-        const btnBaseClasses = "!font-sm text-white font-bold rounded-t p-1 md:p-3 mr-1";
-        const defaultStyle = "bg-cyan-900/50";
-        const activeStyle = "font-bold bg-cyan-500/50";
-
         // Decide what content to serve.
         if (modView == "install")
             body = <ModInstall />;
@@ -264,25 +259,9 @@ const ModSources: React.FC<{ cdn?: string }> = ({ cdn }) => {
             <h3>Sources</h3>
             {mod.ModSource != null && mod.ModSource.length > 0 && (
                 <div id="mod-sources">
-                    {mod.ModSource.map((src: ModSource) => {
-                        const srcQuery = trpc.source.getSource.useQuery({
-                            url: src.sourceUrl,
-
-                            selName: true,
-                            selBanner: true
-                        });
-
-                        const srcDirect = srcQuery.data;
-
-                        let name = "Placeholder";
-                        let banner = "/images/default_source_banner.png";
-
-                        if (srcDirect) {
-                            name = srcDirect.name;
-
-                            if (srcDirect.banner)
-                                banner = srcDirect.banner;
-                        }
+                    {mod.ModSource.map((src: any) => {
+                        const name = src.source.name;
+                        let banner = src.source.banner ? src.source.banner : "/images/default_source_banner.png";
 
                         if (cdn)
                             banner = cdn + banner;
@@ -364,7 +343,11 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
                     parent: true
                 }
             },
-            ModSource: true,
+            ModSource: {
+                include: {
+                    source: true
+                }
+            },
             ModDownload: true,
             ModInstaller: {
                 include: {
