@@ -58,7 +58,8 @@
 }
 
 .mod-button-item {
-    @apply !text-sm;
+    @apply font-bold;
+    @apply text-sm;
     @apply text-white;
     @apply rounded-t;
     @apply p-1;
