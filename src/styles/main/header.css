@@ -1,0 +1,33 @@
+/* Header container */
+header {
+    @apply container;
+    @apply mx-auto;
+    @apply flex;
+    @apply flex-col;
+    @apply items-center;
+    @apply justify-center;
+    @apply gap-12;
+    @apply px-4;
+    @apply py-16;
+}
+
+/* Header logo */
+header > h1 {
+    @apply text-center;
+    @apply text-[3rem];
+    @apply font-extrabold;
+    @apply tracking-tight;
+    @apply text-white;
+    @apply sm:text-[5rem];
+}
+
+/* Nav container */
+nav {
+    @apply hidden;
+    @apply sm:flex;
+    @apply flex-wrap;
+    @apply text-gray-300;
+    @apply font-mono;
+    @apply text-sm;
+    @apply gap-5;
+}

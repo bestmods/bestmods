@@ -1,0 +1,22 @@
+.alert-error {
+    @apply p-4;
+    @apply bg-red-800/50;
+    @apply text-white;
+}
+
+.alert-error > h3 {
+    @apply text-xl;
+    @apply font-bold;
+}
+
+.alert-success {
+    @apply p-4;
+    @apply bg-lime-500/50;
+    @apply text-white;
+}
+
+.alert-success > h3 {
+    @apply text-xl;
+    @apply font-bold;
+}
+

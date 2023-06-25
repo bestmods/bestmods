@@ -41,7 +41,7 @@ const CategoryForm: React.FC<{
     // Submit button.
     const submitBtn = 
         <div className="text-center">
-            <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{!cat ? "Add Category!" : "Edit Category!"}</button>
+            <button type="submit" className="btn btn-blue">{!cat ? "Add Category!" : "Edit Category!"}</button>
         </div>;
 
     // File uploads.
@@ -118,9 +118,9 @@ const CategoryForm: React.FC<{
                 form={form}
                 submitBtn={submitBtn}
             >
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm font-bold mb-2">Image</label>
-                    <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="image" type="file" placeholder="Source Image" onChange={(e) => {
+                <div className="form-container">
+                    <label className="form-label">Image</label>
+                    <input className="form-input" name="image" type="file" placeholder="Source Image" onChange={(e) => {
                         const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
 
                         if (file) {
@@ -134,18 +134,18 @@ const CategoryForm: React.FC<{
                         }
                     }} />
 
-                    <Field className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="iremove" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Remove Current</label>
+                    <Field className="form-checkbox" name="iremove" type="checkbox" /> <label className="form-checkbox-label">Remove Current</label>
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm font-bold mb-2">Has Background</label>
+                <div className="form-container">
+                    <label className="form-label">Has Background</label>
 
-                    <Field className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="has_bg" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Yes</label>
+                    <Field className="form-checkbox" name="has_bg" type="checkbox" /> <label className="form-checkbox-label">Yes</label>
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm font-bold mb-2">Parent</label> 
-                    <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="parent_id" placeholder="Category Parent" defaultValue={parent ?? 0} onChange={(e) => {
+                <div className="form-container">
+                    <label className="form-label">Parent</label> 
+                    <select className="form-input" name="parent_id" placeholder="Category Parent" defaultValue={parent ?? 0} onChange={(e) => {
                         const val = e.target.value;
 
                         if (val)
@@ -166,24 +166,24 @@ const CategoryForm: React.FC<{
                     </select>
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm font-bold mb-2">Name</label>
-                    <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="name" type="text" placeholder="Category Name" />
+                <div className="form-container">
+                    <label className="form-label">Name</label>
+                    <Field className="form-input" name="name" type="text" placeholder="Category Name" />
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm font-bold mb-2">Short Name</label>
-                    <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="name_short" type="text" placeholder="Category Short Name" />
+                <div className="form-container">
+                    <label className="form-label">Short Name</label>
+                    <Field className="form-input" name="name_short" type="text" placeholder="Category Short Name" />
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm font-bold mb-2">URL</label>
-                    <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="url" type="text" placeholder="models" />
+                <div className="form-container">
+                    <label className="form-label">URL</label>
+                    <Field className="form-input" name="url" type="text" placeholder="models" />
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm font-bold mb-2">Classes</label>
-                    <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="classes" type="text" placeholder="CSS Classes" />
+                <div className="form-container">
+                    <label className="form-label">Classes</label>
+                    <Field className="form-input" name="classes" type="text" placeholder="CSS Classes" />
                 </div>
             </FormTemplate>
         </>

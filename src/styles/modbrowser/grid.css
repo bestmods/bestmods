@@ -1,0 +1,204 @@
+/* Grid container */
+.gridView {
+    @apply grid;
+    @apply grid-cols-[repeat(auto-fill,minmax(theme(width.full),1fr))];
+    @apply sm:grid-cols-[repeat(auto-fill,minmax(theme(width.96),1fr))];
+    @apply justify-items-center;
+    @apply gap-8;
+}
+
+/* Mod row */
+.modbrowser-grid-row {
+    @apply w-4/5;
+    @apply md:w-96 h-[32rem];
+    @apply rounded;
+    @apply bg-gradient-to-b;
+    @apply from-cyan-800;
+    @apply to-cyan-900;
+    @apply flex;
+    @apply flex-col;
+    @apply shadow-lg;
+}
+
+/* Mod image container */
+.modbrowser-grid-image {
+    @apply relative;
+    @apply w-full;
+    @apply max-h-64;
+    @apply h-64;
+}
+
+/* Mod image */
+.modbrowser-grid-image > img {
+    @apply w-full;
+    @apply h-full;
+    @apply max-h-full;
+    @apply rounded-t;
+}
+
+/* Mod image owner container */
+.modbrowser-grid-image-owner {
+    @apply absolute;
+    @apply bottom-0;
+    @apply left-0;
+    @apply h-8;
+    @apply pr-4;
+    @apply rounded-tr;
+    @apply bg-cyan-900/60;
+    @apply hover:bg-cyan-900;
+    @apply flex;
+    @apply items-center;
+}
+
+/* Mod image owner text */
+.modbrowser-grid-image-owner > p {
+    @apply text-white;
+    @apply text-sm;
+    @apply ml-1;
+}
+
+/* Mod main container */
+.modbrowser-grid-main {
+    @apply ml-8;
+    @apply mr-8;
+    @apply mb-4;
+    @apply max-h-24;
+    @apply grow;
+    @apply text-ellipsis;
+}
+
+/* Mod title headline */
+.modbrowser-grid-main > h3 {
+    @apply text-white;
+    @apply text-lg;
+    @apply md:text-xl;
+    @apply font-bold;
+    @apply text-center;
+}
+
+/* Mod description text */
+.modbrowser-grid-main > p {
+    @apply text-white;
+    @apply mt-2;
+    @apply text-sm;
+}
+
+/* Mod category container */
+.modbrowser-grid-category {
+    @apply mx-8;
+    @apply mb-1;
+    @apply text-white;
+    @apply flex;
+}
+
+/* Mod category icon */
+.modbrowser-grid-category > img {
+    @apply w-6;
+    @apply h-6;
+    @apply rounded;
+}
+
+/* Mod category text */
+.modbrowser-grid-category > span {
+    @apply mx-2;
+}
+
+/* Mod stats container */
+.modbrowser-grid-stats {
+    @apply flex;
+    @apply justify-between;
+    @apply items-center;
+}
+
+/* Mod stats total views container */
+.modbrowser-grid-stats-views {
+    @apply relative;
+    @apply ml-2;
+    @apply w-1/5;
+}
+
+/* Mod stats total views icon */
+.modbrowser-grid-stats-views > svg {
+    @apply w-4;
+    @apply h-4;
+}
+
+/* Mod stats total views text */
+.modbrowser-grid-stats-views > span {
+    @apply text-white;
+    @apply text-sm;
+    @apply ml-1;
+}
+
+/* Mod stats total downloads container */
+.modbrowser-grid-stats-downloads {
+    @apply relative;
+    @apply mr-2;
+    @apply flex;
+    @apply justify-end;
+    @apply items-end;
+    @apply flex-col;
+}
+
+/* Mod stats total downloads icon */
+.modbrowser-grid-stats-downloads > svg {
+    @apply w-4;
+    @apply h-4;
+}
+
+/* Mod stats total downloads text */
+.modbrowser-grid-stats-downloads > span {
+    @apply text-white;
+    @apply text-sm;
+    @apply mr-1;
+}
+
+/* Mod buttons and links */
+.modbrowser-grid-links {
+    @apply justify-between;
+    @apply flex;
+    @apply text-center;
+    @apply bg-cyan-700;
+    @apply rounded-b;
+}
+
+/* Mod buttons link (non-drop down). */
+.modbrowser-grid-links > a {
+    @apply text-white;
+    @apply font-bold;
+    @apply p-2;
+    @apply w-1/3;
+}
+
+/* Mod buttons drop down container */
+.modbrowser-grid-links-dropdown {
+    @apply relative;
+    @apply p-2;
+    @apply w-1/3;
+}
+
+/* Mod buttons drop down button */
+.modbrowser-grid-links-dropdown > button {
+    @apply text-white;
+    @apply font-bold;
+    @apply flex;
+    @apply items-center;
+    @apply mx-auto;
+}
+
+/* Mod buttons drop down arrow icon */
+.modbrowser-grid-links-dropdown > button > svg {
+    @apply w-4;
+    @apply h-4;
+    @apply text-center;
+    @apply ml-1;
+}
+
+/* Mod buttons down menu container */
+.modbrowser-grid-links-dropdown > ul {
+    @apply absolute;
+    @apply z-30;
+    @apply py-1;
+    @apply text-sm;
+    @apply bg-cyan-800;
+}

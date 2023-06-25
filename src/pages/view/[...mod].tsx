@@ -135,32 +135,32 @@ const MainContent: React.FC<{
         const catLink = ((mod.category) ? "/category" + ((mod.category.parent) ? "/" + mod.category.parent.url : "") + "/" + mod.category.url : null);
 
         return (
-            <div className="container mx-auto w-full">
-                <div id="modHeader">
-                    <div className="flex justify-center">
-                        <img className="block rounded-t w-[48rem] h-[36rem]" src={banner} alt="Mod Banner" />
+            <div id="mod-view">
+                <div id="mod-header">
+                    <div id="mod-image">
+                        <img src={banner} alt="Mod Banner" />
                     </div>
-                    <h1 className="text-4xl font-bold text-white text-center">{mod.name}</h1>
-                    <div className="flex justify-center items-center p-5">
+                    <h1>{mod.name}</h1>
+                    <div id="mod-categories">
                         {mod.category && (
                             <>
                                 {mod.category.parent ? (
                                     <>
-                                        <a href={catParLink ?? "/category"} className="flex">
-                                            <img src={catParIcon} className="w-6 h-6 rounded" alt="Category Icon" />
-                                            <span className="ml-2 text-white">{mod.category.parent.name ?? "Category"}</span>
+                                        <a href={catParLink ?? "/category"}>
+                                            <img src={catParIcon} alt="Category Icon" />
+                                            <span>{mod.category.parent.name ?? "Category"}</span>
                                         </a>
-                                        <span className="text-2xl text-white text-bold ml-2 mr-2"> → </span>
-                                        <a href={catLink ?? "/category"} className="flex">
-                                            <img src={catIcon} className="w-6 h-6 rounded" alt="Category Icon" />
-                                            <span className="ml-2 text-white">{mod.category.name ?? "Category"}</span>
+                                        <span> → </span>
+                                        <a href={catLink ?? "/category"}>
+                                            <img src={catIcon} alt="Category Icon" />
+                                            <span>{mod.category.name ?? "Category"}</span>
                                         </a>
                                     </>
                                 ) : (
                                     <>
-                                        <a href={catLink ?? "/category"} className="flex">
-                                            <img src={catIcon} className="w-6 h-6 rounded" alt="Category Icon" />
-                                            <span className="ml-2 text-white">{mod.category.name ?? "Category"}</span>
+                                        <a href={catLink ?? "/category"}>
+                                            <img src={catIcon} alt="Category Icon" />
+                                            <span>{mod.category.name ?? "Category"}</span>
                                         </a>
                                     </>
                                 )}
@@ -169,33 +169,33 @@ const MainContent: React.FC<{
                     </div>
                 </div>
 
-                <div id="modButtons" className="flex justify-center">
-                    <a href={overviewLink} className={`${btnBaseClasses} ${modView == "overview" ? activeStyle : defaultStyle}`}>Overview</a>
-                    <a href={installLink} className={`${btnBaseClasses} ${modView == "install" ? activeStyle : defaultStyle}`}>Installation</a>
-                    <a href={sourcesLink} className={`${btnBaseClasses} ${modView == "sources" ? activeStyle : defaultStyle}`}>Sources</a>
-                    <a href={downloadsLink} className={`${btnBaseClasses} ${modView == "downloads" ? activeStyle : defaultStyle}`}>Downloads</a>
+                <div id="mod-buttons">
+                    <a href={overviewLink} className={`mod-button-item ${modView == "overview" ? "mod-button-item-active" : ""}`}>Overview</a>
+                    <a href={installLink} className={`mod-button-item ${modView == "install" ? "mod-button-item-active" : ""}`}>Installation</a>
+                    <a href={sourcesLink} className={`mod-button-item ${modView == "sources" ? "mod-button-item-active" : ""}`}>Sources</a>
+                    <a href={downloadsLink} className={`mod-button-item ${modView == "downloads" ? "mod-button-item-active" : ""}`}>Downloads</a>
                 </div>
 
-                <div className="p-12 w-full rounded-b bg-cyan-900/80">
-                    <div className={`flex flex-wrap mb-4 ${onlyRating ? "justify-end" : "justify-between"}`}>
+                <div id="mod-content">
+                    <div id="mod-content-top" className={`${onlyRating ? "justify-end" : "justify-between"}`}>
                         {mod.ownerName && mod.ownerName.length > 0 && (
-                            <div className="">
-                                <p className="text-white">Maintained By <span className="font-bold">{mod.ownerName}</span></p>
+                            <div id="mod-content-owner">
+                                <p>Maintained By <span className="font-bold">{mod.ownerName}</span></p>
                             </div>
                         )}
                         {mod.ModInstaller && mod.ModInstaller.length > 0 && (
                             <div className="relative">
-                                <div className="p-2 flex items-center bg-cyan-800 hover:bg-cyan-900 rounded-t">
+                                <div className="mod-installer">
                                     <button id="installerDropdownBtn" onClick={() => {
                                         setInstallersMenuOpen(!installersMenuOpen);
-                                    }} className="text-white font-bold flex items-center mx-auto" type="button"><span>Install</span> {!installersMenuOpen ? (
-                                        <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
+                                    }} type="button"><span>Install</span> {!installersMenuOpen ? (
+                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
                                     ) : (
-                                        <svg className="w-4 h-4 text-center ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
+                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
                                     )}</button>
                                 </div>
 
-                                <ul id="installerDropdownMenu" className={`absolute py-2 text-sm bg-cyan-700 ${installersMenuOpen ? "block" : "hidden"}`} aria-labelledby="installerDropdownBtn">
+                                <ul id="installerDropdownMenu" className={installersMenuOpen ? "block" : "hidden"} aria-labelledby="installerDropdownBtn">
                                     {mod.ModInstaller.map((ins: any) => {
                                         return (
                                             <ModInstallerRender
@@ -213,7 +213,7 @@ const MainContent: React.FC<{
                             />
                         </div>
                     </div>
-                    <div className="text-white" id="viewContent">
+                    <div className="text-white" id="mod-description">
                         {body}
                     </div>
                     {session && (
@@ -263,8 +263,7 @@ const ModSources: React.FC<{ cdn?: string }> = ({ cdn }) => {
         <>
             <h3>Sources</h3>
             {mod.ModSource != null && mod.ModSource.length > 0 && (
-                <div className="relative flex flex-wrap gap-6">
-
+                <div id="mod-sources">
                     {mod.ModSource.map((src: ModSource) => {
                         const srcQuery = trpc.source.getSource.useQuery({
                             url: src.sourceUrl,
@@ -291,13 +290,13 @@ const ModSources: React.FC<{ cdn?: string }> = ({ cdn }) => {
                         const srcLink = "https://" + src.sourceUrl + "/" + src.query;
 
                         return (
-                            <a rel="noreferrer" key={"src-" + src.modId + "-" + src.sourceUrl + "-" + src.query} href={srcLink} className="relative !no-underline" target="_blank">
-                                <div className="bg-cyan-500/50 hover:bg-cyan-600/50 rounded w-72 h-48">
-                                    <div className="w-full h-36">
-                                        <img src={banner} className="w-full h-full rounded-t" alt="Source Banner" />
+                            <a rel="noreferrer" key={"src-" + src.modId + "-" + src.sourceUrl + "-" + src.query} href={srcLink} target="_blank" className="mod-source-item">
+                                <div>
+                                    <div className="mod-source-item-image">
+                                        <img src={banner} alt="Source Banner" />
                                     </div>
-                                    <div className="w-full text-center">
-                                        <h3 className="!text-lg font-bold">{name}</h3>
+                                    <div className="mod-source-item-name">
+                                        <h3>{name}</h3>
                                     </div>
                                 </div>
                             </a>
@@ -321,7 +320,7 @@ const ModDownloads: React.FC = () => {
     return (
         <>
             <h3>Downloads</h3>
-            <div className="relative flex flex-wrap gap-6">
+            <div id="mod-downloads">
                 {downloads.map((dl: ModDownload) => {
                     return (
                         <a rel="noreferrer" key={mod.id + "-" + dl.url} onClick={() => {
@@ -329,15 +328,15 @@ const ModDownloads: React.FC = () => {
                                 url: mod.url
                             });
                         }} className="mod-download-item" href={dl.url} target="_blank">
-                            <div key={dl.modId + dl.url} className="flex items-center">
+                            <div key={dl.modId + dl.url}>
                                 <svg className="w-5 h-5" viewBox="0 0 512 512" fill="#FFFFFF" xmlns="http://www.w3.org/2000/svg"><path d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z" /></svg>
-                                <span className="text-white font-lg ml-2">{dl.name}</span>
+                                <span>{dl.name}</span>
                             </div>
                         </a>
                     );
                 })}
             </div>
-            <p className="text-sm mt-4">{dlCnt.toString()} Total Downloads</p>
+            <p className="mod-downloads-total">{dlCnt.toString()} Total Downloads</p>
         </>
     );
 };

@@ -2,97 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom card styles (dynamic). We must include them now and not rely on Tailwind CSS to compile them into the CSS due to use loading the classes from JavaScript. */
-.card-style-default
-{
-    @apply !bg-black/50;
+/* Main */
+@import 'main/header.css';
+@import 'main/login_mobie.css';
+@import 'main/mobile.css';
+
+@import 'main/header/filters.css';
+
+/* Mod Browser */
+@import 'modbrowser/cards.css';
+@import 'modbrowser/table.css';
+@import 'modbrowser/grid.css';
+
+/* Views */
+@import 'view/mod.css';
+
+/* Utils */
+@import 'utils/loading.css';
+@import 'utils/notfound.css';
+@import 'utils/scrollbar.css';
+@import 'utils/unauthorized.css';
+@import 'utils/buttons.css';
+@import 'utils/alerts.css';
+
+/* Forms */
+@import 'forms/main.css';
+
+@import 'forms/content/mod.css';
+@import 'forms/content/category.css';
+@import 'forms/content/source.css';
+
+/* Main */
+main {
+    @apply flex;
+    @apply min-h-screen;
+    @apply flex-col;
+    @apply pb-20;
 }
 
-.card-style-1
-{
-    @apply !bg-red-900/50;
-}
-
-.card-style-2
-{
-    @apply !bg-green-900/50;
-}
-
-.card-style-2
-{
-    @apply !bg-sky-900/50;
-}
-
-.card-style-3
-{
-    @apply !bg-slate-900/50;
-}
-
-.card-style-4
-{
-    @apply !bg-cyan-900/50;
-}
-
-.card-style-5
-{
-    @apply !bg-orange-800/50;
-}
-
-.card-style-6
-{
-    @apply !bg-yellow-700/50;
-}
-
-.card-style-7
-{
-    @apply !bg-blue-900/50;
-}
-
-.card-style-8
-{
-    @apply !bg-green-500/20;
-}
-
-.card-style-9
-{
-    @apply !bg-orange-600/50;
-}
-
-.card-style-10
-{
-    @apply !bg-yellow-600/50;
-}
-
-.card-style-11
-{
-    @apply !bg-green-600/50;
-}
-
-.card-style-12
-{
-    @apply !bg-blue-600/50;
-}
-
-.card-style-13
-{
-    @apply !bg-sky-600/50;
-}
-
-.card-style-14
-{
-    @apply !bg-cyan-600/50;
-}
-
-.card-style-15
-{
-    @apply !bg-purple-600/50;
-}
-
-.card-style-16
-{
-    @apply !bg-lime-600/50;
-}
-
+/* Background And Overlay */
 #bgol
 {
     @apply top-0;
@@ -115,311 +63,4 @@
     @apply bg-center;
     @apply bg-no-repeat;
     @apply bg-cover;
-}
-
-#viewContent > strong
-{
-    @apply font-bold;
-}
-
-#viewContent h1, #viewContent h2, #viewContent h3, #viewContent h4, #viewContent h5, #viewContent h6
-{
-    @apply mt-1;
-    @apply font-bold;
-}
-
-#viewContent pre
-{
-    @apply mt-1;
-    @apply mb-1;
-    @apply p-4;
-    @apply m-1;
-    @apply bg-cyan-800/80;
-    @apply rounded-sm;
-    @apply inline-block;
-    @apply break-all;
-}
-
-#viewContent code
-{
-    @apply p-1;
-    @apply m-1;
-    @apply bg-cyan-800/80;
-    @apply rounded-sm;
-    @apply inline-block;
-    @apply break-all;
-}
-
-#viewContent pre > code
-{
-    @apply !p-0;
-    @apply !m-0;
-    @apply !bg-none;
-    @apply !bg-transparent;
-    @apply !rounded-none;
-    @apply !whitespace-pre-line;
-}
-
-#viewContent h1
-{
-    @apply text-3xl;
-}
-
-#viewContent h2
-{
-    @apply text-2xl;
-}
-
-#viewContent h3
-{
-    @apply text-xl;
-}
-
-#viewContent h4
-{
-    @apply text-lg;
-}
-
-#viewContent ul, #viewContent ol
-{
-    padding: revert;
-    margin: revert;
-}
-
-#viewContent ul
-{
-    @apply list-disc;
-}
-
-#viewContent ol
-{
-    @apply list-decimal;
-}
-
-#viewContent p
-{
-    @apply mb-5;
-}
-
-#viewContent a:not(.modDownload)
-{
-    @apply underline;
-}
-
-::-webkit-scrollbar
-{
-    @apply w-2;
-}
- 
-::-webkit-scrollbar-track
-{
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    @apply rounded-lg;
-	@apply bg-black/60;
-}
- 
-::-webkit-scrollbar-thumb
-{
-    @apply rounded-lg;
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
-	@apply bg-cyan-700;
-}
-
-.mods-not-found {
-    @apply font-bold;
-    @apply text-white;
-    @apply text-center;
-}
-
-/* Views */
-.gridView {
-    @apply grid;
-    @apply grid-cols-[repeat(auto-fill,minmax(theme(width.full),1fr))];
-    @apply sm:grid-cols-[repeat(auto-fill,minmax(theme(width.96),1fr))];
-    @apply justify-items-center;
-    @apply gap-8;
-}
-
-/* Table View */
-.tableView {
-    @apply block;
-}
-
-.modbrowser-table {
-    @apply w-full;
-    @apply table-auto;
-    @apply border-spacing-y-5;
-    @apply border-separate;
-}
-
-.modbrowser-table-row {
-    @apply rounded;
-    @apply bg-gradient-to-b;
-    @apply from-cyan-800;
-    @apply to-cyan-900;
-    @apply shadow-lg;
-}
-
-.modbrowser-table-data {
-    @apply p-0;
-    @apply block;
-    @apply sm:table-cell;
-    @apply text-gray-50;
-}
-
-.modbrowser-table-banner {
-    @apply sm:w-36;
-    @apply sm:h-24;
-    @apply w-full;
-    @apply max-h-full;
-}
-
-.modbrowser-table-banner > img {
-    @apply w-full;
-    @apply h-full;
-    @apply max-h-full;
-}
-
-.modbrowser-table-general {
-    @apply py-6;
-    @apply px-1;
-}
-
-.modbrowser-table-general > h3 {
-    @apply text-white;
-    @apply text-lg;
-    @apply font-bold;
-}
-
-.modbrowser-table-general > p {
-    @apply text-sm;
-}
-
-.modbrowser-table-owner {
-    @apply py-6;
-    @apply px-1;
-}
-
-.modbrowser-table-owner > p {
-    @apply text-sm;
-}
-
-.modbrowser-table-cats {
-    @apply py-6;
-    @apply px-1;
-}
-
-.modbrowser-table-cats > div {
-    @apply flex;
-}
-
-.modbrowser-table-cats > div > img {
-    @apply w-6;
-    @apply h-6;
-    @apply rounded;
-}
-
-.modbrowser-table-cats > div > span {
-    @apply ml-2;
-}
-
-.modbrowser-table-stats {
-    @apply py-6;
-    @apply px-1;
-}
-
-.modbrowser-table-stats > div {
-    @apply flex;
-    @apply items-center;
-    @apply p-1;
-}
-
-.modbrowser-table-stats > div > svg {
-    @apply w-4;
-    @apply h-4;
-}
-
-.modbrowser-table-stats > div > span {
-    @apply text-white;
-    @apply text-sm;
-    @apply ml-1;
-}
-
-.modbrowser-table-rating {
-    @apply py-6;
-    @apply px-6;
-}
-
-.modbrowser-table-btns {
-    @apply p-6;
-    @apply flex;
-    @apply text-center;
-    @apply justify-between;
-    @apply items-end;
-}
-
-.modbrowser-table-btns > a {
-    @apply bg-cyan-700;
-    @apply hover:bg-cyan-600;
-    @apply p-3;
-    @apply rounded;
-    @apply self-end;
-    @apply text-white;
-    @apply font-bold;
-    @apply w-1/3;
-}
-
-.modbrowser-table-btns > div {
-    @apply bg-cyan-700;
-    @apply hover:bg-cyan-600;
-    @apply p-3;
-    @apply rounded;
-}
-
-.modbrowser-table-btns > div > ul {
-    @apply absolute;
-    @apply z-30;
-    @apply py-1;
-    @apply text-sm;
-    @apply bg-cyan-800;
-}
-
-.modbrowser-table-btns > div > button {
-    @apply text-white;
-    @apply font-bold;
-    @apply flex;
-    @apply items-center;
-    @apply mx-auto;
-}
-
-.modbrowser-table-btns > div > button > svg {
-    @apply w-4;
-    @apply h-4;
-    @apply text-center;
-    @apply ml-1;
-}
-
-.unauthorized-div {
-    @apply text-center;
-    @apply mx-auto;
-}
-
-.unauthorized-div > p {
-    @apply text-white;
-    @apply font-bold;
-}
-
-.loading-bar {
-    @apply text-center;
-    @apply text-white;
-    @apply text-2xl;
-}
-
-.mod-download-item {
-    word-break: break-all;
-    @apply bg-cyan-500/50;
-    @apply hover:bg-cyan-600/50;
-    @apply rounded;
-    @apply p-4;
-    @apply !no-underline;
 }

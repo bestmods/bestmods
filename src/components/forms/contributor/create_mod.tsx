@@ -55,17 +55,21 @@ const DownloadForm: React.FC<{
     const nameId = "downloads-" + num + "-name";
     const urlId = "downloads-" + num + "-url";
 
-    return (<>
-        <div className="mb-4">
-            <h3 className="text-gray-200 text-lg font-bold mb-2">Download #{num}</h3>
+    return (
+        <>
+            <h3>Download #{num}</h3>
 
-            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Name</label>
-            <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={nameId} id={nameId} defaultValue={mod && mod.ModDownload ? mod.ModDownload[num - 1]?.name ?? "" : ""} type="text" />
+            <div className="form-container">
+                <label className="form-label">Name</label>
+                <input className="form-input" name={nameId} id={nameId} defaultValue={mod && mod.ModDownload ? mod.ModDownload[num - 1]?.name ?? "" : ""} type="text" />
+            </div>
 
-            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
-            <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={urlId} id={urlId} defaultValue={mod && mod.ModDownload ? mod.ModDownload[num - 1]?.url ?? "" : ""} type="text" />
-        </div>
-    </>);
+            <div className="form-container">
+                <label className="form-label">URL</label>
+                <input className="form-input" name={urlId} id={urlId} defaultValue={mod && mod.ModDownload ? mod.ModDownload[num - 1]?.url ?? "" : ""} type="text" />
+            </div>
+        </>
+    );
 };
 
 const ScreenshotForm: React.FC<{
@@ -77,12 +81,16 @@ const ScreenshotForm: React.FC<{
 }) => {
     const url_id = "screenshots-" + num + "-url";
 
-    return (<>
-        <h3 className="text-gray-200 text-lg font-bold mb-2">Screenshot #{num}</h3>
+    return (
+        <>
+            <h3>Screenshot #{num}</h3>
 
-        <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
-        <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={url_id} id={url_id} defaultValue={mod && mod.ModScreenshot ? mod.ModScreenshot[num - 1]?.url ?? "" : ""} type="text" />
-    </>);
+            <div className="form-container">
+                <label className="form-label">URL</label>
+                <input className="form-input" name={url_id} id={url_id} defaultValue={mod && mod.ModScreenshot ? mod.ModScreenshot[num - 1]?.url ?? "" : ""} type="text" />
+            </div>
+        </>
+    );
 }
 
 const SourceForm: React.FC<{ 
@@ -102,23 +110,27 @@ const SourceForm: React.FC<{
 
     return (
         <>
-            <h3 className="text-gray-200 text-lg font-bold mb-2">Source #{num}</h3>
+            <h3>Source #{num}</h3>
 
-            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Source</label>
-            <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={src_url} id={src_url} value={srcUrlVal} onChange={(e) => {
-                const val = e.target.value;
+            <div className="form-container">
+                <label className="form-label">Source</label>
+                <select className="form-input" name={src_url} id={src_url} value={srcUrlVal} onChange={(e) => {
+                    const val = e.target.value;
 
-                setSrcUrlVal(val);
-            }}>
-                {srcs.map((src) => {
-                    return (
-                        <option key={src.url} value={src.url}>{src.name}</option>
-                    );
-                })}
-            </select>
-
-            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Query URL</label>
-            <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={srcQuery} id={srcQuery} defaultValue={mod && mod.ModSource  ? mod.ModSource[num - 1]?.query ?? "" : ""} type="text" />
+                    setSrcUrlVal(val);
+                }}>
+                    {srcs.map((src) => {
+                        return (
+                            <option key={src.url} value={src.url}>{src.name}</option>
+                        );
+                    })}
+                </select>
+            </div>
+            
+            <div className="form-container">
+                <label className="form-label">Query URL</label>
+                <input className="form-input" name={srcQuery} id={srcQuery} defaultValue={mod && mod.ModSource  ? mod.ModSource[num - 1]?.query ?? "" : ""} type="text" />
+            </div>
         </>
     )
 };
@@ -141,23 +153,26 @@ const InstallerForm: React.FC<{
 
     return (
         <>
-            <h3 className="text-gray-200 text-lg font-bold mb-2">Installer #{num}</h3>
+            <h3>Installer #{num}</h3>
+            <div className="form-container">
+                <label className="form-label">Source</label>
+                <select className="form-input" name={src_url} id={src_url} value={srcUrlVal} onChange={(e) => {
+                    const val = e.target.value;
 
-            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Source</label>
-            <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={src_url} id={src_url} value={srcUrlVal} onChange={(e) => {
-                const val = e.target.value;
-
-                setSrcUrlVal(val);
-            }}>
-                {srcs.map((src) => {
-                    return (
-                        <option key={src.url} value={src.url}>{src.name}</option>
-                    );
-                })}
-            </select>
-
-            <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
-            <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name={url} id={url} defaultValue={mod && mod.ModInstaller ? mod.ModInstaller[num - 1]?.url ?? "" : ""} type="text" />
+                    setSrcUrlVal(val);
+                }}>
+                    {srcs.map((src) => {
+                        return (
+                            <option key={src.url} value={src.url}>{src.name}</option>
+                        );
+                    })}
+                </select>
+            </div>
+            
+            <div className="form-container">
+                <label className="form-label">URL</label>
+                <input className="form-input" name={url} id={url} defaultValue={mod && mod.ModInstaller ? mod.ModInstaller[num - 1]?.url ?? "" : ""} type="text" />
+            </div>
         </>
     )
 };
@@ -178,7 +193,7 @@ const ModForm: React.FC<{
     // Submit button.
     const submitBtn =
         <div className="text-center">
-            <button type="submit" className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">{!mod ? "Add Mod!" : "Edit Mod!"}</button>
+            <button type="submit" className="btn btn-blue">{!mod ? "Add Mod!" : "Edit Mod!"}</button>
         </div>;
 
     // State values we cannot extract from Formik.
@@ -229,7 +244,7 @@ const ModForm: React.FC<{
         return (<>
             {range.map((num) => {                
                 return (
-                    <div key={"download-" + num} className="mb-4">
+                    <div key={"download-" + num} className="form-container">
                         <DownloadForm
                             mod={mod}
                             num={num}
@@ -240,7 +255,7 @@ const ModForm: React.FC<{
 
                             // Subtract count.
                             setDownloadCount(downloadCount - 1);
-                        }} className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
+                        }} className="btn btn-red">Remove</button>
                     </div>
                 );
             })}
@@ -250,7 +265,7 @@ const ModForm: React.FC<{
 
                     // Increment downloads count.
                     setDownloadCount(downloadCount + 1);
-                }} className="text-white bg-green-800 hover:bg-green-900 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
+                }} className="btn btn-green">Add</button>
             </div>
         </>);
     }, [downloadCount])
@@ -263,7 +278,7 @@ const ModForm: React.FC<{
         return (<>
             {range.map((num) => {
                 return (
-                    <div key={"screenshot-" + num} className="mb-4">
+                    <div key={"screenshot-" + num} className="form-container">
                         <ScreenshotForm
                             mod={mod}
                             num={num}
@@ -274,18 +289,18 @@ const ModForm: React.FC<{
 
                             // Subtract count.
                             setScreenShotCount(screenShotCount - 1);
-                        }} className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
+                        }} className="btn btn-red">Remove</button>
                     </div>
                 );
             })}
 
-            <div className="mb-4">
+            <div className="form-container">
                 <button onClick={(e) => {
                     e.preventDefault();
 
                     // Increment downloads count.
                     setScreenShotCount(screenShotCount + 1);
-                }} className="text-white bg-green-800 hover:bg-green-900 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
+                }} className="btn btn-green">Add</button>
             </div>
         </>);
     }, [screenShotCount]);
@@ -299,7 +314,7 @@ const ModForm: React.FC<{
             {range.map((num) => {
 
                 return (
-                    <div key={num} className="mb-4">
+                    <div key={num} className="form-container">
                         <SourceForm
                             mod={mod}
                             num={num}
@@ -311,17 +326,17 @@ const ModForm: React.FC<{
 
                             // Subtract count.
                             setSourceCount(sourceCount - 1);
-                        }} className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
+                        }} className="btn btn-red">Remove</button>
                     </div>
                 );
             })}
-            <div className="mb-4">
+            <div className="form-container">
                 <button onClick={(e) => {
                     e.preventDefault();
 
                     // Increment downloads count.
                     setSourceCount(sourceCount + 1);
-                }} className="text-white bg-green-800 hover:bg-green-900 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
+                }} className="btn btn-green">Add</button>
             </div>
         </>);
     }, [sourceCount]);
@@ -334,7 +349,7 @@ const ModForm: React.FC<{
         return (<>
             {range.map((num) => {
                 return (
-                    <div key={"installer-" + num} className="mb-4">
+                    <div key={"installer-" + num} className="form-container">
                         <InstallerForm
                             mod={mod}
                             num={num}
@@ -346,17 +361,17 @@ const ModForm: React.FC<{
 
                             // Subtract count.
                             setInstallerCount(installerCount - 1);
-                        }} className="text-white bg-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Remove</button>
+                        }} className="btn btn-red">Remove</button>
                     </div>
                 );
             })}
-            <div className="mb-4">
+            <div className="form-container">
                 <button onClick={(e) => {
                     e.preventDefault();
 
                     // Increment downloads count.
                     setInstallerCount(installerCount + 1);
-                }} className="text-white bg-green-800 hover:bg-green-900 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-4 py-2 mt-2">Add</button>
+                }} className="btn btn-green">Add</button>
             </div>
         </>);
     }, [installerCount]);
@@ -509,10 +524,10 @@ const ModForm: React.FC<{
                 form={form}
                 submitBtn={submitBtn}
             >
-                <h2 className="text-white text-2xl font-bold">General Information</h2>
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Image Banner</label>
-                    <input className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="image_banner" type="file" placeholder="Mod Image Banner" onChange={(e) => {
+                <h2>General Information</h2>
+                <div className="form-container">
+                    <label className="form-label">Image Banner</label>
+                    <input className="form-input" name="image_banner" type="file" placeholder="Mod Image Banner" onChange={(e) => {
                           const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
 
                           if (file) {
@@ -526,27 +541,27 @@ const ModForm: React.FC<{
                           }
                     }} />
 
-                    <Field className="inline align-middle border-blue-900 rounded py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="bremove" type="checkbox" /> <label className="inline align-middle text-gray-200 text-sm font-bold mb-2">Remove Current</label>
+                    <Field className="form-checkbox" name="bremove" type="checkbox" /> <label className="form-checkbox-label">Remove Current</label>
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Name</label>
-                    <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="name" type="text" placeholder="Mod Name" />
+                <div className="form-container">
+                    <label className="form-label">Name</label>
+                    <Field className="form-input" name="name" type="text" placeholder="Mod Name" />
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Owner Name</label>
-                    <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="owner_name" type="text" placeholder="Owner Name If Any" />
+                <div className="form-container">
+                    <label className="form-label">Owner Name</label>
+                    <Field className="form-input" name="owner_name" type="text" placeholder="Owner Name If Any" />
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">URL</label>
-                    <Field className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="url" type="text" placeholder="bestmods.io/view/value" />
+                <div className="form-container">
+                    <label className="form-label">URL</label>
+                    <Field className="form-input" name="url" type="text" placeholder="bestmods.io/view/value" />
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Category</label>
-                    <select className="shadow appearance-none border-blue-900 rounded w-full py-2 px-3 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" value={category ?? 0} onChange={(e) => {
+                <div className="form-container">
+                    <label className="form-label">Category</label>
+                    <select className="form-input" value={category ?? 0} onChange={(e) => {
                         const val = e.target.value;
 
                         if (val)
@@ -567,31 +582,31 @@ const ModForm: React.FC<{
                     </select>
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Short Description</label>
-                    <Field rows="16" cols="32" className="shadow appearance-none border-blue-900 rounded w-full p-6 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="description_short" as="textarea" placeholder="Mod Short Description" />
+                <div className="form-container">
+                    <label className="form-label">Short Description</label>
+                    <Field rows="16" cols="32" className="form-input" name="description_short" as="textarea" placeholder="Mod Short Description" />
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Description</label>
-                    <Field rows="16" cols="32" className="shadow appearance-none border-blue-900 rounded w-full p-6 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="description" as="textarea" placeholder="Mod Description" />
+                <div className="form-container">
+                    <label className="form-label">Description</label>
+                    <Field rows="16" cols="32" className="form-input" name="description" as="textarea" placeholder="Mod Description" />
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-200 text-sm mt-4 font-bold mb-2">Installation</label>
-                    <Field rows="16" cols="32" className="shadow appearance-none border-blue-900 rounded w-full p-6 text-gray-200 bg-gray-800 leading-tight focus:outline-none focus:shadow-outline" name="install" as="textarea" placeholder="Mod Installation" />
+                <div className="form-container">
+                    <label className="form-label">Installation</label>
+                    <Field rows="16" cols="32" className="form-input" name="install" as="textarea" placeholder="Mod Installation" />
                 </div>
 
-                <h2 className="text-white text-2xl font-bold">Sources</h2>
+                <h2>Sources</h2>
                 {sources_form}
 
-                <h2 className="text-white text-2xl font-bold">Installers</h2>
+                <h2>Installers</h2>
                 {installers_form}
 
-                <h2 className="text-white text-2xl font-bold">Downloads</h2>
+                <h2>Downloads</h2>
                 {downloads_form}
 
-                <h2 className="text-white text-2xl font-bold">Screenshots</h2>
+                <h2>Screenshots</h2>
                 {screenshots_form}
             </FormTemplate>
         </>

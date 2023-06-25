@@ -1,0 +1,283 @@
+#mod-view {
+    @apply container;
+    @apply mx-auto;
+    @apply w-full;
+}
+
+#mod-header > h1 {
+    @apply text-4xl;
+    @apply font-bold;
+    @apply text-white;
+    @apply text-center;
+}
+
+#mod-image {
+    @apply flex;
+    @apply justify-center;
+}
+
+#mod-image > img {
+    @apply block;
+    @apply rounded-t;
+    @apply w-[48rem];
+    @apply h-[36rem];
+}
+
+#mod-categories {
+    @apply flex;
+    @apply justify-center;
+    @apply items-center;
+    @apply p-5;
+}
+
+#mod-categories > a {
+    @apply flex;
+}
+
+#mod-categories > span {
+    @apply text-2xl;
+    @apply text-white;
+    @apply font-bold;
+    @apply mx-2;
+}
+
+#mod-categories > a > img {
+    @apply w-6;
+    @apply h-6;
+    @apply rounded;
+}
+
+#mod-categories > a > span {
+    @apply ml-2;
+    @apply text-white;
+}
+
+#mod-buttons {
+    @apply flex;
+    @apply justify-center;
+}
+
+.mod-button-item {
+    @apply !text-sm;
+    @apply text-white;
+    @apply rounded-t;
+    @apply p-1;
+    @apply md:p-3;
+    @apply mr-1;
+    @apply bg-cyan-900/50;
+}
+
+.mod-button-item-active {
+    @apply !bg-cyan-500/50;
+    @apply font-bold;
+}
+
+#mod-content {
+    @apply p-12;
+    @apply w-full;
+    @apply rounded-b;
+    @apply bg-cyan-900/80;
+}
+
+#mod-content-top {
+    @apply flex;
+    @apply flex-wrap;
+    @apply mb-4;
+}
+
+#mod-content-owner > p {
+    @apply text-white;
+}
+
+.mod-installer {
+    @apply p-2;
+    @apply flex;
+    @apply items-center;
+    @apply bg-cyan-800;
+    @apply hover:bg-cyan-900;
+    @apply rounded-t;
+}
+
+.mod-installer > button {
+    @apply text-white;
+    @apply font-bold;
+    @apply flex;
+    @apply items-center;
+    @apply mx-auto;
+}
+
+.mod-installer > button > svg {
+    @apply w-4;
+    @apply h-4;
+    @apply text-center;
+    @apply ml-1;
+}
+
+.mod-installer > ul {
+    @apply absolute;
+    @apply py-2;
+    @apply text-sm;
+    @apply bg-cyan-700;
+}
+
+#mod-description > strong
+{
+    @apply font-bold;
+}
+
+#mod-description h1, #mod-description h2, #mod-description h3, #mod-description h4, #mod-description h5, #mod-description h6
+{
+    @apply mt-1;
+    @apply font-bold;
+}
+
+#mod-description pre
+{
+    @apply mt-1;
+    @apply mb-1;
+    @apply p-4;
+    @apply m-1;
+    @apply bg-cyan-800/80;
+    @apply rounded-sm;
+    @apply inline-block;
+    @apply break-all;
+}
+
+#mod-description code
+{
+    @apply p-1;
+    @apply m-1;
+    @apply bg-cyan-800/80;
+    @apply rounded-sm;
+    @apply inline-block;
+    @apply break-all;
+}
+
+#mod-description pre > code
+{
+    @apply !p-0;
+    @apply !m-0;
+    @apply !bg-none;
+    @apply !bg-transparent;
+    @apply !rounded-none;
+    @apply !whitespace-pre-line;
+}
+
+#mod-description h1
+{
+    @apply text-3xl;
+}
+
+#mod-description h2
+{
+    @apply text-2xl;
+}
+
+#mod-description h3
+{
+    @apply text-xl;
+}
+
+#mod-description h4
+{
+    @apply text-lg;
+}
+
+#mod-description ul, #mod-description ol
+{
+    padding: revert;
+    margin: revert;
+}
+
+#mod-description ul
+{
+    @apply list-disc;
+}
+
+#mod-description ol
+{
+    @apply list-decimal;
+}
+
+#mod-description p
+{
+    @apply mb-5;
+}
+
+#mod-description a:not(.modDownload)
+{
+    @apply underline;
+}
+
+#mod-sources {
+    @apply relative;
+    @apply flex;
+    @apply flex-wrap;
+    @apply gap-6;
+}
+
+.mod-source-item {
+    @apply relative;
+    @apply !no-underline;
+}
+
+.mod-source-item > div {
+    @apply bg-cyan-500/50;
+    @apply hover:bg-cyan-600/50;
+    @apply rounded;
+    @apply w-72;
+    @apply h-48;
+}
+
+.mod-source-item-image {
+    @apply w-full;
+    @apply h-36;
+}
+
+.mod-source-item-image > img {
+    @apply w-full;
+    @apply h-full;
+    @apply rounded-t;
+}
+
+.mod-source-item-name {
+    @apply w-full;
+    @apply text-center;
+}
+
+.mod-source-item-name > h3 {
+    @apply !text-lg;
+    @apply font-bold;
+}
+
+#mod-downloads {
+    @apply relative;
+    @apply flex;
+    @apply flex-wrap;
+    @apply gap-6;
+}
+
+.mod-download-item {
+    @apply break-all;
+    @apply bg-cyan-500/50;
+    @apply hover:bg-cyan-600/50;
+    @apply rounded;
+    @apply p-4;
+    @apply !no-underline;
+}
+
+.mod-download-item > div {
+    @apply flex;
+    @apply items-center;
+}
+
+.mod-download-item > div > span {
+    @apply text-white;
+    @apply text-lg;
+    @apply ml-2;
+}
+
+.mod-downloads-total {
+    @apply text-sm;
+    @apply mt-4;
+}
