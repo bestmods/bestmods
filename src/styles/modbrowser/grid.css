@@ -10,7 +10,8 @@
 /* Mod row */
 .modbrowser-grid-row {
     @apply w-4/5;
-    @apply md:w-96 h-[32rem];
+    @apply min-h-[32rem];
+    @apply md:w-96;
     @apply rounded;
     @apply bg-gradient-to-b;
     @apply from-cyan-800;
@@ -18,6 +19,9 @@
     @apply flex;
     @apply flex-col;
     @apply shadow-lg;
+
+    @apply ring-4;
+    @apply ring-cyan-950;
 }
 
 /* Mod image container */
@@ -168,6 +172,7 @@
     @apply font-bold;
     @apply p-2;
     @apply w-1/3;
+    @apply hover:bg-cyan-600;
 }
 
 /* Mod buttons drop down container */
@@ -175,6 +180,7 @@
     @apply relative;
     @apply p-2;
     @apply w-1/3;
+    @apply hover:bg-cyan-600;
 }
 
 /* Mod buttons drop down button */
