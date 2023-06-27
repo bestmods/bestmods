@@ -7,7 +7,6 @@ const GridRow: React.FC<{
     addClasses: string,
     banner: string,
     descShort: string,
-    dots: string,
     cat: any,
     catPar?: Category | null,
     catParIcon: string,
@@ -20,7 +19,6 @@ const GridRow: React.FC<{
     addClasses,
     banner,
     descShort,
-    dots,
     cat,
     catPar,
     catParIcon,
@@ -41,7 +39,6 @@ const GridRow: React.FC<{
                         <p>By {mod.ownerName}</p>
                     </div>
                 )}
-
             </div>
             <div className="modbrowser-grid-main">
                 <h3><a href={viewLink}>{mod.name}</a></h3>

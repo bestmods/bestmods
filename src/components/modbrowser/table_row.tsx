@@ -7,7 +7,6 @@ const TableRow: React.FC<{
     addClasses: string,
     banner: string,
     descShort: string,
-    dots: string,
     cat: any,
     catPar?: Category | null,
     catParIcon: string,
@@ -20,7 +19,6 @@ const TableRow: React.FC<{
     addClasses,
     banner,
     descShort,
-    dots,
     cat,
     catPar,
     catParIcon,
@@ -42,7 +40,7 @@ const TableRow: React.FC<{
             <td className="modbrowser-table-data">
                 <div className="modbrowser-table-general">
                     <h3>{mod.name}</h3>
-                    <p>{descShort.substring(0, 120)}{dots}</p>
+                    <p>{descShort}</p>
                 </div>
             </td>
             <td className="modbrowser-table-data">
