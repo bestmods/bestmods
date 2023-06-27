@@ -178,22 +178,25 @@
 /* Mod buttons drop down container */
 .modbrowser-grid-links-dropdown {
     @apply relative;
-    @apply p-2;
     @apply w-1/3;
     @apply hover:bg-cyan-600;
+    @apply flex;
+    @apply items-center;
+    @apply rounded;
 }
 
 /* Mod buttons drop down button */
-.modbrowser-grid-links-dropdown > button {
+.modbrowser-grid-links-dropdown > div {
     @apply text-white;
     @apply font-bold;
     @apply flex;
     @apply items-center;
     @apply mx-auto;
+    @apply p-2;
 }
 
 /* Mod buttons drop down arrow icon */
-.modbrowser-grid-links-dropdown > button > svg {
+.modbrowser-grid-links-dropdown > div > svg {
     @apply w-4;
     @apply h-4;
     @apply text-center;
@@ -203,8 +206,16 @@
 /* Mod buttons down menu container */
 .modbrowser-grid-links-dropdown > ul {
     @apply absolute;
+    @apply w-full;
+    @apply top-10;
     @apply z-30;
-    @apply py-1;
     @apply text-sm;
     @apply bg-cyan-800;
+}
+
+.modbrowser-grid-links-dropdown > ul > li > a {
+    @apply p-5;
+    @apply border-b-2;
+    @apply border-b-slate-800;
+    @apply hover:bg-cyan-700;
 }
