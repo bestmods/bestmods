@@ -64,12 +64,12 @@
 
 /* Mod main container */
 .modbrowser-grid-main {
-    @apply ml-8;
-    @apply mr-8;
-    @apply mb-4;
-    @apply max-h-24;
+    @apply py-1;
+    @apply px-2;
     @apply grow;
     @apply text-ellipsis;
+    @apply overflow-clip;
+    @apply w-full;
 }
 
 /* Mod title headline */
@@ -84,16 +84,17 @@
 /* Mod description text */
 .modbrowser-grid-main > p {
     @apply text-white;
-    @apply mt-2;
+    @apply pt-2;
     @apply text-sm;
 }
 
 /* Mod category container */
 .modbrowser-grid-category {
-    @apply mx-8;
-    @apply mb-1;
+    @apply py-2;
+    @apply px-2;
     @apply text-white;
     @apply flex;
+    @apply items-center;
 }
 
 /* Mod category icon */
@@ -105,7 +106,7 @@
 
 /* Mod category text */
 .modbrowser-grid-category > span {
-    @apply mx-2;
+    @apply ml-2;
 }
 
 /* Mod stats container */
@@ -113,12 +114,12 @@
     @apply flex;
     @apply justify-between;
     @apply items-center;
+    @apply px-2;
 }
 
 /* Mod stats total views container */
 .modbrowser-grid-stats-views {
     @apply relative;
-    @apply ml-2;
     @apply flex;
     @apply justify-start;
     @apply items-center;
@@ -128,21 +129,19 @@
 
 /* Mod stats total views icon */
 .modbrowser-grid-stats-views > svg {
-    @apply w-4;
-    @apply h-4;
+    @apply w-6;
+    @apply h-6;
 }
 
 /* Mod stats total views text */
 .modbrowser-grid-stats-views > span {
     @apply text-white;
     @apply text-sm;
-    @apply ml-1;
 }
 
 /* Mod stats total downloads container */
 .modbrowser-grid-stats-downloads {
     @apply relative;
-    @apply mr-2;
     @apply flex;
     @apply justify-end;
     @apply items-center;
@@ -151,15 +150,14 @@
 
 /* Mod stats total downloads icon */
 .modbrowser-grid-stats-downloads > svg {
-    @apply w-4;
-    @apply h-4;
+    @apply w-6;
+    @apply h-6;
 }
 
 /* Mod stats total downloads text */
 .modbrowser-grid-stats-downloads > span {
     @apply text-white;
     @apply text-sm;
-    @apply mr-1;
 }
 
 /* Mod buttons and links */
