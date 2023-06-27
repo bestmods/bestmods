@@ -44,7 +44,7 @@ const GridRow: React.FC<{
 
             </div>
             <div className="modbrowser-grid-main">
-                <h3>{mod.name}</h3>
+                <h3><a href={viewLink}>{mod.name}</a></h3>
                 <p>{descShort}</p>
             </div>
             <div className="grow"></div>
