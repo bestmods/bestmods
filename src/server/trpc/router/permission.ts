@@ -4,22 +4,6 @@ import { router, protectedProcedure, adminProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server"
 
 export const permissionRouter = router({
-    checkPerm: protectedProcedure
-        .input(z.object({
-            userId: z.string(),
-            perm: z.string()
-        }))
-        .query(({ ctx, input }) => {
-            if (input.userId.length < 1)
-                return null;
-
-            return ctx.prisma.permissions.findFirst({
-                where: {
-                    userId: input.userId,
-                    perm: input.perm
-                }
-            });
-        }),
     addUserPerm: adminProcedure
         .input(z.object({
             userId: z.string(),

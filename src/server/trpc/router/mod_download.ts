@@ -29,39 +29,5 @@ export const modDownloadRouter = router({
                     code: "BAD_REQUEST"
                 });
             }
-        }),
-    addModDownload: contributorProcedure
-        .input(z.object({
-            modId: z.number(),
-            name: z.string(),
-            url: z.string()
-        }))
-        .mutation(async ({ ctx, input }) => {
-            try {
-                await ctx.prisma.modDownload.upsert({
-                    where: {
-                        modId_url: {
-                            modId: input.modId,
-                            url: input.url
-                        }
-                    },
-                    create: {
-                        modId: input.modId,
-                        name: input.name,
-                        url: input.url
-                    },
-                    update: {
-                        name: input.name
-                    }
-                });
-            } catch (error) {
-                console.error("Error adding mod download for mod ID '" + input.modId + "' for URL '" + input.url + "'.");
-                console.error(error);
-
-                throw new TRPCError({
-                    code: "CONFLICT",
-                    message: (typeof error == "string") ? error : ""
-                })
-            }
         })
 });
