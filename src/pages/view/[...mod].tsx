@@ -21,18 +21,6 @@ const ModViewCtx = React.createContext<string | null>(null);
 const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
-    // View generator.
-    const [isViewed, setIsViewed] = useState(false);
-    const modViewMut = trpc.modView.incModViewCnt.useMutation();
-
-    if (!isViewed && mod && modView == "overview") {
-        modViewMut.mutate({
-            url: mod.url
-        });
-
-        setIsViewed(true);
-    }
-
     // Handle background.
     let bg_file: string | undefined = undefined;
         
@@ -363,6 +351,20 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             url: url
         }
     });
+
+    // Increment view if mod is found.
+    if (mod) {
+        await prisma.mod.update({
+            where: {
+                id: mod.id
+            },
+            data: {
+                totalViews: {
+                    increment: 1
+                }
+            }
+        })
+    }
 
     return { 
         props: { 
