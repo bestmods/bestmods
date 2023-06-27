@@ -88,8 +88,11 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({
 
                 break;
 
-            default:
+            case 5:
                 setRating(mod.totalRating);
+
+            default:
+                setRating(mod.ratingHour);
         }
 
         setReceivedRating(true);
