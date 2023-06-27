@@ -119,7 +119,11 @@
 .modbrowser-grid-stats-views {
     @apply relative;
     @apply ml-2;
-    @apply w-1/5;
+    @apply flex;
+    @apply justify-start;
+    @apply items-center;
+    @apply flex-col;
+    @apply text-center;
 }
 
 /* Mod stats total views icon */
@@ -141,7 +145,7 @@
     @apply mr-2;
     @apply flex;
     @apply justify-end;
-    @apply items-end;
+    @apply items-center;
     @apply flex-col;
 }
 
