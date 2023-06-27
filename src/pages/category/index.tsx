@@ -4,9 +4,7 @@ import React from "react";
 import { BestModsPage } from '../../components/main';
 import HeadInfo from "../../components/head";
 
-import { trpc } from '../../utils/trpc';
 import Link from 'next/link';
-import { type Category } from "@prisma/client";
 
 import { prisma } from '../../server/db/client';
 
@@ -29,7 +27,7 @@ const Home: NextPage<{
 };
 
 const ChildRender: React.FC<{
-    child: Category,
+    child: any,
     parent: any,
     cdn: string
 }> = ({
@@ -37,9 +35,6 @@ const ChildRender: React.FC<{
     parent,
     cdn
 }) => {
-    const query = trpc.category.getModCnt.useQuery({ id: child.id });
-    const ctnData = query.data;
-
     const viewLinkChild = "/category/" + parent.url + "/" + child.url;
     const iconChild = (child.icon) ? child.icon : cdn + "/images/default_icon.png";
 
@@ -47,7 +42,7 @@ const ChildRender: React.FC<{
         <div className="flex items-center flex-wrap ml-4 mb-4">
             <Link href={viewLinkChild} className="flex items-center flex-wrap">
                 <img src={iconChild} className="w-8 h-8" alt="Category Child Icon" />
-                <span className="text-sm text-white ml-2">{child.name} ({ctnData?._count?.Mod ?? 0})</span>
+                <span className="text-sm text-white ml-2">{child.name} ({child._count?.Mod ?? 0})</span>
             </Link>
         </div>
     );
@@ -58,6 +53,7 @@ const Categories: React.FC<{
 }> = ({
     cats
 }) => {
+    console.log(cats);
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
     return (
@@ -107,7 +103,19 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             parentId: null
         },
         include: {
-            children: true,
+            children: {
+                select: {
+                    id: true,
+                    name: true,
+                    icon: true,
+                    url: true,
+                    _count: {
+                        select: {
+                            Mod: true
+                        }
+                    }
+                }
+            },
             _count: {
                 select: {
                     Mod: true
