@@ -48,8 +48,9 @@
     @apply h-8;
     @apply pr-4;
     @apply rounded-tr;
-    @apply bg-cyan-900/60;
-    @apply hover:bg-cyan-900;
+    @apply bg-slate-700/60;
+    @apply hover:bg-black/90;
+    @apply hover:font-bold;
     @apply flex;
     @apply items-center;
 }
@@ -205,6 +206,7 @@
 
 /* Mod buttons down menu container */
 .modbrowser-grid-links-dropdown > ul {
+    @apply break-all;
     @apply absolute;
     @apply w-full;
     @apply top-10;

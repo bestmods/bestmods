@@ -38,7 +38,7 @@ const GridRow: React.FC<{
                 <img src={banner} alt="Mod Banner" />
                 {mod.ownerName && mod.ownerName.length > 0 && (
                     <div className="modbrowser-grid-image-owner">
-                        <p>{mod.ownerName}</p>
+                        <p>By {mod.ownerName}</p>
                     </div>
                 )}
 
