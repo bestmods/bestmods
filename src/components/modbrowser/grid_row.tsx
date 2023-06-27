@@ -38,15 +38,16 @@ const GridRow: React.FC<{
                 <img src={banner} alt="Mod Banner" />
                 {mod.ownerName && mod.ownerName.length > 0 && (
                     <div className="modbrowser-grid-image-owner">
-                        <p>{mod.ownerName}</p>
+                        <p>By {mod.ownerName}</p>
                     </div>
                 )}
 
             </div>
             <div className="modbrowser-grid-main">
-                <h3>{mod.name}</h3>
-                <p>{descShort.substring(0, 120)}{dots}</p>
+                <h3><a href={viewLink}>{mod.name}</a></h3>
+                <p>{descShort}</p>
             </div>
+            <div className="grow"></div>
             {catPar && (
                 <div className="modbrowser-grid-category">
                     <img src={catParIcon} alt="Category Icon" />
@@ -71,11 +72,10 @@ const GridRow: React.FC<{
                     </span>
                 </div>
             )}
-            <div className="grow"></div>
             <div className="modbrowser-grid-stats">
                 <div className="modbrowser-grid-stats-views">
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11085)"><path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M2 12C3.60014 7.90264 7.33603 5 12 5C16.664 5 20.3999 7.90264 22 12C20.3999 16.0974 16.664 19 12 19C7.33603 19 3.60014 16.0974 2 12Z" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11085"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
-                    <span className="text-white text-sm ml-1">{mod.totalViews.toString()}</span>
+                    <span className="text-white text-sm">{mod.totalViews.toString()}</span>
                 </div>
 
                 <ModRatingRender
@@ -90,16 +90,20 @@ const GridRow: React.FC<{
             <div className="modbrowser-grid-links">
                 <a href={viewLink}>View</a>
                 {mod.ModInstaller && mod.ModInstaller.length > 0 && (
-                    <div className="modbrowser-grid-links-dropdown">
-                        <button id={"installerDropdownBtn" + mod.id} onClick={() => {
+                    <button className="modbrowser-grid-links-dropdown" onClick={() => {
                             setInstallersMenuOpen(!installersMenuOpen);
-                        }} type="button"><span>Install</span> {!installersMenuOpen ? (
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
-                        ) : (
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
-                        )}</button>
+                        }} type="button">
+                            <div>
+                                <span>Install</span>
+                                
+                                {!installersMenuOpen ? (
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
+                            ) : (
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
+                            )}
+                        </div>
 
-                        <ul id={"installerDropdownMenu" + mod.id} className={installersMenuOpen ? "block" : "hidden"} aria-labelledby={"installerDropdownBtn" + mod.id}>
+                        <ul className={installersMenuOpen ? "block" : "hidden"} aria-labelledby={"installerDropdownBtn" + mod.id}>
                             {mod.ModInstaller.map((ins: any) => {
                                 return (
                                     <ModInstallerRender
@@ -109,19 +113,23 @@ const GridRow: React.FC<{
                                 );
                             })}
                         </ul>
-                    </div>
+                    </button>
                 )}
                 {mod.ModSource && mod.ModSource.length > 0 && (
-                    <div className="modbrowser-grid-links-dropdown">
-                        <button id={"sourceDropdownBtn" + mod.id} onClick={() => {
-                            setSourcesMenuOpen(!sourcesMenuOpen);
-                        }}type="button"><span>Sources</span> {!sourcesMenuOpen ? (
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
-                        ) : (
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
-                        )}</button>
+                    <button className="modbrowser-grid-links-dropdown" onClick={() => {
+                        setSourcesMenuOpen(!sourcesMenuOpen);
+                    }} type="button">
+                        <div>
+                            <span>Sources</span> 
+                            
+                            {!sourcesMenuOpen ? (
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
+                            ) : (
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
+                            )}
+                        </div>
 
-                        <ul id={"sourceDropdownMenu" + mod.id} className={sourcesMenuOpen ? "block" : "hidden"} aria-labelledby={"installerDropdownBtn" + mod.id}>
+                        <ul className={sourcesMenuOpen ? "block" : "hidden"}>
                             {mod.ModSource.map((src: any) => {
                                 return (
                                     <ModSourceRender
@@ -131,7 +139,7 @@ const GridRow: React.FC<{
                                 );
                             })}
                         </ul>
-                    </div>
+                    </button>
                 )}
             </div>
         </div>
