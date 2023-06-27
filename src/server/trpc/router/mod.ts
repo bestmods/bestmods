@@ -127,6 +127,48 @@ export const modRouter = router({
         }))
         .query(async ({ ctx, input }) => {
             const count = input.count;
+            
+            /*
+            // Check if we want to retrieve mod rating within specific range.
+            let time_range: number | null = null;
+
+            if (input.timeframe) {
+                switch (Number(input.timeframe)) {
+                    case 0:
+                        time_range = 3600;
+
+                        break;
+
+                    case 1:
+                        time_range = 86400;
+
+                        break;
+
+                    case 2:
+                        time_range = 604800;
+
+                        break;
+
+                    case 3:
+                        time_range = 2629800;
+
+                        break;
+
+                    case 4:
+                        time_range = 311556952;
+
+                        break;
+
+                    default:
+                        time_range = null;
+                }
+            }
+
+            let time_range_date: Date | null = null;
+
+            if (time_range)
+                time_range_date = new Date(Date.now() - time_range);
+            */
 
             // Process categories.
             const catsArr = JSON.parse(input.categories ?? "[]");
