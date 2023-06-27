@@ -9,9 +9,7 @@ An open-source [website](https://bestmods.io) made by [Christian Deacon](https:/
 Please also check out the [@modcommunity](https://github.com/modcommunity)! They are doing things that will change the direction of gaming on a large scale by using modding and open source like never seen before!
 
 ## Road Map
-A road map for the website may be found [here](https://github.com/bestmods/roadmap/issues)!
-
-Each GitHub project represents a quarter and lists all things we're hoping to get completed by the end of said quarter.
+A road map for the website may be found [here](https://github.com/bestmods/bestmods/milestones)!
 
 ## Contributing
 Any help from the open source community is highly appreciated on this project! We utilize the following.
