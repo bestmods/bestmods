@@ -1,7 +1,7 @@
 import { BestModsPage, SessionCtx } from '../../components/main';
 
 import { type NextPage } from "next";
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 
 import { trpc } from "../../utils/trpc";
 import { type ModDownload } from '@prisma/client';

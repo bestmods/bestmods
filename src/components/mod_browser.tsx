@@ -1,9 +1,7 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { trpc } from "../utils/trpc";
 
 import { signIn } from "next-auth/react";
-
-import { type ModSource, type ModInstaller, type Category } from "@prisma/client";
 
 import InfiniteScroll from 'react-infinite-scroller';
 
@@ -208,7 +206,6 @@ const ModRow: React.FC<ModRowArguments> = ({
 
     // Handle short description.
     const descShort = String(mod.descriptionShort);
-    const dots = (descShort.length > 120) ? "..." : "";
 
     return (
         <>

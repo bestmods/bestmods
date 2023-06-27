@@ -1,9 +1,7 @@
-import { Field, Form, Formik } from "formik";
-import React, { useState, useContext, type ReactNode } from "react";
+import React, { useState, type ReactNode } from "react";
 
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
-import Link from 'next/link'
 import { setCookie } from 'cookies-next';
 import GoogleAnalytics from "./scripts/google_analytics";
 import Header from "./main/header";

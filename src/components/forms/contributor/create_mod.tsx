@@ -1,6 +1,6 @@
 
 import { useFormik, Field } from "formik";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 
 import { trpc } from "../../../utils/trpc";
 

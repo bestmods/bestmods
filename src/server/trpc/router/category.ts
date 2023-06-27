@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, publicProcedure, contributorProcedure } from "../trpc";
+import { router, contributorProcedure } from "../trpc";
 
 import { TRPCError } from "@trpc/server"
 import { Delete_Category, Insert_Or_Update_Category } from "../../../utils/content/category";

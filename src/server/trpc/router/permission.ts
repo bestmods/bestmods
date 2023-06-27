@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, protectedProcedure, adminProcedure } from "../trpc";
+import { router, adminProcedure } from "../trpc";
 
 import { TRPCError } from "@trpc/server"
 

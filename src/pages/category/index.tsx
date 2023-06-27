@@ -1,4 +1,4 @@
-import { type GetServerSidePropsContext, type NextPage } from "next";
+import { type NextPage } from "next";
 import React from "react";
 
 import { BestModsPage } from '../../components/main';
@@ -97,7 +97,7 @@ const Categories: React.FC<{
     );
 }
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+export async function getServerSideProps() {
     const cats = await prisma.category.findMany({
         where: {
             parentId: null
