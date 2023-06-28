@@ -31,8 +31,6 @@ export const ModSourceRender: React.FC<{
     if (cdn)
         icon = cdn + icon;
 
-    console.log(modSrc);
-
     return (
         <a rel="noreferrer" href={url} target="_blank">
             <li>
