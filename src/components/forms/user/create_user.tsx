@@ -137,6 +137,7 @@ const Permissions: React.FC<{
     let error: string | null = null;
     let success: string | null = null;
 
+    // To Do: Figure out how to make sure one of the mutations are false at all times.
     if (perm_add_mut.isSuccess) {
         success = "Successfully added permission!";
         error = null;
@@ -160,6 +161,9 @@ const Permissions: React.FC<{
         return (
             <>
                 {permissions?.map((permission: Permissions) => {
+                    if (!permission)
+                        return;
+
                     return (
                         <Link key={"user-permission-" + permission.perm} href="/" onClick={(e) => {
                             e.preventDefault();
