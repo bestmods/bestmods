@@ -53,7 +53,6 @@ const Categories: React.FC<{
 }> = ({
     cats
 }) => {
-    console.log(cats);
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
     return (
