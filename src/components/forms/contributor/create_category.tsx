@@ -86,25 +86,25 @@ const CategoryForm: React.FC<{
         enableReinitialize: true,
 
         onSubmit: (values) => {
-        // Create new values.
-        const new_vals: values_type = values;
+            // Create new values.
+            const new_vals: values_type = values;
 
-        // Assign some additional values.
-        new_vals.parent_id = parent;
-        new_vals.id = cat?.id;
-        new_vals.icon = iconData?.toString() ?? null;
+            // Assign some additional values.
+            new_vals.parent_id = parent;
+            new_vals.id = cat?.id;
+            new_vals.icon = iconData?.toString() ?? null;
 
-        // Insert into database.
-        cat_mut.mutate(new_vals);
+            // Insert into database.
+            cat_mut.mutate(new_vals);
 
-        // Scroll to top.
-        if (typeof window !== undefined) {
-            window.scroll({
-                top: 0,
-                left: 0,
-                behavior: 'smooth'
-            });
-        }
+            // Scroll to top.
+            if (typeof window !== undefined) {
+                window.scroll({
+                    top: 0,
+                    left: 0,
+                    behavior: 'smooth'
+                });
+            }
         }
     });
 

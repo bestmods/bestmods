@@ -32,6 +32,10 @@
 @import 'forms/content/category.css';
 @import 'forms/content/source.css';
 
+@import 'forms/user/permissions.css';
+
+@import 'user/table.css';
+
 /* Main */
 main {
     @apply flex;
@@ -63,4 +67,10 @@ main {
     @apply bg-center;
     @apply bg-no-repeat;
     @apply bg-cover;
+}
+
+.page-title {
+    @apply text-3xl;
+    @apply font-bold;
+    @apply text-white;
 }
