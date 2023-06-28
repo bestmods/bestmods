@@ -66,7 +66,7 @@ const Index: React.FC<{
                     </div>
                 ) : (
                     <div className="unauthorized-div">
-                        <p>You are not authorized to add or edit a category!</p>
+                        <p>You are not authorized to view this page!</p>
                     </div>                    
                 )}
             </BestModsPage>
