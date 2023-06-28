@@ -45,5 +45,16 @@ export const permissionRouter = router({
                     code: "BAD_REQUEST"
                 });
             }
+        }),
+    retrieveUserPerms: adminProcedure
+        .input(z.object({
+            id: z.string()
+        }))
+        .query(({ ctx, input }) => {
+            return ctx.prisma.permissions.findMany({
+                where: {
+                    userId: input.id
+                }
+            });
         })
 });

@@ -9,7 +9,7 @@ import EditForm from "../../../../components/forms/user/create_user";
 
 const EditUser: React.FC<{
     authed: boolean,
-    user: any | null
+    user: User | null
 }> = ({
     authed,
     user
@@ -17,7 +17,7 @@ const EditUser: React.FC<{
     return (
         <>
             <HeadInfo
-                title={"Editing User " + user.name + " - Best Mods"}
+                title={"Editing User " + user?.name ?? "N/A" + " - Best Mods"}
             />
             <BestModsPage>
                 <div className="container mx-auto">
@@ -39,7 +39,7 @@ const EditUser: React.FC<{
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     let authed = false;
-    let user: any | null = null;
+    let user: User | null = null;
 
     // Our user ID.
     const id = (ctx.params?.id && ctx.params?.id[0]) ? ctx.params.id[0] : "";
@@ -60,9 +60,6 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         user = await prisma.user.findFirst({
             where: {
                 id: id
-            },
-            include: {
-                Permissions: true
             }
         });
     }

@@ -3,9 +3,10 @@ import { Permissions, User } from "@prisma/client";
 import FormTemplate from '../main';
 import { AlertForm } from '../../alert';
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { trpc } from "../../../utils/trpc";
 import { Field, useFormik } from "formik";
+import NavItems from "../../main/header/nav_items";
 
 type user_vals = {
     id: string,
@@ -16,7 +17,7 @@ type user_vals = {
 }
 
 const UserForm: React.FC<{
-    user: any
+    user: User | null
 }> = ({
     user
 }) => {
@@ -26,6 +27,11 @@ const UserForm: React.FC<{
     // Error and success messages.
     let error: string | null = null;
     let success: string | null = null;
+
+    if (user_add_mut.isSuccess)
+        success = "Successfully modified user!";
+    else if (user_add_mut.isError)
+        error = user_add_mut.error.message;
 
     // Avatar data.
     const [avatar, setAvatar] = useState<string | ArrayBuffer | null>(null);
@@ -44,21 +50,23 @@ const UserForm: React.FC<{
             aremove: false
         },
         onSubmit: (values) => {
-            const new_vals: user_vals = { 
-                ...values, 
-                id: user.id,
-                avatar: avatar?.toString() ?? undefined
-            };
+            if (user) {
+                const new_vals: user_vals = { 
+                    ...values, 
+                    id: user.id,
+                    avatar: avatar?.toString() ?? undefined
+                };
 
-            user_add_mut.mutate(new_vals);
+                user_add_mut.mutate(new_vals);
 
-            // Scroll to top.
-            if (typeof window !== undefined) {
-                window.scroll({
-                    top: 0,
-                    left: 0,
-                    behavior: 'smooth'
-                });
+                // Scroll to top.
+                if (typeof window !== undefined) {
+                    window.scroll({
+                        top: 0,
+                        left: 0,
+                        behavior: 'smooth'
+                    });
+                }
             }
         }
     })
@@ -113,33 +121,71 @@ const UserForm: React.FC<{
 }
 
 const Permissions: React.FC<{
-    user: any
+    user: User | null
 }> = ({
     user
-}) => {
-    const permissions = user.Permissions ?? [];
+}) => {    
+    // Queries. We're using a query so we can keep our permission list update to date without reloading our page.
+    const perm_list_query = trpc.permission.retrieveUserPerms.useQuery({
+        id: user?.id ?? ""
+    });
+    const permissions = perm_list_query.data;
 
     // Mutations.
     const perm_add_mut = trpc.permission.addUserPerm.useMutation();
     const perm_del_mut = trpc.permission.delUserPerm.useMutation();
 
+    let error: string | null = null;
+    let success: string | null = null;
+
+    if (perm_add_mut.isSuccess) {
+        success = "Successfully added permission!";
+        error = null;
+    } else if (perm_add_mut.isError) {
+        error = perm_add_mut.error.message;
+        success = null;
+    }
+    
+    if (perm_del_mut.isSuccess) {
+        success = "Successfully removed permission!";
+        error = null;
+    } else if (perm_del_mut.isError) {
+        error = perm_del_mut.error.message;
+        success = null;
+    }
+
+    const permissions_list = useMemo(() => {
+        // Refetch items.
+        perm_list_query.refetch();
+
+        return (
+            <>
+                {permissions?.map((permission: Permissions) => {
+                    return (
+                        <Link key={"user-permission-" + permission.perm} href="/" onClick={(e) => {
+                            e.preventDefault();
+                            
+                            perm_del_mut.mutate({
+                                id: permission.userId,
+                                perm: permission.perm
+                            });
+                        }}>{permission.perm}</Link>
+                    );
+                })}
+            </>
+        );
+    }, [perm_add_mut, perm_del_mut, perm_list_query.data]);
+
     return (
         <>
             <h2>Permissions</h2>
+            <AlertForm
+                error={error}
+                success={success}
+            />
             <div className="form-container">
                 <div className="user-edit-permissions-items">
-                    {permissions.map((permission: Permissions) => {
-                        return (
-                            <Link key={"user-permission-" + permission.perm} href="/" onClick={(e) => {
-                                e.preventDefault();
-                                
-                                perm_del_mut.mutate({
-                                    id: permission.userId,
-                                    perm: permission.perm
-                                });
-                            }}>{permission.perm}</Link>
-                        );
-                    })}
+                    {permissions_list}
                 </div>
                 <div className="form-container user-edit-permissions-container">
                     <label>Permission</label>
@@ -147,12 +193,14 @@ const Permissions: React.FC<{
                     <button type="button" onClick={(e) => {
                         e.preventDefault();
 
-                        const perm = (document.getElementById("permission") as HTMLInputElement).value;
+                        if (user) {
+                            const perm = (document.getElementById("permission") as HTMLInputElement).value;
 
-                        perm_add_mut.mutate({
-                            id: user.id,
-                            perm: perm
-                        });
+                            perm_add_mut.mutate({
+                                id: user.id,
+                                perm: perm
+                            });
+                        }
                     }}>Add!</button>
                 </div>
             </div>

@@ -33,7 +33,7 @@ export const Insert_Or_Update_User = async (
                 const fileName =  lookup_id + "." + file_ext;
 
                 // Set avatar path.
-                avatar_path = "/images/users/" + fileName;
+                avatar_path = "images/users/" + fileName;
 
                 // Convert to binary from base64.
                 const buffer = Buffer.from(base64Data, 'base64');
@@ -66,7 +66,7 @@ export const Insert_Or_Update_User = async (
                     email: email
                 }),
                 ...(avatar_path !== false && {
-                    avatar_path: avatar_path
+                    image: avatar_path
                 })
             }
         });
@@ -76,37 +76,15 @@ export const Insert_Or_Update_User = async (
     }
 
 
-
-
-    // If we have a file upload, update database.
-    if (icon_path != null || iremove) {
-        // If we're removing the icon or banner, make sure our data is null before updating again.
-        if (iremove)
-            icon_path = null;
-
-        try {
-            await prisma.category.update({
-                where: {
-                    id: cat.id
-                },
-                data: {
-                    icon: icon_path
-                }
-            })
-        } catch (error) {
-            return [cat, false, error];
-        }
-    }
-   
-    return [cat, true, null];
+    return [user, true, null];
 }
 
-export const Delete_Category = async (
+export const Delete_User = async (
     prisma: PrismaClient,
-    id: number
+    id: string
 ): Promise<[boolean, string | any | null]> => {
     try {
-        await prisma.category.delete({
+        await prisma.user.delete({
             where: {
                 id: id
             }
