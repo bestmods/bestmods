@@ -65,7 +65,7 @@ export const ModInstallerRender: React.FC<{
         
         <a rel="noreferrer" href={url}>
             <li>
-            {icon && (
+                {icon && (
                     <img src={icon} /> 
                 )}
                 
