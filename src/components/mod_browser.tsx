@@ -22,10 +22,27 @@ export const ModSourceRender: React.FC<{
     const name = modSrc.source.name;
     const url = "https://" + modSrc.sourceUrl + "/" + modSrc.query;
 
+    const cdn: string | undefined = process.env.NEXT_PUBLIC_CDN_URL;
+    let icon: string | undefined = undefined;
+
+    if (modSrc.source.icon)
+        icon = modSrc.source.icon;
+
+    if (cdn)
+        icon = cdn + icon;
+
+    console.log(modSrc);
+
     return (
-        <li>
-            <a rel="noreferrer" href={url} className="block px-4 hover:bg-teal-900 text-white" target="_blank">{name}</a>
-        </li>
+        <a rel="noreferrer" href={url} target="_blank">
+            <li>
+                {icon && (
+                    <img src={icon} /> 
+                )}
+                
+                {name}
+            </li>
+        </a>
     );
 };
 
@@ -37,10 +54,27 @@ export const ModInstallerRender: React.FC<{
     const name = modIns.source.name;
     const url = modIns.url;
 
+    const cdn: string | undefined = process.env.NEXT_PUBLIC_CDN_URL;
+    let icon: string | undefined = undefined;
+
+    if (modIns.source.icon)
+        icon = modIns.source.icon;
+
+    if (cdn)
+        icon = cdn + icon;
+
     return (
-        <li>
-            <a rel="noreferrer" href={url} className="block px-4 hover:bg-teal-900 text-white">{name}</a>
-        </li>
+        
+        <a rel="noreferrer" href={url}>
+            <li>
+            {icon && (
+                    <img src={icon} /> 
+                )}
+                
+                {name}
+            </li>
+        </a>
+        
     );
 };
 

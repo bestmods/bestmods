@@ -100,7 +100,7 @@ const GridRow: React.FC<{
                             )}
                         </div>
 
-                        <ul className={installersMenuOpen ? "block" : "hidden"} aria-labelledby={"installerDropdownBtn" + mod.id}>
+                        <ul className={installersMenuOpen ? "block" : "hidden"}>
                             {mod.ModInstaller.map((ins: any) => {
                                 return (
                                     <ModInstallerRender

@@ -22,6 +22,8 @@
 
     @apply ring-4;
     @apply ring-cyan-950;
+
+    @apply hover:ring-cyan-600;
 }
 
 /* Mod image container */
@@ -176,6 +178,7 @@
     @apply p-2;
     @apply w-1/3;
     @apply hover:bg-cyan-600;
+    @apply rounded;
 }
 
 /* Mod buttons drop down container */
@@ -211,15 +214,30 @@
     @apply break-all;
     @apply absolute;
     @apply w-full;
+    @apply md:w-[200%];
     @apply top-10;
     @apply z-30;
-    @apply text-sm;
-    @apply bg-cyan-800;
+    @apply rounded-b;
 }
 
-.modbrowser-grid-links-dropdown > ul > li > a {
+.modbrowser-grid-links-dropdown > ul > a > li {
     @apply p-5;
-    @apply border-b-2;
-    @apply border-b-slate-800;
-    @apply hover:bg-cyan-700;
+    @apply text-white;
+    @apply block;
+    @apply bg-cyan-800;
+    @apply hover:bg-cyan-500;
+    @apply divide-y-2;
+    @apply divide-slate-800;
+    @apply hover:divide-cyan-700;
+    @apply font-bold;
+    @apply flex;
+    @apply items-center;
+    @apply gap-2;
+}
+
+.modbrowser-grid-links-dropdown > ul > a > li > img {
+    @apply w-6;
+    @apply h-6;
+    @apply hidden;
+    @apply md:block;
 }
