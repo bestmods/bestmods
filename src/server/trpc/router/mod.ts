@@ -40,7 +40,10 @@ export const modRouter = router({
             if (input.downloads) {
                 const json = JSON.parse(input.downloads ?? "[]");
 
-                json.forEach(({name, url} : { name: string, url: string}) => {
+                json.forEach(({ name, url}  : { name: string, url: string}) => {
+                    if (!name || !url)
+                        return;
+
                     const new_item: ModDownload = {
                         modId: 0,
                         name: name,
@@ -58,6 +61,9 @@ export const modRouter = router({
                 const json = JSON.parse(input.screenshots ?? "[]");
 
                 json.forEach(({ url } : { url: string }) => {
+                    if (!url)
+                        return;
+
                     const new_item: ModScreenshot = {
                         modId: 0,
                         url: url
@@ -74,6 +80,9 @@ export const modRouter = router({
                 const json = JSON.parse(input.sources ?? "[]");
 
                 json.forEach(({ url, query } : { url: string, query: string }) => {
+                    if (!url || !query)
+                        return;
+
                     const new_item: ModSource = {
                         modId: 0,
                         primary: false,
@@ -91,10 +100,13 @@ export const modRouter = router({
             if (input.installers) {
                 const json = JSON.parse(input.installers ?? "[]");
 
-                json.forEach(({ srcUrl, url } : { srcUrl: string, url: string }) => {
+                json.forEach(({ src_url, url } : { src_url: string, url: string }) => {
+                    if (!src_url || !url)
+                        return;
+
                     const new_item: ModInstaller = {
                         modId: 0,
-                        sourceUrl: srcUrl,
+                        sourceUrl: src_url,
                         url: url
                     };
 

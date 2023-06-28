@@ -256,6 +256,7 @@ export const Insert_Or_Update_Mod = async (
     // Loop through sources.
     if (sources) {
         sources.forEach(async ({ sourceUrl, query }) => {
+            console.log("Source URL => " + sourceUrl);
             if (!sourceUrl || sourceUrl.length < 1 || !query || query.length < 1 || !mod)
                 return;
 
