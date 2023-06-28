@@ -1,0 +1,38 @@
+.user-edit-permissions-container {
+    @apply p-4;
+    @apply flex;
+    @apply items-center;
+    @apply gap-4;
+}
+
+.user-edit-permissions-container > label {
+    @apply text-white;
+    @apply text-lg;
+    @apply font-bold;
+}
+
+.user-edit-permissions-container > button {
+    @apply p-4;
+    @apply rounded;
+    @apply text-white;
+    @apply font-bold;
+    @apply text-center;
+    @apply bg-green-700;
+    @apply hover:bg-green-600;
+}
+
+.user-edit-permissions-items {
+    @apply flex;
+    @apply flex-wrap;
+    @apply gap-4;
+    @apply p-4;
+}
+
+.user-edit-permissions-items > a {
+    @apply p-4;
+    @apply rounded;
+    @apply text-white;
+    @apply text-center;
+    @apply bg-teal-700;
+    @apply hover:bg-red-600;
+}
