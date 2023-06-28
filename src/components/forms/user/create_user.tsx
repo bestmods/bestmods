@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { trpc } from "../../../utils/trpc";
 import { Field, useFormik } from "formik";
-import NavItems from "../../main/header/nav_items";
 
 type user_vals = {
     id: string,
