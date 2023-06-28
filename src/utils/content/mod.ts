@@ -196,7 +196,7 @@ export const Insert_Or_Update_Mod = async (
     // Loop through downloads.
     if (downloads) {
         downloads.forEach(async ({ name, url }) => {
-            if (url.length < 1 || !mod)
+            if (!url || url.length < 1 || !name || !mod)
                 return;
 
             try {
@@ -227,7 +227,7 @@ export const Insert_Or_Update_Mod = async (
     // Loop through screenshots.
     if (screenshots) {
         screenshots.forEach(async ({ url }) => {
-            if (url.length < 1 || !mod)
+            if (!url || url.length < 1 || !mod)
                 return
 
             try {
@@ -256,7 +256,7 @@ export const Insert_Or_Update_Mod = async (
     // Loop through sources.
     if (sources) {
         sources.forEach(async ({ sourceUrl, query }) => {
-            if (sourceUrl.length < 1 || query.length < 1 || !mod)
+            if (!sourceUrl || sourceUrl.length < 1 || !query || query.length < 1 || !mod)
                 return;
 
             try {
@@ -286,7 +286,7 @@ export const Insert_Or_Update_Mod = async (
     // Loop through installers.
     if (installers) {
         installers.forEach(async ({ sourceUrl, url }) => {
-            if (sourceUrl.length < 1 || url.length < 1 || !mod)
+            if (!sourceUrl || sourceUrl.length < 1 || !url || url.length < 1 || !mod)
                 return;
 
             try {
