@@ -14,68 +14,6 @@ type ModRowArguments = {
     display?: string
 };
 
-export const ModSourceRender: React.FC<{
-    modSrc: any
-}> = ({
-    modSrc
-}) => {
-    const name = modSrc.source.name;
-    const url = "https://" + modSrc.sourceUrl + "/" + modSrc.query;
-
-    const cdn: string | undefined = process.env.NEXT_PUBLIC_CDN_URL;
-    let icon: string | undefined = undefined;
-
-    if (modSrc.source.icon)
-        icon = modSrc.source.icon;
-
-    if (cdn)
-        icon = cdn + icon;
-
-    return (
-        <a rel="noreferrer" href={url} target="_blank">
-            <li>
-                {icon && (
-                    <img src={icon} /> 
-                )}
-                
-                {name}
-            </li>
-        </a>
-    );
-};
-
-export const ModInstallerRender: React.FC<{
-    modIns: any
-}> = ({
-    modIns
-}) => {
-    const name = modIns.source.name;
-    const url = modIns.url;
-
-    const cdn: string | undefined = process.env.NEXT_PUBLIC_CDN_URL;
-    let icon: string | undefined = undefined;
-
-    if (modIns.source.icon)
-        icon = modIns.source.icon;
-
-    if (cdn)
-        icon = cdn + icon;
-
-    return (
-        
-        <a rel="noreferrer" href={url}>
-            <li>
-                {icon && (
-                    <img src={icon} /> 
-                )}
-                
-                {name}
-            </li>
-        </a>
-        
-    );
-};
-
 export const ModRatingRender: React.FC<ModRowArguments> = ({
     mod
 }) => {
