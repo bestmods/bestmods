@@ -34,7 +34,11 @@
 
 @import 'forms/user/permissions.css';
 
+/* Users */
 @import 'user/table.css';
+
+/* Admin Area */
+@import 'admin/index.css';
 
 /* Main */
 main {
