@@ -1,6 +1,10 @@
-const UpArrow: React.FC = () => {
+const UpArrow: React.FC<{
+    classes?: string
+}> = ({
+    classes
+}) => {
     return (
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg className={classes ? classes : ""} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clipPath="url(#clip0_429_11224)">
                 <path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
