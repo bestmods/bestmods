@@ -1,25 +1,13 @@
-import { type Permissions, type PrismaClient } from "@prisma/client";
+import { type Session } from "next-auth";
 
-export const Has_Perm = async (
-    prisma: PrismaClient,
-    id: string,
+export const Has_Perm = (
+    session: Session,
     perm: string
-): Promise<[boolean, string | any | null]> => {
-    let perm_check: Permissions | null = null;
+): boolean => {
+    const permissions = session?.user?.permissions;
 
-    try {
-        perm_check = await prisma.permissions.findFirst({
-            where: {
-                userId: id,
-                perm: perm
-            }
-        });
-    } catch (error) {
-        return [false, error];
-    }
-
-    if (!perm_check)
-        return [false, null];
-
-    return [true, null];
+    if (!permissions)
+        return false;
+    
+    return permissions.includes(perm);
 }
