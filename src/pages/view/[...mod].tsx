@@ -14,6 +14,8 @@ import { ModInstallerRender, ModRatingRender } from '../../components/mod_browse
 import { prisma } from '../../server/db/client';
 import { type GetServerSidePropsContext } from 'next';
 import { getSession, useSession } from 'next-auth/react';
+import { Has_Perm } from '../../utils/permissions';
+import Link from 'next/link';
 
 const ModCtx = React.createContext<any | boolean | null>(null);
 const ModViewCtx = React.createContext<string | null>(null);
@@ -77,6 +79,10 @@ const MainContent: React.FC<{
     const mod = useContext(ModCtx);
     const modView = useContext(ModViewCtx);
     const { data: session } = useSession();
+
+    // Mutations
+    const mod_hide_mut = trpc.mod.setModVisibility.useMutation();
+    const [modVisibility, setModVisibility] = useState<boolean>(mod.visible);
 
     // Installer menu.
     const [installersMenuOpen, setInstallersMenuOpen] = useState(false);
@@ -178,7 +184,7 @@ const MainContent: React.FC<{
                                     )}</button>
                                 </div>
 
-                                <ul id="installerDropdownMenu" className={installersMenuOpen ? "block" : "hidden"} aria-labelledby="installerDropdownBtn">
+                                <ul className={installersMenuOpen ? "block" : "hidden"}>
                                     {mod.ModInstaller.map((ins: any) => {
                                         return (
                                             <ModInstallerRender
@@ -199,9 +205,21 @@ const MainContent: React.FC<{
                     <div className="text-white" id="mod-description">
                         {body}
                     </div>
-                    {session && (
-                        <div className="flex flex-row justify-center items-center">
-                            <a href={editLink} className="text-white bg-cyan-800 hover:bg-cyan-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded px-4 py-2 mt-2 max-w-xs">Edit</a>
+                    {session && Has_Perm(session, "contributor") && (
+                        <div className="mod-moderation">
+                            <Link href={editLink}>Edit</Link>
+                            <Link href="#" onClick={(e) => {
+                                e.preventDefault();
+
+                                // Do opposite.
+                                mod_hide_mut.mutate({
+                                    id: mod.id,
+                                    visible: !modVisibility
+                                });
+
+                                setModVisibility(!modVisibility);
+
+                            }}>{modVisibility ? "Hide" : "Show"}</Link>
                         </div>
                     )}
                 </div>
