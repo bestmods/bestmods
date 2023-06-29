@@ -2,8 +2,9 @@ import { type Category } from "@prisma/client";
 import {ModRatingRender } from "../mod_browser";
 import DropDown, { Drop_Down_Menu_Type } from "../utils/drop_down";
 import Link from "next/link";
-import Eye from "../utils/icons/eye";
-import Download from "../utils/icons/download";
+
+import EyeIcon from "../utils/icons/eye";
+import DownloadIcon from "../utils/icons/download";
 
 const GridRow: React.FC<{
     mod: any,
@@ -134,8 +135,8 @@ const GridRow: React.FC<{
             )}
             <div className="modbrowser-grid-stats">
                 <div className="modbrowser-grid-stats-views">
-                    <Eye
-                        classes="w-4 h-4"
+                    <EyeIcon
+                        classes={["w-4", "h-4"]}
                     />
                     <span className="text-white text-sm">{mod.totalViews.toString()}</span>
                 </div>
@@ -145,8 +146,8 @@ const GridRow: React.FC<{
                 />
 
                 <div className="modbrowser-grid-stats-downloads">
-                    <Download
-                        classes="w-4 h-4"
+                    <DownloadIcon
+                        classes={["w-4", "h-4"]}
                     />
                     <span>{mod.totalDownloads.toString()}</span>
                 </div>

@@ -18,6 +18,8 @@ import { Has_Perm } from '../../utils/permissions';
 import Link from 'next/link';
 import DropDown, { Drop_Down_Menu_Type } from '../../components/utils/drop_down';
 
+import Download2Icon from '../../components/utils/icons/download2';
+
 const ModCtx = React.createContext<any | boolean | null>(null);
 const ModViewCtx = React.createContext<string | null>(null);
 
@@ -335,7 +337,9 @@ const ModDownloads: React.FC = () => {
                             });
                         }} className="mod-download-item" href={dl.url} target="_blank">
                             <div key={dl.modId + dl.url}>
-                                <svg className="w-5 h-5" viewBox="0 0 512 512" fill="#FFFFFF" xmlns="http://www.w3.org/2000/svg"><path d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z" /></svg>
+                                <Download2Icon
+                                    classes={["w-5", "h-5"]}
+                                />
                                 <span>{dl.name}</span>
                             </div>
                         </a>
