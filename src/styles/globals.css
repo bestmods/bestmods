@@ -38,6 +38,10 @@
 /* Users */
 @import 'user/table.css';
 
+/* Categories */
+@import 'category/index.css';
+@import 'category/row.css';
+
 /* Admin Area */
 @import 'admin/index.css';
 

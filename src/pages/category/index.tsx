@@ -8,6 +8,8 @@ import Link from 'next/link';
 
 import { prisma } from '../../server/db/client';
 
+import CategoryRow from '../../components/category/row';
+
 const Home: NextPage<{
     cats: any
 }> = ({
@@ -53,39 +55,34 @@ const Categories: React.FC<{
 }> = ({
     cats
 }) => {
-    const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
-
     return (
-        <div className="container mx-auto bg-cyan-900/80 rounded-sm p-2 sm:p-16">
-            <h1 className="text-white text-3xl font-bold text-center">All Categories</h1>
+        <div className="category-container">
+            <h1 className="page-title">All Categories</h1>
 
             {cats ? (
                 <>
                     {cats.map((cat: any) => {
-                        const viewLink = "/category/" + cat.url;
-                        const icon = (cat.icon) ? cdn + cat.icon : cdn + "/images/default_icon.png"
-
                         return (
-                            <div key={"cat-" + cat.id} className="p-4">
-                                <Link href={viewLink} className="flex items-center flex-wrap">
-                                    <img src={icon} className="w-8 h-8" alt="Category Icon" />
-                                    <span className="text-white ml-2">{cat.name} ({cat._count?.Mod ?? 0})</span>
-                                </Link>
+                            <>
+                                <CategoryRow
+                                    cat={cat}
+                                    include_mod_count={true}
+                                    classes={["p-4"]}
+                                />
                                 {cat.children.length > 0 && (
-                                    <div className="p-4">
-                                        {cat.children.map((catChild: any) => {
+                                    <>
+                                        {cat.children.map((cat_child: any) => {
                                             return (
-                                                <ChildRender
-                                                    key={"catchild-" + catChild.id}
-                                                    child={catChild}
-                                                    parent={cat}
-                                                    cdn={cdn}
+                                                <CategoryRow
+                                                    cat={cat_child}
+                                                    include_mod_count={true}
+                                                    classes={["p-4", "ml-10"]}
                                                 />
                                             );
                                         })}
-                                    </div>
+                                    </>
                                 )}
-                            </div>
+                            </>
                         );
                     })}
                 </>
