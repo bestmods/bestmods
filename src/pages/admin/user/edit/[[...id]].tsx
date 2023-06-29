@@ -48,7 +48,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     // Retrieve session and permission check.
     const session = await getSession(ctx);
 
-    const perm_check = session && (Has_Perm(session, "admin") || Has_Perm(session, "contributor"));
+    const perm_check = session && Has_Perm(session, "admin");
 
     if (perm_check) {
         authed = true;
