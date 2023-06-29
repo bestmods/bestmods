@@ -1,5 +1,5 @@
-import { User } from "@prisma/client";
-import { GetServerSidePropsContext } from "next";
+import { type User } from "@prisma/client";
+import { type GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 
 import { prisma } from '../../../../server/db/client';
