@@ -290,6 +290,7 @@
 .mod-moderation {
     @apply flex;
     @apply flex-row;
+    @apply flex-wrap;
     @apply justify-center;
     @apply gap-2;
     @apply items-center;
@@ -304,12 +305,18 @@
     @apply py-2;
 }
 
+
 .mod-moderation > a:is(:first-child) {
     @apply bg-green-700;
     @apply hover:bg-green-600;
 }
 
 .mod-moderation > a:is(:last-child) {
+    @apply bg-red-700;
+    @apply hover:bg-red-600;
+}
+
+.mod-moderation > a:not(:first-child):not(:last-child) {
     @apply bg-gray-600;
     @apply hover:bg-gray-500;
 }

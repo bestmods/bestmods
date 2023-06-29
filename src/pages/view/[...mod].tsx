@@ -82,6 +82,9 @@ const MainContent: React.FC<{
 
     // Mutations
     const mod_hide_mut = trpc.mod.setModVisibility.useMutation();
+    const mod_del_mut = trpc.mod.delMod.useMutation();
+
+    // We need to use a state for mod visibility (for moderation display right now).
     const [modVisibility, setModVisibility] = useState<boolean>(mod.visible);
 
     // Installer menu.
@@ -211,7 +214,7 @@ const MainContent: React.FC<{
                             <Link href="#" onClick={(e) => {
                                 e.preventDefault();
 
-                                // Do opposite.
+                                // Do opposite of our current value.
                                 mod_hide_mut.mutate({
                                     id: mod.id,
                                     visible: !modVisibility
@@ -220,6 +223,16 @@ const MainContent: React.FC<{
                                 setModVisibility(!modVisibility);
 
                             }}>{modVisibility ? "Hide" : "Show"}</Link>
+                            <Link href="#" onClick={(e) => {
+                                e.preventDefault();
+
+                                // Delete mod after confirmation.
+                                if (confirm("Are you sure you want to delete this mod?")) {
+                                    mod_del_mut.mutate({
+                                        id: mod.id
+                                    });
+                                }
+                            }}>Delete</Link>
                         </div>
                     )}
                 </div>
