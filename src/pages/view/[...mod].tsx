@@ -1,4 +1,4 @@
-import { BestModsPage, SessionCtx } from '../../components/main';
+import { BestModsPage } from '../../components/main';
 
 import { type NextPage } from "next";
 import React, { useContext, useState } from "react";
@@ -13,7 +13,9 @@ import { ModInstallerRender, ModRatingRender } from '../../components/mod_browse
 
 import { prisma } from '../../server/db/client';
 import { type GetServerSidePropsContext } from 'next';
-import { getSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
+import { Has_Perm } from '../../utils/permissions';
+import Link from 'next/link';
 
 const ModCtx = React.createContext<any | boolean | null>(null);
 const ModViewCtx = React.createContext<string | null>(null);
@@ -23,18 +25,20 @@ const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
 
     // Handle background.
     let bg_file: string | undefined = undefined;
-        
-    if (mod.category.hasBg && mod.category.parent)
-        bg_file = mod.category.parent.url + "_" + mod.category.url + ".png";
-    else if (mod.category.hasBg && !mod.category.parent)
-        bg_file = mod.category.url + ".png";
-    else if (mod.category.parent && mod.category.parent.hasBg)
-        bg_file = mod.category.parent.url + ".png";
+    
+    if (mod) {
+        if (mod.category.hasBg && mod.category.parent)
+            bg_file = mod.category.parent.url + "_" + mod.category.url + ".png";
+        else if (mod.category.hasBg && !mod.category.parent)
+            bg_file = mod.category.url + ".png";
+        else if (mod.category.parent && mod.category.parent.hasBg)
+            bg_file = mod.category.parent.url + ".png";
+    }
 
     const bg_path = "/images/backgrounds/" + bg_file;
 
     // Determine title name.
-    let titleName = mod.name;
+    let titleName = mod?.name ?? "";
 
     if (modView == "install")
         titleName += " (Installation)";
@@ -76,7 +80,14 @@ const MainContent: React.FC<{
 }) => {
     const mod = useContext(ModCtx);
     const modView = useContext(ModViewCtx);
-    const session = useContext(SessionCtx);
+    const { data: session } = useSession();
+
+    // Mutations
+    const mod_hide_mut = trpc.mod.setModVisibility.useMutation();
+    const mod_del_mut = trpc.mod.delMod.useMutation();
+
+    // We need to use a state for mod visibility (for moderation display right now).
+    const [modVisibility, setModVisibility] = useState<boolean>(mod?.visible ?? true);
 
     // Installer menu.
     const [installersMenuOpen, setInstallersMenuOpen] = useState(false);
@@ -178,7 +189,7 @@ const MainContent: React.FC<{
                                     )}</button>
                                 </div>
 
-                                <ul id="installerDropdownMenu" className={installersMenuOpen ? "block" : "hidden"} aria-labelledby="installerDropdownBtn">
+                                <ul className={installersMenuOpen ? "block" : "hidden"}>
                                     {mod.ModInstaller.map((ins: any) => {
                                         return (
                                             <ModInstallerRender
@@ -199,9 +210,31 @@ const MainContent: React.FC<{
                     <div className="text-white" id="mod-description">
                         {body}
                     </div>
-                    {session && (
-                        <div className="flex flex-row justify-center items-center">
-                            <a href={editLink} className="text-white bg-cyan-800 hover:bg-cyan-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded px-4 py-2 mt-2 max-w-xs">Edit</a>
+                    {session && Has_Perm(session, "contributor") && (
+                        <div className="mod-moderation">
+                            <Link href={editLink}>Edit</Link>
+                            <Link href="#" onClick={(e) => {
+                                e.preventDefault();
+
+                                // Do opposite of our current value.
+                                mod_hide_mut.mutate({
+                                    id: mod.id,
+                                    visible: !modVisibility
+                                });
+
+                                setModVisibility(!modVisibility);
+
+                            }}>{modVisibility ? "Hide" : "Show"}</Link>
+                            <Link href="#" onClick={(e) => {
+                                e.preventDefault();
+
+                                // Delete mod after confirmation.
+                                if (confirm("Are you sure you want to delete this mod?")) {
+                                    mod_del_mut.mutate({
+                                        id: mod.id
+                                    });
+                                }
+                            }}>Delete</Link>
                         </div>
                     )}
                 </div>

@@ -14,7 +14,7 @@ const Home: NextPage<{ cookies: { [key: string]: string } }> = ({ cookies }) => 
                 cookies={cookies}
                 showFilters={true}
             >
-                <ModBrowser />
+                <ModBrowser visible={true} />
             </BestModsPage>
         </>
     );

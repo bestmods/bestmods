@@ -66,7 +66,7 @@ const Home: NextPage<{
                     )}
                 </h1>
             </div>
-            <ModBrowser categories={categories} />
+            <ModBrowser categories={categories} visible={true} />
         </div>
         : error;
 

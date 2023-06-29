@@ -1,9 +1,7 @@
-import { signIn, signOut } from "next-auth/react";
-import { useContext } from "react";
-import { SessionCtx } from "../main";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 const Login: React.FC = () => {
-    const session = useContext(SessionCtx);
+    const { data: session } = useSession();
 
     return (
         <div className="absolute top-0 right-0 rounded-bl bg-cyan-800 hover:bg-cyan-900">
