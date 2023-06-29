@@ -1,4 +1,4 @@
-import { Permissions, User } from "@prisma/client";
+import { type Permissions, type User } from "@prisma/client";
 
 import FormTemplate from '../main';
 import { AlertForm } from '../../alert';
@@ -68,7 +68,7 @@ const UserForm: React.FC<{
                 }
             }
         }
-    })
+    });
 
     return (
         <>
@@ -177,7 +177,7 @@ const Permissions: React.FC<{
                 })}
             </>
         );
-    }, [perm_add_mut, perm_del_mut, perm_list_query.data]);
+    }, [perm_del_mut, perm_list_query, permissions]);
 
     return (
         <>

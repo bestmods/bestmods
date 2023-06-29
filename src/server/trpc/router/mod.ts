@@ -125,6 +125,46 @@ export const modRouter = router({
                 });
             }
         }),
+    setModVisibility: contributorProcedure
+        .input(z.object({
+            id: z.number(),
+            visible: z.boolean().default(true)
+        }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                await ctx.prisma.mod.update({
+                    where: {
+                        id: input.id
+                    },
+                    data: {
+                        visible: input.visible
+                    }
+                });
+            } catch (error) {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: (typeof error == "string") ? error : "Unable to set mod's visibility"
+                });
+            }
+        }),
+    delMod: contributorProcedure
+        .input(z.object({
+            id: z.number(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                await ctx.prisma.mod.delete({
+                    where: {
+                        id: input.id
+                    }
+                });
+            } catch (error) {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: (typeof error == "string") ? error : "Unable to delete mod."
+                });
+            }
+        }),
     getAllModsBrowser: publicProcedure
         .input(z.object({
             cursor: z.number().nullish(),

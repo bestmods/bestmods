@@ -5,14 +5,33 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 import { env } from "../../../env/server.mjs";
 import { prisma } from "../../../server/db/client";
+import { type Permissions } from "@prisma/client";
 
 export const authOptions: NextAuthOptions = {
     // Include user.id on session
     callbacks: {
-        session({ session, user }) {
+        async session({ session, user }) {
             if (session.user) {
                 session.user.id = user.id;
+
+                // Retrieve user permissions and assign to session.
+                let permissions: Permissions[] = [];
+
+                try {
+                    permissions = await prisma.permissions.findMany({
+                        where: {
+                            userId: user.id,
+                        }
+                    });
+                } catch (error) {
+                    console.error(error);
+                }
+
+                // Assign permissions to our session user data.
+                if (permissions)
+                    session.user.permissions = permissions.map(perm => perm.perm);
             }
+
             return session;
         },
     },
