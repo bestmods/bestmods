@@ -28,7 +28,8 @@ export const authOptions: NextAuthOptions = {
                 }
 
                 // Assign permissions to our session user data.
-                session.user.permissions = permissions.map(perm => perm.perm);
+                if (permissions)
+                    session.user.permissions = permissions.map(perm => perm.perm);
             }
 
             return session;
