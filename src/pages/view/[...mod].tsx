@@ -1,4 +1,4 @@
-import { BestModsPage, SessionCtx } from '../../components/main';
+import { BestModsPage } from '../../components/main';
 
 import { type NextPage } from "next";
 import React, { useContext, useState } from "react";
@@ -13,7 +13,7 @@ import { ModInstallerRender, ModRatingRender } from '../../components/mod_browse
 
 import { prisma } from '../../server/db/client';
 import { type GetServerSidePropsContext } from 'next';
-import { getSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 
 const ModCtx = React.createContext<any | boolean | null>(null);
 const ModViewCtx = React.createContext<string | null>(null);
@@ -76,7 +76,7 @@ const MainContent: React.FC<{
 }) => {
     const mod = useContext(ModCtx);
     const modView = useContext(ModViewCtx);
-    const session = useContext(SessionCtx);
+    const { data: session } = useSession();
 
     // Installer menu.
     const [installersMenuOpen, setInstallersMenuOpen] = useState(false);

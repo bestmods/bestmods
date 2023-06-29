@@ -68,7 +68,7 @@ const UserForm: React.FC<{
                 }
             }
         }
-    })
+    });
 
     return (
         <>

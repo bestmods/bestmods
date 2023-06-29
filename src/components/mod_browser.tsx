@@ -1,11 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { trpc } from "../utils/trpc";
 
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 
 import InfiniteScroll from 'react-infinite-scroller';
 
-import { SessionCtx, FilterCtx, CookiesCtx } from './main';
+import { FilterCtx, CookiesCtx } from './main';
 import GridRow from './modbrowser/grid_row';
 import TableRow from './modbrowser/table_row';
 
@@ -80,7 +80,7 @@ export const ModRatingRender: React.FC<ModRowArguments> = ({
     mod
 }) => {
     // Retrieve session.
-    const session = useContext(SessionCtx);
+    const { data: session } = useSession();
     const filters = useContext(FilterCtx);
 
     // Retrieve rating.

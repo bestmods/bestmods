@@ -1,7 +1,5 @@
 import React, { useState, type ReactNode } from "react";
 
-import { useSession } from "next-auth/react";
-
 import { setCookie } from 'cookies-next';
 import GoogleAnalytics from "./scripts/google_analytics";
 import Header from "./main/header";
@@ -24,7 +22,6 @@ export type displayArgs = {
     displayCb: (e: React.MouseEvent) => void
 }
 
-export const SessionCtx = React.createContext<any | null>(null);
 export const FilterCtx = React.createContext<filterArgs | null>(null);
 export const DisplayCtx = React.createContext<displayArgs | null>(null);
 export const CookiesCtx = React.createContext<{ [key: string]: string }>({});
@@ -48,9 +45,6 @@ export const BestModsPage: React.FC<{
     cookies,
     showFilters = false
 }) => {
-    // Retrieve session to use in context.
-    const { data: session } = useSession();
-
     // Handle filtering and display options.
     const [timeframe, setTimeframe] = useState<number | null>(0);
     const [sort, setSort] = useState<number | null>(0);
@@ -117,32 +111,30 @@ export const BestModsPage: React.FC<{
                     id={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}
                 />
             )}
-            <SessionCtx.Provider value={session}>
-                <FilterCtx.Provider value={filters}>
-                    <DisplayCtx.Provider value={display}>
-                        <CookiesCtx.Provider value={cookies ?? {}}>
-                            <div id="mobile-and-login">
-                                <MobileMenu />
-                                <Login />
-                            </div>
+            <FilterCtx.Provider value={filters}>
+                <DisplayCtx.Provider value={display}>
+                    <CookiesCtx.Provider value={cookies ?? {}}>
+                        <div id="mobile-and-login">
+                            <MobileMenu />
+                            <Login />
+                        </div>
 
-                            <Background
-                                background={background}
-                                image={image}
-                                overlay={overlay}
-                            />
+                        <Background
+                            background={background}
+                            image={image}
+                            overlay={overlay}
+                        />
 
-                            <Header
-                                showFilters={showFilters}
-                            />
+                        <Header
+                            showFilters={showFilters}
+                        />
 
-                            <div className="relative">
-                                {children}
-                            </div>
-                        </CookiesCtx.Provider>
-                    </DisplayCtx.Provider>
-                </FilterCtx.Provider>
-            </SessionCtx.Provider>
+                        <div className="relative">
+                            {children}
+                        </div>
+                    </CookiesCtx.Provider>
+                </DisplayCtx.Provider>
+            </FilterCtx.Provider>
         </main>
     );
 };
