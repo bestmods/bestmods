@@ -25,18 +25,20 @@ const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
 
     // Handle background.
     let bg_file: string | undefined = undefined;
-        
-    if (mod.category.hasBg && mod.category.parent)
-        bg_file = mod.category.parent.url + "_" + mod.category.url + ".png";
-    else if (mod.category.hasBg && !mod.category.parent)
-        bg_file = mod.category.url + ".png";
-    else if (mod.category.parent && mod.category.parent.hasBg)
-        bg_file = mod.category.parent.url + ".png";
+    
+    if (mod) {
+        if (mod.category.hasBg && mod.category.parent)
+            bg_file = mod.category.parent.url + "_" + mod.category.url + ".png";
+        else if (mod.category.hasBg && !mod.category.parent)
+            bg_file = mod.category.url + ".png";
+        else if (mod.category.parent && mod.category.parent.hasBg)
+            bg_file = mod.category.parent.url + ".png";
+    }
 
     const bg_path = "/images/backgrounds/" + bg_file;
 
     // Determine title name.
-    let titleName = mod.name;
+    let titleName = mod?.name ?? "";
 
     if (modView == "install")
         titleName += " (Installation)";
@@ -85,7 +87,7 @@ const MainContent: React.FC<{
     const mod_del_mut = trpc.mod.delMod.useMutation();
 
     // We need to use a state for mod visibility (for moderation display right now).
-    const [modVisibility, setModVisibility] = useState<boolean>(mod.visible);
+    const [modVisibility, setModVisibility] = useState<boolean>(mod?.visible ?? true);
 
     // Installer menu.
     const [installersMenuOpen, setInstallersMenuOpen] = useState(false);
