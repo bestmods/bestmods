@@ -11,6 +11,8 @@ import { type CategoriesWithChildren, type ModWithRelations } from '../../../../
 import ModForm from '../../../../components/forms/contributor/create_mod';
 import { type Source } from '@prisma/client';
 
+import { Has_Perm } from '../../../../utils/permissions';
+
 const Home: NextPage<{
     authed: boolean,
     cats: CategoriesWithChildren[],
@@ -65,12 +67,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const session = await getSession(ctx);
 
     // Make sure we have contributor permissions.
-    const perm_check = await prisma.permissions.findFirst({
-        where: {
-            userId: session?.user?.id ?? "",
-            perm: "contributor"
-        }
-    });
+    const perm_check = session && (Has_Perm(session, "admin") || Has_Perm(session, "contributor"))
 
     if (perm_check)
         authed = true;

@@ -7,6 +7,7 @@ import HeadInfo from "../../../components/head";
 import { BestModsPage } from "../../../components/main";
 import Link from "next/link";
 import { trpc } from "../../../utils/trpc";
+import { Has_Perm } from "../../../utils/permissions";
 
 const Index: React.FC<{
     authed: boolean,
@@ -157,15 +158,11 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const session = await getSession(ctx);
 
     // Permission check.
-    const perm_check = await prisma.permissions.findFirst({
-        where: {
-            userId: session?.user?.id ?? "",
-            perm: "admin"
-        }
-    });
+    const perm_check = session && (Has_Perm(session, "admin") || Has_Perm(session, "contributor"));
 
-    if (session && perm_check) {
+    if (perm_check) {
         authed = true;
+        
         const offset = Number(users_per_page) * (page_number - 1);
 
         users = await prisma.user.findMany({
