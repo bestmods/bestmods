@@ -1,5 +1,5 @@
 import { type Category } from "@prisma/client";
-import { ModRatingRender } from "../mod_browser";
+import ModRatingRender from "../mod/rating/render";
 import DropDown, { Drop_Down_Menu_Type } from "../utils/drop_down";
 import Link from "next/link";
 

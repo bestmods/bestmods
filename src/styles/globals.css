@@ -42,6 +42,9 @@
 @import 'category/index.css';
 @import 'category/row.css';
 
+/* Mods */
+@import 'mod/rating.css';
+
 /* Admin Area */
 @import 'admin/index.css';
 

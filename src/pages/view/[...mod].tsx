@@ -9,7 +9,7 @@ import { type ModDownload } from '@prisma/client';
 import ReactMarkdown from 'react-markdown'
 
 import HeadInfo from "../../components/head";
-import { ModRatingRender } from '../../components/mod_browser';
+import ModRatingRender from '../../components/mod/rating/render';
 
 import { prisma } from '../../server/db/client';
 import { type GetServerSidePropsContext } from 'next';
