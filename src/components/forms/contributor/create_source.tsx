@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { trpc } from "../../../utils/trpc";
 
 import FormTemplate from '../main';
-import { AlertForm } from '../../alert';
+import { AlertForm } from '../../utils/alert';
 import { type Source } from "@prisma/client";
 
 type values_type = {

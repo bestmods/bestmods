@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { BestModsPage } from '../../components/main';
 import HeadInfo from "../../components/head";
 
-import { AlertForm } from '../../components/alert';
+import { AlertForm } from '../../components/utils/alert';
 
 import { trpc } from '../../utils/trpc';
 
