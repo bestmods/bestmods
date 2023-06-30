@@ -29,8 +29,6 @@ const DropDown: React.FC<{
 
     return (
         <button className={dd_classes} onClick={(e) => {
-            e.preventDefault();
-
             setMenuOpen(!menuOpen);
         }}>
             <div>
