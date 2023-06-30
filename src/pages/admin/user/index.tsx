@@ -92,7 +92,7 @@ const UserRow: React.FC<{
         <tr>
             <td className="user-table-avatar">
                 {avatar && (
-                    <img src={avatar} />
+                    <img src={avatar} alt="User Avatar" />
                 )}
             </td>
             <td className="user-table-id">

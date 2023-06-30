@@ -4,8 +4,6 @@ import React from "react";
 import { BestModsPage } from '../../components/main';
 import HeadInfo from "../../components/head";
 
-import Link from 'next/link';
-
 import { prisma } from '../../server/db/client';
 
 import CategoryRow from '../../components/category/row';
@@ -28,28 +26,6 @@ const Home: NextPage<{
     );
 };
 
-const ChildRender: React.FC<{
-    child: any,
-    parent: any,
-    cdn: string
-}> = ({
-    child,
-    parent,
-    cdn
-}) => {
-    const viewLinkChild = "/category/" + parent.url + "/" + child.url;
-    const iconChild = (child.icon) ? child.icon : cdn + "/images/default_icon.png";
-
-    return (
-        <div className="flex items-center flex-wrap ml-4 mb-4">
-            <Link href={viewLinkChild} className="flex items-center flex-wrap">
-                <img src={iconChild} className="w-8 h-8" alt="Category Child Icon" />
-                <span className="text-sm text-white ml-2">{child.name} ({child._count?.Mod ?? 0})</span>
-            </Link>
-        </div>
-    );
-}
-
 const Categories: React.FC<{
     cats: any
 }> = ({
@@ -65,6 +41,7 @@ const Categories: React.FC<{
                         return (
                             <>
                                 <CategoryRow
+                                    key={"category-" + cat.id}
                                     cat={cat}
                                     include_mod_count={true}
                                     classes={["p-4"]}
@@ -74,6 +51,7 @@ const Categories: React.FC<{
                                         {cat.children.map((cat_child: any) => {
                                             return (
                                                 <CategoryRow
+                                                    key={"category-child-" + cat_child.id}
                                                     cat={cat_child}
                                                     include_mod_count={true}
                                                     classes={["p-4", "ml-10"]}

@@ -28,7 +28,7 @@ const DropDown: React.FC<{
         dd_classes = dd_classes + " " + classes.join(" ");
 
     return (
-        <button className={dd_classes} onClick={(e) => {
+        <button className={dd_classes} onClick={() => {
             setMenuOpen(!menuOpen);
         }}>
             <div>

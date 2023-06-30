@@ -1,7 +1,5 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { trpc } from "../utils/trpc";
-
-import { signIn, useSession } from "next-auth/react";
 
 import InfiniteScroll from 'react-infinite-scroller';
 

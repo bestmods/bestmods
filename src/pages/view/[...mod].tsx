@@ -16,7 +16,7 @@ import { type GetServerSidePropsContext } from 'next';
 import { getSession, useSession } from 'next-auth/react';
 import { Has_Perm } from '../../utils/permissions';
 import Link from 'next/link';
-import DropDown, { Drop_Down_Menu_Type } from '../../components/utils/drop_down';
+import DropDown, { type Drop_Down_Menu_Type } from '../../components/utils/drop_down';
 
 import Download2Icon from '../../components/utils/icons/download2';
 
