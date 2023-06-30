@@ -8,6 +8,7 @@ import FormTemplate from '../main';
 import { AlertForm } from '../../utils/alert';
 import { type Source } from "@prisma/client";
 import { type CategoriesWithChildren, type ModWithRelations } from "../../types";
+import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 
 type values_type = {
     owner_name?: string | null
@@ -514,6 +515,18 @@ const ModForm: React.FC<{
         }
     });
 
+    // Preview mode.
+    const [previewMode, setPreviewMode] = useState(false);
+
+    // Retrieve current values for preview mode.
+    let description_val = "N/A";
+    let install_val = "N/A";
+
+    if (typeof document !== "undefined" && previewMode) {
+        description_val = (document.getElementById("description") as HTMLInputElement)?.value ?? "N/A";
+        install_val = (document.getElementById("install") as HTMLInputElement)?.value ?? "N/A";
+    }
+
     return (
         <>
             <AlertForm
@@ -589,12 +602,22 @@ const ModForm: React.FC<{
 
                 <div className="form-container">
                     <label className="form-label">Description</label>
-                    <Field rows="16" cols="32" className="form-input" name="description" as="textarea" placeholder="Mod Description" />
+                    {previewMode && (
+                        <ReactMarkdown className="content-markdown">
+                            {description_val}
+                        </ReactMarkdown>
+                    )}
+                    <Field rows="16" cols="32" className={previewMode ? "hidden" : "form-input"} id="description" name="description" as="textarea" placeholder="Mod Description" />
                 </div>
 
                 <div className="form-container">
                     <label className="form-label">Installation</label>
-                    <Field rows="16" cols="32" className="form-input" name="install" as="textarea" placeholder="Mod Installation" />
+                    {previewMode && (
+                        <ReactMarkdown className="content-markdown">
+                            {install_val}
+                        </ReactMarkdown>
+                    )}
+                    <Field rows="16" cols="32" className={previewMode ? "hidden" : "form-input"} id="install" name="install" as="textarea" placeholder="Mod Installation" />
                 </div>
 
                 <h2>Sources</h2>
@@ -608,6 +631,20 @@ const ModForm: React.FC<{
 
                 <h2>Screenshots</h2>
                 {screenshots_form}
+
+                <div className="form-preview-mode-container">
+                    <button type="button" onClick={(e) => {
+                        e.preventDefault();
+
+                        setPreviewMode(!previewMode);
+                    }}>
+                        {previewMode ? (
+                            <span>Preview Off</span>
+                        ) : (
+                            <span>Preview On</span>
+                        )}
+                    </button>
+                </div>
             </FormTemplate>
         </>
     );

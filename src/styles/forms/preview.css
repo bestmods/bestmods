@@ -1,0 +1,13 @@
+.form-preview-mode-container {
+    @apply mx-auto;
+    @apply p-6;
+}
+
+.form-preview-mode-container > button {
+    @apply bg-amber-700;
+    @apply hover:bg-amber-600;
+    @apply p-4;
+    @apply rounded;
+    @apply text-white;
+    @apply font-bold;
+}
