@@ -31,7 +31,7 @@ const TableRow: React.FC<{
     catLink,
     viewLink
 }) => {
-    const cdn: string | undefined = process.env.NEXT_PUBLIC_URL;
+    const cdn: string | undefined = process.env.NEXT_PUBLIC_CDN_URL;
 
     // Compile installer drop-down items.
     const installer_items: Drop_Down_Menu_Type[] = [];
