@@ -9,13 +9,16 @@ import { type ModDownload } from '@prisma/client';
 import ReactMarkdown from 'react-markdown'
 
 import HeadInfo from "../../components/head";
-import { ModInstallerRender, ModRatingRender } from '../../components/mod_browser';
+import ModRatingRender from '../../components/mod/rating/render';
 
 import { prisma } from '../../server/db/client';
 import { type GetServerSidePropsContext } from 'next';
 import { getSession, useSession } from 'next-auth/react';
 import { Has_Perm } from '../../utils/permissions';
 import Link from 'next/link';
+import DropDown, { type Drop_Down_Menu_Type } from '../../components/utils/drop_down';
+
+import Download2Icon from '../../components/utils/icons/download2';
 
 const ModCtx = React.createContext<any | boolean | null>(null);
 const ModViewCtx = React.createContext<string | null>(null);
@@ -63,9 +66,7 @@ const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
                             image={bg_file ? cdn + bg_path : undefined}
                             excludeCdn={bg_file ? true : false}
                         >
-                            <MainContent 
-                                cdn={cdn}
-                            />
+                            <MainContent />
                         </BestModsPage>
                 </ModViewCtx.Provider>
             </ModCtx.Provider>
@@ -73,11 +74,9 @@ const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
     );
 };
 
-const MainContent: React.FC<{ 
-    cdn: string
-}> = ({ 
-    cdn = "" 
-}) => {
+const MainContent: React.FC = () => {
+    const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
+    
     const mod = useContext(ModCtx);
     const modView = useContext(ModViewCtx);
     const { data: session } = useSession();
@@ -89,10 +88,37 @@ const MainContent: React.FC<{
     // We need to use a state for mod visibility (for moderation display right now).
     const [modVisibility, setModVisibility] = useState<boolean>(mod?.visible ?? true);
 
-    // Installer menu.
-    const [installersMenuOpen, setInstallersMenuOpen] = useState(false);
+    const installer_items: Drop_Down_Menu_Type[] = [];
 
     if (mod != null) {
+        // Compile installer drop-down items.
+        if (mod.ModInstaller && mod.ModInstaller.length > 0) {
+            mod.ModInstaller.map((ins: any) => {
+                const name = ins.source.name;
+                const url = ins.url;
+    
+                let icon = ins.source.icon ?? undefined;
+    
+                if (icon)
+                    icon = cdn + icon;
+    
+                const html = <>
+                    {icon && (
+                        <img src={icon} />
+                    )}
+    
+                    {name}
+                </>;
+    
+                installer_items.push({
+                    link: url,
+                    html: html,
+                    new_tab: false
+                });
+            });
+        }
+
+        // Determine our body.
         let body: JSX.Element = <></>;
 
         // Decide what content to serve.
@@ -177,29 +203,12 @@ const MainContent: React.FC<{
                                 <p>Maintained By <span className="font-bold">{mod.ownerName}</span></p>
                             </div>
                         )}
-                        {mod.ModInstaller && mod.ModInstaller.length > 0 && (
-                            <div className="mod-installer">
-                                <div className="mod-installer-button">
-                                    <button id="installerDropdownBtn" onClick={() => {
-                                        setInstallersMenuOpen(!installersMenuOpen);
-                                    }} type="button"><span>Install</span> {!installersMenuOpen ? (
-                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11251)"><path d="M7 10L12 15" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 15L17 10" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11251"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
-                                    ) : (
-                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clipPath="url(#clip0_429_11224)"><path d="M17 14L12 9" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /><path d="M12 9L7 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></g><defs><clipPath id="clip0_429_11224"><rect width="24" height="24" fill="white" /></clipPath></defs></svg>
-                                    )}</button>
-                                </div>
-
-                                <ul className={installersMenuOpen ? "block" : "hidden"}>
-                                    {mod.ModInstaller.map((ins: any) => {
-                                        return (
-                                            <ModInstallerRender
-                                                key={mod.id + "-" + ins.sourceUrl}
-                                                modIns={ins}
-                                            />
-                                        );
-                                    })}
-                                </ul>
-                            </div>
+                        {installer_items.length > 0 && (
+                                <DropDown
+                                    html={<>Install</>}
+                                    drop_down_items={installer_items}
+                                    classes={["mod-view-installer"]}
+                                />
                         )}
                         <div className="relative flex justify-center">
                             <ModRatingRender
@@ -328,7 +337,9 @@ const ModDownloads: React.FC = () => {
                             });
                         }} className="mod-download-item" href={dl.url} target="_blank">
                             <div key={dl.modId + dl.url}>
-                                <svg className="w-5 h-5" viewBox="0 0 512 512" fill="#FFFFFF" xmlns="http://www.w3.org/2000/svg"><path d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z" /></svg>
+                                <Download2Icon
+                                    classes={["w-5", "h-5"]}
+                                />
                                 <span>{dl.name}</span>
                             </div>
                         </a>

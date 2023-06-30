@@ -1,7 +1,7 @@
 import { type Permissions, type User } from "@prisma/client";
 
 import FormTemplate from '../main';
-import { AlertForm } from '../../alert';
+import { AlertForm } from '../../utils/alert';
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { trpc } from "../../../utils/trpc";

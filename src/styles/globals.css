@@ -24,6 +24,7 @@
 @import 'utils/unauthorized.css';
 @import 'utils/buttons.css';
 @import 'utils/alerts.css';
+@import 'utils/drop_down.css';
 
 /* Forms */
 @import 'forms/main.css';
@@ -36,6 +37,13 @@
 
 /* Users */
 @import 'user/table.css';
+
+/* Categories */
+@import 'category/index.css';
+@import 'category/row.css';
+
+/* Mods */
+@import 'mod/rating.css';
 
 /* Admin Area */
 @import 'admin/index.css';

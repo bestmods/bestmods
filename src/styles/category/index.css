@@ -1,0 +1,8 @@
+.category-container {
+    @apply container;
+    @apply mx-auto;
+    @apply bg-cyan-900/80;
+    @apply rounded-sm;
+    @apply p-2;
+    @apply sm:p-16;
+}
