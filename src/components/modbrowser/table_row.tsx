@@ -103,7 +103,7 @@ const TableRow: React.FC<{
             </td>
             <td className="modbrowser-table-data">
                 <div className="modbrowser-table-general">
-                    <h3>{mod.name}</h3>
+                    <h3><Link href={viewLink}>{mod.name}</Link></h3>
                     <p>{descShort}</p>
                 </div>
             </td>
@@ -163,14 +163,22 @@ const TableRow: React.FC<{
                 </div>
             </td>
             <td className="modbrowser-table-data">
-                <div className="modbrowser-table-btns">
+                <div className="modbrowser-table-links">
                     <Link href={viewLink}>View</Link>
+                </div>
+            </td>
+            <td className="modbrowser-table-data">
+                <div className="modbrowser-table-links">
                     {installer_items.length > 0 && (
                         <DropDown
                             html={<>Install</>}
                             drop_down_items={installer_items}
                         />
                     )}
+                </div>
+            </td>
+            <td className="modbrowser-table-data">
+                <div className="modbrowser-table-links">
                     {source_items.length > 0 && (
                         <DropDown
                             html={<>Sources</>}
