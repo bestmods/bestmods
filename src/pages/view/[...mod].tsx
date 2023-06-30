@@ -216,7 +216,7 @@ const MainContent: React.FC = () => {
                             />
                         </div>
                     </div>
-                    <div className="text-white" id="mod-description">
+                    <div className="content-markdown">
                         {body}
                     </div>
                     {session && Has_Perm(session, "contributor") && (
