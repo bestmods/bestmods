@@ -53,3 +53,8 @@
     @apply font-bold;
     @apply hover:text-white;
 }
+
+.user-table-avatar > img {
+    @apply w-8;
+    @apply h-8;
+}
