@@ -49,9 +49,11 @@ const Categories: React.FC<{
                                 {cat.children.length > 0 && (
                                     <>
                                         {cat.children.map((cat_child: any) => {
+
                                             return (
                                                 <CategoryRow
                                                     key={"category-child-" + cat_child.id}
+                                                    parent={cat}
                                                     cat={cat_child}
                                                     include_mod_count={true}
                                                     classes={["p-4", "ml-10"]}
