@@ -58,10 +58,12 @@ const source = async (req: NextApiRequest, res: NextApiResponse) => {
             iremove, 
             banner, 
             bremove, 
-            name, 
+            name,
+            description,
             classes 
         } : { 
-            name?: string, 
+            name?: string,
+            description?: string,
             url: string, 
             classes?: string, 
             icon?: string,
@@ -107,7 +109,7 @@ const source = async (req: NextApiRequest, res: NextApiResponse) => {
             }
         }
 
-        const [src, success, err] = await Insert_Or_Update_Source(prisma, (update) ? pre_url ?? "" : url, update, icon, iremove, banner, bremove, name, classes);
+        const [src, success, err] = await Insert_Or_Update_Source(prisma, (update) ? pre_url ?? "" : url, update, icon, iremove, banner, bremove, name, description, classes);
 
         if (!success || !src) {
             return res.status(400).json({

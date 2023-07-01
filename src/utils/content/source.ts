@@ -17,6 +17,7 @@ export const Insert_Or_Update_Source = async (
     bremove?: boolean,
     
     name?: string,
+    description?: string,
     classes?: string | null
 ): Promise<[Source | null, boolean, string | null | any]> => {
     // Returns.
@@ -105,6 +106,9 @@ export const Insert_Or_Update_Source = async (
                     ...(name && {
                         name: name
                     }),
+                    ...(description != undefined && {
+                        description: description
+                    }),
                     url: url,
                     ...(classes != undefined && {
                         classes: classes
@@ -124,6 +128,7 @@ export const Insert_Or_Update_Source = async (
             src = await prisma.source.create({
                 data: {
                     name: name,
+                    description: description ?? null,
                     url: url,
                     classes: classes ?? null,
     
