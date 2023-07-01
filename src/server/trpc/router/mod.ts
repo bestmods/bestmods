@@ -333,7 +333,7 @@ export const modRouter = router({
                         ...(input.sort != null && input.sort > 0 && {
                             ...(input.sort == 1 && { totalViews: "desc" }),
                             ...(input.sort == 2 && { totalDownloads: "desc" }),
-                            ...(input.sort == 3 && { updateAt: "desc" }),
+                            ...(input.sort == 3 && { editAt: "desc" }),
                             ...(input.sort == 4 && { createAt: "desc" })
                         })
                     },
