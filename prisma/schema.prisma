@@ -89,6 +89,8 @@ model Mod {
   ModCollections ModCollections[]
   ModComment     ModComment[]
   ModInstaller   ModInstaller[]
+  ModTag         ModTag[]
+  ModCredit      ModCredit[]
 }
 
 // Mod Relations
@@ -164,6 +166,26 @@ model ModComment {
   contents String
 }
 
+model ModTag {
+  mod   Mod    @relation(fields: [modId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  modId Int
+  tag   Tag    @relation(fields: [tagId], references: [name], onUpdate: Cascade, onDelete: Cascade)
+  tagId String
+
+  @@id([modId, tagId])
+}
+
+model ModCredit {
+  id     Int     @id @default(autoincrement())
+  mod    Mod     @relation(fields: [modId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  modId  Int
+  user   User?   @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  userId String?
+
+  name   String
+  credit String
+}
+
 // Collections
 model ModCollection {
   id             Int              @id @default(autoincrement())
@@ -216,6 +238,7 @@ model User {
   ModCollection ModCollection?
   ModComment    ModComment[]
   Mod           Mod[]
+  ModCredit     ModCredit[]
 }
 
 model VerificationToken {
@@ -242,4 +265,11 @@ model Permissions {
   perm   String
 
   @@unique([perm, userId])
+}
+
+// Tag System
+model Tag {
+  name        String   @id
+  description String?  @db.Text
+  ModTag      ModTag[]
 }
