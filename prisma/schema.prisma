@@ -18,6 +18,7 @@ datasource db {
 // Primary Content Models
 model Source {
   name         String
+  description  String?        @db.Text
   url          String         @id
   icon         String?
   banner       String?
@@ -27,17 +28,18 @@ model Source {
 }
 
 model Category {
-  id        Int        @id @default(autoincrement())
-  parentId  Int?       @default(0) @map("parentId")
-  children  Category[] @relation("children")
-  parent    Category?  @relation("children", fields: [parentId], references: [id], onUpdate: Cascade, onDelete: NoAction)
-  name      String
-  nameShort String
-  url       String?
-  classes   String?
-  icon      String?
-  Mod       Mod[]
-  hasBg     Boolean    @default(false)
+  id          Int        @id @default(autoincrement())
+  parentId    Int?       @default(0) @map("parentId")
+  children    Category[] @relation("children")
+  parent      Category?  @relation("children", fields: [parentId], references: [id], onUpdate: Cascade, onDelete: NoAction)
+  name        String
+  nameShort   String
+  description String?    @db.Text
+  url         String?
+  classes     String?
+  icon        String?
+  Mod         Mod[]
+  hasBg       Boolean    @default(false)
 }
 
 model Mod {
@@ -59,7 +61,7 @@ model Mod {
 
   createAt DateTime  @default(now())
   updateAt DateTime? @updatedAt
-  editAt DateTime @default(now())
+  editAt   DateTime  @default(now())
 
   needsRecounting Boolean  @default(false)
   recountedAt     DateTime @default(now())
