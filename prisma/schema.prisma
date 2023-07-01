@@ -59,6 +59,7 @@ model Mod {
 
   createAt DateTime  @default(now())
   updateAt DateTime? @updatedAt
+  editAt DateTime @default(now())
 
   needsRecounting Boolean  @default(false)
   recountedAt     DateTime @default(now())
