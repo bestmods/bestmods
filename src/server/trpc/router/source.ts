@@ -9,6 +9,7 @@ export const sourceRouter = router({
         .input(z.object({
             update: z.boolean().default(false),
             name: z.string(),
+            description: z.string().optional(),
             url: z.string(),
             icon: z.string().nullable().default(null),
             banner: z.string().nullable().default(null),
@@ -17,7 +18,7 @@ export const sourceRouter = router({
             bremove: z.boolean().default(false)
         }))
         .mutation(async ({ ctx, input }) => {
-            const [src, success, err] = await Insert_Or_Update_Source(ctx.prisma, input.url, input.update, input.icon ?? undefined, input.iremove, input.banner ?? undefined, input.bremove, input.name, input.classes);
+            const [src, success, err] = await Insert_Or_Update_Source(ctx.prisma, input.url, input.update, input.icon ?? undefined, input.iremove, input.banner ?? undefined, input.bremove, input.name, input.description, input.classes);
 
             if (!success || !src) {
                 throw new TRPCError({

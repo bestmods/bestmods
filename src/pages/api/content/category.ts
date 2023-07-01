@@ -60,6 +60,7 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
             parent_id,
             name,
             name_short,
+            description,
             url,
             classes,
             icon,
@@ -69,6 +70,7 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
             parent_id?: number,
             name?: string,
             name_short?: string,
+            description?: string,
             url?: string,
             classes?: string,
             icon?: string,
@@ -111,7 +113,7 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
             }
         }
 
-        const [cat, success, err] = await Insert_Or_Update_Category(prisma, name, name_short, url, (update && id) ? Number(id) : undefined, icon, iremove, parent_id, classes, has_bg);
+        const [cat, success, err] = await Insert_Or_Update_Category(prisma, name, name_short, description, url, (update && id) ? Number(id) : undefined, icon, iremove, parent_id, classes, has_bg);
 
         if (!success || !cat) {
             return res.status(400).json({

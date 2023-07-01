@@ -9,6 +9,7 @@ export const categoryRouter = router({
         .input(z.object({
             id: z.number().nullable().default(null),
             parent_id: z.number().nullable().default(null),
+            description: z.string().optional(),
             name: z.string(),
             name_short: z.string(),
             url: z.string(),
@@ -21,7 +22,7 @@ export const categoryRouter = router({
         }))
         .mutation(async ({ ctx, input }) => {
             // Use our helper funtion to insert our update category.
-            const [cat, success, err] = await Insert_Or_Update_Category(ctx.prisma, input.name, input.name_short, input.url, input.id ?? 0, input.icon ?? undefined, input.iremove ?? undefined, input.parent_id, input.classes, input.has_bg);
+            const [cat, success, err] = await Insert_Or_Update_Category(ctx.prisma, input.name, input.name_short, input.description, input.url, input.id ?? 0, input.icon ?? undefined, input.iremove ?? undefined, input.parent_id, input.classes, input.has_bg);
 
             if (!success || !cat) {
                 throw new TRPCError({

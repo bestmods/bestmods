@@ -50,12 +50,19 @@ const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
     else if (modView == "downloads")
         titleName += " (Downloads)";
 
+    let cat_head_name = "";
+
+    if (mod?.category?.parent)
+        cat_head_name = mod.category.parent.name;
+    else if (mod?.category)
+        cat_head_name = mod.category.name;
+
     return (
         <>
             <ModCtx.Provider value={mod}>
                 <ModViewCtx.Provider value={modView}>
                     <HeadInfo
-                        title={mod ? titleName + " - Best Mods" : null}
+                        title={mod ? titleName + " - " + cat_head_name + " - Best Mods" : null}
                         description={mod ? mod.descriptionShort : null}
                         image={mod && mod.banner ? cdn + mod.banner : null}
                         webtype="article"

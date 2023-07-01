@@ -80,12 +80,15 @@ const Home: NextPage<{
     if (cat) {
         if (cat.parent) {
             headTitle = cat.parent.name + " " + cat.name + " - Best Mods";
-            headDesc = "Browse through many mods in " + cat.parent.name + " " + cat.name + "!";
+            headDesc = "Browse through many mods in " + cat.parent.name + "'s " + cat.name + " category!";
         } else {
             headTitle = cat.name + " - Best Mods";
             headDesc = "Browse through many mods in " + cat.name + "!";
         }
     }
+
+    if (headDesc && cat?.description)
+        headDesc += `\n\n${cat.description}`
 
     return (
         <>

@@ -10,16 +10,18 @@ import { type Category } from "@prisma/client";
 import { type CategoriesWithChildren } from "../../types";
 
 type values_type = {
-    id?: number;
-    parent_id?: number | null;
+    id?: number
+    parent_id?: number | null
 
-    name: string;
-    name_short: string;
-    url: string;
-    classes: string;
+    name: string
+    name_short: string
+    url: string
+    classes: string
 
-    icon?: string | null;
-    iremove?: boolean | null;
+    description?: string
+
+    icon?: string | null
+    iremove?: boolean | null
 
     has_bg?: boolean
 };
@@ -78,6 +80,7 @@ const CategoryForm: React.FC<{
         initialValues: {
             name: cat?.name ?? "",
             name_short: cat?.nameShort ?? "",
+            description: cat?.description ?? "",
             url: cat?.url ?? "",
             classes: cat?.classes ?? "",
             iremove: false,
@@ -174,6 +177,11 @@ const CategoryForm: React.FC<{
                 <div className="form-container">
                     <label className="form-label">Short Name</label>
                     <Field className="form-input" name="name_short" type="text" placeholder="Category Short Name" />
+                </div>
+
+                <div className="form-container">
+                    <label className="form-label">Description</label>
+                    <Field className="form-input" rows={16} cols={32} name="description" as="textarea" placeholder="Category Description" />
                 </div>
 
                 <div className="form-container">

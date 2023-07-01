@@ -8,6 +8,7 @@ export const Insert_Or_Update_Category = async (
 
     name?: string,
     name_short?: string,
+    description?: string,
     url?: string,
     
     lookup_id?: number,
@@ -46,6 +47,9 @@ export const Insert_Or_Update_Category = async (
                     ...(parent_id != undefined && {
                         parentId: (parent_id > 0) ? parent_id : null
                     }),
+                    ...(description != undefined && {
+                        description: description
+                    }),
                     ...(name && {
                         name: name
                     }),
@@ -67,6 +71,7 @@ export const Insert_Or_Update_Category = async (
             cat = await prisma.category.create({
                 data: {
                     parentId: parent_id ?? null,
+                    description: description ?? null,
                     name: name ?? "",
                     nameShort: name_short ?? "",
                     url: url ?? "",

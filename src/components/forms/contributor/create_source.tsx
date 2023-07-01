@@ -12,7 +12,8 @@ type values_type = {
     update?: boolean
     name: string
     url: string
-    classes: string | null
+    classes?: string
+    description?: string
     banner?: string | null
     icon?: string | null
     iremove?: boolean
@@ -69,6 +70,7 @@ const SourceForm: React.FC<{
     const form = useFormik({
         initialValues: {
             name: src?.name ?? "",
+            description: src?.description ?? "",
             url: src?.url ?? "",
             classes: src?.classes ?? "",
             iremove: false,
@@ -151,6 +153,11 @@ const SourceForm: React.FC<{
                 <div className="form-container">
                     <label className="form-label">Name</label>
                     <Field className="form-input" name="name" type="text" placeholder="Source Name" />
+                </div>
+
+                <div className="form-container">
+                    <label className="form-label">Description</label>
+                    <Field className="form-input" rows={16} cols={32} name="description" as="textarea" placeholder="Source Description" />
                 </div>
 
                 <div className="form-container">
