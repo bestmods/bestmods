@@ -87,6 +87,9 @@ const Home: NextPage<{
         }
     }
 
+    if (headDesc && cat?.description)
+        headDesc += `\n\n${cat.description}`
+
     return (
         <>
             <HeadInfo
