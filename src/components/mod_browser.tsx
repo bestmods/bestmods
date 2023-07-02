@@ -95,10 +95,10 @@ const ModBrowser: React.FC<{
     const items: any = [];
 
     const { data, fetchNextPage } = trpc.mod.getAllModsBrowser.useInfiniteQuery({
-        categories: (categories) ? JSON.stringify(categories) : null,
-        timeframe: filters?.timeframe ?? null,
-        sort: filters?.sort ?? null,
-        search: filters?.search ?? null,
+        categories: (categories) ? JSON.stringify(categories) : undefined,
+        timeframe: filters?.timeframe,
+        sort: filters?.sort,
+        search: filters?.search,
         visible: (visible != null) ? visible : true
     }, {
         getNextPageParam: (lastPage) => lastPage.nextCur,

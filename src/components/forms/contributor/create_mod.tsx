@@ -11,20 +11,20 @@ import { type CategoriesWithChildren, type ModWithRelations } from "../../types"
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 
 type values_type = {
-    owner_name?: string | null
+    owner_name?: string
     description: string
-    category?: number | null
-    id?: number | null
+    category?: number
+    id?: number
     name: string
     url: string
-    banner?: string | null
+    banner?: string
     description_short: string
-    install: string | null
+    install: string
     bremove?: boolean
-    downloads?: string | null
-    screenshots?: string | null
-    sources?: string | null
-    installers?: string | null
+    downloads?: string
+    screenshots?: string
+    sources?: string
+    installers?: string
     credits?: string
 };
 
@@ -235,7 +235,7 @@ const ModForm: React.FC<{
         </div>;
 
     // State values we cannot extract from Formik.
-    const [category, setCategory] = useState<number | null>(mod?.categoryId ?? null);
+    const [category, setCategory] = useState<number | undefined>(mod?.categoryId ?? undefined);
 
     // States for number of download and screenshot forms to show.
     const [downloadCount, setDownloadCount] = useState(mod?.ModDownload?.length || 1);
@@ -572,11 +572,11 @@ const ModForm: React.FC<{
             }
 
             // Assign category and ID if any.
-            new_vals.id = mod?.id ?? null;
+            new_vals.id = mod?.id;
             new_vals.category = category;
 
             // Assign banner data.
-            new_vals.banner = bannerData?.toString() ?? null;
+            new_vals.banner = bannerData?.toString() ?? undefined;
 
             // Insert into database.
             mod_mut.mutate(new_vals);

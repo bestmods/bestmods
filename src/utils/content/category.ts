@@ -94,10 +94,10 @@ export const Insert_Or_Update_Category = async (
     // Let's now handle file uploads.
     let icon_path = null;
 
-    if (icon != null && icon.length > 0) {
+    if (icon && icon.length > 0) {
         const base64Data = icon.split(',')[1];
 
-        if (base64Data != null) {
+        if (base64Data) {
             // Retrieve file type.
             const file_ext = FileType(base64Data);
 

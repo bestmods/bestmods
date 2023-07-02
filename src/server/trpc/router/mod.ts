@@ -8,27 +8,27 @@ import { Insert_Or_Update_Mod } from "../../../utils/content/mod";
 export const modRouter = router({
     addMod: contributorProcedure
         .input(z.object({
-            id: z.number().nullable().default(null),
+            id: z.number().optional(),
             visible: z.boolean().default(true),
 
-            owner_id: z.string().nullable().default(null),
-            owner_name: z.string().nullable().default(null),
+            owner_id: z.string().optional(),
+            owner_name: z.string().optional(),
 
             name: z.string(),
-            banner: z.string().nullable().default(null),
+            banner: z.string().optional(),
             url: z.string(),
-            category: z.number().nullable().default(null),
+            category: z.number().optional(),
 
             // The following should be parsed via Markdown Syntax.
             description: z.string(),
             description_short: z.string(),
-            install: z.string().nullable().default(null),
+            install: z.string().optional(),
 
             // The following should be parsed via JSON.
-            downloads: z.string().nullable().default(null),
-            screenshots: z.string().nullable().default(null),
-            sources: z.string().nullable().default(null),
-            installers: z.string().nullable().default(null),
+            downloads: z.string().optional(),
+            screenshots: z.string().optional(),
+            sources: z.string().optional(),
+            installers: z.string().optional(),
             credits: z.string().optional(),
 
             bremove: z.boolean().default(false)
@@ -138,7 +138,7 @@ export const modRouter = router({
             }
 
             // Insert ot update mod.
-            const [mod, success, err] = await Insert_Or_Update_Mod(ctx.prisma, input.name, input.url, input.description, input.visible, input.id ?? undefined, undefined, input.owner_id ?? undefined, input.owner_name ?? undefined, input.banner ?? undefined, input.bremove, input.category, input.description_short, input.install ?? undefined, downloads, screenshots, sources, installers, credits);
+            const [mod, success, err] = await Insert_Or_Update_Mod(ctx.prisma, input.name, input.url, input.description, input.visible, input.id, undefined, input.owner_id, input.owner_name, input.banner, input.bremove, input.category, input.description_short, input.install, downloads, screenshots, sources, installers, credits);
 
             // Check for error.
             if (!success || !mod) {
@@ -193,10 +193,10 @@ export const modRouter = router({
             cursor: z.number().nullish(),
             count: z.number().default(10),
 
-            categories: z.string().nullable().default(null),
-            search: z.string().nullable().default(null),
-            timeframe: z.number().nullable().default(null),
-            sort: z.number().nullable().default(null),
+            categories: z.string().optional(),
+            search: z.string().optional(),
+            timeframe: z.number().default(0),
+            sort: z.number().default(0),
 
             visible: z.boolean().default(false),
         }))
@@ -345,7 +345,7 @@ export const modRouter = router({
                 },
                 orderBy: [
                     {
-                        ...(input.sort != null && input.sort == 0 && {
+                        ...(input.sort == 0 && {
                             ...(input.timeframe == 0 && { ratingHour: "desc" }),
                             ...(input.timeframe == 1 && { ratingDay: "desc" }),
                             ...(input.timeframe == 2 && { ratingWeek: "desc" }),
@@ -353,7 +353,7 @@ export const modRouter = router({
                             ...(input.timeframe == 4 && { ratingYear: "desc" }),
                             ...(input.timeframe == 5 && { totalRating: "desc" })
                         }),
-                        ...(input.sort != null && input.sort > 0 && {
+                        ...(input.sort > 0 && {
                             ...(input.sort == 1 && { totalViews: "desc" }),
                             ...(input.sort == 2 && { totalDownloads: "desc" }),
                             ...(input.sort == 3 && { editAt: "desc" }),

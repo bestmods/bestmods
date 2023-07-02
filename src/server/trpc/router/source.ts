@@ -11,14 +11,14 @@ export const sourceRouter = router({
             name: z.string(),
             description: z.string().optional(),
             url: z.string(),
-            icon: z.string().nullable().default(null),
-            banner: z.string().nullable().default(null),
-            classes: z.string().nullable().default(null),
+            icon: z.string().optional(),
+            banner: z.string().optional(),
+            classes: z.string().optional(),
             iremove: z.boolean().default(false),
             bremove: z.boolean().default(false)
         }))
         .mutation(async ({ ctx, input }) => {
-            const [src, success, err] = await Insert_Or_Update_Source(ctx.prisma, input.url, input.update, input.icon ?? undefined, input.iremove, input.banner ?? undefined, input.bremove, input.name, input.description, input.classes);
+            const [src, success, err] = await Insert_Or_Update_Source(ctx.prisma, input.url, input.update, input.icon, input.iremove, input.banner, input.bremove, input.name, input.description, input.classes);
 
             if (!success || !src) {
                 throw new TRPCError({

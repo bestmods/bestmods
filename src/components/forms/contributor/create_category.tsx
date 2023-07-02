@@ -20,8 +20,8 @@ type values_type = {
 
     description?: string
 
-    icon?: string | null
-    iremove?: boolean | null
+    icon?: string
+    iremove?: boolean
 
     has_bg?: boolean
 };
@@ -95,7 +95,7 @@ const CategoryForm: React.FC<{
             // Assign some additional values.
             new_vals.parent_id = parent;
             new_vals.id = cat?.id;
-            new_vals.icon = iconData?.toString() ?? null;
+            new_vals.icon = iconData?.toString() ?? undefined;
 
             // Insert into database.
             cat_mut.mutate(new_vals);

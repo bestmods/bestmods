@@ -7,9 +7,9 @@ import MobileMenu from "./main/mobile_menu";
 import Login from "./main/login";
 
 export type filterArgs = {
-    timeframe: number | null
-    sort: number | null
-    search: string | null
+    timeframe: number
+    sort: number
+    search?: string
 
     timeframeCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void) | null
     sortCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void) | null
@@ -46,9 +46,9 @@ export const BestModsPage: React.FC<{
     showFilters = false
 }) => {
     // Handle filtering and display options.
-    const [timeframe, setTimeframe] = useState<number | null>(0);
-    const [sort, setSort] = useState<number | null>(0);
-    const [search, setSearch] = useState<string | null>(null);
+    const [timeframe, setTimeframe] = useState<number>(0);
+    const [sort, setSort] = useState<number>(0);
+    const [search, setSearch] = useState<string | undefined>(undefined);
     const [displayStr, setDisplay] = useState((cookies) ? cookies['bm_display'] ?? "grid" : "grid");
 
     const timeframeCb = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -63,7 +63,7 @@ export const BestModsPage: React.FC<{
         if (e.target.value.length > 0)
             setSearch(e.target.value);
         else
-            setSearch(null);
+            setSearch(undefined);
     };
 
     const displayCb = (e: React.MouseEvent) => {
