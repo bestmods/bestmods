@@ -12,7 +12,8 @@ const modWithRelations = Prisma.validator<Prisma.ModArgs>()({
         ModDownload: true,
         ModScreenshot: true,
         ModSource: true,
-        ModInstaller: true
+        ModInstaller: true,
+        ModCredit: true
     }
 });
 
