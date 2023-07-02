@@ -2,7 +2,7 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 
 import { prisma } from "../../../server/db/client";
 import { Delete_Mod, Insert_Or_Update_Mod } from "../../../utils/content/mod";
-import { type ModDownload, type ModInstaller, type ModScreenshot, type ModSource } from "@prisma/client";
+import { type ModCredit, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource } from "@prisma/client";
 
 const mod = async (req: NextApiRequest, res: NextApiResponse) => {
     // Check API key.
@@ -72,7 +72,8 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
             downloads,
             screenshots,
             sources,
-            installers
+            installers,
+            credits
         } : {
             url?: string,
             visible?: boolean,
@@ -88,7 +89,8 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
             downloads?: ModDownload[]
             screenshots?: ModScreenshot[],
             sources?: ModSource[],
-            installers?: ModInstaller[]
+            installers?: ModInstaller[],
+            credits?: ModCredit[]
         } = req.body;
 
         let id: string | undefined = undefined;
@@ -134,7 +136,7 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         // Update or insert mod.
-        const [mod, success, err] = await Insert_Or_Update_Mod(prisma, name, url, description, visible, (update) ? Number(id) : undefined, (update) ? pre_url : undefined, owner_id, owner_name, banner, bremove, category_id, description_short, install, downloads, screenshots, sources, installers);
+        const [mod, success, err] = await Insert_Or_Update_Mod(prisma, name, url, description, visible, (update) ? Number(id) : undefined, (update) ? pre_url : undefined, owner_id, owner_name, banner, bremove, category_id, description_short, install, downloads, screenshots, sources, installers, credits);
 
         // Check for error.
         if (!success || !mod) {

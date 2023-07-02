@@ -1,4 +1,4 @@
-import { type Mod, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource, type PrismaClient } from "@prisma/client";
+import { type ModCredit, type Mod, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource, type PrismaClient } from "@prisma/client";
 
 import FileType from '../base64';
 import fs from 'fs';
@@ -28,7 +28,8 @@ export const Insert_Or_Update_Mod = async (
     downloads?: ModDownload[],
     screenshots?: ModScreenshot[],
     sources?: ModSource[],
-    installers?: ModInstaller[]
+    installers?: ModInstaller[],
+    credits?: ModCredit[]
 ): Promise<[Mod | null, boolean, string | null | any]> => {
     // Returns.
     let mod: Mod | null = null;
@@ -188,6 +189,14 @@ export const Insert_Or_Update_Mod = async (
                 }
             });
         }
+
+        if (credits) {
+            await prisma.modCredit.deleteMany({
+                where: {
+                    modId: mod.id
+                }
+            });
+        }
     } catch (error) {
         // Log, but continue.
         console.error("Error deleting relations for Mod ID #" + mod.id)
@@ -313,6 +322,27 @@ export const Insert_Or_Update_Mod = async (
                 console.error(error);
             }
         });
+    }
+
+    // Loop through credits.
+    if (credits) {
+        credits.forEach(async ({ name, credit }) => {
+            if (!mod || !name || name.length < 1 || !credit || credit.length < 1)
+                return;
+
+            try {
+                await prisma.modCredit.create({
+                    data: {
+                        modId: mod.id,
+                        name: name,
+                        credit: credit
+                    }
+                });
+            } catch (error) {
+                console.error("Error inserting credit for mod ID #" + mod.id + " (name => " + name + ". Credit => " + credit);
+                console.error(error);     
+            }
+        })
     }
 
     return [mod, true, null];

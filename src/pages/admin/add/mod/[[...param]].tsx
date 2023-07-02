@@ -102,7 +102,8 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
                     ModDownload: true,
                     ModScreenshot: true,
                     ModSource: true,
-                    ModInstaller: true
+                    ModInstaller: true,
+                    ModCredit: true
                 }
             });
         }

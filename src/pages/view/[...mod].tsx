@@ -49,6 +49,8 @@ const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
         titleName += " (Sources)";
     else if (modView == "downloads")
         titleName += " (Downloads)";
+    else if (modView == "credits")
+        titleName += " (Credits)";
 
     let cat_head_name = "";
 
@@ -135,6 +137,8 @@ const MainContent: React.FC = () => {
             body = <ModSources cdn={cdn} />;
         else if (modView == "downloads")
             body = <ModDownloads />;
+        else if (modView == "credits")
+            body = <ModCredits />
         else
             body = <ModOverview />;
 
@@ -148,6 +152,8 @@ const MainContent: React.FC = () => {
         const installLink = "/view/" + mod.url + "/install";
         const sourcesLink = "/view/" + mod.url + "/sources";
         const downloadsLink = "/view/" + mod.url + "/downloads";
+        const credits_link = "/view/" + mod.url + "/credits";
+
         const editLink = "/admin/add/mod/" + mod.url;
 
         // Check rating.
@@ -201,6 +207,10 @@ const MainContent: React.FC = () => {
                     <a href={installLink} className={`mod-button-item ${modView == "install" ? "mod-button-item-active" : ""}`}>Installation</a>
                     <a href={sourcesLink} className={`mod-button-item ${modView == "sources" ? "mod-button-item-active" : ""}`}>Sources</a>
                     <a href={downloadsLink} className={`mod-button-item ${modView == "downloads" ? "mod-button-item-active" : ""}`}>Downloads</a>
+                    {mod?.ModCredit?.length && (
+                        <a href={credits_link} className={`mod-button-item ${modView == "credits" ? "mod-button-item-active" : ""}`}>Credits</a>
+                    )}
+                    
                 </div>
 
                 <div id="mod-content">
@@ -358,6 +368,32 @@ const ModDownloads: React.FC = () => {
     );
 };
 
+const ModCredits: React.FC = () => {
+    const mod = useContext(ModCtx);
+
+    const credits = mod.ModCredit ?? [];
+
+    return (
+        <>
+            <h3>Credits</h3>
+            <div id="mod-credits">
+                <ul>
+                    {credits.map(({ name, credit } : { name: string, credit: string }) => {
+                        if (!name || !credit)
+                            return;
+
+                        return (
+                            <li key={"credit-" + name}>
+                                <span className="mod-credit-name">{name}</span> - <span className="mod-credit-credit">{credit}</span>
+                            </li>
+                        );
+                    })}
+                </ul>
+            </div>
+        </>
+    );
+}
+
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const session = await getSession(ctx);
 
@@ -396,7 +432,8 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
                 where: {
                     userId: session?.user?.id ?? ""
                 }
-            }
+            },
+            ModCredit: true
         },
         where: {
             url: url

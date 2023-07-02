@@ -2,7 +2,7 @@ import { z } from "zod";
 import { router, publicProcedure, protectedProcedure, contributorProcedure } from "../trpc";
 
 import { TRPCError } from "@trpc/server"
-import { type ModDownload, type ModInstaller, type ModScreenshot, type ModSource } from "@prisma/client";
+import { type ModCredit, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource } from "@prisma/client";
 import { Insert_Or_Update_Mod } from "../../../utils/content/mod";
 
 export const modRouter = router({
@@ -29,6 +29,7 @@ export const modRouter = router({
             screenshots: z.string().nullable().default(null),
             sources: z.string().nullable().default(null),
             installers: z.string().nullable().default(null),
+            credits: z.string().optional(),
 
             bremove: z.boolean().default(false)
         }))
@@ -114,8 +115,30 @@ export const modRouter = router({
                 })
             }
 
+            // Parse credits from input and put into ModCredit type.
+            const credits: ModCredit[] = [];
+
+            if (input.credits) {
+                const json = JSON.parse(input.credits ?? "[]");
+
+                json.forEach(({ name, credit } : { name: string, credit: string }) => {
+                    if (!name || !credit)
+                        return;
+
+                    const new_item: ModCredit = {
+                        id:  0,
+                        modId: 0,
+                        userId: "",
+                        name: name,
+                        credit: credit
+                    };
+
+                    credits.push(new_item);
+                });
+            }
+
             // Insert ot update mod.
-            const [mod, success, err] = await Insert_Or_Update_Mod(ctx.prisma, input.name, input.url, input.description, input.visible, input.id ?? undefined, undefined, input.owner_id ?? undefined, input.owner_name ?? undefined, input.banner ?? undefined, input.bremove, input.category, input.description_short, input.install ?? undefined, downloads, screenshots, sources, installers);
+            const [mod, success, err] = await Insert_Or_Update_Mod(ctx.prisma, input.name, input.url, input.description, input.visible, input.id ?? undefined, undefined, input.owner_id ?? undefined, input.owner_name ?? undefined, input.banner ?? undefined, input.bremove, input.category, input.description_short, input.install ?? undefined, downloads, screenshots, sources, installers, credits);
 
             // Check for error.
             if (!success || !mod) {
