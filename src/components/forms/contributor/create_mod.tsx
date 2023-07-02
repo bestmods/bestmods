@@ -25,6 +25,7 @@ type values_type = {
     screenshots?: string | null
     sources?: string | null
     installers?: string | null
+    credits?: string
 };
 
 type dl_arr_type = {
@@ -44,7 +45,12 @@ type src_arr_type = {
 type ins_arr_type = {
     src_url: string
     url: string
-}
+};
+
+type cre_arr_type = {
+    name: string
+    credit: string
+};
 
 const DownloadForm: React.FC<{
     mod: ModWithRelations | null,
@@ -178,6 +184,37 @@ const InstallerForm: React.FC<{
     )
 };
 
+const CreditForm: React.FC<{
+    mod: ModWithRelations | null,
+    num: number
+}> = ({
+    mod,
+    num
+}) => {
+    const mod_credit = mod?.ModCredit[num - 1];
+
+    const name = mod_credit?.name ?? "";
+    const credit = mod_credit?.credit ?? "";
+
+    const name_id = "credits-" + num + "-name";
+    const credit_id = "credits-" + num + "-credit";
+
+    return (
+        <>
+            <h3>Credit #{num}</h3>
+            <div className="form-container">
+                <label className="form-label">Name</label>
+                <input type="text" className="form-input" id={name_id} defaultValue={name} />
+            </div>
+
+            <div className="form-container">
+                <label className="form-label">Credit</label>
+                <input type="text" className="form-input" id={credit_id} defaultValue={credit} />
+            </div>
+        </>
+    );
+}
+
 const ModForm: React.FC<{
     cats: CategoriesWithChildren[],
     srcs: Source[],
@@ -205,6 +242,7 @@ const ModForm: React.FC<{
     const [screenShotCount, setScreenShotCount] = useState(mod?.ModScreenshot?.length || 1);
     const [sourceCount, setSourceCount] = useState(mod?.ModSource?.length || 1);
     const [installerCount, setInstallerCount] = useState(mod?.ModInstaller?.length || 1);
+    const [creditCount, setCreditCount] = useState(mod?.ModCredit?.length || 1);
 
     // File uploads.
     const [bannerData, setBannerData] = useState<string | ArrayBuffer | null>(null);
@@ -377,6 +415,40 @@ const ModForm: React.FC<{
         </>);
     }, [installerCount]);
 
+    const credits_form = useMemo(() => {
+        const range = Array.from( { length: creditCount }, (_, index) => index + 1);
+
+        return (
+            <>
+                {range.map((num) => {
+                    return (
+                        <div key={"credit-" + num} className="form-container">
+                            <CreditForm
+                                mod={mod}
+                                num={num}
+                            />
+
+                            <button onClick={(e) => {
+                                e.preventDefault();
+
+                                // Subtract credits count.
+                                setCreditCount(prev => prev - 1);
+                            }} className="btn btn-red">Remove</button>
+                        </div>
+                    );
+                })}
+                <div className="form-container">
+                    <button onClick={(e) => {
+                        e.preventDefault();
+
+                        // Increment credits count.
+                        setCreditCount(prev => prev + 1);
+                    }} className="btn btn-green">Add</button>
+                </div>
+            </>
+        );
+    }, [creditCount]);
+
     // Create form using Formik.
     const form = useFormik({
         initialValues: {
@@ -493,6 +565,33 @@ const ModForm: React.FC<{
             }
 
             new_vals.installers = JSON.stringify(ins_arr);
+
+            // Retrieve values from credits.
+            const cre_arr: cre_arr_type[] = [];
+
+            for (let i = 1; i <= 50; i++) {
+                if (typeof window === "undefined")
+                    break;
+
+                    const name_ele = document.getElementById("credits-" + i + "-name");
+                    const credit_ele = document.getElementById("credits-" + i + "-credit");
+
+                    if (!name_ele || !credit_ele)
+                        break;
+
+                    const name = (name_ele as HTMLInputElement)?.value ?? null;
+                    const credit = (credit_ele as HTMLInputElement)?.value ?? null;
+
+                    if (!name || !credit)
+                        continue;
+
+                    cre_arr.push({
+                        name: name,
+                        credit: credit
+                    });
+            }
+
+            new_vals.credits = JSON.stringify(cre_arr);
 
             // Assign category and ID if any.
             new_vals.id = mod?.id ?? null;
@@ -631,6 +730,9 @@ const ModForm: React.FC<{
 
                 <h2>Screenshots</h2>
                 {screenshots_form}
+
+                <h2>Credits</h2>
+                {credits_form}
 
                 <div className="form-preview-mode-container">
                     <button type="button" onClick={(e) => {
