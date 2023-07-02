@@ -231,3 +231,7 @@
     @apply bg-gray-600;
     @apply hover:bg-gray-500;
 }
+
+.mod-credit-name {
+    @apply font-bold;
+}
