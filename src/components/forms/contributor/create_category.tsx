@@ -84,7 +84,7 @@ const CategoryForm: React.FC<{
             url: cat?.url ?? "",
             classes: cat?.classes ?? "",
             iremove: false,
-            has_bg: cat?.hasBg ?? ""
+            has_bg: cat?.hasBg ?? false
         },
         enableReinitialize: true,
 
