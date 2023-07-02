@@ -14,8 +14,6 @@
 @import 'modbrowser/table.css';
 @import 'modbrowser/grid.css';
 
-/* Views */
-@import 'view/mod.css';
 
 /* Utils */
 @import 'utils/loading.css';
@@ -45,6 +43,7 @@
 @import 'category/row.css';
 
 /* Mods */
+@import 'mod/view.css';
 @import 'mod/rating.css';
 
 /* Admin Area */

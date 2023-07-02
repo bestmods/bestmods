@@ -14,8 +14,8 @@ type values_type = {
     url: string
     classes?: string
     description?: string
-    banner?: string | null
-    icon?: string | null
+    banner?: string
+    icon?: string
     iremove?: boolean
     bremove?: boolean
 };
@@ -82,8 +82,8 @@ const SourceForm: React.FC<{
             // Create new values.
             const new_vals: values_type = values;
 
-            new_vals.icon = iconData?.toString() ?? null;
-            new_vals.banner = bannerData?.toString() ?? null;
+            new_vals.icon = iconData?.toString();
+            new_vals.banner = bannerData?.toString();
             new_vals.update = (src) ? true : false;
 
             // Insert into database.

@@ -54,6 +54,8 @@
 
 #mod-buttons {
     @apply flex;
+    @apply flex-wrap;
+    @apply gap-1;
     @apply justify-center;
 }
 
@@ -62,9 +64,7 @@
     @apply text-sm;
     @apply text-white;
     @apply rounded-t;
-    @apply p-1;
-    @apply md:p-3;
-    @apply mr-1;
+    @apply p-3;
     @apply bg-cyan-900/50;
 }
 

@@ -11,20 +11,20 @@ import { type CategoriesWithChildren, type ModWithRelations } from "../../types"
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 
 type values_type = {
-    owner_name?: string | null
+    owner_name?: string
     description: string
-    category?: number | null
-    id?: number | null
+    category?: number
+    id?: number
     name: string
     url: string
-    banner?: string | null
+    banner?: string
     description_short: string
-    install: string | null
+    install: string
     bremove?: boolean
-    downloads?: string | null
-    screenshots?: string | null
-    sources?: string | null
-    installers?: string | null
+    downloads?: string
+    screenshots?: string
+    sources?: string
+    installers?: string
     credits?: string
 };
 
@@ -235,7 +235,7 @@ const ModForm: React.FC<{
         </div>;
 
     // State values we cannot extract from Formik.
-    const [category, setCategory] = useState<number | null>(mod?.categoryId ?? null);
+    const [category, setCategory] = useState<number | undefined>(mod?.categoryId ?? undefined);
 
     // States for number of download and screenshot forms to show.
     const [downloadCount, setDownloadCount] = useState(mod?.ModDownload?.length || 1);
@@ -466,139 +466,117 @@ const ModForm: React.FC<{
             // Create new values.
             const new_vals: values_type = values;
 
-            // Retrieve values from downloads.
-            const dls_arr: Array<dl_arr_type> = [];
+            if (typeof window != "undefined" && typeof document != "undefined") {
+                // Retrieve values from downloads.
+                const dls_arr: Array<dl_arr_type> = [];
 
-            for (let i = 1; i <= 50; i++) {
-                const name_ele = document.getElementById("downloads-" + i + "-name");
-                const url_ele = document.getElementById("downloads-" + i + "-url");
-    
-                if (!name_ele || !url_ele)
-                    continue;
-    
-                const nam_val = (document.getElementById(name_ele.id) as HTMLInputElement).value;
-                const url_val = (document.getElementById(url_ele.id) as HTMLInputElement).value;
-    
-                if (url_val.length < 1)
-                    continue;
-    
+                for (let i = 1; i <= 50; i++) {
+                    // Retrieve input values.
+                    const name = (document.getElementById("downloads-" + i + "-name") as HTMLInputElement)?.value ?? null;
+                    const url = (document.getElementById("downloads-" + i + "-url") as HTMLInputElement)?.value ?? null;
+        
+                    // Make sure they're valid.
+                    if (!name || !url || url.length < 1)
+                        continue;
+
+                    // Push to array.
                     dls_arr.push({ 
-                        name: nam_val,
-                        url: url_val
+                        name: name,
+                        url: url
                     });
-            }
+                }
 
-            new_vals.downloads = JSON.stringify(dls_arr);
+                new_vals.downloads = JSON.stringify(dls_arr);
 
-            // Retrieve values from screenshots.
-            const sss_arr: Array<ss_arr_type> = [];
+                // Retrieve values from screenshots.
+                const sss_arr: Array<ss_arr_type> = [];
 
-            for (let i = 1; i <= 50; i++) {
-                if (typeof window === 'undefined')
-                    break
-    
-                const url_ele = document.getElementById("screenshots-" + i + "-url");
-    
-                if (!url_ele)
-                    break;
-    
-                const url_val = (document.getElementById(url_ele.id) as HTMLInputElement).value;
-    
-                if (url_val.length < 1)
-                    continue;
-    
-                    sss_arr.push({ url: url_val });
-            }
+                for (let i = 1; i <= 50; i++) {        
+                    // Retrieve input values.
+                    const url = (document.getElementById("screenshots-" + i + "-url") as HTMLInputElement)?.value ?? null;
+        
+                    // Make sure they're valid.
+                    if (!url || url.length < 1)
+                        continue;
+        
+                    // Push to array.
+                    sss_arr.push({ 
+                        url: url 
+                    });
+                }
 
-            new_vals.screenshots = JSON.stringify(sss_arr);
+                new_vals.screenshots = JSON.stringify(sss_arr);
 
-            // Retrieve values from sources.
-            const srcs_arr: Array<src_arr_type> = [];
+                // Retrieve values from sources.
+                const srcs_arr: Array<src_arr_type> = [];
 
-            for (let i = 1; i <= 50; i++) {
-                if (typeof window === 'undefined')
-                    break
-    
-                const url_ele = document.getElementById("sources-" + i + "-url");
-                const query_ele = document.getElementById("sources-" + i + "-query");
-    
-                if (!url_ele || !query_ele)
-                    continue;
-    
-                const url_val = (document.getElementById(url_ele.id) as HTMLInputElement).value;
-                const query_val = (document.getElementById(query_ele.id) as HTMLInputElement).value;
-    
-                if (url_val.length < 1)
-                    continue;
-    
+                for (let i = 1; i <= 50; i++) {
+                    // Retrieve input values.
+                    const url = (document.getElementById("sources-" + i + "-url") as HTMLInputElement)?.value ?? null;
+                    const query = (document.getElementById("sources-" + i + "-query") as HTMLInputElement)?.value ?? null;
+        
+                    // Make sure they're valid.
+                    if (!url || !query || query.length < 1)
+                        continue;
+        
+                    // Push to array.
                     srcs_arr.push({ 
-                        url: url_val,
-                        query: query_val 
+                        url: url,
+                        query: query 
                     });
-            }
+                }
 
-            new_vals.sources = JSON.stringify(srcs_arr);
+                new_vals.sources = JSON.stringify(srcs_arr);
 
-            // Retrieve values from installers.
-            const ins_arr: Array<ins_arr_type> = [];
+                // Retrieve values from installers.
+                const ins_arr: Array<ins_arr_type> = [];
 
-            for (let i = 1; i <= 50; i++) {
-                if (typeof window === 'undefined')
-                    break
-    
-                const src_url_ele = document.getElementById("installers-" + i + "-srcurl");
-                const url_ele = document.getElementById("installers-" + i + "-url");
-    
-                if (!src_url_ele || !url_ele)
-                    continue;
-    
-                const src_url_val = (document.getElementById(src_url_ele.id) as HTMLInputElement).value;
-                const url_val = (document.getElementById(url_ele.id) as HTMLInputElement).value;
-    
-                if (url_val.length < 1)
-                    continue;
-    
-                ins_arr.push({ 
-                    src_url: src_url_val,
-                    url: url_val
-                });
-            }
+                for (let i = 1; i <= 50; i++) {
+                    // Retrieve input values.
+                    const src_url = (document.getElementById("installers-" + i + "-srcurl") as HTMLInputElement)?.value ?? null;
+                    const url = (document.getElementById("installers-" + i + "-url") as HTMLInputElement)?.value ?? null;
+        
+                    // Make sure they're valid.
+                    if (!src_url || !url || url.length < 1)
+                        continue;
+        
+                    // Push to array.
+                    ins_arr.push({ 
+                        src_url: src_url,
+                        url: url
+                    });
+                }
 
-            new_vals.installers = JSON.stringify(ins_arr);
+                new_vals.installers = JSON.stringify(ins_arr);
 
-            // Retrieve values from credits.
-            const cre_arr: cre_arr_type[] = [];
+                // Retrieve values from credits.
+                const cre_arr: cre_arr_type[] = [];
 
-            for (let i = 1; i <= 50; i++) {
-                if (typeof window === "undefined")
-                    break;
+                for (let i = 1; i <= 50; i++) {
+                    // Retrieve input values.
+                    const name = (document.getElementById("credits-" + i + "-name") as HTMLInputElement)?.value ?? null;
+                    const credit = (document.getElementById("credits-" + i + "-credit") as HTMLInputElement)?.value ?? null;
 
-                    const name_ele = document.getElementById("credits-" + i + "-name");
-                    const credit_ele = document.getElementById("credits-" + i + "-credit");
-
-                    if (!name_ele || !credit_ele)
-                        break;
-
-                    const name = (name_ele as HTMLInputElement)?.value ?? null;
-                    const credit = (credit_ele as HTMLInputElement)?.value ?? null;
-
+                    // Make sure they're valid.
                     if (!name || !credit)
                         continue;
 
+                    // Push to array.
                     cre_arr.push({
                         name: name,
                         credit: credit
                     });
+                }
+
+                new_vals.credits = JSON.stringify(cre_arr);
             }
 
-            new_vals.credits = JSON.stringify(cre_arr);
-
             // Assign category and ID if any.
-            new_vals.id = mod?.id ?? null;
+            new_vals.id = mod?.id;
             new_vals.category = category;
 
             // Assign banner data.
-            new_vals.banner = bannerData?.toString() ?? null;
+            new_vals.banner = bannerData?.toString() ?? undefined;
 
             // Insert into database.
             mod_mut.mutate(new_vals);

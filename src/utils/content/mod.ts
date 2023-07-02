@@ -53,10 +53,10 @@ export const Insert_Or_Update_Mod = async (
     if (bremove)
         banner_path = null;
 
-    if (banner != null && banner.length > 0 && !bremove) {
+    if (banner && banner.length > 0 && !bremove) {
         const base64Data = banner.split(',')[1];
 
-        if (base64Data != null) {
+        if (base64Data) {
             // Retrieve file type.
             const fileExt = FileType(base64Data);
 
@@ -266,7 +266,6 @@ export const Insert_Or_Update_Mod = async (
     // Loop through sources.
     if (sources) {
         sources.forEach(async ({ sourceUrl, query }) => {
-            console.log("Source URL => " + sourceUrl);
             if (!sourceUrl || sourceUrl.length < 1 || !query || query.length < 1 || !mod)
                 return;
 
