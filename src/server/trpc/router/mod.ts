@@ -2,7 +2,6 @@ import { z } from "zod";
 import { router, publicProcedure, protectedProcedure, contributorProcedure } from "../trpc";
 
 import { TRPCError } from "@trpc/server"
-import { type ModCredit, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource } from "@prisma/client";
 import { Insert_Or_Update_Mod } from "../../../utils/content/mod";
 
 export const modRouter = router({
@@ -25,120 +24,48 @@ export const modRouter = router({
             install: z.string().optional(),
 
             // The following should be parsed via JSON.
-            downloads: z.string().optional(),
-            screenshots: z.string().optional(),
-            sources: z.string().optional(),
-            installers: z.string().optional(),
-            credits: z.string().optional(),
+            downloads: z.array(z.object({
+                name: z.string().nullable(),
+                url: z.string(),
 
+                // Required for ModDownload type.
+                modId: z.number()
+            })),
+            screenshots: z.array(z.object({
+                url: z.string(),
+
+                // Required for ModScreenshot type.
+                modId: z.number()
+            })),
+            sources: z.array(z.object({
+                sourceUrl: z.string(),
+                query: z.string(),
+
+                // Required for ModSource type.
+                modId: z.number(),
+                primary: z.boolean()
+            })),
+            installers: z.array(z.object({
+                sourceUrl: z.string(),
+                url: z.string(),
+
+                // Required for ModInstaller type.
+                modId: z.number()
+            })),
+            credits: z.array(z.object({
+                name: z.string(),
+                credit: z.string(),
+
+                // Required for ModCredit type.
+                id: z.number(),
+                modId: z.number(),
+                userId: z.string().nullable()
+            })),
             bremove: z.boolean().default(false)
         }))
         .mutation(async ({ ctx, input }) => {
-            /* To Do: Perhaps simplify the below and create globally used types so we don't have to reparse? */
-            // Parse downloads from input and put it into ModDownload type.
-            const downloads: ModDownload[] = [];
-            
-            if (input.downloads) {
-                const json = JSON.parse(input.downloads ?? "[]");
-
-                json.forEach(({ name, url}  : { name: string, url: string}) => {
-                    if (!name || !url)
-                        return;
-
-                    const new_item: ModDownload = {
-                        modId: 0,
-                        name: name,
-                        url: url
-                    };
-
-                    downloads.push(new_item)
-                });
-            }
-
-            // Parse screenshots from input and put into ModScreenshot type.
-            const screenshots: ModScreenshot[] = [];
-
-            if (input.screenshots) {
-                const json = JSON.parse(input.screenshots ?? "[]");
-
-                json.forEach(({ url } : { url: string }) => {
-                    if (!url)
-                        return;
-
-                    const new_item: ModScreenshot = {
-                        modId: 0,
-                        url: url
-                    };
-
-                    screenshots.push(new_item);
-                });
-            }
-
-            // Parse sources from input and put into ModSource type.
-            const sources: ModSource[] = [];
-
-            if (input.sources) {
-                const json = JSON.parse(input.sources ?? "[]");
-
-                json.forEach(({ url, query } : { url: string, query: string }) => {
-                    if (!url || !query)
-                        return;
-
-                    const new_item: ModSource = {
-                        modId: 0,
-                        primary: false,
-                        sourceUrl: url,
-                        query: query
-                    };
-
-                    sources.push(new_item);
-                })
-            }
-
-            // Parse installers from input and put into ModInstaller type.
-            const installers: ModInstaller[] = [];
-
-            if (input.installers) {
-                const json = JSON.parse(input.installers ?? "[]");
-
-                json.forEach(({ src_url, url } : { src_url: string, url: string }) => {
-                    if (!src_url || !url)
-                        return;
-
-                    const new_item: ModInstaller = {
-                        modId: 0,
-                        sourceUrl: src_url,
-                        url: url
-                    };
-
-                    installers.push(new_item);
-                })
-            }
-
-            // Parse credits from input and put into ModCredit type.
-            const credits: ModCredit[] = [];
-
-            if (input.credits) {
-                const json = JSON.parse(input.credits ?? "[]");
-
-                json.forEach(({ name, credit } : { name: string, credit: string }) => {
-                    if (!name || !credit)
-                        return;
-
-                    const new_item: ModCredit = {
-                        id:  0,
-                        modId: 0,
-                        userId: "",
-                        name: name,
-                        credit: credit
-                    };
-
-                    credits.push(new_item);
-                });
-            }
-
             // Insert ot update mod.
-            const [mod, success, err] = await Insert_Or_Update_Mod(ctx.prisma, input.name, input.url, input.description, input.visible, input.id, undefined, input.owner_id, input.owner_name, input.banner, input.bremove, input.category, input.description_short, input.install, downloads, screenshots, sources, installers, credits);
+            const [mod, success, err] = await Insert_Or_Update_Mod(ctx.prisma, input.name, input.url, input.description, input.visible, input.id, undefined, input.owner_id, input.owner_name, input.banner, input.bremove, input.category, input.description_short, input.install, input.downloads, input.screenshots, input.sources, input.installers, input.credits);
 
             // Check for error.
             if (!success || !mod) {
