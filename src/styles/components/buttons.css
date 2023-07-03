@@ -30,9 +30,9 @@
 
     .btn-normal {
         @apply text-white;
-        @apply !bg-blue-500;
+        @apply !bg-blue-600;
 
-        @apply hover:!bg-blue-600;
+        @apply hover:!bg-blue-500;
 
         @apply focus:ring-4;
         @apply focus:ring-blue-300;
