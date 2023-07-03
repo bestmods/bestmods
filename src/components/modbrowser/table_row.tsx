@@ -173,6 +173,7 @@ const TableRow: React.FC<{
                         <DropDown
                             html={<>Install</>}
                             drop_down_items={installer_items}
+                            classes={["w-1/3"]}
                         />
                     )}
                 </div>
@@ -183,6 +184,7 @@ const TableRow: React.FC<{
                         <DropDown
                             html={<>Sources</>}
                             drop_down_items={source_items}
+                            classes={["w-1/3"]}
                         />
                     )}
                 </div>

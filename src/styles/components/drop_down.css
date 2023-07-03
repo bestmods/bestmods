@@ -3,7 +3,6 @@
 @layer components {
     .utils-drop-down {
         @apply relative;
-        @apply w-1/3;
         @apply bg-cyan-700;
         @apply hover:bg-cyan-600;
         @apply flex;
