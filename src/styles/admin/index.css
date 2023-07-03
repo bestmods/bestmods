@@ -83,12 +83,4 @@
         @apply flex;
         @apply justify-center;
     }
-
-    .admin-index-add > a {
-        @apply bg-green-700;
-        @apply hover:bg-green-600;
-        @apply px-6;
-        @apply py-4;
-        @apply rounded;
-    }
 }
