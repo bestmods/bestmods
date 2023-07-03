@@ -1,5 +1,6 @@
 .content-markdown {
     @apply text-gray-200;
+    @apply break-all;
 }
 
 .content-markdown > strong {
