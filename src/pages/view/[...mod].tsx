@@ -207,10 +207,9 @@ const MainContent: React.FC = () => {
                     <a href={installLink} className={`mod-button-item ${modView == "install" ? "mod-button-item-active" : ""}`}>Installation</a>
                     <a href={sourcesLink} className={`mod-button-item ${modView == "sources" ? "mod-button-item-active" : ""}`}>Sources</a>
                     <a href={downloadsLink} className={`mod-button-item ${modView == "downloads" ? "mod-button-item-active" : ""}`}>Downloads</a>
-                    {mod?.ModCredit?.length && (
+                    {mod?.ModCredit?.length > 0 && (
                         <a href={credits_link} className={`mod-button-item ${modView == "credits" ? "mod-button-item-active" : ""}`}>Credits</a>
                     )}
-                    
                 </div>
 
                 <div id="mod-content">
