@@ -238,29 +238,39 @@ const MainContent: React.FC = () => {
                     </div>
                     {session && Has_Perm(session, "contributor") && (
                         <div className="mod-moderation">
-                            <Link href={editLink}>Edit</Link>
-                            <Link href="#" onClick={(e) => {
-                                e.preventDefault();
+                            <Link
+                                className="btn btn-primary" 
+                                href={editLink}
+                            >Edit</Link>
+                            <Link 
+                                className="btn btn-secondary"
+                                href="#"
+                                onClick={(e) => {
+                                    e.preventDefault();
 
-                                // Do opposite of our current value.
-                                mod_hide_mut.mutate({
-                                    id: mod.id,
-                                    visible: !modVisibility
-                                });
-
-                                setModVisibility(!modVisibility);
-
-                            }}>{modVisibility ? "Hide" : "Show"}</Link>
-                            <Link href="#" onClick={(e) => {
-                                e.preventDefault();
-
-                                // Delete mod after confirmation.
-                                if (confirm("Are you sure you want to delete this mod?")) {
-                                    mod_del_mut.mutate({
-                                        id: mod.id
+                                    // Do opposite of our current value.
+                                    mod_hide_mut.mutate({
+                                        id: mod.id,
+                                        visible: !modVisibility
                                     });
-                                }
-                            }}>Delete</Link>
+
+                                    setModVisibility(!modVisibility);
+                                }}
+                            >{modVisibility ? "Hide" : "Show"}</Link>
+                            <Link
+                                className="btn btn-danger"
+                                href="#"
+                                onClick={(e) => {
+                                    e.preventDefault();
+
+                                    // Delete mod after confirmation.
+                                    if (confirm("Are you sure you want to delete this mod?")) {
+                                        mod_del_mut.mutate({
+                                            id: mod.id
+                                        });
+                                    }
+                                }}
+                            >Delete</Link>
                         </div>
                     )}
                 </div>
