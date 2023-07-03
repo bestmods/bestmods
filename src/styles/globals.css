@@ -15,15 +15,15 @@
 @import 'modbrowser/grid.css';
 
 
-/* Utils */
-@import 'utils/loading.css';
-@import 'utils/notfound.css';
-@import 'utils/scrollbar.css';
-@import 'utils/unauthorized.css';
-@import 'utils/buttons.css';
-@import 'utils/alerts.css';
-@import 'utils/drop_down.css';
-@import 'utils/markdown.css';
+/* Components */
+@import 'components/background.css';
+@import 'components/loading.css';
+@import 'components/notfound.css';
+@import 'components/unauthorized.css';
+@import 'components/buttons.css';
+@import 'components/alerts.css';
+@import 'components/drop_down.css';
+@import 'components/markdown.css';
 
 /* Forms */
 @import 'forms/main.css';
@@ -49,41 +49,42 @@
 /* Admin Area */
 @import 'admin/index.css';
 
-/* Main */
-main {
-    @apply flex;
-    @apply min-h-screen;
-    @apply flex-col;
-    @apply pb-20;
+@layer base {
+    /* Main */
+    main {
+        @apply flex;
+        @apply min-h-screen;
+        @apply flex-col;
+        @apply pb-20;
+        @apply text-gray-200;
+    }
+
+    /* Scroll Bar */
+    ::-webkit-scrollbar
+    {
+        @apply w-2;
+    }
+     
+    ::-webkit-scrollbar-track
+    {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        @apply rounded-lg;
+        @apply bg-black/60;
+    }
+     
+    ::-webkit-scrollbar-thumb
+    {
+        @apply rounded-lg;
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+        @apply bg-cyan-700;
+    }
 }
 
-/* Background And Overlay */
-#bgol
-{
-    @apply top-0;
-    @apply left-0;
-    @apply w-full;
-    @apply h-full;
-    @apply -z-40;
-    @apply fixed;
+@layer utilities {
+    .page-title {
+        @apply text-3xl;
+        @apply font-bold;
+        @apply text-white;
+    }
 }
 
-#bg
-{
-    @apply top-0;
-    @apply left-0;
-    @apply w-full;
-    @apply h-full;
-    @apply -z-50;
-    @apply fixed;
-    @apply bg-fixed;
-    @apply bg-center;
-    @apply bg-no-repeat;
-    @apply bg-cover;
-}
-
-.page-title {
-    @apply text-3xl;
-    @apply font-bold;
-    @apply text-white;
-}

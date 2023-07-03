@@ -1,0 +1,28 @@
+@tailwind components;
+
+@layer components {
+    /* Background And Overlay */
+    #bgol
+    {
+        @apply top-0;
+        @apply left-0;
+        @apply w-full;
+        @apply h-full;
+        @apply -z-40;
+        @apply fixed;
+    }
+
+    #bg
+    {
+        @apply top-0;
+        @apply left-0;
+        @apply w-full;
+        @apply h-full;
+        @apply -z-50;
+        @apply fixed;
+        @apply bg-fixed;
+        @apply bg-center;
+        @apply bg-no-repeat;
+        @apply bg-cover;
+    }
+}
