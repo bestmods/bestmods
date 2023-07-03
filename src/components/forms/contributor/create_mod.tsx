@@ -472,8 +472,8 @@ const ModForm: React.FC<{
 
                 for (let i = 1; i <= 50; i++) {
                     // Retrieve input values.
-                    const name = (document.getElementById("downloads-" + i + "-name") as HTMLInputElement)?.value ?? null;
-                    const url = (document.getElementById("downloads-" + i + "-url") as HTMLInputElement)?.value ?? null;
+                    const name = (document.getElementById("downloads-" + i + "-name") as HTMLInputElement)?.value;
+                    const url = (document.getElementById("downloads-" + i + "-url") as HTMLInputElement)?.value;
         
                     // Make sure they're valid.
                     if (!name || !url || url.length < 1)
@@ -493,7 +493,7 @@ const ModForm: React.FC<{
 
                 for (let i = 1; i <= 50; i++) {        
                     // Retrieve input values.
-                    const url = (document.getElementById("screenshots-" + i + "-url") as HTMLInputElement)?.value ?? null;
+                    const url = (document.getElementById("screenshots-" + i + "-url") as HTMLInputElement)?.value;
         
                     // Make sure they're valid.
                     if (!url || url.length < 1)
@@ -512,8 +512,8 @@ const ModForm: React.FC<{
 
                 for (let i = 1; i <= 50; i++) {
                     // Retrieve input values.
-                    const url = (document.getElementById("sources-" + i + "-url") as HTMLInputElement)?.value ?? null;
-                    const query = (document.getElementById("sources-" + i + "-query") as HTMLInputElement)?.value ?? null;
+                    const url = (document.getElementById("sources-" + i + "-url") as HTMLInputElement)?.value;
+                    const query = (document.getElementById("sources-" + i + "-query") as HTMLInputElement)?.value;
         
                     // Make sure they're valid.
                     if (!url || !query || query.length < 1)
@@ -533,8 +533,8 @@ const ModForm: React.FC<{
 
                 for (let i = 1; i <= 50; i++) {
                     // Retrieve input values.
-                    const src_url = (document.getElementById("installers-" + i + "-srcurl") as HTMLInputElement)?.value ?? null;
-                    const url = (document.getElementById("installers-" + i + "-url") as HTMLInputElement)?.value ?? null;
+                    const src_url = (document.getElementById("installers-" + i + "-srcurl") as HTMLInputElement)?.value;
+                    const url = (document.getElementById("installers-" + i + "-url") as HTMLInputElement)?.value;
         
                     // Make sure they're valid.
                     if (!src_url || !url || url.length < 1)
@@ -554,8 +554,8 @@ const ModForm: React.FC<{
 
                 for (let i = 1; i <= 50; i++) {
                     // Retrieve input values.
-                    const name = (document.getElementById("credits-" + i + "-name") as HTMLInputElement)?.value ?? null;
-                    const credit = (document.getElementById("credits-" + i + "-credit") as HTMLInputElement)?.value ?? null;
+                    const name = (document.getElementById("credits-" + i + "-name") as HTMLInputElement)?.value;
+                    const credit = (document.getElementById("credits-" + i + "-credit") as HTMLInputElement)?.value;
 
                     // Make sure they're valid.
                     if (!name || !credit)
@@ -576,7 +576,7 @@ const ModForm: React.FC<{
             new_vals.category = category;
 
             // Assign banner data.
-            new_vals.banner = bannerData?.toString() ?? undefined;
+            new_vals.banner = bannerData?.toString();
 
             // Insert into database.
             mod_mut.mutate(new_vals);
