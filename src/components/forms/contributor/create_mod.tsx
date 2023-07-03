@@ -94,6 +94,57 @@ const DownloadForm: React.FC<{
     );
 };
 
+const SourceForm: React.FC<{ 
+    form: any, 
+    index: number,
+    srcs: Source[] 
+}> = ({
+    form,
+    index,
+    srcs 
+}) => {
+    const vals = form?.values?.sources[index] ?? undefined;
+
+    const src_url = vals?.sourceUrl ?? "";
+    const query = vals?.query ?? "";
+
+    return (
+        <>
+            <h3>Source #{index + 1}</h3>
+
+            <div className="form-container">
+                <label className="form-label">Source</label>
+                <select 
+                    className="form-input"
+                    name={`sources[${index}].sourceUrl`}
+                    value={src_url}
+                    onChange={form.handleChange}
+                >
+                    {srcs.map((src) => {
+                        return (
+                            <option
+                                key={src.url}
+                                value={src.url}
+                            >{src.name}</option>
+                        );
+                    })}
+                </select>
+            </div>
+            
+            <div className="form-container">
+                <label className="form-label">Query URL</label>
+                <input
+                    type="text"
+                    className="form-input"
+                    name={`sources[${index}].query`}
+                    value={query}
+                    onChange={form.handleChange}
+                />
+            </div>
+        </>
+    )
+};
+
 const ScreenshotForm: React.FC<{
     form: any,
     index: number
@@ -123,54 +174,6 @@ const ScreenshotForm: React.FC<{
     );
 }
 
-const SourceForm: React.FC<{ 
-    form: any, 
-    index: number,
-    srcs: Source[] 
-}> = ({
-    form,
-    index,
-    srcs 
-}) => {
-    const vals = form?.values?.sources[index] ?? undefined;
-
-    const src_url = vals?.sourceUrl ?? "";
-    const query = vals?.query ?? "";
-
-    return (
-        <>
-            <h3>Source #{index + 1}</h3>
-
-            <div className="form-container">
-                <label className="form-label">Source</label>
-                <select 
-                    className="form-input"
-                    name={`sources[${index}].sourceUrl`}
-                    value={src_url}
-                    onChange={form.handleChange}
-                >
-                    {srcs.map((src) => {
-                        return (
-                            <option key={src.url} value={src.url}>{src.name}</option>
-                        );
-                    })}
-                </select>
-            </div>
-            
-            <div className="form-container">
-                <label className="form-label">Query URL</label>
-                <input
-                    type="text"
-                    className="form-input"
-                    name={`sources[${index}].query`}
-                    value={query}
-                    onChange={form.handleChange}
-                />
-            </div>
-        </>
-    )
-};
-
 const InstallerForm: React.FC<{ 
     form: any 
     index: number, 
@@ -198,7 +201,10 @@ const InstallerForm: React.FC<{
                 >
                     {srcs.map((src) => {
                         return (
-                            <option key={src.url} value={src.url}>{src.name}</option>
+                            <option
+                                key={src.url}
+                                value={src.url}
+                            >{src.name}</option>
                         );
                     })}
                 </select>
@@ -367,30 +373,36 @@ const ModForm: React.FC<{
                                 index={index}
                             />
 
-                            <button onClick={(e) => {
-                                e.preventDefault();
+                            <button 
+                                className="btn btn-red"
+                                onClick={(e) => {
+                                    e.preventDefault();
 
-                                const downloads = form.values.downloads;
+                                    const downloads = form.values.downloads;
 
-                                downloads.splice(index, 1);
+                                    downloads.splice(index, 1);
 
-                                form.setValues({
-                                    ...form.values,
-                                    downloads
-                                });
-                            }} className="btn btn-red">Remove</button>
+                                    form.setValues({
+                                        ...form.values,
+                                        downloads
+                                    });
+                                }}
+                            >Remove</button>
                         </div>
                     );
                 })}
                 <div className="mb-4">
-                    <button onClick={(e) => {
-                        e.preventDefault();
+                    <button
+                        className="btn btn-green"
+                        onClick={(e) => {
+                            e.preventDefault();
 
-                        form.setValues({
-                            ...form.values,
-                            downloads: [...form.values.downloads, EMPTY_DOWNLOAD_VALUE]
-                        });
-                    }} className="btn btn-green">Add</button>
+                            form.setValues({
+                                ...form.values,
+                                downloads: [...form.values.downloads, EMPTY_DOWNLOAD_VALUE]
+                            });
+                        }}
+                    >Add</button>
                 </div>
             </>
         );
@@ -411,30 +423,36 @@ const ModForm: React.FC<{
                                 srcs={srcs}
                             />
 
-                            <button onClick={(e) => {
-                                e.preventDefault();
+                            <button
+                                className="btn btn-red"
+                                onClick={(e) => {
+                                    e.preventDefault();
 
-                                const sources = form.values.sources;
+                                    const sources = form.values.sources;
 
-                                sources.splice(index, 1);
+                                    sources.splice(index, 1);
 
-                                form.setValues({
-                                    ...form.values,
-                                    sources
-                                });
-                            }} className="btn btn-red">Remove</button>
+                                    form.setValues({
+                                        ...form.values,
+                                        sources
+                                    });
+                                }} 
+                            >Remove</button>
                         </div>
                     );
                 })}
                 <div className="form-container">
-                    <button onClick={(e) => {
-                        e.preventDefault();
+                    <button
+                        className="btn btn-green"
+                        onClick={(e) => {
+                            e.preventDefault();
 
-                        form.setValues({
-                            ...form.values,
-                            sources: [...form.values.sources, EMPTY_SOURCE_VALUE]
-                        });
-                    }} className="btn btn-green">Add</button>
+                            form.setValues({
+                                ...form.values,
+                                sources: [...form.values.sources, EMPTY_SOURCE_VALUE]
+                            });
+                        }}
+                    >Add</button>
                 </div>
             </>
         );
@@ -454,31 +472,37 @@ const ModForm: React.FC<{
                                 index={index}
                             />
 
-                            <button onClick={(e) => {
-                                e.preventDefault();
+                            <button
+                                className="btn btn-red"
+                                onClick={(e) => {
+                                    e.preventDefault();
 
-                                const screenshots = form.values.screenshots;
+                                    const screenshots = form.values.screenshots;
 
-                                screenshots.splice(index, 1);
+                                    screenshots.splice(index, 1);
 
-                                form.setValues({
-                                    ...form.values,
-                                    screenshots
-                                });
-                            }} className="btn btn-red">Remove</button>
+                                    form.setValues({
+                                        ...form.values,
+                                        screenshots
+                                    });
+                                }}
+                            >Remove</button>
                         </div>
                     );
                 })}
 
                 <div className="form-container">
-                    <button onClick={(e) => {
-                        e.preventDefault();
+                    <button 
+                        onClick={(e) => {
+                            e.preventDefault();
 
-                        form.setValues({
-                            ...form.values,
-                            screenshots: [...form.values.screenshots, EMPTY_SCREENSHOT_VALUE]
-                        });
-                    }} className="btn btn-green">Add</button>
+                            form.setValues({
+                                ...form.values,
+                                screenshots: [...form.values.screenshots, EMPTY_SCREENSHOT_VALUE]
+                            });
+                        }}
+                        className="btn btn-green"
+                    >Add</button>
                 </div>
             </>
         );
@@ -499,30 +523,36 @@ const ModForm: React.FC<{
                                 srcs={srcs}
                             />
 
-                            <button onClick={(e) => {
-                                e.preventDefault();
+                            <button
+                                className="btn btn-red"
+                                onClick={(e) => {
+                                    e.preventDefault();
 
-                                const installers = form.values.installers;
+                                    const installers = form.values.installers;
 
-                                installers.splice(index, 1);
+                                    installers.splice(index, 1);
 
-                                form.setValues({
-                                    ...form.values,
-                                    installers
-                                });
-                            }} className="btn btn-red">Remove</button>
+                                    form.setValues({
+                                        ...form.values,
+                                        installers
+                                    });
+                                }}
+                            >Remove</button>
                         </div>
                     );
                 })}
                 <div className="form-container">
-                    <button onClick={(e) => {
-                        e.preventDefault();
+                    <button
+                        className="btn btn-green"
+                        onClick={(e) => {
+                            e.preventDefault();
 
-                        form.setValues({
-                            ...form.values,
-                            installers: [...form.values.installers, EMPTY_INSTALLER_VALUE]
-                        });
-                    }} className="btn btn-green">Add</button>
+                            form.setValues({
+                                ...form.values,
+                                installers: [...form.values.installers, EMPTY_INSTALLER_VALUE]
+                            });
+                        }}
+                    >Add</button>
                 </div>
             </>
         );
@@ -542,29 +572,35 @@ const ModForm: React.FC<{
                                 index={index}
                             />
 
-                            <button onClick={(e) => {
-                                e.preventDefault();
+                            <button
+                                className="btn btn-red"
+                                onClick={(e) => {
+                                    e.preventDefault();
 
-                                const credits = form.values.credits;
+                                    const credits = form.values.credits;
 
-                                credits.splice(index, 1);
-                                form.setValues({
-                                    ...form.values,
-                                    credits
-                                });
-                            }} className="btn btn-red">Remove</button>
+                                    credits.splice(index, 1);
+                                    form.setValues({
+                                        ...form.values,
+                                        credits
+                                    });
+                                }}
+                            >Remove</button>
                         </div>
                     );
                 })}
                 <div className="form-container">
-                    <button onClick={(e) => {
-                        e.preventDefault();
+                    <button
+                        className="btn btn-green"
+                        onClick={(e) => {
+                            e.preventDefault();
 
-                        form.setValues({
-                            ...form.values,
-                            credits: [...form.values.credits, EMPTY_CREDIT_VALUE]
-                        });
-                    }} className="btn btn-green">Add</button>
+                            form.setValues({
+                                ...form.values,
+                                credits: [...form.values.credits, EMPTY_CREDIT_VALUE]
+                            });
+                        }}
+                    >Add</button>
                 </div>
             </>
         );
@@ -577,7 +613,7 @@ const ModForm: React.FC<{
     let description_val = "N/A";
     let install_val = "N/A";
 
-    if (typeof document !== "undefined" && previewMode) {
+    if (typeof document != "undefined" && previewMode) {
         description_val = (document.getElementById("description") as HTMLInputElement)?.value ?? "N/A";
         install_val = (document.getElementById("install") as HTMLInputElement)?.value ?? "N/A";
     }
@@ -595,46 +631,76 @@ const ModForm: React.FC<{
                 <h2>General Information</h2>
                 <div className="form-container">
                     <label className="form-label">Image Banner</label>
-                    <input className="form-input" name="image_banner" type="file" placeholder="Mod Image Banner" onChange={(e) => {
-                          const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
+                    <input
+                        type="file"
+                        className="form-input"
+                        name="image_banner"
+                        placeholder="Mod Image Banner"
+                        onChange={(e) => {
+                            const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
 
-                          if (file) {
-                              const reader = new FileReader();
-  
-                              reader.onloadend = () => {
-                                  setBannerData(reader.result);
-                              };
-                              
-                              reader.readAsDataURL(file);
-                          }
-                    }} />
+                            if (file) {
+                                const reader = new FileReader();
 
-                    <Field className="form-checkbox" name="bremove" type="checkbox" /> <label className="form-checkbox-label">Remove Current</label>
+                                reader.onloadend = () => {
+                                    setBannerData(reader.result);
+                                };
+                                
+                                reader.readAsDataURL(file);
+                            }
+                        }} 
+                    />
+
+                    <Field
+                        type="checkbox"
+                        className="form-checkbox" 
+                        name="bremove"
+                    />
+                    <label className="form-checkbox-label">Remove Current</label>
                 </div>
 
                 <div className="form-container">
                     <label className="form-label">Name</label>
-                    <Field className="form-input" name="name" type="text" placeholder="Mod Name" />
+                    <Field
+                        type="text"
+                        className="form-input"
+                        name="name"
+                        placeholder="Mod Name"
+                    />
                 </div>
 
                 <div className="form-container">
                     <label className="form-label">Owner Name</label>
-                    <Field className="form-input" name="owner_name" type="text" placeholder="Owner Name If Any" />
+                    <Field
+                        type="text"
+                        className="form-input"
+                        name="owner_name"
+                        placeholder="Owner Name If Any"
+                    />
                 </div>
 
                 <div className="form-container">
                     <label className="form-label">URL</label>
-                    <Field className="form-input" name="url" type="text" placeholder="bestmods.io/view/value" />
+                    <Field
+                        type="text"
+                        className="form-input"
+                        name="url"
+                        placeholder="bestmods.io/view/value"
+                    />
                 </div>
 
                 <div className="form-container">
                     <label className="form-label">Category</label>
-                    <select className="form-input" value={category ?? 0} onChange={(e) => {
-                        const val = e.target.value;
+                    <select 
+                        className="form-input"
+                        value={category ?? 0}
+                        onChange={(e) => {
+                            const val = e.target.value;
 
-                        if (val)
-                            setCategory(Number(val));
-                    }}>
+                            if (val)
+                                setCategory(Number(val));
+                        }}
+                    >
                         <option value="0">None</option>
                         {cats.map((cat) => {
                             return (
@@ -652,7 +718,14 @@ const ModForm: React.FC<{
 
                 <div className="form-container">
                     <label className="form-label">Short Description</label>
-                    <Field rows="16" cols="32" className="form-input" name="description_short" as="textarea" placeholder="Mod Short Description" />
+                    <Field
+                        as="textarea"
+                        rows="16"
+                        cols="32"
+                        className="form-input"
+                        name="description_short"
+                        placeholder="Mod Short Description"
+                    />
                 </div>
 
                 <div className="form-container">
@@ -662,7 +735,15 @@ const ModForm: React.FC<{
                             {description_val}
                         </ReactMarkdown>
                     )}
-                    <Field rows="16" cols="32" className={previewMode ? "hidden" : "form-input"} id="description" name="description" as="textarea" placeholder="Mod Description" />
+                    <Field
+                        as="textarea"
+                        rows="16"
+                        cols="32"
+                        className={previewMode ? "hidden" : "form-input"}
+                        name="description"
+                        id="description"
+                        placeholder="Mod Description"
+                    />
                 </div>
 
                 <div className="form-container">
@@ -672,7 +753,15 @@ const ModForm: React.FC<{
                             {install_val}
                         </ReactMarkdown>
                     )}
-                    <Field rows="16" cols="32" className={previewMode ? "hidden" : "form-input"} id="install" name="install" as="textarea" placeholder="Mod Installation" />
+                    <Field
+                        as="textarea"
+                        rows="16"
+                        cols="32"
+                        className={previewMode ? "hidden" : "form-input"}
+                        name="install"
+                        id="install"
+                        placeholder="Mod Installation"
+                    />
                 </div>
 
                 <h2>Sources</h2>
@@ -691,11 +780,14 @@ const ModForm: React.FC<{
                 {credits_form}
 
                 <div className="form-preview-mode-container">
-                    <button type="button" onClick={(e) => {
-                        e.preventDefault();
+                    <button 
+                        type="button"
+                        onClick={(e) => {
+                            e.preventDefault();
 
-                        setPreviewMode(!previewMode);
-                    }}>
+                            setPreviewMode(!previewMode);
+                        }}
+                    >
                         {previewMode ? (
                             <span>Preview Off</span>
                         ) : (
