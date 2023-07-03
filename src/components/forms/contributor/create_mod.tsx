@@ -65,27 +65,34 @@ const DownloadForm: React.FC<{
     const name = vals?.name ?? "";
     const url = vals?.url ?? "";
 
+    const identifier = `downloads[${index}]`;
+
     return (
         <>
             <h3>Download #{index + 1}</h3>
 
             <div className="form-container">
-                <label className="form-label">Name</label>
+                <label
+                    htmlFor={`${identifier}.name`} 
+                    className="form-label"
+                >Name</label>
                 <input
                     type="text"
                     className="form-input"
-                    name={`downloads[${index}].name`} 
+                    name={`${identifier}.name`} 
                     value={name}
                     onChange={form.handleChange}
                 />
             </div>
 
             <div className="form-container">
-                <label className="form-label">URL</label>
+                <label
+                    htmlFor={`${identifier}.url`} 
+                    className="form-label">URL</label>
                 <input
                     type="text"
                     className="form-input"
-                    name={`downloads[${index}].url`} 
+                    name={`${identifier}.url`} 
                     value={url}
                     onChange={form.handleChange}
                 />
@@ -108,15 +115,20 @@ const SourceForm: React.FC<{
     const src_url = vals?.sourceUrl ?? "";
     const query = vals?.query ?? "";
 
+    const identifier = `sources[${index}]`;
+
     return (
         <>
             <h3>Source #{index + 1}</h3>
 
             <div className="form-container">
-                <label className="form-label">Source</label>
+                <label
+                    htmlFor={`${identifier}.sourceUrl`}
+                    className="form-label"
+                >Source</label>
                 <select 
                     className="form-input"
-                    name={`sources[${index}].sourceUrl`}
+                    name={`${identifier}.sourceUrl`}
                     value={src_url}
                     onChange={form.handleChange}
                 >
@@ -132,11 +144,14 @@ const SourceForm: React.FC<{
             </div>
             
             <div className="form-container">
-                <label className="form-label">Query URL</label>
+                <label
+                    htmlFor={`${identifier}.query`}
+                    className="form-label"
+                >Query URL</label>
                 <input
                     type="text"
                     className="form-input"
-                    name={`sources[${index}].query`}
+                    name={`${identifier}.query`}
                     value={query}
                     onChange={form.handleChange}
                 />
@@ -156,16 +171,21 @@ const ScreenshotForm: React.FC<{
 
     const url = vals?.url ?? "";
 
+    const identifier = `screenshots[${index}]`;
+
     return (
         <>
             <h3>Screenshot #{index + 1}</h3>
 
             <div className="form-container">
-                <label className="form-label">URL</label>
+                <label
+                    htmlFor={`${identifier}.url`}
+                    className="form-label"
+                >URL</label>
                 <input
                     type="text"
                     className="form-input" 
-                    name={`screenshots[${index}].url`}
+                    name={`${identifier}.url`}
                     value={url}
                     onChange={form.handleChange}
                 />
@@ -188,14 +208,19 @@ const InstallerForm: React.FC<{
     const src_url = vals?.sourceUrl ?? "";
     const url = vals?.url ?? "";
 
+    const identifier = `installers[${index}]`;
+
     return (
         <>
             <h3>Installer #{index + 1}</h3>
             <div className="form-container">
-                <label className="form-label">Source</label>
+                <label
+                    htmlFor={`${identifier}.sourceUrl`}
+                    className="form-label"
+                >Source</label>
                 <select 
                     className="form-input"
-                    name={`installers[${index}].sourceUrl`} 
+                    name={`${identifier}.sourceUrl`} 
                     value={src_url}
                     onChange={form.handleChange}
                 >
@@ -211,11 +236,14 @@ const InstallerForm: React.FC<{
             </div>
             
             <div className="form-container">
-                <label className="form-label">URL</label>
+                <label
+                    htmlFor={`${identifier}.url`}
+                    className="form-label"
+                >URL</label>
                 <input
                     type="text"
                     className="form-input"
-                    name={`installers[${index}].url`}
+                    name={`${identifier}.url`}
                     value={url}
                     onChange={form.handleChange}
                 />
@@ -236,26 +264,34 @@ const CreditForm: React.FC<{
     const name = vals?.name ?? "";
     const credit = vals?.credit ?? "";
 
+    const identifier = `credits[${index}]`;
+
     return (
         <>
             <h3>Credit #{index + 1}</h3>
             <div className="form-container">
-                <label className="form-label">Name</label>
+                <label
+                    htmlFor={`${identifier}.name`}
+                    className="form-label"
+                >Name</label>
                 <input 
                     type="text" 
                     className="form-input" 
-                    name={`credits[${index}].name`} 
+                    name={`${identifier}.name`} 
                     value={name}
                     onChange={form.handleChange}
                 />
             </div>
 
             <div className="form-container">
-                <label className="form-label">Credit</label>
+                <label
+                    htmlFor={`${identifier}.credit`}
+                    className="form-label"
+                >Credit</label>
                 <input 
                     type="text" 
                     className="form-input" 
-                    name={`credits[${index}].credit`}
+                    name={`${identifier}.credit`}
                     value={credit}
                     onChange={form.handleChange}
                 />
@@ -280,7 +316,10 @@ const ModForm: React.FC<{
     // Submit button.
     const submitBtn =
         <div className="text-center">
-            <button type="submit" className="btn btn-blue">{!mod ? "Add Mod!" : "Edit Mod!"}</button>
+            <button 
+                type="submit"
+                className="btn btn-normal"
+            >{!mod ? "Add Mod!" : "Edit Mod!"}</button>
         </div>;
 
     // State values we cannot extract from Formik.
@@ -340,12 +379,8 @@ const ModForm: React.FC<{
             mod_mut.mutate({
                 ...values,
                 category: category,
-                ...(mod?.id && {
-                    id: mod.id
-                }),
-                ...(bannerData && {
-                    banner: bannerData?.toString()
-                })
+                id: mod?.id,
+                banner: bannerData?.toString()
             });
 
             // Scroll to top.
@@ -374,7 +409,7 @@ const ModForm: React.FC<{
                             />
 
                             <button 
-                                className="btn btn-red"
+                                className="btn btn-danger"
                                 onClick={(e) => {
                                     e.preventDefault();
 
@@ -393,7 +428,7 @@ const ModForm: React.FC<{
                 })}
                 <div className="mb-4">
                     <button
-                        className="btn btn-green"
+                        className="btn btn-primary"
                         onClick={(e) => {
                             e.preventDefault();
 
@@ -424,7 +459,7 @@ const ModForm: React.FC<{
                             />
 
                             <button
-                                className="btn btn-red"
+                                className="btn btn-danger"
                                 onClick={(e) => {
                                     e.preventDefault();
 
@@ -443,7 +478,7 @@ const ModForm: React.FC<{
                 })}
                 <div className="form-container">
                     <button
-                        className="btn btn-green"
+                        className="btn btn-primary"
                         onClick={(e) => {
                             e.preventDefault();
 
@@ -473,7 +508,7 @@ const ModForm: React.FC<{
                             />
 
                             <button
-                                className="btn btn-red"
+                                className="btn btn-danger"
                                 onClick={(e) => {
                                     e.preventDefault();
 
@@ -492,7 +527,8 @@ const ModForm: React.FC<{
                 })}
 
                 <div className="form-container">
-                    <button 
+                    <button
+                        className="btn btn-primary"
                         onClick={(e) => {
                             e.preventDefault();
 
@@ -501,7 +537,6 @@ const ModForm: React.FC<{
                                 screenshots: [...form.values.screenshots, EMPTY_SCREENSHOT_VALUE]
                             });
                         }}
-                        className="btn btn-green"
                     >Add</button>
                 </div>
             </>
@@ -524,7 +559,7 @@ const ModForm: React.FC<{
                             />
 
                             <button
-                                className="btn btn-red"
+                                className="btn btn-danger"
                                 onClick={(e) => {
                                     e.preventDefault();
 
@@ -543,7 +578,7 @@ const ModForm: React.FC<{
                 })}
                 <div className="form-container">
                     <button
-                        className="btn btn-green"
+                        className="btn btn-primary"
                         onClick={(e) => {
                             e.preventDefault();
 
@@ -573,7 +608,7 @@ const ModForm: React.FC<{
                             />
 
                             <button
-                                className="btn btn-red"
+                                className="btn btn-danger"
                                 onClick={(e) => {
                                     e.preventDefault();
 
@@ -591,7 +626,7 @@ const ModForm: React.FC<{
                 })}
                 <div className="form-container">
                     <button
-                        className="btn btn-green"
+                        className="btn btn-primary"
                         onClick={(e) => {
                             e.preventDefault();
 
@@ -630,12 +665,15 @@ const ModForm: React.FC<{
             >
                 <h2>General Information</h2>
                 <div className="form-container">
-                    <label className="form-label">Image Banner</label>
+                    <label
+                        htmlFor="banner"
+                        className="form-label"
+                    >Banner</label>
                     <input
                         type="file"
                         className="form-input"
-                        name="image_banner"
-                        placeholder="Mod Image Banner"
+                        name="banner"
+                        placeholder="Mod Banner"
                         onChange={(e) => {
                             const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
 
@@ -656,11 +694,17 @@ const ModForm: React.FC<{
                         className="form-checkbox" 
                         name="bremove"
                     />
-                    <label className="form-checkbox-label">Remove Current</label>
+                    <label
+                        htmlFor="bremove" 
+                        className="form-checkbox-label"
+                    >Remove Current</label>
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">Name</label>
+                    <label
+                        htmlFor="name" 
+                        className="form-label"
+                    >Name</label>
                     <Field
                         type="text"
                         className="form-input"
@@ -670,7 +714,10 @@ const ModForm: React.FC<{
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">Owner Name</label>
+                    <label
+                        htmlFor="owner_name"
+                        className="form-label"
+                    >Owner Name</label>
                     <Field
                         type="text"
                         className="form-input"
@@ -680,7 +727,10 @@ const ModForm: React.FC<{
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">URL</label>
+                    <label
+                        htmlFor="url"
+                        className="form-label"
+                    >URL</label>
                     <Field
                         type="text"
                         className="form-input"
@@ -690,9 +740,13 @@ const ModForm: React.FC<{
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">Category</label>
+                    <label
+                        htmlFor="category_id"
+                        className="form-label"
+                    >Category</label>
                     <select 
                         className="form-input"
+                        name="category_id"
                         value={category ?? 0}
                         onChange={(e) => {
                             const val = e.target.value;
@@ -717,7 +771,10 @@ const ModForm: React.FC<{
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">Short Description</label>
+                    <label
+                        htmlFor="description_short"
+                        className="form-label"
+                    >Short Description</label>
                     <Field
                         as="textarea"
                         rows="16"
@@ -729,7 +786,10 @@ const ModForm: React.FC<{
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">Description</label>
+                    <label
+                        htmlFor="description"
+                        className="form-label"
+                    >Description</label>
                     {previewMode && (
                         <ReactMarkdown className="content-markdown">
                             {description_val}
@@ -747,7 +807,10 @@ const ModForm: React.FC<{
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">Installation</label>
+                    <label
+                        htmlFor="install"
+                        className="form-label"
+                    >Installation</label>
                     {previewMode && (
                         <ReactMarkdown className="content-markdown">
                             {install_val}
@@ -780,8 +843,9 @@ const ModForm: React.FC<{
                 {credits_form}
 
                 <div className="form-preview-mode-container">
-                    <button 
+                    <button
                         type="button"
+                        className="btn btn-warning"
                         onClick={(e) => {
                             e.preventDefault();
 
