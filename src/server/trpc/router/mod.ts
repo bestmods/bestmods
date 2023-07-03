@@ -23,7 +23,7 @@ export const modRouter = router({
             description_short: z.string(),
             install: z.string().optional(),
 
-            // The following should be parsed via JSON.
+            // Relation data (we try to replicate Prisma types for consistency).
             downloads: z.array(z.object({
                 name: z.string().nullable(),
                 url: z.string(),
