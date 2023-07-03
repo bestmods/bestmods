@@ -10,125 +10,122 @@ import { type Source } from "@prisma/client";
 import { type CategoriesWithChildren, type ModWithRelations } from "../../types";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 
-type values_type = {
-    owner_name?: string
-    description: string
-    category?: number
-    id?: number
-    name: string
-    url: string
-    banner?: string
-    description_short: string
-    install: string
-    bremove?: boolean
-    downloads?: string
-    screenshots?: string
-    sources?: string
-    installers?: string
-    credits?: string
+/* 
+    Default values for our relations.
+    
+    NOTE - We need to stay consistent with Prisma model type. This is why there are unused values added.
+*/
+
+const EMPTY_DOWNLOAD_VALUE = {
+    name: "",
+    url: "",
+
+    modId: 0
 };
 
-type dl_arr_type = {
-    name: string
-    url: string
+const EMPTY_SOURCE_VALUE = {
+    sourceUrl: "",
+    query: "",
+
+    modId: 0,
+    primary: false
 };
 
-type ss_arr_type = {
-    url: string
+const EMPTY_SCREENSHOT_VALUE = {
+    url: "",
+
+    modId: 0
 };
 
-type src_arr_type = {
-    url: string
-    query: string
+const EMPTY_INSTALLER_VALUE = {
+    sourceUrl: "",
+    url: "",
+
+    modId: 0
 };
 
-type ins_arr_type = {
-    src_url: string
-    url: string
-};
+const EMPTY_CREDIT_VALUE = {
+    name: "",
+    credit: "",
 
-type cre_arr_type = {
-    name: string
-    credit: string
+    id: 0,
+    modId: 0,
+    userId: null
 };
 
 const DownloadForm: React.FC<{
-    mod: ModWithRelations | null,
-    num: number
+    form: any,
+    index: number
 }> = ({
-    mod,
-    num
+    form,
+    index
 }) => {
-    const nameId = "downloads-" + num + "-name";
-    const urlId = "downloads-" + num + "-url";
+    const vals = form?.values?.downloads[index] ?? undefined;
+
+    const name = vals?.name ?? "";
+    const url = vals?.url ?? "";
 
     return (
         <>
-            <h3>Download #{num}</h3>
+            <h3>Download #{index + 1}</h3>
 
             <div className="form-container">
                 <label className="form-label">Name</label>
-                <input className="form-input" name={nameId} id={nameId} defaultValue={mod && mod.ModDownload ? mod.ModDownload[num - 1]?.name ?? "" : ""} type="text" />
+                <input
+                    type="text"
+                    className="form-input"
+                    name={`downloads[${index}].name`} 
+                    value={name}
+                    onChange={form.handleChange}
+                />
             </div>
 
             <div className="form-container">
                 <label className="form-label">URL</label>
-                <input className="form-input" name={urlId} id={urlId} defaultValue={mod && mod.ModDownload ? mod.ModDownload[num - 1]?.url ?? "" : ""} type="text" />
+                <input
+                    type="text"
+                    className="form-input"
+                    name={`downloads[${index}].url`} 
+                    value={url}
+                    onChange={form.handleChange}
+                />
             </div>
         </>
     );
 };
 
-const ScreenshotForm: React.FC<{
-    mod: ModWithRelations | null,
-    num: number
-}> = ({
-    mod,
-    num
-}) => {
-    const url_id = "screenshots-" + num + "-url";
-
-    return (
-        <>
-            <h3>Screenshot #{num}</h3>
-
-            <div className="form-container">
-                <label className="form-label">URL</label>
-                <input className="form-input" name={url_id} id={url_id} defaultValue={mod && mod.ModScreenshot ? mod.ModScreenshot[num - 1]?.url ?? "" : ""} type="text" />
-            </div>
-        </>
-    );
-}
-
 const SourceForm: React.FC<{ 
-    mod: ModWithRelations | null, 
-    num: number,
+    form: any, 
+    index: number,
     srcs: Source[] 
-}> = ({ mod,
-    num,
+}> = ({
+    form,
+    index,
     srcs 
 }) => {
-    const src_url = "sources-" + num + "-url";
-    const srcQuery = "sources-" + num + "-query";
+    const vals = form?.values?.sources[index] ?? undefined;
 
-    const cur_url = mod && mod.ModSource ? mod.ModSource[num - 1]?.sourceUrl ?? "" : "";
-
-    const [srcUrlVal, setSrcUrlVal] = useState(cur_url);
+    const src_url = vals?.sourceUrl ?? "";
+    const query = vals?.query ?? "";
 
     return (
         <>
-            <h3>Source #{num}</h3>
+            <h3>Source #{index + 1}</h3>
 
             <div className="form-container">
                 <label className="form-label">Source</label>
-                <select className="form-input" name={src_url} id={src_url} value={srcUrlVal} onChange={(e) => {
-                    const val = e.target.value;
-
-                    setSrcUrlVal(val);
-                }}>
+                <select 
+                    className="form-input"
+                    name={`sources[${index}].sourceUrl`}
+                    value={src_url}
+                    onChange={form.handleChange}
+                >
                     {srcs.map((src) => {
                         return (
-                            <option key={src.url} value={src.url}>{src.name}</option>
+                            <option
+                                key={src.url}
+                                value={src.url}
+                            >{src.name}</option>
                         );
                     })}
                 </select>
@@ -136,41 +133,78 @@ const SourceForm: React.FC<{
             
             <div className="form-container">
                 <label className="form-label">Query URL</label>
-                <input className="form-input" name={srcQuery} id={srcQuery} defaultValue={mod && mod.ModSource  ? mod.ModSource[num - 1]?.query ?? "" : ""} type="text" />
+                <input
+                    type="text"
+                    className="form-input"
+                    name={`sources[${index}].query`}
+                    value={query}
+                    onChange={form.handleChange}
+                />
             </div>
         </>
     )
 };
 
-const InstallerForm: React.FC<{ 
-    mod: ModWithRelations | null, 
-    num: number, 
-    srcs: Source[] 
-}> = ({ 
-    mod, 
-    num, 
-    srcs 
+const ScreenshotForm: React.FC<{
+    form: any,
+    index: number
+}> = ({
+    form,
+    index
 }) => {
-    const src_url = "installers-" + num + "-srcurl";
-    const url = "installers-" + num + "-url";
+    const vals = form?.values?.screenshots[index] ?? undefined;
 
-    const cur_url = mod && mod.ModInstaller && mod.ModInstaller[num - 1] ? mod.ModInstaller[num - 1]?.sourceUrl ?? "" : "";
-
-    const [srcUrlVal, setSrcUrlVal] = useState(cur_url);
+    const url = vals?.url ?? "";
 
     return (
         <>
-            <h3>Installer #{num}</h3>
+            <h3>Screenshot #{index + 1}</h3>
+
+            <div className="form-container">
+                <label className="form-label">URL</label>
+                <input
+                    type="text"
+                    className="form-input" 
+                    name={`screenshots[${index}].url`}
+                    value={url}
+                    onChange={form.handleChange}
+                />
+            </div>
+        </>
+    );
+}
+
+const InstallerForm: React.FC<{ 
+    form: any 
+    index: number, 
+    srcs: Source[] 
+}> = ({
+    form,
+    index, 
+    srcs 
+}) => {
+    const vals = form?.values?.installers[index] ?? undefined;
+
+    const src_url = vals?.sourceUrl ?? "";
+    const url = vals?.url ?? "";
+
+    return (
+        <>
+            <h3>Installer #{index + 1}</h3>
             <div className="form-container">
                 <label className="form-label">Source</label>
-                <select className="form-input" name={src_url} id={src_url} value={srcUrlVal} onChange={(e) => {
-                    const val = e.target.value;
-
-                    setSrcUrlVal(val);
-                }}>
+                <select 
+                    className="form-input"
+                    name={`installers[${index}].sourceUrl`} 
+                    value={src_url}
+                    onChange={form.handleChange}
+                >
                     {srcs.map((src) => {
                         return (
-                            <option key={src.url} value={src.url}>{src.name}</option>
+                            <option
+                                key={src.url}
+                                value={src.url}
+                            >{src.name}</option>
                         );
                     })}
                 </select>
@@ -178,38 +212,53 @@ const InstallerForm: React.FC<{
             
             <div className="form-container">
                 <label className="form-label">URL</label>
-                <input className="form-input" name={url} id={url} defaultValue={mod && mod.ModInstaller ? mod.ModInstaller[num - 1]?.url ?? "" : ""} type="text" />
+                <input
+                    type="text"
+                    className="form-input"
+                    name={`installers[${index}].url`}
+                    value={url}
+                    onChange={form.handleChange}
+                />
             </div>
         </>
     )
 };
 
 const CreditForm: React.FC<{
-    mod: ModWithRelations | null,
-    num: number
+    form: any,
+    index: number
 }> = ({
-    mod,
-    num
+    form,
+    index
 }) => {
-    const mod_credit = mod?.ModCredit[num - 1];
+    const vals = form?.values?.credits[index] ?? undefined;
 
-    const name = mod_credit?.name ?? "";
-    const credit = mod_credit?.credit ?? "";
-
-    const name_id = "credits-" + num + "-name";
-    const credit_id = "credits-" + num + "-credit";
+    const name = vals?.name ?? "";
+    const credit = vals?.credit ?? "";
 
     return (
         <>
-            <h3>Credit #{num}</h3>
+            <h3>Credit #{index + 1}</h3>
             <div className="form-container">
                 <label className="form-label">Name</label>
-                <input type="text" className="form-input" id={name_id} defaultValue={name} />
+                <input 
+                    type="text" 
+                    className="form-input" 
+                    name={`credits[${index}].name`} 
+                    value={name}
+                    onChange={form.handleChange}
+                />
             </div>
 
             <div className="form-container">
                 <label className="form-label">Credit</label>
-                <input type="text" className="form-input" id={credit_id} defaultValue={credit} />
+                <input 
+                    type="text" 
+                    className="form-input" 
+                    name={`credits[${index}].credit`}
+                    value={credit}
+                    onChange={form.handleChange}
+                />
             </div>
         </>
     );
@@ -236,13 +285,6 @@ const ModForm: React.FC<{
 
     // State values we cannot extract from Formik.
     const [category, setCategory] = useState<number | undefined>(mod?.categoryId ?? undefined);
-
-    // States for number of download and screenshot forms to show.
-    const [downloadCount, setDownloadCount] = useState(mod?.ModDownload?.length || 1);
-    const [screenShotCount, setScreenShotCount] = useState(mod?.ModScreenshot?.length || 1);
-    const [sourceCount, setSourceCount] = useState(mod?.ModSource?.length || 1);
-    const [installerCount, setInstallerCount] = useState(mod?.ModInstaller?.length || 1);
-    const [creditCount, setCreditCount] = useState(mod?.ModCredit?.length || 1);
 
     // File uploads.
     const [bannerData, setBannerData] = useState<string | ArrayBuffer | null>(null);
@@ -275,180 +317,6 @@ const ModForm: React.FC<{
         console.error(mod_mut.error);
     }
 
-    //  Handle downloads form.
-    const downloads_form = useMemo(() => {
-       // Create a range from 1 to download count.
-       const range = Array.from({ length: downloadCount }, (_, index) => index + 1);
-
-        return (<>
-            {range.map((num) => {                
-                return (
-                    <div key={"download-" + num} className="form-container">
-                        <DownloadForm
-                            mod={mod}
-                            num={num}
-                        />
-
-                        <button onClick={(e) => {
-                            e.preventDefault();
-
-                            // Subtract count.
-                            setDownloadCount(downloadCount - 1);
-                        }} className="btn btn-red">Remove</button>
-                    </div>
-                );
-            })}
-            <div className="mb-4">
-                <button onClick={(e) => {
-                    e.preventDefault();
-
-                    // Increment downloads count.
-                    setDownloadCount(downloadCount + 1);
-                }} className="btn btn-green">Add</button>
-            </div>
-        </>);
-    }, [downloadCount])
-
-
-    // Handle screenshots form.
-    const screenshots_form = useMemo(() => {
-        const range = Array.from({ length: screenShotCount }, (value, index) => index + 1);
-
-        return (<>
-            {range.map((num) => {
-                return (
-                    <div key={"screenshot-" + num} className="form-container">
-                        <ScreenshotForm
-                            mod={mod}
-                            num={num}
-                        />
-
-                        <button onClick={(e) => {
-                            e.preventDefault();
-
-                            // Subtract count.
-                            setScreenShotCount(screenShotCount - 1);
-                        }} className="btn btn-red">Remove</button>
-                    </div>
-                );
-            })}
-
-            <div className="form-container">
-                <button onClick={(e) => {
-                    e.preventDefault();
-
-                    // Increment downloads count.
-                    setScreenShotCount(screenShotCount + 1);
-                }} className="btn btn-green">Add</button>
-            </div>
-        </>);
-    }, [screenShotCount]);
-
-    // Handle sources form.
-    const sources_form = useMemo(() => {
-        // Create a range from 1 to sources count.
-        const range = Array.from({ length: sourceCount }, (_, index) => index + 1);
-
-        return (<>
-            {range.map((num) => {
-
-                return (
-                    <div key={num} className="form-container">
-                        <SourceForm
-                            mod={mod}
-                            num={num}
-                            srcs={srcs}
-                        />
-
-                        <button onClick={(e) => {
-                            e.preventDefault();
-
-                            // Subtract count.
-                            setSourceCount(sourceCount - 1);
-                        }} className="btn btn-red">Remove</button>
-                    </div>
-                );
-            })}
-            <div className="form-container">
-                <button onClick={(e) => {
-                    e.preventDefault();
-
-                    // Increment downloads count.
-                    setSourceCount(sourceCount + 1);
-                }} className="btn btn-green">Add</button>
-            </div>
-        </>);
-    }, [sourceCount]);
-
-    // Handle installers form.
-    const installers_form = useMemo(() => {
-        // Create a range from 1 to sources count.
-        const range = Array.from({ length: installerCount }, (_, index) => index + 1);
-
-        return (<>
-            {range.map((num) => {
-                return (
-                    <div key={"installer-" + num} className="form-container">
-                        <InstallerForm
-                            mod={mod}
-                            num={num}
-                            srcs={srcs}
-                        />
-
-                        <button onClick={(e) => {
-                            e.preventDefault();
-
-                            // Subtract count.
-                            setInstallerCount(installerCount - 1);
-                        }} className="btn btn-red">Remove</button>
-                    </div>
-                );
-            })}
-            <div className="form-container">
-                <button onClick={(e) => {
-                    e.preventDefault();
-
-                    // Increment downloads count.
-                    setInstallerCount(installerCount + 1);
-                }} className="btn btn-green">Add</button>
-            </div>
-        </>);
-    }, [installerCount]);
-
-    const credits_form = useMemo(() => {
-        const range = Array.from( { length: creditCount }, (_, index) => index + 1);
-
-        return (
-            <>
-                {range.map((num) => {
-                    return (
-                        <div key={"credit-" + num} className="form-container">
-                            <CreditForm
-                                mod={mod}
-                                num={num}
-                            />
-
-                            <button onClick={(e) => {
-                                e.preventDefault();
-
-                                // Subtract credits count.
-                                setCreditCount(prev => prev - 1);
-                            }} className="btn btn-red">Remove</button>
-                        </div>
-                    );
-                })}
-                <div className="form-container">
-                    <button onClick={(e) => {
-                        e.preventDefault();
-
-                        // Increment credits count.
-                        setCreditCount(prev => prev + 1);
-                    }} className="btn btn-green">Add</button>
-                </div>
-            </>
-        );
-    }, [creditCount]);
-
     // Create form using Formik.
     const form = useFormik({
         initialValues: {
@@ -458,128 +326,27 @@ const ModForm: React.FC<{
             description_short: mod?.descriptionShort ?? "",
             install: mod?.install ?? "",
             url: mod?.url ?? "",
-            bremove: false
+            bremove: false,
+            downloads: mod?.ModDownload ?? [EMPTY_DOWNLOAD_VALUE],
+            sources: mod?.ModSource ?? [EMPTY_SOURCE_VALUE],
+            screenshots: mod?.ModScreenshot ?? [EMPTY_SCREENSHOT_VALUE],
+            installers: mod?.ModInstaller ?? [EMPTY_INSTALLER_VALUE],
+            credits: mod?.ModCredit ?? [EMPTY_CREDIT_VALUE]
         },
         enableReinitialize: true,
 
         onSubmit: (values) => {
-            // Create new values.
-            const new_vals: values_type = values;
-
-            if (typeof window != "undefined" && typeof document != "undefined") {
-                // Retrieve values from downloads.
-                const dls_arr: Array<dl_arr_type> = [];
-
-                for (let i = 1; i <= 50; i++) {
-                    // Retrieve input values.
-                    const name = (document.getElementById("downloads-" + i + "-name") as HTMLInputElement)?.value ?? null;
-                    const url = (document.getElementById("downloads-" + i + "-url") as HTMLInputElement)?.value ?? null;
-        
-                    // Make sure they're valid.
-                    if (!name || !url || url.length < 1)
-                        continue;
-
-                    // Push to array.
-                    dls_arr.push({ 
-                        name: name,
-                        url: url
-                    });
-                }
-
-                new_vals.downloads = JSON.stringify(dls_arr);
-
-                // Retrieve values from screenshots.
-                const sss_arr: Array<ss_arr_type> = [];
-
-                for (let i = 1; i <= 50; i++) {        
-                    // Retrieve input values.
-                    const url = (document.getElementById("screenshots-" + i + "-url") as HTMLInputElement)?.value ?? null;
-        
-                    // Make sure they're valid.
-                    if (!url || url.length < 1)
-                        continue;
-        
-                    // Push to array.
-                    sss_arr.push({ 
-                        url: url 
-                    });
-                }
-
-                new_vals.screenshots = JSON.stringify(sss_arr);
-
-                // Retrieve values from sources.
-                const srcs_arr: Array<src_arr_type> = [];
-
-                for (let i = 1; i <= 50; i++) {
-                    // Retrieve input values.
-                    const url = (document.getElementById("sources-" + i + "-url") as HTMLInputElement)?.value ?? null;
-                    const query = (document.getElementById("sources-" + i + "-query") as HTMLInputElement)?.value ?? null;
-        
-                    // Make sure they're valid.
-                    if (!url || !query || query.length < 1)
-                        continue;
-        
-                    // Push to array.
-                    srcs_arr.push({ 
-                        url: url,
-                        query: query 
-                    });
-                }
-
-                new_vals.sources = JSON.stringify(srcs_arr);
-
-                // Retrieve values from installers.
-                const ins_arr: Array<ins_arr_type> = [];
-
-                for (let i = 1; i <= 50; i++) {
-                    // Retrieve input values.
-                    const src_url = (document.getElementById("installers-" + i + "-srcurl") as HTMLInputElement)?.value ?? null;
-                    const url = (document.getElementById("installers-" + i + "-url") as HTMLInputElement)?.value ?? null;
-        
-                    // Make sure they're valid.
-                    if (!src_url || !url || url.length < 1)
-                        continue;
-        
-                    // Push to array.
-                    ins_arr.push({ 
-                        src_url: src_url,
-                        url: url
-                    });
-                }
-
-                new_vals.installers = JSON.stringify(ins_arr);
-
-                // Retrieve values from credits.
-                const cre_arr: cre_arr_type[] = [];
-
-                for (let i = 1; i <= 50; i++) {
-                    // Retrieve input values.
-                    const name = (document.getElementById("credits-" + i + "-name") as HTMLInputElement)?.value ?? null;
-                    const credit = (document.getElementById("credits-" + i + "-credit") as HTMLInputElement)?.value ?? null;
-
-                    // Make sure they're valid.
-                    if (!name || !credit)
-                        continue;
-
-                    // Push to array.
-                    cre_arr.push({
-                        name: name,
-                        credit: credit
-                    });
-                }
-
-                new_vals.credits = JSON.stringify(cre_arr);
-            }
-
-            // Assign category and ID if any.
-            new_vals.id = mod?.id;
-            new_vals.category = category;
-
-            // Assign banner data.
-            new_vals.banner = bannerData?.toString() ?? undefined;
-
             // Insert into database.
-            mod_mut.mutate(new_vals);
+            mod_mut.mutate({
+                ...values,
+                category: category,
+                ...(mod?.id && {
+                    id: mod.id
+                }),
+                ...(bannerData && {
+                    banner: bannerData?.toString()
+                })
+            });
 
             // Scroll to top.
             if (typeof window !== undefined) {
@@ -592,6 +359,253 @@ const ModForm: React.FC<{
         }
     });
 
+    // Downloads form.
+    const downloads_form = useMemo(() => {
+        const downloads = form.values.downloads;
+ 
+        return (
+            <>
+                {downloads.map((_download, index) => {                
+                    return (
+                        <div key={"download" + index} className="form-container">
+                            <DownloadForm
+                                form={form}
+                                index={index}
+                            />
+
+                            <button 
+                                className="btn btn-red"
+                                onClick={(e) => {
+                                    e.preventDefault();
+
+                                    const downloads = form.values.downloads;
+
+                                    downloads.splice(index, 1);
+
+                                    form.setValues({
+                                        ...form.values,
+                                        downloads
+                                    });
+                                }}
+                            >Remove</button>
+                        </div>
+                    );
+                })}
+                <div className="mb-4">
+                    <button
+                        className="btn btn-green"
+                        onClick={(e) => {
+                            e.preventDefault();
+
+                            form.setValues({
+                                ...form.values,
+                                downloads: [...form.values.downloads, EMPTY_DOWNLOAD_VALUE]
+                            });
+                        }}
+                    >Add</button>
+                </div>
+            </>
+        );
+    }, [form.values]);
+
+    // Sources form.
+    const sources_form = useMemo(() => {
+        const sources = form.values.sources;
+
+        return (
+            <>
+                {sources.map((_source, index) => {
+                    return (
+                        <div key={"source" + index} className="form-container">
+                            <SourceForm
+                                form={form}
+                                index={index}
+                                srcs={srcs}
+                            />
+
+                            <button
+                                className="btn btn-red"
+                                onClick={(e) => {
+                                    e.preventDefault();
+
+                                    const sources = form.values.sources;
+
+                                    sources.splice(index, 1);
+
+                                    form.setValues({
+                                        ...form.values,
+                                        sources
+                                    });
+                                }} 
+                            >Remove</button>
+                        </div>
+                    );
+                })}
+                <div className="form-container">
+                    <button
+                        className="btn btn-green"
+                        onClick={(e) => {
+                            e.preventDefault();
+
+                            form.setValues({
+                                ...form.values,
+                                sources: [...form.values.sources, EMPTY_SOURCE_VALUE]
+                            });
+                        }}
+                    >Add</button>
+                </div>
+            </>
+        );
+    }, [form.values]);
+
+    // Screenshots form.
+    const screenshots_form = useMemo(() => {
+        const screenshots = form.values.screenshots;
+
+        return (
+            <>
+                {screenshots.map((_screenshot, index) => {
+                    return (
+                        <div key={"screenshot" + index} className="form-container">
+                            <ScreenshotForm
+                                form={form}
+                                index={index}
+                            />
+
+                            <button
+                                className="btn btn-red"
+                                onClick={(e) => {
+                                    e.preventDefault();
+
+                                    const screenshots = form.values.screenshots;
+
+                                    screenshots.splice(index, 1);
+
+                                    form.setValues({
+                                        ...form.values,
+                                        screenshots
+                                    });
+                                }}
+                            >Remove</button>
+                        </div>
+                    );
+                })}
+
+                <div className="form-container">
+                    <button 
+                        onClick={(e) => {
+                            e.preventDefault();
+
+                            form.setValues({
+                                ...form.values,
+                                screenshots: [...form.values.screenshots, EMPTY_SCREENSHOT_VALUE]
+                            });
+                        }}
+                        className="btn btn-green"
+                    >Add</button>
+                </div>
+            </>
+        );
+    }, [form.values]);
+
+    // Installers form.
+    const installers_form = useMemo(() => {
+        const installers = form.values.installers;
+
+        return (
+            <>
+                {installers.map((_installer, index) => {
+                    return (
+                        <div key={"installer" + index} className="form-container">
+                            <InstallerForm
+                                form={form}
+                                index={index}
+                                srcs={srcs}
+                            />
+
+                            <button
+                                className="btn btn-red"
+                                onClick={(e) => {
+                                    e.preventDefault();
+
+                                    const installers = form.values.installers;
+
+                                    installers.splice(index, 1);
+
+                                    form.setValues({
+                                        ...form.values,
+                                        installers
+                                    });
+                                }}
+                            >Remove</button>
+                        </div>
+                    );
+                })}
+                <div className="form-container">
+                    <button
+                        className="btn btn-green"
+                        onClick={(e) => {
+                            e.preventDefault();
+
+                            form.setValues({
+                                ...form.values,
+                                installers: [...form.values.installers, EMPTY_INSTALLER_VALUE]
+                            });
+                        }}
+                    >Add</button>
+                </div>
+            </>
+        );
+    }, [form.values]);
+
+    // Credits form.
+    const credits_form = useMemo(() => {
+        const credits = form.values.credits;
+
+        return (
+            <>
+                {credits.map((_credit, index) => {
+                    return (
+                        <div key={"credit" + index} className="form-container">
+                            <CreditForm
+                                form={form}
+                                index={index}
+                            />
+
+                            <button
+                                className="btn btn-red"
+                                onClick={(e) => {
+                                    e.preventDefault();
+
+                                    const credits = form.values.credits;
+
+                                    credits.splice(index, 1);
+                                    form.setValues({
+                                        ...form.values,
+                                        credits
+                                    });
+                                }}
+                            >Remove</button>
+                        </div>
+                    );
+                })}
+                <div className="form-container">
+                    <button
+                        className="btn btn-green"
+                        onClick={(e) => {
+                            e.preventDefault();
+
+                            form.setValues({
+                                ...form.values,
+                                credits: [...form.values.credits, EMPTY_CREDIT_VALUE]
+                            });
+                        }}
+                    >Add</button>
+                </div>
+            </>
+        );
+    }, [form.values]);
+
     // Preview mode.
     const [previewMode, setPreviewMode] = useState(false);
 
@@ -599,7 +613,7 @@ const ModForm: React.FC<{
     let description_val = "N/A";
     let install_val = "N/A";
 
-    if (typeof document !== "undefined" && previewMode) {
+    if (typeof document != "undefined" && previewMode) {
         description_val = (document.getElementById("description") as HTMLInputElement)?.value ?? "N/A";
         install_val = (document.getElementById("install") as HTMLInputElement)?.value ?? "N/A";
     }
@@ -617,46 +631,76 @@ const ModForm: React.FC<{
                 <h2>General Information</h2>
                 <div className="form-container">
                     <label className="form-label">Image Banner</label>
-                    <input className="form-input" name="image_banner" type="file" placeholder="Mod Image Banner" onChange={(e) => {
-                          const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
+                    <input
+                        type="file"
+                        className="form-input"
+                        name="image_banner"
+                        placeholder="Mod Image Banner"
+                        onChange={(e) => {
+                            const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
 
-                          if (file) {
-                              const reader = new FileReader();
-  
-                              reader.onloadend = () => {
-                                  setBannerData(reader.result);
-                              };
-                              
-                              reader.readAsDataURL(file);
-                          }
-                    }} />
+                            if (file) {
+                                const reader = new FileReader();
 
-                    <Field className="form-checkbox" name="bremove" type="checkbox" /> <label className="form-checkbox-label">Remove Current</label>
+                                reader.onloadend = () => {
+                                    setBannerData(reader.result);
+                                };
+                                
+                                reader.readAsDataURL(file);
+                            }
+                        }} 
+                    />
+
+                    <Field
+                        type="checkbox"
+                        className="form-checkbox" 
+                        name="bremove"
+                    />
+                    <label className="form-checkbox-label">Remove Current</label>
                 </div>
 
                 <div className="form-container">
                     <label className="form-label">Name</label>
-                    <Field className="form-input" name="name" type="text" placeholder="Mod Name" />
+                    <Field
+                        type="text"
+                        className="form-input"
+                        name="name"
+                        placeholder="Mod Name"
+                    />
                 </div>
 
                 <div className="form-container">
                     <label className="form-label">Owner Name</label>
-                    <Field className="form-input" name="owner_name" type="text" placeholder="Owner Name If Any" />
+                    <Field
+                        type="text"
+                        className="form-input"
+                        name="owner_name"
+                        placeholder="Owner Name If Any"
+                    />
                 </div>
 
                 <div className="form-container">
                     <label className="form-label">URL</label>
-                    <Field className="form-input" name="url" type="text" placeholder="bestmods.io/view/value" />
+                    <Field
+                        type="text"
+                        className="form-input"
+                        name="url"
+                        placeholder="bestmods.io/view/value"
+                    />
                 </div>
 
                 <div className="form-container">
                     <label className="form-label">Category</label>
-                    <select className="form-input" value={category ?? 0} onChange={(e) => {
-                        const val = e.target.value;
+                    <select 
+                        className="form-input"
+                        value={category ?? 0}
+                        onChange={(e) => {
+                            const val = e.target.value;
 
-                        if (val)
-                            setCategory(Number(val));
-                    }}>
+                            if (val)
+                                setCategory(Number(val));
+                        }}
+                    >
                         <option value="0">None</option>
                         {cats.map((cat) => {
                             return (
@@ -674,7 +718,14 @@ const ModForm: React.FC<{
 
                 <div className="form-container">
                     <label className="form-label">Short Description</label>
-                    <Field rows="16" cols="32" className="form-input" name="description_short" as="textarea" placeholder="Mod Short Description" />
+                    <Field
+                        as="textarea"
+                        rows="16"
+                        cols="32"
+                        className="form-input"
+                        name="description_short"
+                        placeholder="Mod Short Description"
+                    />
                 </div>
 
                 <div className="form-container">
@@ -684,7 +735,15 @@ const ModForm: React.FC<{
                             {description_val}
                         </ReactMarkdown>
                     )}
-                    <Field rows="16" cols="32" className={previewMode ? "hidden" : "form-input"} id="description" name="description" as="textarea" placeholder="Mod Description" />
+                    <Field
+                        as="textarea"
+                        rows="16"
+                        cols="32"
+                        className={previewMode ? "hidden" : "form-input"}
+                        name="description"
+                        id="description"
+                        placeholder="Mod Description"
+                    />
                 </div>
 
                 <div className="form-container">
@@ -694,7 +753,15 @@ const ModForm: React.FC<{
                             {install_val}
                         </ReactMarkdown>
                     )}
-                    <Field rows="16" cols="32" className={previewMode ? "hidden" : "form-input"} id="install" name="install" as="textarea" placeholder="Mod Installation" />
+                    <Field
+                        as="textarea"
+                        rows="16"
+                        cols="32"
+                        className={previewMode ? "hidden" : "form-input"}
+                        name="install"
+                        id="install"
+                        placeholder="Mod Installation"
+                    />
                 </div>
 
                 <h2>Sources</h2>
@@ -713,11 +780,14 @@ const ModForm: React.FC<{
                 {credits_form}
 
                 <div className="form-preview-mode-container">
-                    <button type="button" onClick={(e) => {
-                        e.preventDefault();
+                    <button 
+                        type="button"
+                        onClick={(e) => {
+                            e.preventDefault();
 
-                        setPreviewMode(!previewMode);
-                    }}>
+                            setPreviewMode(!previewMode);
+                        }}
+                    >
                         {previewMode ? (
                             <span>Preview Off</span>
                         ) : (
