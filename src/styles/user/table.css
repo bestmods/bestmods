@@ -1,60 +1,64 @@
-.user-table {
-    @apply table;
-    @apply table-auto;
-    @apply w-full;
-}
+@tailwind utilities;
 
-.user-table > thead > tr {
-    @apply bg-cyan-600;
-}
+@layer utilities {
+    .user-table {
+        @apply table;
+        @apply table-auto;
+        @apply w-full;
+    }
 
-.user-table > thead > tr > th {
-    @apply text-white;
-    @apply font-bold;
-    @apply text-xl;
-    @apply p-5;
-}
+    .user-table > thead > tr {
+        @apply bg-cyan-600;
+    }
 
-.user-table > tbody > tr {
-    @apply bg-cyan-800;
-    @apply hover:bg-cyan-700;
-}
+    .user-table > thead > tr > th {
+        @apply text-white;
+        @apply font-bold;
+        @apply text-xl;
+        @apply p-5;
+    }
 
-.user-table > tbody > tr > td {
-    @apply text-center;
-    @apply text-gray-200;
-    @apply p-5;
-}
+    .user-table > tbody > tr {
+        @apply bg-cyan-800;
+        @apply hover:bg-cyan-700;
+    }
 
-.user-table-actions {
-    @apply flex;
-    @apply justify-center;
-    @apply gap-5;
-}
+    .user-table > tbody > tr > td {
+        @apply text-center;
+        @apply text-gray-200;
+        @apply p-5;
+    }
 
-.user-table-actions > a:is(:first-child) {
-    @apply text-green-300;
-    @apply font-bold;
-}
+    .user-table-actions {
+        @apply flex;
+        @apply justify-center;
+        @apply gap-5;
+    }
 
-.user-table-actions > a:is(:last-child) {
-    @apply text-red-300;
-    @apply font-bold;
-}
+    .user-table-actions > a:is(:first-child) {
+        @apply text-green-300;
+        @apply font-bold;
+    }
 
-.user-page-numbers {
-    @apply flex;
-    @apply gap-6;
-    @apply py-12;
-}
+    .user-table-actions > a:is(:last-child) {
+        @apply text-red-300;
+        @apply font-bold;
+    }
 
-.user-page-numbers > a {
-    @apply text-gray-200;
-    @apply font-bold;
-    @apply hover:text-white;
-}
+    .user-page-numbers {
+        @apply flex;
+        @apply gap-6;
+        @apply py-12;
+    }
 
-.user-table-avatar > img {
-    @apply w-8;
-    @apply h-8;
+    .user-page-numbers > a {
+        @apply text-gray-200;
+        @apply font-bold;
+        @apply hover:text-white;
+    }
+
+    .user-table-avatar > img {
+        @apply w-8;
+        @apply h-8;
+    }
 }

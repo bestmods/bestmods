@@ -8,18 +8,6 @@ import FormTemplate from '../main';
 import { AlertForm } from '../../utils/alert';
 import { type Source } from "@prisma/client";
 
-type values_type = {
-    update?: boolean
-    name: string
-    url: string
-    classes?: string
-    description?: string
-    banner?: string
-    icon?: string
-    iremove?: boolean
-    bremove?: boolean
-};
-
 const SourceForm: React.FC<{ 
     src: Source | null 
 }> = ({ 
@@ -32,7 +20,7 @@ const SourceForm: React.FC<{
     // Submit button.
     const submitBtn = 
         <div className="text-center">
-            <button type="submit" className="btn btn-blue">{!src ? "Add Source!" : "Edit Source!"}</button>
+            <button type="submit" className="btn btn-normal">{!src ? "Add Source!" : "Edit Source!"}</button>
         </div>;
 
     const [iconData, setIconData] = useState<string | ArrayBuffer | null>(null);
@@ -79,15 +67,13 @@ const SourceForm: React.FC<{
         enableReinitialize: true,
 
         onSubmit: (values) => {
-            // Create new values.
-            const new_vals: values_type = values;
-
-            new_vals.icon = iconData?.toString();
-            new_vals.banner = bannerData?.toString();
-            new_vals.update = (src) ? true : false;
-
             // Insert into database.
-            src_mut.mutate(new_vals);
+            src_mut.mutate({
+                ...values,
+                icon: iconData?.toString(),
+                banner: bannerData?.toString(),
+                update: (src) ? true : false
+            });
 
             // Scroll to top.
             if (typeof window !== undefined) {
@@ -111,63 +97,131 @@ const SourceForm: React.FC<{
                 submitBtn={submitBtn}
             >
                 <div className="form-container">
-                    <label className="form-label">Image</label>
-                    <input className="form-input" name="image" type="file" placeholder="Source Image" onChange={(e) => {
-                        const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
+                    <label
+                        htmlFor="icon" 
+                        className="form-label"
+                    >Icon</label>
+                    <input
+                        type="file"
+                        className="form-input"
+                        name="icon"
+                        placeholder="Source Icon"
+                        onChange={(e) => {
+                            const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
 
-                        if (file) {
+                            if (file) {
 
-                            const reader = new FileReader();
+                                const reader = new FileReader();
 
-                            reader.onloadend = () => {
-                                setIconData(reader.result);
-                            };
-                            
-                            reader.readAsDataURL(file);
-                        }
-                    }} />
+                                reader.onloadend = () => {
+                                    setIconData(reader.result);
+                                };
+                                
+                                reader.readAsDataURL(file);
+                            }
+                        }}
+                    />
 
-                    <Field className="form-checkbox" name="iremove" type="checkbox" /> <label className="form-checkbox-label">Remove Current</label>
+                    <Field
+                        type="checkbox"
+                        className="form-checkbox"
+                        name="iremove"
+                    />
+                    <label
+                        htmlFor="iremove" 
+                        className="form-checkbox-label"
+                    >Remove Current</label>
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">Image Banner</label>
-                    <input className="form-input" name="image_banner" type="file" placeholder="Source Image Banner" onChange={(e) => {
-                        const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
+                    <label
+                        htmlFor="banner" 
+                        className="form-label"
+                    >Image Banner</label>
+                    <input
+                        type="file" 
+                        className="form-input"
+                        name="banner"
+                        placeholder="Source Image Banner"
+                        onChange={(e) => {
+                            const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
 
-                        if (file) {
+                            if (file) {
 
-                            const reader = new FileReader();
+                                const reader = new FileReader();
 
-                            reader.onloadend = () => {
-                                setBannerData(reader.result);
-                            };
-                            
-                            reader.readAsDataURL(file);
-                        }
-                    }} />
+                                reader.onloadend = () => {
+                                    setBannerData(reader.result);
+                                };
+                                
+                                reader.readAsDataURL(file);
+                            }
+                        }}
+                    />
 
-                    <input className="form-checkbox" name="image_banner-remove" type="checkbox" /> <label className="form-checkbox-label">Remove Current</label>
+                    <input
+                        type="checkbox"
+                        className="form-checkbox"
+                        name="bremove"
+                    />
+                    <label
+                        htmlFor="bremove" 
+                        className="form-checkbox-label"
+                    >Remove Current</label>
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">Name</label>
-                    <Field className="form-input" name="name" type="text" placeholder="Source Name" />
+                    <label
+                        htmlFor="name" 
+                        className="form-label"
+                    >Name</label>
+                    <Field
+                        type="text"
+                        className="form-input"
+                        name="name"
+                        placeholder="Source Name" 
+                    />
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">Description</label>
-                    <Field className="form-input" rows={16} cols={32} name="description" as="textarea" placeholder="Source Description" />
+                    <label
+                        htmlFor="description" 
+                        className="form-label"
+                    >Description</label>
+                    <Field
+                        as="textarea"
+                        rows={16}
+                        cols={32}
+                        className="form-input"
+                        name="description"
+                        placeholder="Source Description"
+                    />
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">URL</label>
-                    <Field className="form-input" name="url" type="text" placeholder="moddingcommunity.com" />
+                    <label
+                        htmlFor="url" 
+                        className="form-label"
+                    >URL</label>
+                    <Field
+                        type="text"
+                        className="form-input"
+                        name="url"
+                        placeholder="moddingcommunity.com"
+                    />
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">Classes</label>
-                    <Field className="form-input" name="classes" type="text" placeholder="CSS Classes" />
+                    <label
+                        htmlFor="classes" 
+                        className="form-label"
+                    >Classes</label>
+                    <Field
+                        type="text"
+                        className="form-input"
+                        name="classes"
+                        placeholder="CSS Classes"
+                    />
                 </div>
             </FormTemplate>
         </>

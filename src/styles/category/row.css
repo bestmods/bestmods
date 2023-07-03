@@ -1,13 +1,18 @@
-.category-row > a {
-    @apply flex;
-    @apply items-center;
-    @apply flex-wrap;
-    @apply gap-1;
-    
-    @apply text-white;
-}
+@tailwind utilities;
 
-.category-row > a > img {
-    @apply w-8;
-    @apply h-8;
+
+@layer utilities {
+    .category-row > a {
+        @apply flex;
+        @apply items-center;
+        @apply flex-wrap;
+        @apply gap-1;
+        
+        @apply text-white;
+    }
+
+    .category-row > a > img {
+        @apply w-8;
+        @apply h-8;
+    }
 }

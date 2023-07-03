@@ -141,7 +141,10 @@ const Categories: React.FC<{
                 <p className="text-white">No categories found.</p>
             )}
             <div className="admin-index-add">
-                <Link href="/admin/add/category">Add Category!</Link>
+                <Link
+                    className="btn btn-primary" 
+                    href="/admin/add/category"
+                >Add Category!</Link>
             </div>
         </div>
     );
@@ -202,7 +205,10 @@ const Sources: React.FC<{
                 <p className="text-white">No sources found.</p>
             )}
             <div className="admin-index-add">
-                <Link href="/admin/add/source">Add Source!</Link>
+                <Link
+                    className="btn btn-primary" 
+                    href="/admin/add/source"
+                >Add Source!</Link>
             </div>
         </div>
     );

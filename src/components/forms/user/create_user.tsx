@@ -7,14 +7,6 @@ import { useMemo, useState } from "react";
 import { trpc } from "../../../utils/trpc";
 import { Field, useFormik } from "formik";
 
-type user_vals = {
-    id: string,
-    name?: string,
-    email?: string,
-    avatar?: string,
-    aremove: boolean
-}
-
 const UserForm: React.FC<{
     user: User | null
 }> = ({
@@ -38,7 +30,10 @@ const UserForm: React.FC<{
     // Submit button.
     const submitBtn =
         <div className="text-center">
-            <button type="submit" className="btn btn-blue">{!user ? "Add User!" : "Edit User!"}</button>
+            <button 
+                type="submit"
+                className="btn btn-normal"
+            >{!user ? "Add User!" : "Edit User!"}</button>
         </div>;
 
     // Form.
@@ -50,13 +45,11 @@ const UserForm: React.FC<{
         },
         onSubmit: (values) => {
             if (user) {
-                const new_vals: user_vals = { 
-                    ...values, 
+                user_add_mut.mutate({
+                    ...values,
                     id: user.id,
-                    avatar: avatar?.toString() ?? undefined
-                };
-
-                user_add_mut.mutate(new_vals);
+                    avatar: avatar?.toString()
+                });
 
                 // Scroll to top.
                 if (typeof window !== undefined) {
@@ -83,32 +76,65 @@ const UserForm: React.FC<{
                 <h2>General Information</h2>
 
                 <div className="form-container">
-                    <label className="form-label">Avatar</label>
-                    <input className="form-input" name="avatar" type="file" placeholder="Avatar" onChange={(e) => {
-                        const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
+                    <label
+                        htmlFor="avatar" 
+                        className="form-label"
+                    >Avatar</label>
+                    <input
+                        type="file"
+                        className="form-input"
+                        name="avatar"
+                        placeholder="Avatar" 
+                        onChange={(e) => {
+                            const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
 
-                        if (file) {
-                            const reader = new FileReader();
+                            if (file) {
+                                const reader = new FileReader();
 
-                            reader.onloadend = () => {
-                                setAvatar(reader.result);
-                            };
-                            
-                            reader.readAsDataURL(file);
-                        }
-                    }} />
+                                reader.onloadend = () => {
+                                    setAvatar(reader.result);
+                                };
+                                
+                                reader.readAsDataURL(file);
+                            }
+                        }} 
+                    />
 
-                    <Field className="form-checkbox" name="iremove" type="checkbox" /> <label className="form-checkbox-label">Remove Current</label>
+                    <Field
+                        type="checkbox"
+                        className="form-checkbox"
+                        name="iremove"
+                    />
+                    <label
+                        htmlFor="iremove" 
+                        className="form-checkbox-label"
+                    >Remove Current</label>
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">Name</label>
-                    <Field className="form-input" name="name" type="text" placeholder="User's name" />
+                    <label
+                        htmlFor="name"
+                        className="form-label"
+                    >Name</label>
+                    <Field
+                        type="text"
+                        className="form-input"
+                        name="name"
+                        placeholder="User's name"
+                    />
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">Email</label>
-                    <Field className="form-input" name="email" type="text" placeholder="User's email" />
+                    <label
+                        htmlFor="email"
+                        className="form-label"
+                    >Email</label>
+                    <Field
+                        type="text"
+                        className="form-input"
+                        name="email"
+                        placeholder="User's email"
+                    />
                 </div>
 
                 <Permissions
@@ -165,14 +191,17 @@ const Permissions: React.FC<{
                         return;
 
                     return (
-                        <Link key={"user-permission-" + permission.perm} href="/" onClick={(e) => {
-                            e.preventDefault();
-                            
-                            perm_del_mut.mutate({
-                                id: permission.userId,
-                                perm: permission.perm
-                            });
-                        }}>{permission.perm}</Link>
+                        <Link 
+                            key={"user-permission-" + permission.perm} href="/"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                
+                                perm_del_mut.mutate({
+                                    id: permission.userId,
+                                    perm: permission.perm
+                                });
+                            }}
+                        >{permission.perm}</Link>
                     );
                 })}
             </>
@@ -192,19 +221,26 @@ const Permissions: React.FC<{
                 </div>
                 <div className="form-container user-edit-permissions-container">
                     <label>Permission</label>
-                    <input type="text" className="form-input" id="permission" />
-                    <button type="button" onClick={(e) => {
-                        e.preventDefault();
+                    <input 
+                        type="text"
+                        className="form-input"
+                        id="permission"
+                    />
+                    <button 
+                        type="button"
+                        onClick={(e) => {
+                            e.preventDefault();
 
-                        if (user) {
-                            const perm = (document.getElementById("permission") as HTMLInputElement).value;
+                            if (user) {
+                                const perm = (document.getElementById("permission") as HTMLInputElement).value;
 
-                            perm_add_mut.mutate({
-                                id: user.id,
-                                perm: perm
-                            });
-                        }
-                    }}>Add!</button>
+                                perm_add_mut.mutate({
+                                    id: user.id,
+                                    perm: perm
+                                });
+                            }
+                        }}
+                    >Add!</button>
                 </div>
             </div>
         </>

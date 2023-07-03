@@ -1,0 +1,9 @@
+@tailwind components;
+
+@layer components {
+    .loading-bar {
+        @apply text-center;
+        @apply text-white;
+        @apply text-2xl;
+    }
+}

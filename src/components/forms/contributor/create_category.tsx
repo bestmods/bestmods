@@ -9,23 +9,6 @@ import { AlertForm } from '../../utils/alert';
 import { type Category } from "@prisma/client";
 import { type CategoriesWithChildren } from "../../types";
 
-type values_type = {
-    id?: number
-    parent_id?: number | null
-
-    name: string
-    name_short: string
-    url: string
-    classes: string
-
-    description?: string
-
-    icon?: string
-    iremove?: boolean
-
-    has_bg?: boolean
-};
-
 const CategoryForm: React.FC<{ 
     cat: Category,
     cats: CategoriesWithChildren[]
@@ -43,7 +26,10 @@ const CategoryForm: React.FC<{
     // Submit button.
     const submitBtn = 
         <div className="text-center">
-            <button type="submit" className="btn btn-blue">{!cat ? "Add Category!" : "Edit Category!"}</button>
+            <button 
+                type="submit"
+                className="btn btn-normal"
+            >{!cat ? "Add Category!" : "Edit Category!"}</button>
         </div>;
 
     // File uploads.
@@ -87,18 +73,14 @@ const CategoryForm: React.FC<{
             has_bg: cat?.hasBg ?? false
         },
         enableReinitialize: true,
-
         onSubmit: (values) => {
-            // Create new values.
-            const new_vals: values_type = values;
-
-            // Assign some additional values.
-            new_vals.parent_id = parent;
-            new_vals.id = cat?.id;
-            new_vals.icon = iconData?.toString() ?? undefined;
-
             // Insert into database.
-            cat_mut.mutate(new_vals);
+            cat_mut.mutate({
+                ...values,
+                parent_id: parent,
+                id: cat?.id,
+                icon: iconData?.toString()
+            });
 
             // Scroll to top.
             if (typeof window !== undefined) {
@@ -122,38 +104,75 @@ const CategoryForm: React.FC<{
                 submitBtn={submitBtn}
             >
                 <div className="form-container">
-                    <label className="form-label">Image</label>
-                    <input className="form-input" name="image" type="file" placeholder="Source Image" onChange={(e) => {
-                        const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
+                    <label
+                        htmlFor="icon" 
+                        className="form-label"
+                    >Icon</label>
+                    <input
+                        type="file"
+                        className="form-input"
+                        name="icon"
+                        placeholder="Category Icon"
+                        onChange={(e) => {
+                            const file = (e?.target?.files) ? e?.target?.files[0] ?? null : null;
 
-                        if (file) {
-                            const reader = new FileReader();
+                            if (file) {
+                                const reader = new FileReader();
 
-                            reader.onloadend = () => {
-                                setIconData(reader.result);
-                            };
-                            
-                            reader.readAsDataURL(file);
-                        }
-                    }} />
+                                reader.onloadend = () => {
+                                    setIconData(reader.result);
+                                };
+                                
+                                reader.readAsDataURL(file);
+                            }
+                        }}
+                    />
 
-                    <Field className="form-checkbox" name="iremove" type="checkbox" /> <label className="form-checkbox-label">Remove Current</label>
+                    <Field
+                        type="checkbox"
+                        className="form-checkbox"
+                        name="iremove"
+                    />
+                    <label
+                        htmlFor="iremove"
+                        className="form-checkbox-label"
+                    >Remove Current</label>
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">Has Background</label>
+                    <label
+                        htmlFor="has_bg"
+                        className="form-label"
+                    >Has Background</label>
 
-                    <Field className="form-checkbox" name="has_bg" type="checkbox" /> <label className="form-checkbox-label">Yes</label>
+                    <Field
+                        type="checkbox"
+                        className="form-checkbox"
+                        name="has_bg"
+                    />
+                    <label
+                        htmlFor="has_bg" 
+                        className="form-checkbox-label"
+                    >Yes</label>
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">Parent</label> 
-                    <select className="form-input" name="parent_id" placeholder="Category Parent" defaultValue={parent ?? 0} onChange={(e) => {
-                        const val = e.target.value;
+                    <label
+                        htmlFor="parent_id"
+                        className="form-label"
+                    >Parent</label> 
+                    <select 
+                        className="form-input"
+                        name="parent_id"
+                        placeholder="Category Parent"
+                        defaultValue={parent ?? 0}
+                        onChange={(e) => {
+                            const val = e.target.value;
 
-                        if (val)
-                            setParent(Number(val));
-                    }}>
+                            if (val)
+                                setParent(Number(val));
+                        }}
+                    >
                         <option value="0">None</option>
                         {cats.map((cat) => {
                             return (
@@ -170,28 +189,70 @@ const CategoryForm: React.FC<{
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">Name</label>
-                    <Field className="form-input" name="name" type="text" placeholder="Category Name" />
+                    <label
+                        htmlFor="name"
+                        className="form-label"
+                    >Name</label>
+                    <Field
+                        type="text"
+                        className="form-input"
+                        name="name"
+                        placeholder="Category Name"
+                    />
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">Short Name</label>
-                    <Field className="form-input" name="name_short" type="text" placeholder="Category Short Name" />
+                    <label
+                        htmlFor="name_short"
+                        className="form-label"
+                    >Short Name</label>
+                    <Field
+                        type="text"
+                        className="form-input"
+                        name="name_short"
+                        placeholder="Category Short Name"
+                    />
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">Description</label>
-                    <Field className="form-input" rows={16} cols={32} name="description" as="textarea" placeholder="Category Description" />
+                    <label
+                        htmlFor="description"
+                        className="form-label"
+                    >Description</label>
+                    <Field
+                        as="textarea"
+                        rows={16}
+                        cols={32}
+                        className="form-input"
+                        name="description"
+                        placeholder="Category Description"
+                    />
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">URL</label>
-                    <Field className="form-input" name="url" type="text" placeholder="models" />
+                    <label
+                        htmlFor="url"
+                        className="form-label"
+                    >URL</label>
+                    <Field
+                        type="text"
+                        className="form-input"
+                        name="url"
+                        placeholder="models"
+                    />
                 </div>
 
                 <div className="form-container">
-                    <label className="form-label">Classes</label>
-                    <Field className="form-input" name="classes" type="text" placeholder="CSS Classes" />
+                    <label
+                        htmlFor="classes"
+                        className="form-label"
+                    >Classes</label>
+                    <Field
+                        type="text" 
+                        className="form-input"
+                        name="classes"
+                        placeholder="CSS Classes"
+                    />
                 </div>
             </FormTemplate>
         </>

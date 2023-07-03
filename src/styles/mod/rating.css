@@ -1,15 +1,19 @@
-.mod-rating-container {
-    @apply relative;
-    @apply flex;
-    @apply text-center;
-    @apply justify-center;
-    @apply items-center;
-    @apply gap-1;
-}
+@tailwind utilities;
 
-.mod-rating-container span {
-    @apply text-white;
-    @apply font-bold;
-    @apply text-4xl;
-    @apply text-center;
+@layer utilities {
+    .mod-rating-container {
+        @apply relative;
+        @apply flex;
+        @apply text-center;
+        @apply justify-center;
+        @apply items-center;
+        @apply gap-1;
+    }
+
+    .mod-rating-container span {
+        @apply text-white;
+        @apply font-bold;
+        @apply text-4xl;
+        @apply text-center;
+    }
 }
