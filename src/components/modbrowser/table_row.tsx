@@ -5,9 +5,10 @@ import Link from "next/link";
 
 import EyeIcon from "../utils/icons/eye";
 import DownloadIcon from "../utils/icons/download";
+import { type ModRowBrowser } from "../types";
 
 const TableRow: React.FC<{
-    mod: any,
+    mod: ModRowBrowser,
     addClasses: string,
     banner: string,
     descShort: string,
@@ -17,7 +18,8 @@ const TableRow: React.FC<{
     catParLink: string | null,
     catIcon: string,
     catLink: string | null,
-    viewLink: string
+    viewLink: string,
+    rating?: number
 }> = ({
     mod,
     addClasses,
@@ -29,7 +31,8 @@ const TableRow: React.FC<{
     catParLink,
     catIcon,
     catLink,
-    viewLink
+    viewLink,
+    rating
 }) => {
     const cdn: string | undefined = process.env.NEXT_PUBLIC_CDN_URL;
 
@@ -159,6 +162,7 @@ const TableRow: React.FC<{
                 <div className="modbrowser-table-rating">
                     <ModRatingRender
                         mod={mod}
+                        rating={rating}
                     />
                 </div>
             </td>
