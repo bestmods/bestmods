@@ -61,7 +61,6 @@ const ModRow: React.FC<{
                     catParIcon={catParIcon}
                     catParLink={catParLink}
                     viewLink={viewLink}
-                    rating={mod.rating}
                 />
             ) : (
                 <TableRow
@@ -76,7 +75,6 @@ const ModRow: React.FC<{
                     catParIcon={catParIcon}
                     catParLink={catParLink}
                     viewLink={viewLink}
-                    rating={mod.rating}
                 />
             )}
         </>

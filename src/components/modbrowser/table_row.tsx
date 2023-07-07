@@ -18,8 +18,7 @@ const TableRow: React.FC<{
     catParLink: string | null,
     catIcon: string,
     catLink: string | null,
-    viewLink: string,
-    rating?: number
+    viewLink: string
 }> = ({
     mod,
     addClasses,
@@ -31,8 +30,7 @@ const TableRow: React.FC<{
     catParLink,
     catIcon,
     catLink,
-    viewLink,
-    rating
+    viewLink
 }) => {
     const cdn: string | undefined = process.env.NEXT_PUBLIC_CDN_URL;
 
@@ -162,7 +160,7 @@ const TableRow: React.FC<{
                 <div className="modbrowser-table-rating">
                     <ModRatingRender
                         mod={mod}
-                        rating={rating}
+                        rating={mod.rating}
                     />
                 </div>
             </td>
