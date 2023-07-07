@@ -2,7 +2,8 @@ import { z } from "zod";
 import { router, publicProcedure, protectedProcedure, contributorProcedure } from "../trpc";
 
 import { TRPCError } from "@trpc/server"
-import { Insert_Or_Update_Mod } from "../../../utils/content/mod";
+import { Get_Mod_Rating, Insert_Or_Update_Mod } from "../../../utils/content/mod";
+import { ModRowBrowser } from "../../../components/types";
 
 export const modRouter = router({
     addMod: contributorProcedure
@@ -130,52 +131,45 @@ export const modRouter = router({
         .query(async ({ ctx, input }) => {
             const count = input.count;
             
-            /*
             // Check if we want to retrieve mod rating within specific range.
-            let time_range: number | null = null;
+            let time_range: number | undefined = undefined;
 
-            if (input.timeframe) {
-                switch (Number(input.timeframe)) {
-                    case 0:
-                        time_range = 3600;
+            switch (input.timeframe) {
+                case 0:
+                    time_range = 3600;
 
-                        break;
+                    break;
 
-                    case 1:
-                        time_range = 86400;
+                case 1:
+                    time_range = 86400;
 
-                        break;
+                    break;
 
-                    case 2:
-                        time_range = 604800;
+                case 2:
+                    time_range = 604800;
 
-                        break;
+                    break;
 
-                    case 3:
-                        time_range = 2629800;
+                case 3:
+                    time_range = 2629800;
 
-                        break;
+                    break;
 
-                    case 4:
-                        time_range = 311556952;
+                case 4:
+                    time_range = 311556952;
 
-                        break;
-
-                    default:
-                        time_range = null;
-                }
+                    break;
             }
 
-            let time_range_date: Date | null = null;
+            let time_range_date: Date | undefined = undefined;
 
             if (time_range)
-                time_range_date = new Date(Date.now() - time_range);
-            */
+                time_range_date = new Date(Date.now() - (time_range * 1000));
 
             // Process categories.
             const catsArr = JSON.parse(input.categories ?? "[]");
 
-            const items = await ctx.prisma.mod.findMany({
+            const items: ModRowBrowser[] = await ctx.prisma.mod.findMany({
                 where: {
                     ...(catsArr && catsArr.length > 0 && {
                         categoryId: {
@@ -237,13 +231,6 @@ export const modRouter = router({
 
                     totalDownloads: true,
                     totalViews: true,
-                    totalRating: true,
-
-                    ratingHour: true,
-                    ratingDay: true,
-                    ratingWeek: true,
-                    ratingMonth: true,
-                    ratingYear: true,
 
                     owner: true,
                     category: {
@@ -271,25 +258,12 @@ export const modRouter = router({
                     }
                 },
                 orderBy: [
-                    {
-                        ...(input.sort == 0 && {
-                            ...(input.timeframe == 0 && { ratingHour: "desc" }),
-                            ...(input.timeframe == 1 && { ratingDay: "desc" }),
-                            ...(input.timeframe == 2 && { ratingWeek: "desc" }),
-                            ...(input.timeframe == 3 && { ratingMonth: "desc" }),
-                            ...(input.timeframe == 4 && { ratingYear: "desc" }),
-                            ...(input.timeframe == 5 && { totalRating: "desc" })
-                        }),
-                        ...(input.sort > 0 && {
-                            ...(input.sort == 1 && { totalViews: "desc" }),
-                            ...(input.sort == 2 && { totalDownloads: "desc" }),
-                            ...(input.sort == 3 && { editAt: "desc" }),
-                            ...(input.sort == 4 && { createAt: "desc" })
-                        })
-                    },
-                    {
-                        id: "desc"
-                    }
+                    (input.sort > 0 && {
+                        ...(input.sort == 1 && { totalViews: "desc" }),
+                        ...(input.sort == 2 && { totalDownloads: "desc" }),
+                        ...(input.sort == 3 && { updateAt: "desc" }),
+                        ...(input.sort == 4 && { createAt: "desc" })
+                    }) || { id: "desc" }
                 ],
                 cursor: (input.cursor) ? { id: input.cursor } : undefined,
                 take: count + 1
@@ -302,6 +276,21 @@ export const modRouter = router({
                 nextCur = nextItem?.id;
             }
 
+            // We want to run queries to retrieve the mod rating.
+            // Unfortunately, Prisma doesn't support multiple count queries on the same table.
+            // More information here -> https://github.com/bestmods/bestmods/issues/23
+            // P.S. I hate this solution, but it's the best I can think of right now.
+            // Using raw Prisma queries would make this task VERY complicated.
+            await Promise.all(
+                items.map(async (item, index) => {
+                    const rating = await Get_Mod_Rating(ctx.prisma, item.id, time_range_date);
+              
+                    // Retrieve mod rating.
+                    if (items && items[index])
+                        items[index]!.rating = rating;
+                })
+            );
+            
             return {
                 items,
                 nextCur
