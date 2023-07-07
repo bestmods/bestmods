@@ -1,14 +1,14 @@
 import React from 'react';
 
 export const AlertForm: React.FC<{
-    error?: string | null,
-    success?: string | null
+    error?: string,
+    success?: string
 }> = ({
     error,
     success
 }) => {
     return (<>
-        <div id="alertbox">
+        <div className="alert">
             {error && (
                 <div className="alert-error">
                     <h3>Error!</h3>

@@ -16,8 +16,8 @@ const UserForm: React.FC<{
     const user_add_mut = trpc.user.updateUser.useMutation();
 
     // Error and success messages.
-    let error: string | null = null;
-    let success: string | null = null;
+    let error: string | undefined = undefined;
+    let success: string | undefined = undefined;
 
     if (user_add_mut.isSuccess)
         success = "Successfully modified user!";
@@ -160,24 +160,24 @@ const Permissions: React.FC<{
     const perm_add_mut = trpc.permission.addUserPerm.useMutation();
     const perm_del_mut = trpc.permission.delUserPerm.useMutation();
 
-    let error: string | null = null;
-    let success: string | null = null;
+    let error: string | undefined = undefined;
+    let success: string | undefined = undefined;
 
     // To Do: Figure out how to make sure one of the mutations are false at all times.
     if (perm_add_mut.isSuccess) {
         success = "Successfully added permission!";
-        error = null;
+        error = undefined;
     } else if (perm_add_mut.isError) {
         error = perm_add_mut.error.message;
-        success = null;
+        success = undefined;
     }
     
     if (perm_del_mut.isSuccess) {
         success = "Successfully removed permission!";
-        error = null;
+        error = undefined;
     } else if (perm_del_mut.isError) {
         error = perm_del_mut.error.message;
-        success = null;
+        success = undefined;
     }
 
     const permissions_list = useMemo(() => {

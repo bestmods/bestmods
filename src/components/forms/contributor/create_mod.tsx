@@ -310,8 +310,8 @@ const ModForm: React.FC<{
     mod
  }) => {
     // Errors and success handles.
-    let error: string | null = null;
-    let success: string | null = null;
+    let error: string | undefined = undefined;
+    let success: string | undefined = undefined;
 
     // Submit button.
     const submitBtn =
@@ -334,7 +334,7 @@ const ModForm: React.FC<{
     // Handle success and error messages.
     if (mod_mut.isSuccess) {
         success = "Successfully added or edited mod!";
-        error = null;
+        error = undefined;
     } else if (mod_mut.isError) {
         const err_msg = mod_mut.error.message;
 
@@ -350,7 +350,7 @@ const ModForm: React.FC<{
         else
             error = "Unable to create or edit mod!";
 
-        success = null;
+        success = undefined;
 
         // Send alert and log full error to client's console.
         console.error(mod_mut.error);

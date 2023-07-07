@@ -11,9 +11,9 @@ export type filterArgs = {
     sort: number
     search?: string
 
-    timeframeCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void) | null
-    sortCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void) | null
-    searchCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void) | null
+    timeframeCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void)
+    sortCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void)
+    searchCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void)
 }
 
 export type displayArgs = {
@@ -28,9 +28,9 @@ export const CookiesCtx = React.createContext<{ [key: string]: string }>({});
 
 export const BestModsPage: React.FC<{
     children: ReactNode,
-    classes?: string | null,
+    classes?: string,
     background?: string,
-    image?: string | null,
+    image?: string,
     overlay?: string,
     excludeCdn?: boolean,
     cookies?: { [key: string]: string },

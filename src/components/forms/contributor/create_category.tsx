@@ -17,8 +17,8 @@ const CategoryForm: React.FC<{
     cats
   }) => {
     // Errors and success handles.
-    let error: string | null = null;
-    let success: string | null = null;
+    let error: string | undefined = undefined;
+    let success: string | undefined = undefined;
 
     // We must handle the parent ourselves.
     const [parent, setParent] = useState<number | null>(cat?.parentId ?? null);
@@ -41,7 +41,7 @@ const CategoryForm: React.FC<{
     // Hande success and errors.
     if (cat_mut.isSuccess) {
         success = "Successfully added or edited category!";
-        error = null;
+        error = undefined;
     } else if (cat_mut.isError) {
         const err_msg = cat_mut.error.message;
 
@@ -55,7 +55,7 @@ const CategoryForm: React.FC<{
         else
             error = "Unable to create or edit category!";
 
-        success = null;
+        success = undefined;
 
         // Send alert and log full error to client's console.
         console.error(cat_mut.error);

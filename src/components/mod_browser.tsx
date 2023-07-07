@@ -9,12 +9,10 @@ import TableRow from './modbrowser/table_row';
 
 import LoadingIcon from './utils/icons/loading';
 
-type ModRowArguments = {
-    mod: any
+const ModRow: React.FC<{
+    mod: any,
     display?: string
-};
-
-const ModRow: React.FC<ModRowArguments> = ({
+}> = ({
     mod,
     display = "grid"
 }) => {

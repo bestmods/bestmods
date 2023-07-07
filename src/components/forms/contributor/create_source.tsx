@@ -14,8 +14,8 @@ const SourceForm: React.FC<{
     src 
 }) => {
     // Errors and success handles.
-    let error: string | null = null;
-    let success: string | null = null;
+    let error: string | undefined = undefined;
+    let success: string | undefined = undefined;
 
     // Submit button.
     const submitBtn = 
@@ -32,7 +32,7 @@ const SourceForm: React.FC<{
     // Handle errors and success.
     if (src_mut.isSuccess) {
         success = "Successfully added or edited source!";
-        error = null;
+        error = undefined;
     } else if (src_mut.isError) {
         const err_msg = src_mut.error.message;
 
@@ -48,7 +48,7 @@ const SourceForm: React.FC<{
         else
             error = "Unable to create or edit source!";
 
-        success = null;
+        success = undefined;
 
         // Send alert and log full error to client's console.
         console.error(src_mut.error);

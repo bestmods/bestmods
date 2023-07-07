@@ -64,7 +64,7 @@ const Categories: React.FC<{
 }) => {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
-    const [success, setSuccess] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | undefined>(undefined);
 
     const delCats = trpc.category.delCategory.useMutation();
 
@@ -157,7 +157,7 @@ const Sources: React.FC<{
 }) => {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
-    const [success, setSuccess] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | undefined>(undefined);
 
     const delSrcs = trpc.source.delSource.useMutation();
 
