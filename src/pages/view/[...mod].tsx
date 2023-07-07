@@ -19,11 +19,20 @@ import Link from 'next/link';
 import DropDown, { type Drop_Down_Menu_Type } from '../../components/utils/drop_down';
 
 import Download2Icon from '../../components/utils/icons/download2';
+import { Get_Mod_Rating } from '../../utils/content/mod';
 
 const ModCtx = React.createContext<any | boolean | null>(null);
 const ModViewCtx = React.createContext<string | null>(null);
 
-const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
+const Home: NextPage<{
+    mod: any,
+    modView: string,
+    rating: number
+}> = ({
+    mod,
+    modView,
+    rating
+}) => {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
     // Handle background.
@@ -75,7 +84,7 @@ const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
                             image={bg_file ? cdn + bg_path : undefined}
                             excludeCdn={bg_file ? true : false}
                         >
-                            <MainContent />
+                            <MainContent rating={rating} />
                         </BestModsPage>
                 </ModViewCtx.Provider>
             </ModCtx.Provider>
@@ -83,7 +92,11 @@ const Home: NextPage<{ mod: any, modView: string }> = ({ mod, modView }) => {
     );
 };
 
-const MainContent: React.FC = () => {
+const MainContent: React.FC<{
+    rating: number
+}> = ({
+    rating
+}) => {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
     
     const mod = useContext(ModCtx);
@@ -229,6 +242,7 @@ const MainContent: React.FC = () => {
                         <div className="relative flex justify-center">
                             <ModRatingRender
                                 mod={mod}
+                                rating={rating}
                             />
                         </div>
                     </div>
@@ -449,8 +463,11 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         }
     });
 
-    // Increment view if mod is found.
+    let rating = 1;
+
+    // Increment view if mod is found and retrieve mod rating.
     if (mod) {
+        // Increment view count.
         await prisma.mod.update({
             where: {
                 id: mod.id
@@ -460,12 +477,16 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
                     increment: 1
                 }
             }
-        })
+        });
+
+        // Retrieve mod rating.
+        rating = await Get_Mod_Rating(prisma, mod.id);
     }
 
     return { 
         props: { 
             mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === 'bigint' ? v.toString() : v)),
+            rating: rating,
             modView: modView 
         } 
     };
