@@ -8,9 +8,10 @@ import GridRow from './modbrowser/grid_row';
 import TableRow from './modbrowser/table_row';
 
 import LoadingIcon from './utils/icons/loading';
+import { type ModRowBrowser } from './types';
 
 const ModRow: React.FC<{
-    mod: any,
+    mod: ModRowBrowser,
     display?: string
 }> = ({
     mod,
@@ -26,7 +27,7 @@ const ModRow: React.FC<{
 
     // Categories.
     const cat = mod.category;
-    const cat_par = cat.parent;
+    const cat_par = cat?.parent;
 
     // Generate category info.
     const defaultCatIcon = cdn + "/images/default_icon.png";
@@ -90,7 +91,7 @@ const ModBrowser: React.FC<{
     const filters = useContext(FilterCtx);
 
     let requireItems = true;
-    const items: any = [];
+    const items: ModRowBrowser[] = [];
 
     const { data, fetchNextPage } = trpc.mod.getAllModsBrowser.useInfiniteQuery({
         categories: (categories) ? JSON.stringify(categories) : undefined,
@@ -99,7 +100,7 @@ const ModBrowser: React.FC<{
         search: filters?.search,
         visible: (visible != null) ? visible : true
     }, {
-        getNextPageParam: (lastPage) => lastPage.nextCur,
+        getNextPageParam: (lastPage) => lastPage.next_cur,
     });
 
     const loadMore = () => {
@@ -109,9 +110,9 @@ const ModBrowser: React.FC<{
     if (data) {
         data.pages.forEach((pg) => {
             items.push(...pg.items);
-            
+
             // If next cursor is undefined, we're at the end.
-            if (!pg.nextCur)
+            if (!pg.next_cur)
                 requireItems = false;
         });
     }
@@ -143,7 +144,7 @@ const ModBrowser: React.FC<{
                     <>
                         {items.length > 0 ? (
                             <>
-                                {items.map((mod: any) => {
+                                {items.map((mod: ModRowBrowser) => {
                                     return (
                                         <ModRow
                                             key={mod.id + "-row"}
@@ -166,7 +167,7 @@ const ModBrowser: React.FC<{
                         {items.length > 0 ? (
                             <table className="modbrowser-table">
                                 <tbody>
-                                    {items.map((mod: any) => {
+                                    {items.map((mod: ModRowBrowser) => {
                                         return (
                                             <ModRow
                                                 key={mod.id + "-row"}

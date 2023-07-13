@@ -5,9 +5,10 @@ import Link from "next/link";
 
 import EyeIcon from "../utils/icons/eye";
 import DownloadIcon from "../utils/icons/download";
+import { type ModRowBrowser } from "../types";
 
 const GridRow: React.FC<{
-    mod: any,
+    mod: ModRowBrowser,
     addClasses: string,
     banner: string,
     descShort: string,
@@ -29,7 +30,7 @@ const GridRow: React.FC<{
     catParLink,
     catIcon,
     catLink,
-    viewLink 
+    viewLink
 }) => {
     const cdn: string | undefined = process.env.NEXT_PUBLIC_CDN_URL;
 
@@ -143,6 +144,7 @@ const GridRow: React.FC<{
 
                 <ModRatingRender
                     mod={mod}
+                    rating={mod.rating}
                 />
 
                 <div className="modbrowser-grid-stats-downloads">

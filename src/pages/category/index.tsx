@@ -20,7 +20,7 @@ const Home: NextPage<{
                 description="Choose what games and categories you want to see mods in!"
             />
             <BestModsPage>
-                <Categories cats={cats} />
+                <Categories key="what" cats={cats} />
             </BestModsPage>
         </>
     );
@@ -39,9 +39,8 @@ const Categories: React.FC<{
                 <>
                     {cats.map((cat: any) => {
                         return (
-                            <>
+                            <React.Fragment key={"category-" + cat.id}>
                                 <CategoryRow
-                                    key={"category-" + cat.id}
                                     cat={cat}
                                     include_mod_count={true}
                                     classes={["p-4"]}
@@ -62,7 +61,7 @@ const Categories: React.FC<{
                                         })}
                                     </>
                                 )}
-                            </>
+                            </React.Fragment>
                         );
                     })}
                 </>

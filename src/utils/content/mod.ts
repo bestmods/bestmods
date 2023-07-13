@@ -372,3 +372,35 @@ export const Delete_Mod = async (
 
     return [true, null];
 }
+
+export const Get_Mod_Rating = async (
+    prisma: PrismaClient,
+    id: number,
+    date?: Date
+): Promise<number> => {
+    const rating_pos = await prisma.modRating.count({
+        where: {
+            modId: id,
+            positive: true,
+            ...(date && {
+                createdAt: {
+                    gte: date
+                }
+            })
+        }
+    });
+
+    const rating_neg = await prisma.modRating.count({
+        where: {
+            modId: id,
+            positive: false,
+            ...(date && {
+                createdAt: {
+                    gte: date
+                }
+            })
+        }
+    });
+
+    return (rating_pos - rating_neg) + 1;
+}

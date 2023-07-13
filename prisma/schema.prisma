@@ -69,13 +69,6 @@ model Mod {
   // For caching and whatnot.
   totalDownloads BigInt @default(0)
   totalViews     BigInt @default(0)
-  totalRating    BigInt @default(1)
-
-  ratingHour  BigInt @default(1)
-  ratingDay   BigInt @default(1)
-  ratingWeek  BigInt @default(1)
-  ratingMonth BigInt @default(1)
-  ratingYear  BigInt @default(1)
 
   // Relations
   category   Category? @relation(fields: [categoryId], references: [id], onUpdate: Cascade, onDelete: SetNull)

@@ -5,9 +5,10 @@ import Link from "next/link";
 
 import EyeIcon from "../utils/icons/eye";
 import DownloadIcon from "../utils/icons/download";
+import { type ModRowBrowser } from "../types";
 
 const TableRow: React.FC<{
-    mod: any,
+    mod: ModRowBrowser,
     addClasses: string,
     banner: string,
     descShort: string,
@@ -159,6 +160,7 @@ const TableRow: React.FC<{
                 <div className="modbrowser-table-rating">
                     <ModRatingRender
                         mod={mod}
+                        rating={mod.rating}
                     />
                 </div>
             </td>
