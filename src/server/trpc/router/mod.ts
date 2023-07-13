@@ -6,7 +6,6 @@ import { Insert_Or_Update_Mod } from "../../../utils/content/mod";
 import { ModRowBrowser } from "../../../components/types";
 
 import { Prisma } from "@prisma/client";
-import ModBrowser from "../../../components/mod_browser";
 
 export const modRouter = router({
     addMod: contributorProcedure
