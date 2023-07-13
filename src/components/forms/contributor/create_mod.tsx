@@ -10,49 +10,6 @@ import { type Source } from "@prisma/client";
 import { type CategoriesWithChildren, type ModWithRelations } from "../../types";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 
-/* 
-    Default values for our relations.
-    
-    NOTE - We need to stay consistent with Prisma model type. This is why there are unused values added.
-*/
-
-const EMPTY_DOWNLOAD_VALUE = {
-    name: "",
-    url: "",
-
-    modId: 0
-};
-
-const EMPTY_SOURCE_VALUE = {
-    sourceUrl: "",
-    query: "",
-
-    modId: 0,
-    primary: false
-};
-
-const EMPTY_SCREENSHOT_VALUE = {
-    url: "",
-
-    modId: 0
-};
-
-const EMPTY_INSTALLER_VALUE = {
-    sourceUrl: "",
-    url: "",
-
-    modId: 0
-};
-
-const EMPTY_CREDIT_VALUE = {
-    name: "",
-    credit: "",
-
-    id: 0,
-    modId: 0,
-    userId: null
-};
-
 const DownloadForm: React.FC<{
     form: any,
     index: number
@@ -112,7 +69,7 @@ const SourceForm: React.FC<{
 }) => {
     const vals = form?.values?.sources[index] ?? undefined;
 
-    const src_url = vals?.sourceUrl ?? "";
+    const src_url = vals?.sourceUrl || srcs[0]?.url || "";
     const query = vals?.query ?? "";
 
     const identifier = `sources[${index}]`;
@@ -205,7 +162,7 @@ const InstallerForm: React.FC<{
 }) => {
     const vals = form?.values?.installers[index] ?? undefined;
 
-    const src_url = vals?.sourceUrl ?? "";
+    const src_url = vals?.sourceUrl || srcs[0]?.url || "";
     const url = vals?.url ?? "";
 
     const identifier = `installers[${index}]`;
@@ -355,6 +312,44 @@ const ModForm: React.FC<{
         // Send alert and log full error to client's console.
         console.error(mod_mut.error);
     }
+
+    // Default relation values.
+    const EMPTY_DOWNLOAD_VALUE = {
+        name: "",
+        url: "",
+    
+        modId: 0
+    };
+    
+    const EMPTY_SOURCE_VALUE = {
+        sourceUrl: srcs[0]?.url ?? "",
+        query: "",
+    
+        modId: 0,
+        primary: false
+    };
+    
+    const EMPTY_SCREENSHOT_VALUE = {
+        url: "",
+    
+        modId: 0
+    };
+    
+    const EMPTY_INSTALLER_VALUE = {
+        sourceUrl: srcs[0]?.url ?? "",
+        url: "",
+    
+        modId: 0
+    };
+    
+    const EMPTY_CREDIT_VALUE = {
+        name: "",
+        credit: "",
+    
+        id: 0,
+        modId: 0,
+        userId: null
+    };
 
     // Create form using Formik.
     const form = useFormik({
