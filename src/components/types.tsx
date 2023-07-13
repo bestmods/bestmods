@@ -33,6 +33,7 @@ const modRowBrowser = Prisma.validator<Prisma.ModArgs>()({
 
         updateAt: true,
         createAt: true,
+        editAt: true,
         needsRecounting: false,
 
         totalDownloads: true,

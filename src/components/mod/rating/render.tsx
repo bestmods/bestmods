@@ -13,6 +13,12 @@ const RatingRender: React.FC<{
     classes,
     rating
 }) => {
+    // Convert to number instead of BigInt.
+    rating = Number(mod.rating ?? rating ?? 1);
+
+    // This stores a temporary rating value for when the user submits a rating.
+    const [tempRatingVal, setTempRatingVal] = useState<number | undefined>(undefined);
+
     // Retrieve session.
     const { data: session } = useSession();
 
@@ -68,9 +74,8 @@ const RatingRender: React.FC<{
                             positive: false
                         });
 
-                        // Since we recalculate off of scheduling, set visible rating now.
-                        if (rating)
-                            rating--;
+                        // Set temporary rating value.
+                        setTempRatingVal((rating ?? 1) - 1);
 
                         // Require updating.
                         modRequiresUpdateMut.mutate({ id: mod.id });
@@ -86,7 +91,7 @@ const RatingRender: React.FC<{
                 </button>
             </div>
             <div>
-                <span>{rating?.toString() ?? 1}</span>
+                <span>{tempRatingVal?.toString() ?? rating?.toString() ?? 1}</span>
             </div>
             <div>
                 <button onClick={(e) => {
@@ -103,9 +108,8 @@ const RatingRender: React.FC<{
                             positive: true
                         });
 
-                        // Since we recalculate off of scheduling, set visible rating now.
-                        if (rating)
-                            rating++;
+                        // Set temporary rating value.
+                        setTempRatingVal((rating ?? 1) + 1);
 
                         // Require updating.
                         modRequiresUpdateMut.mutate({ id: mod.id });

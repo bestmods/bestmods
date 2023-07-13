@@ -100,7 +100,7 @@ const ModBrowser: React.FC<{
         search: filters?.search,
         visible: (visible != null) ? visible : true
     }, {
-        getNextPageParam: (lastPage) => lastPage.nextCur,
+        getNextPageParam: (lastPage) => lastPage.next_cur,
     });
 
     const loadMore = () => {
@@ -110,9 +110,9 @@ const ModBrowser: React.FC<{
     if (data) {
         data.pages.forEach((pg) => {
             items.push(...pg.items);
-            
+
             // If next cursor is undefined, we're at the end.
-            if (!pg.nextCur)
+            if (!pg.next_cur)
                 requireItems = false;
         });
     }
@@ -123,21 +123,6 @@ const ModBrowser: React.FC<{
 
     if (cookies && cookies['bm_display'] != undefined && cookies['bm_display'] != "grid")
         display = "table";
-
-    // Check if we need to sort mods by rating.
-    if (filters?.sort == 0) {
-        // Sort by rating descending (throw to bottom if undefined).
-        items.sort((a, b) => {
-            if (a.rating === undefined && b.rating === undefined)
-              return 0;
-            else if (a.rating === undefined)
-              return 1;
-            else if (b.rating === undefined)
-              return -1;
-            else
-              return b.rating - a.rating;
-          });
-    }
 
     return (
         <div className="mx-auto w-full sm:w-4/5">
@@ -160,7 +145,6 @@ const ModBrowser: React.FC<{
                         {items.length > 0 ? (
                             <>
                                 {items.map((mod: ModRowBrowser) => {
-                                    console.log()
                                     return (
                                         <ModRow
                                             key={mod.id + "-row"}
