@@ -1,11 +1,13 @@
-import { type Permissions, type User } from "@prisma/client";
-
-import FormTemplate from '../main';
-import { AlertForm } from '../../utils/alert';
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import { trpc } from "../../../utils/trpc";
 import { Field, useFormik } from "formik";
+
+import { type Permissions, type User } from "@prisma/client";
+
+import FormTemplate from "@components/forms/main";
+import { AlertForm } from "@utils/alert";
+
+import Link from "next/link";
 
 const UserForm: React.FC<{
     user: User | null

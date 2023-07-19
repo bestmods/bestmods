@@ -1,23 +1,22 @@
-import { type GetServerSidePropsContext, type NextPage } from "next";
 import React, { useState } from "react";
+import { type GetServerSidePropsContext, type NextPage } from "next";
+import Link from "next/link";
 
-import { BestModsPage } from '../../components/main';
-import HeadInfo from "../../components/head";
+import { BestModsPage } from "@components/main";
+import HeadInfo from "@components/head";
 
-import { AlertForm } from '../../components/utils/alert';
-
-import { trpc } from '../../utils/trpc';
-
-import Link from 'next/link';
+import { type CategoriesWithChildren } from "types/category";
+import { type Source } from "@prisma/client";
 
 import { prisma } from "../../server/db/client";
-import { type CategoriesWithChildren } from "../../components/types";
-import { type Source } from "@prisma/client";
 import { getSession } from "next-auth/react";
-import { Has_Perm } from "../../utils/permissions";
 
-import EditIcon from "../../components/utils/icons/edit";
-import DeleteIcon from "../../components/utils/icons/delete";
+import { trpc } from "@utils/trpc";
+import { Has_Perm } from "@utils/permissions";
+import { AlertForm } from "@utils/alert";
+
+import EditIcon from "@utils/icons/edit";
+import DeleteIcon from "@utils/icons/delete";
 
 const Home: NextPage<{
     authed: boolean,

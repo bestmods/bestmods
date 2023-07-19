@@ -1,13 +1,13 @@
-import { router } from "../trpc";
-import { authRouter } from "./auth";
+import { router } from "@server/trpc/trpc";
 
-import { categoryRouter } from './category';
-import { sourceRouter } from "./source";
-import { modRouter } from "./mod";
-import { modRatingRouter } from './mod_rating';
-import { modDownloadRouter } from './mod_download';
-import { permissionRouter } from "./permission";
-import { userRouter } from "./user";
+import { authRouter } from "@server/trpc/router/auth";
+import { categoryRouter } from "@server/trpc/router/category";
+import { sourceRouter } from "@server/trpc/router/source";
+import { modRouter } from "@server/trpc/router/mod";
+import { modRatingRouter } from "@server/trpc/router/mod_rating";
+import { modDownloadRouter } from "@server/trpc/router/mod_download";
+import { permissionRouter } from "@server/trpc/router/permission";
+import { userRouter } from "@server/trpc/router/user";
 
 export const appRouter = router({
     source: sourceRouter,

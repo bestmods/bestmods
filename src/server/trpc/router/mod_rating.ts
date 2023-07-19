@@ -1,7 +1,7 @@
-import { z } from "zod";
-import { router, protectedProcedure } from "../trpc";
-
+import { router, protectedProcedure } from "@server/trpc/trpc";
 import { TRPCError } from "@trpc/server"
+
+import { z } from "zod";
 
 export const modRatingRouter = router({
     addModUserRating: protectedProcedure

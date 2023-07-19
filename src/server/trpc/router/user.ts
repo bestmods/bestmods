@@ -1,8 +1,10 @@
-import { z } from "zod";
-import { adminProcedure, router } from "../trpc";
-import { TRPCError } from "@trpc/server";
-import { Delete_User, Insert_Or_Update_User } from "../../../utils/user";
 
+import { adminProcedure, router } from "@server/trpc/trpc";
+import { TRPCError } from "@trpc/server";
+
+import { z } from "zod";
+
+import { Delete_User, Insert_Or_Update_User } from "@utils/user";
 
 export const userRouter = router({
     updateUser: adminProcedure

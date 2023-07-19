@@ -1,7 +1,8 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 
-import { prisma } from "../../../server/db/client";
-import { Delete_Category, Insert_Or_Update_Category } from "../../../utils/content/category";
+import { prisma } from "@server/db/client";
+
+import { Delete_Category, Insert_Or_Update_Category } from "@utils/content/category";
 
 const category = async (req: NextApiRequest, res: NextApiResponse) => {
     // Check API key.

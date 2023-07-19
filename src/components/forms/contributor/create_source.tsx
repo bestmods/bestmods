@@ -2,10 +2,11 @@
 import { useFormik, Field } from "formik";
 import React, { useState } from "react";
 
-import { trpc } from "../../../utils/trpc";
+import { trpc } from "@utils/trpc";
+import { AlertForm } from "@utils/alert";
 
-import FormTemplate from '../main';
-import { AlertForm } from '../../utils/alert';
+import FormTemplate from "@components/forms/main";
+
 import { type Source } from "@prisma/client";
 
 const SourceForm: React.FC<{ 

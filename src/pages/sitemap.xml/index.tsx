@@ -1,7 +1,7 @@
-import { getServerSideSitemap } from 'next-sitemap'
-import { type GetServerSideProps } from 'next'
+import { getServerSideSitemap } from "next-sitemap"
+import { type GetServerSideProps } from "next"
 
-import { prisma } from "../../server/db/client";
+import { prisma } from "@server/db/client";
 
 type Changefreq =
     | 'always'

@@ -1,7 +1,8 @@
+import fs from "fs";
+
 import { type ModCredit, type Mod, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource, type PrismaClient } from "@prisma/client";
 
-import FileType from '../base64';
-import fs from 'fs';
+import FileType from "@utils/base64";
 
 export const Insert_Or_Update_Mod = async (
     prisma: PrismaClient,

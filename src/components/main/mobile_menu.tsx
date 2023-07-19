@@ -1,9 +1,10 @@
 import { useState } from "react";
-import NavItems from "./header/nav_items";
-import Filters from "./header/filters";
 
-import HamburgerIcon from "../utils/icons/hamburger";
-import LeftArrowIcon from "../utils/icons/left_arrow";
+import NavItems from "@components/main/header/nav_items";
+import Filters from "@components/main/header/filters";
+
+import HamburgerIcon from "@utils/icons/hamburger";
+import LeftArrowIcon from "@utils/icons/left_arrow";
 
 const MobileMenu: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);

@@ -1,6 +1,7 @@
 import Link from "next/link";
-import NavItems from "./header/nav_items";
-import Filters from "./header/filters";
+
+import NavItems from "@components/main/header/nav_items";
+import Filters from "@components/main/header/filters";
 
 const Header: React.FC<{
     showFilters?: boolean

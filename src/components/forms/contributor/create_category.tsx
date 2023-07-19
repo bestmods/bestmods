@@ -2,12 +2,13 @@
 import { useFormik, Field } from "formik";
 import React, { useState } from "react";
 
-import { trpc } from "../../../utils/trpc";
+import { trpc } from "@utils/trpc";
 
-import FormTemplate from '../main';
-import { AlertForm } from '../../utils/alert';
+import FormTemplate from "@components/forms/main";
+import { AlertForm } from "@utils/alert";
+
 import { type Category } from "@prisma/client";
-import { type CategoriesWithChildren } from "../../types";
+import { type CategoriesWithChildren } from "types/category";
 
 const CategoryForm: React.FC<{ 
     cat: Category,

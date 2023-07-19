@@ -1,10 +1,10 @@
-import { type GetServerSidePropsContext, type NextPage } from "next";
 import React from "react";
+import { type GetServerSidePropsContext, type NextPage } from "next";
 
-import { BestModsPage } from '../components/main';
-import HeadInfo from "../components/head";
+import { BestModsPage } from "@components/main";
+import HeadInfo from "@components/head";
 
-import ModBrowser from '../components/mod_browser';
+import ModBrowser from "@components/mod_browser";
 
 const Home: NextPage<{ cookies: { [key: string]: string } }> = ({ cookies }) => {
     return (

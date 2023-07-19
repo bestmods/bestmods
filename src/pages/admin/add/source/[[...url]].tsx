@@ -1,16 +1,17 @@
-import { BestModsPage } from '../../../../components/main';
-
-import { type GetServerSidePropsContext, type NextPage } from "next";
 import React from "react";
+import { type GetServerSidePropsContext, type NextPage } from "next";
 
-import HeadInfo from "../../../../components/head";
+import { BestModsPage } from "@components/main";
+import HeadInfo from "@components/head";
 
-import { type Source } from '@prisma/client';
+import SourceForm from "@components/forms/contributor/create_source";
 
-import { prisma } from '../../../../server/db/client'
-import { getSession } from 'next-auth/react';
-import SourceForm from '../../../../components/forms/contributor/create_source';
-import { Has_Perm } from '../../../../utils/permissions';
+import { type Source } from "@prisma/client";
+
+import { prisma } from "@server/db/client";
+import { getSession } from "next-auth/react";
+
+import { Has_Perm } from "@utils/permissions";
 
 const Home: NextPage<{
     authed: boolean,

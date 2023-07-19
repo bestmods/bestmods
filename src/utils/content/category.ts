@@ -1,7 +1,8 @@
+import fs from "fs";
+
 import { type Category, type PrismaClient } from "@prisma/client";
 
-import FileType from '../base64';
-import fs from 'fs';
+import FileType from "@utils/base64";
 
 export const Insert_Or_Update_Category = async (
     prisma: PrismaClient,

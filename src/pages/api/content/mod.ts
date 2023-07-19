@@ -1,7 +1,9 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 
-import { prisma } from "../../../server/db/client";
-import { Delete_Mod, Insert_Or_Update_Mod } from "../../../utils/content/mod";
+import { prisma } from "@server/db/client";
+
+import { Delete_Mod, Insert_Or_Update_Mod } from "@utils/content/mod";
+
 import { type ModCredit, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource } from "@prisma/client";
 
 const mod = async (req: NextApiRequest, res: NextApiResponse) => {

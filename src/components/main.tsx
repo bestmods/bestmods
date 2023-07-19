@@ -1,10 +1,12 @@
 import React, { useState, type ReactNode } from "react";
 
-import { setCookie } from 'cookies-next';
-import GoogleAnalytics from "./scripts/google_analytics";
-import Header from "./main/header";
-import MobileMenu from "./main/mobile_menu";
-import Login from "./main/login";
+import { setCookie } from "cookies-next";
+
+import GoogleAnalytics from "@components/scripts/google_analytics";
+
+import Header from "@components/main/header";
+import MobileMenu from "@components/main/mobile_menu";
+import Login from "@components/main/login";
 
 export type filterArgs = {
     timeframe: number

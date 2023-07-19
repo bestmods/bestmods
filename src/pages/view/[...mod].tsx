@@ -1,25 +1,26 @@
-import { BestModsPage } from '../../components/main';
-
-import { type NextPage } from "next";
 import React, { useContext, useState } from "react";
+import { type NextPage } from "next";
+import Link from "next/link";
+import { type GetServerSidePropsContext } from "next";
+import { getSession, useSession } from "next-auth/react";
 
-import { trpc } from "../../utils/trpc";
-import { type ModDownload } from '@prisma/client';
+import { BestModsPage } from "@components/main";
+import HeadInfo from "@components/head";
 
-import ReactMarkdown from 'react-markdown'
+import ModRatingRender from "@components/mod/rating/render";
 
-import HeadInfo from "../../components/head";
-import ModRatingRender from '../../components/mod/rating/render';
+import { type ModDownload } from "@prisma/client";
 
-import { prisma } from '../../server/db/client';
-import { type GetServerSidePropsContext } from 'next';
-import { getSession, useSession } from 'next-auth/react';
-import { Has_Perm } from '../../utils/permissions';
-import Link from 'next/link';
-import DropDown, { type Drop_Down_Menu_Type } from '../../components/utils/drop_down';
+import { prisma } from "@server/db/client";
 
-import Download2Icon from '../../components/utils/icons/download2';
-import { Get_Mod_Rating } from '../../utils/content/mod';
+import { trpc } from "@utils/trpc";
+import { Has_Perm } from "@utils/permissions";
+import DropDown, { type Drop_Down_Menu_Type } from "@utils/drop_down";
+
+import Download2Icon from "@utils/icons/download2";
+import { Get_Mod_Rating } from "@utils/content/mod";
+
+import ReactMarkdown from "react-markdown";
 
 const ModCtx = React.createContext<any | boolean | null>(null);
 const ModViewCtx = React.createContext<string | null>(null);

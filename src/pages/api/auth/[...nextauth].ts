@@ -3,8 +3,9 @@ import DiscordProvider from "next-auth/providers/discord";
 // Prisma adapter for NextAuth, optional and can be removed
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
-import { env } from "../../../env/server.mjs";
-import { prisma } from "../../../server/db/client";
+import { env } from "@env/server.mjs";
+
+import { prisma } from "@server/db/client";
 import { type Permissions } from "@prisma/client";
 
 export const authOptions: NextAuthOptions = {
