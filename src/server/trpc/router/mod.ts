@@ -3,7 +3,7 @@ import { router, publicProcedure, protectedProcedure, contributorProcedure } fro
 
 import { TRPCError } from "@trpc/server"
 import { Insert_Or_Update_Mod } from "../../../utils/content/mod";
-import { ModRowBrowser } from "../../../components/types";
+import { type ModRowBrowser } from "../../../components/types";
 
 import { Prisma } from "@prisma/client";
 
