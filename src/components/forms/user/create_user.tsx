@@ -8,6 +8,7 @@ import FormTemplate from "@components/forms/main";
 import { AlertForm } from "@utils/alert";
 
 import Link from "next/link";
+import ScrollToTop from "@utils/scroll";
 
 const UserForm: React.FC<{
     user: User | null
@@ -54,13 +55,7 @@ const UserForm: React.FC<{
                 });
 
                 // Scroll to top.
-                if (typeof window !== undefined) {
-                    window.scroll({
-                        top: 0,
-                        left: 0,
-                        behavior: 'smooth'
-                    });
-                }
+                ScrollToTop();
             }
         }
     });
