@@ -1,9 +1,10 @@
-import { getSession } from "next-auth/react";
-import { ModRowBrowser } from "../src/components/types"
-
-import { prisma } from "../src/server/db/client";
-import { Prisma } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
+import { getSession } from "next-auth/react";
+
+import { ModRowBrowser } from "types/mod"
+
+import { prisma } from "@server/db/client";
+import { Prisma } from "@prisma/client";
 
 const DEFAULT_NUM_OF_MODS = 15;
 
