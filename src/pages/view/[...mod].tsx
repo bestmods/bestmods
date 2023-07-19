@@ -40,11 +40,11 @@ const Home: NextPage<{
     let bg_file: string | undefined = undefined;
     
     if (mod) {
-        if (mod.category.hasBg && mod.category.parent)
+        if (mod.category?.hasBg && mod.category?.parent)
             bg_file = mod.category.parent.url + "_" + mod.category.url + ".png";
-        else if (mod.category.hasBg && !mod.category.parent)
+        else if (mod.category?.hasBg && !mod.category?.parent)
             bg_file = mod.category.url + ".png";
-        else if (mod.category.parent && mod.category.parent.hasBg)
+        else if (mod.category?.parent?.hasBg)
             bg_file = mod.category.parent.url + ".png";
     }
 
