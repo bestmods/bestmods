@@ -51,7 +51,7 @@ export const BestModsPage: React.FC<{
     const [timeframe, setTimeframe] = useState<number>(0);
     const [sort, setSort] = useState<number>(0);
     const [search, setSearch] = useState<string | undefined>(undefined);
-    const [displayStr, setDisplay] = useState((cookies) ? cookies['bm_display'] ?? "grid" : "grid");
+    const [displayStr, setDisplay] = useState((cookies) ? cookies["bm_display"] ?? "grid" : "grid");
 
     const timeframeCb = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setTimeframe(Number(e.target.value));
@@ -77,14 +77,14 @@ export const BestModsPage: React.FC<{
             setCookie("bm_display", "grid");
 
             if (cookies)
-                cookies['bm_display'] = "grid";
+                cookies["bm_display"] = "grid";
         }
         else {
             setDisplay("table");
             setCookie("bm_display", "table");
 
             if (cookies)
-                cookies['bm_display'] = "table";
+                cookies["bm_display"] = "table";
         }
     }
 

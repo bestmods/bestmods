@@ -122,7 +122,7 @@ const ModBrowser: React.FC<{
     let display = "grid";
     const cookies = useContext(CookiesCtx);
 
-    if (cookies && cookies['bm_display'] != undefined && cookies['bm_display'] != "grid")
+    if (cookies && cookies["bm_display"] != undefined && cookies["bm_display"] != "grid")
         display = "table";
 
     return (
