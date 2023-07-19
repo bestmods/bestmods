@@ -1,7 +1,8 @@
+import fs from "fs";
+
 import { type User, type PrismaClient } from "@prisma/client";
 
-import FileType from './base64';
-import fs from 'fs';
+import FileType from "@utils/base64";
 
 export const Insert_Or_Update_User = async (
     prisma: PrismaClient,
@@ -21,7 +22,7 @@ export const Insert_Or_Update_User = async (
     let avatar_path: string | boolean | null = false;
 
     if (avatar != null && avatar.length > 0) {
-        const base64Data = avatar.split(',')[1];
+        const base64Data = avatar.split(",")[1];
 
         if (base64Data != null) {
             // Retrieve file type.
@@ -36,7 +37,7 @@ export const Insert_Or_Update_User = async (
                 avatar_path = "images/users/" + fileName;
 
                 // Convert to binary from base64.
-                const buffer = Buffer.from(base64Data, 'base64');
+                const buffer = Buffer.from(base64Data, "base64");
 
                 // Write file to disk.
                 try {

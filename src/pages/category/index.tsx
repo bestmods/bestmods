@@ -1,12 +1,12 @@
-import { type NextPage } from "next";
 import React from "react";
+import { type NextPage } from "next";
 
-import { BestModsPage } from '../../components/main';
-import HeadInfo from "../../components/head";
+import { BestModsPage } from "@components/main";
+import HeadInfo from "@components/head";
 
-import { prisma } from '../../server/db/client';
+import CategoryRow from "@components/category/row";
 
-import CategoryRow from '../../components/category/row';
+import { prisma } from "@server/db/client";
 
 const Home: NextPage<{
     cats: any

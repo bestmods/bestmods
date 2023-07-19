@@ -1,19 +1,18 @@
-import { BestModsPage } from '../../../../components/main';
-
-import { type GetServerSidePropsContext, type NextPage } from "next";
 import React from "react";
+import { type GetServerSidePropsContext, type NextPage } from "next";
 
-import CategoryForm from "../../../../components/forms/contributor/create_category";
+import { BestModsPage } from "@components/main";
+import HeadInfo from "@components/head";
 
-import HeadInfo from "../../../../components/head";
+import CategoryForm from "@components/forms/contributor/create_category";
 
-import { type Category } from '@prisma/client';
+import { prisma } from "@server/db/client"
+import { getSession } from "next-auth/react";
 
-import { prisma } from '../../../../server/db/client'
-import { getSession } from 'next-auth/react';
-import { type CategoriesWithChildren } from '../../../../components/types';
+import { type Category } from "@prisma/client";
+import { type CategoriesWithChildren } from "types/category";
 
-import { Has_Perm } from '../../../../utils/permissions';
+import { Has_Perm } from "@utils/permissions";
 
 const Home: NextPage<{
     authed: boolean,

@@ -1,7 +1,7 @@
-import { z } from "zod";
-import { router, adminProcedure } from "../trpc";
-
+import { router, adminProcedure } from "@server/trpc/trpc";
 import { TRPCError } from "@trpc/server"
+
+import { z } from "zod";
 
 export const permissionRouter = router({
     addUserPerm: adminProcedure

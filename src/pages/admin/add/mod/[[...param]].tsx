@@ -1,17 +1,19 @@
-import { BestModsPage } from '../../../../components/main';
-
-import { type GetServerSidePropsContext, type NextPage } from "next";
 import React from "react";
+import { type GetServerSidePropsContext, type NextPage } from "next";
 
-import HeadInfo from "../../../../components/head";
+import { BestModsPage } from "@components/main";
+import HeadInfo from "@components/head";
 
-import { prisma } from '../../../../server/db/client'
-import { getSession } from 'next-auth/react';
-import { type CategoriesWithChildren, type ModWithRelations } from '../../../../components/types';
-import ModForm from '../../../../components/forms/contributor/create_mod';
-import { type Source } from '@prisma/client';
+import ModForm from "@components/forms/contributor/create_mod";
 
-import { Has_Perm } from '../../../../utils/permissions';
+import { prisma } from "@server/db/client";
+import { getSession } from "next-auth/react";
+
+import { type CategoriesWithChildren } from "types/category";
+import { type ModWithRelations } from "types/mod";
+import { type Source } from "@prisma/client";
+
+import { Has_Perm } from "@utils/permissions";
 
 const Home: NextPage<{
     authed: boolean,
@@ -114,7 +116,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             authed: authed,
             cats: cats,
             srcs: srcs,
-            mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === 'bigint' ? v.toString() : v))
+            mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === "bigint" ? v.toString() : v))
         } 
     };
 }

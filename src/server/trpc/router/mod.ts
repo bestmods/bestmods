@@ -1,9 +1,10 @@
-import { z } from "zod";
-import { router, publicProcedure, protectedProcedure, contributorProcedure } from "../trpc";
-
+import { router, publicProcedure, protectedProcedure, contributorProcedure } from "@server/trpc/trpc";
 import { TRPCError } from "@trpc/server"
-import { Insert_Or_Update_Mod } from "../../../utils/content/mod";
-import { type ModRowBrowser } from "../../../components/types";
+
+import { z } from "zod";
+
+import { Insert_Or_Update_Mod } from "@utils/content/mod";
+import { type ModRowBrowser } from "types/mod";
 
 import { Prisma } from "@prisma/client";
 

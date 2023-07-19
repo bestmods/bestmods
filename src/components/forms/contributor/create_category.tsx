@@ -2,12 +2,14 @@
 import { useFormik, Field } from "formik";
 import React, { useState } from "react";
 
-import { trpc } from "../../../utils/trpc";
+import { trpc } from "@utils/trpc";
 
-import FormTemplate from '../main';
-import { AlertForm } from '../../utils/alert';
+import FormTemplate from "@components/forms/main";
+import { AlertForm } from "@utils/alert";
+
 import { type Category } from "@prisma/client";
-import { type CategoriesWithChildren } from "../../types";
+import { type CategoriesWithChildren } from "types/category";
+import ScrollToTop from "@utils/scroll";
 
 const CategoryForm: React.FC<{ 
     cat: Category,
@@ -83,13 +85,7 @@ const CategoryForm: React.FC<{
             });
 
             // Scroll to top.
-            if (typeof window !== undefined) {
-                window.scroll({
-                    top: 0,
-                    left: 0,
-                    behavior: 'smooth'
-                });
-            }
+            ScrollToTop();
         }
     });
 

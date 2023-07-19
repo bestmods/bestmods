@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
-import { env } from "../../env/server.mjs";
+import { env } from "@env/server.mjs";
 
 declare global {
     // eslint-disable-next-line no-var
@@ -16,10 +16,10 @@ export const prisma =
 
 // Enable the following for debugging Prisma queries.
 /*
-prisma.$on('query', (e) => {
-    console.log('Query: ' + e.query)
-    console.log('Params: ' + e.params)
-    console.log('Duration: ' + e.duration + 'ms')
+prisma.$on("query", (e) => {
+    console.log("Query: " + e.query)
+    console.log("Params: " + e.params)
+    console.log("Duration: " + e.duration + "ms")
 });
 */
 

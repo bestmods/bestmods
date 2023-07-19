@@ -2,11 +2,14 @@ import { type User } from "@prisma/client";
 import { type GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 
-import { prisma } from '../../../../server/db/client';
-import HeadInfo from "../../../../components/head";
-import { BestModsPage } from "../../../../components/main";
-import EditForm from "../../../../components/forms/user/create_user";
-import { Has_Perm } from "../../../../utils/permissions";
+import { BestModsPage } from "@components/main";
+import HeadInfo from "@components/head";
+
+import EditForm from "@components/forms/user/create_user";
+
+import { prisma } from "@server/db/client";
+
+import { Has_Perm } from "@utils/permissions";
 
 const EditUser: React.FC<{
     authed: boolean,

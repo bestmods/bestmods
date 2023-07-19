@@ -1,14 +1,14 @@
 import { createNextApiHandler } from "@trpc/server/adapters/next";
 
-import { env } from "../../../env/server.mjs";
-import { createContext } from "../../../server/trpc/context";
-import { appRouter } from "../../../server/trpc/router/_app";
+import { env } from "@env/server.mjs";
+import { createContext } from "@server/trpc/context";
+import { appRouter } from "@server/trpc/router/_app";
 
 export const config = {
     api: {
-        responseLimit: '8mb',
+        responseLimit: "8mb",
         bodyParser: {
-            sizeLimit: '8mb'
+            sizeLimit: "8mb"
         }
     },
 }

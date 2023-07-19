@@ -2,12 +2,16 @@
 import { useFormik, Field } from "formik";
 import React, { useState, useMemo } from "react";
 
-import { trpc } from "../../../utils/trpc";
+import { trpc } from "@utils/trpc";
 
-import FormTemplate from '../main';
-import { AlertForm } from '../../utils/alert';
+import FormTemplate from "@components/forms/main";
+
+import { AlertForm } from "@utils/alert";
 import { type Source } from "@prisma/client";
-import { type CategoriesWithChildren, type ModWithRelations } from "../../types";
+
+import { type CategoriesWithChildren } from "types/category";
+import { type ModWithRelations } from "types/mod";
+
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 
 const DownloadForm: React.FC<{

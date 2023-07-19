@@ -1,8 +1,9 @@
-import { z } from "zod";
-import { router, contributorProcedure } from "../trpc";
-
+import { router, contributorProcedure } from "@server/trpc/trpc";
 import { TRPCError } from "@trpc/server"
-import { Delete_Category, Insert_Or_Update_Category } from "../../../utils/content/category";
+
+import { z } from "zod";
+
+import { Delete_Category, Insert_Or_Update_Category } from "@utils/content/category";
 
 export const categoryRouter = router({
     addCategory: contributorProcedure

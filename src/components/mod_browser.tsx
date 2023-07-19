@@ -1,14 +1,15 @@
-import React, { useContext } from 'react';
-import { trpc } from "../utils/trpc";
+import React, { useContext } from "react";
 
-import InfiniteScroll from 'react-infinite-scroller';
+import InfiniteScroll from "react-infinite-scroller";
 
-import { FilterCtx, CookiesCtx } from './main';
-import GridRow from './modbrowser/grid_row';
-import TableRow from './modbrowser/table_row';
+import { FilterCtx, CookiesCtx } from "@components/main";
+import GridRow from "@components/modbrowser/grid_row";
+import TableRow from "@components/modbrowser/table_row";
 
-import LoadingIcon from './utils/icons/loading';
-import { type ModRowBrowser } from './types';
+import { trpc } from "@utils/trpc";
+import LoadingIcon from "@utils/icons/loading";
+
+import { type ModRowBrowser } from "types/mod";
 
 const ModRow: React.FC<{
     mod: ModRowBrowser,
@@ -121,7 +122,7 @@ const ModBrowser: React.FC<{
     let display = "grid";
     const cookies = useContext(CookiesCtx);
 
-    if (cookies && cookies['bm_display'] != undefined && cookies['bm_display'] != "grid")
+    if (cookies && cookies["bm_display"] != undefined && cookies["bm_display"] != "grid")
         display = "table";
 
     return (

@@ -1,13 +1,14 @@
-import { type NextPage } from "next";
 import React, { useState } from "react";
+import { type GetServerSidePropsContext } from "next";
+import { type NextPage } from "next";
 
-import { BestModsPage } from '../../components/main';
-import HeadInfo from "../../components/head";
+import { BestModsPage } from "@components/main";
+import HeadInfo from "@components/head";
 
-import ModBrowser from '../../components/mod_browser';
+import ModBrowser from "@components/mod_browser";
 
-import { prisma } from '../../server/db/client';
-import { type GetServerSidePropsContext } from 'next';
+import { prisma } from "@server/db/client";
+
 import { type Category } from "@prisma/client";
 
 const Home: NextPage<{
@@ -157,7 +158,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     return { 
         props: {
-            cat: JSON.parse(JSON.stringify(cat, (_, v) => typeof v === 'bigint' ? v.toString() : v)),
+            cat: JSON.parse(JSON.stringify(cat, (_, v) => typeof v === "bigint" ? v.toString() : v)),
             cookies: cookies
         }
     };

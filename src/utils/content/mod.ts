@@ -1,7 +1,8 @@
+import fs from "fs";
+
 import { type ModCredit, type Mod, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource, type PrismaClient } from "@prisma/client";
 
-import FileType from '../base64';
-import fs from 'fs';
+import FileType from "@utils/base64";
 
 export const Insert_Or_Update_Mod = async (
     prisma: PrismaClient,
@@ -54,7 +55,7 @@ export const Insert_Or_Update_Mod = async (
         banner_path = null;
 
     if (banner && banner.length > 0 && !bremove) {
-        const base64Data = banner.split(',')[1];
+        const base64Data = banner.split(",")[1];
 
         if (base64Data) {
             // Retrieve file type.
@@ -69,7 +70,7 @@ export const Insert_Or_Update_Mod = async (
                 banner_path = "/images/mod/" + fileName;
 
                 // Convert to binary from base64.
-                const buffer = Buffer.from(base64Data, 'base64');
+                const buffer = Buffer.from(base64Data, "base64");
 
                 // Write file to disk.
                 try {

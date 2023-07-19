@@ -1,8 +1,10 @@
 import { signIn, useSession } from "next-auth/react";
 import { useState } from "react";
-import { trpc } from "../../../utils/trpc";
-import DownArrow2 from "../../utils/icons/down_arrow2";
-import UpArrow2 from "../../utils/icons/up_arrow2";
+
+import { trpc } from "@utils/trpc";
+
+import DownArrow2 from "@utils/icons/down_arrow2";
+import UpArrow2 from "@utils/icons/up_arrow2";
 
 const RatingRender: React.FC<{
     mod: any,

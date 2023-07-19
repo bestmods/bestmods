@@ -1,16 +1,16 @@
-import { getServerSideSitemap } from 'next-sitemap'
-import { type GetServerSideProps } from 'next'
+import { getServerSideSitemap } from "next-sitemap"
+import { type GetServerSideProps } from "next"
 
-import { prisma } from "../../server/db/client";
+import { prisma } from "@server/db/client";
 
 type Changefreq =
-    | 'always'
-    | 'hourly'
-    | 'daily'
-    | 'weekly'
-    | 'monthly'
-    | 'yearly'
-    | 'never'
+    | "always"
+    | "hourly"
+    | "daily"
+    | "weekly"
+    | "monthly"
+    | "yearly"
+    | "never"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const items: Array<{ loc: string, lastmod: string, priority?: number, changefreq?: Changefreq }> = [];

@@ -1,7 +1,7 @@
-import { z } from "zod";
-import { router, publicProcedure } from "../trpc";
-
+import { router, publicProcedure } from "@server/trpc/trpc";
 import { TRPCError } from "@trpc/server"
+
+import { z } from "zod";
 
 export const modDownloadRouter = router({
     incModDownloadCnt: publicProcedure

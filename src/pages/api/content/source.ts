@@ -1,7 +1,8 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 
-import { prisma } from "../../../server/db/client";
-import { Delete_Source, Insert_Or_Update_Source } from "../../../utils/content/source";
+import { prisma } from "@server/db/client";
+
+import { Delete_Source, Insert_Or_Update_Source } from "@utils/content/source";
 
 const source = async (req: NextApiRequest, res: NextApiResponse) => {
     // Check API key.

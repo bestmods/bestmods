@@ -1,8 +1,9 @@
-import { z } from "zod";
-import { router, contributorProcedure } from "../trpc";
-
+import { router, contributorProcedure } from "@server/trpc/trpc";
 import { TRPCError } from "@trpc/server"
-import { Delete_Source, Insert_Or_Update_Source } from "../../../utils/content/source";
+
+import { z } from "zod";
+
+import { Delete_Source, Insert_Or_Update_Source } from "@utils/content/source";
 
 export const sourceRouter = router({
     addSource: contributorProcedure

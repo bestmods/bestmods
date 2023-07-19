@@ -1,13 +1,16 @@
-import { type User } from "@prisma/client";
 import { type GetServerSidePropsContext } from "next";
-
-import { prisma } from "../../../server/db/client";
-import { getSession } from "next-auth/react";
-import HeadInfo from "../../../components/head";
-import { BestModsPage } from "../../../components/main";
 import Link from "next/link";
-import { trpc } from "../../../utils/trpc";
-import { Has_Perm } from "../../../utils/permissions";
+
+import { BestModsPage } from "@components/main";
+import HeadInfo from "@components/head";
+
+import { type User } from "@prisma/client";
+
+import { prisma } from "@server/db/client";
+import { getSession } from "next-auth/react";
+
+import { trpc } from "@utils/trpc";
+import { Has_Perm } from "@utils/permissions";
 
 const Index: React.FC<{
     authed: boolean,

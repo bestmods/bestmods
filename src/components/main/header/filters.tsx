@@ -1,13 +1,13 @@
 import { useContext } from "react";
-import { DisplayCtx, FilterCtx } from "../../main";
-import { Field, Form, Formik } from "formik";
 import Link from "next/link";
 
-import SearchIcon from '../../utils/icons/search';
-import CategoryIcon from '../../utils/icons/category';
+import { DisplayCtx, FilterCtx } from "@components/main";
+import { Field, Form, Formik } from "formik";
 
-import TableIcon from '../../utils/icons/table';
-import GridIcon from '../../utils/icons/grid';
+import SearchIcon from "@utils/icons/search";
+import CategoryIcon from "@utils/icons/category";
+import TableIcon from "@utils/icons/table";
+import GridIcon from "@utils/icons/grid";
 
 const Filters: React.FC<{
     classes?: string

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import UpArrow from "./icons/up_arrow";
-import DownArrow from "./icons/down_arrow";
+import UpArrow from "@utils/icons/up_arrow";
+import DownArrow from "@utils/icons/down_arrow";
 
 export type Drop_Down_Menu_Type = {
     link: string,

@@ -1,6 +1,6 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 
-import UserIcon from '../utils/icons/user';
+import UserIcon from "@utils/icons/user";
 
 const Login: React.FC = () => {
     const { data: session } = useSession();

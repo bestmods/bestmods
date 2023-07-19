@@ -2,11 +2,13 @@
 import { useFormik, Field } from "formik";
 import React, { useState } from "react";
 
-import { trpc } from "../../../utils/trpc";
+import { trpc } from "@utils/trpc";
+import { AlertForm } from "@utils/alert";
 
-import FormTemplate from '../main';
-import { AlertForm } from '../../utils/alert';
+import FormTemplate from "@components/forms/main";
+
 import { type Source } from "@prisma/client";
+import ScrollToTop from "@utils/scroll";
 
 const SourceForm: React.FC<{ 
     src: Source | null 
@@ -76,13 +78,7 @@ const SourceForm: React.FC<{
             });
 
             // Scroll to top.
-            if (typeof window !== undefined) {
-                window.scroll({
-                    top: 0,
-                    left: 0,
-                    behavior: 'smooth'
-                });
-            }
+            ScrollToTop();
         }
     });
 

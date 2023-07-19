@@ -1,7 +1,9 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 
-import { prisma } from "../../../server/db/client";
-import { Delete_Mod, Insert_Or_Update_Mod } from "../../../utils/content/mod";
+import { prisma } from "@server/db/client";
+
+import { Delete_Mod, Insert_Or_Update_Mod } from "@utils/content/mod";
+
 import { type ModCredit, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource } from "@prisma/client";
 
 const mod = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -50,7 +52,7 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(200).json({
             "message": "Mod fetched!",
             data: {
-                mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === 'bigint' ? v.toString() : v))
+                mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === "bigint" ? v.toString() : v))
             }
         });
     } else if (["POST", "PATCH", "PUT"].includes(req.method ?? "")) {
@@ -149,7 +151,7 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(200).json({
             message: `${update ? "Inserted" : "Updated"} mod successfully!`,
             data: {
-                mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === 'bigint' ? v.toString() : v))
+                mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === "bigint" ? v.toString() : v))
             }
         });
     } else if (req.method == "DELETE") {

@@ -1,11 +1,14 @@
-import { type Category } from "@prisma/client";
-import ModRatingRender from "../mod/rating/render";
-import DropDown, { type Drop_Down_Menu_Type } from "../utils/drop_down";
 import Link from "next/link";
 
-import EyeIcon from "../utils/icons/eye";
-import DownloadIcon from "../utils/icons/download";
-import { type ModRowBrowser } from "../types";
+import ModRatingRender from "@components/mod/rating/render";
+
+import DropDown, { type Drop_Down_Menu_Type } from "@utils/drop_down";
+
+import EyeIcon from "@utils/icons/eye";
+import DownloadIcon from "@utils/icons/download";
+
+import { type Category } from "@prisma/client";
+import { type ModRowBrowser } from "types/mod";
 
 const TableRow: React.FC<{
     mod: ModRowBrowser,
