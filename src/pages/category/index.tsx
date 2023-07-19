@@ -20,7 +20,7 @@ const Home: NextPage<{
                 description="Choose what games and categories you want to see mods in!"
             />
             <BestModsPage>
-                <Categories key="what" cats={cats} />
+                <Categories cats={cats} />
             </BestModsPage>
         </>
     );
