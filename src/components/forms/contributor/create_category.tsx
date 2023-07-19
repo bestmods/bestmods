@@ -9,6 +9,7 @@ import { AlertForm } from "@utils/alert";
 
 import { type Category } from "@prisma/client";
 import { type CategoriesWithChildren } from "types/category";
+import ScrollToTop from "@utils/scroll";
 
 const CategoryForm: React.FC<{ 
     cat: Category,
@@ -84,13 +85,7 @@ const CategoryForm: React.FC<{
             });
 
             // Scroll to top.
-            if (typeof window !== undefined) {
-                window.scroll({
-                    top: 0,
-                    left: 0,
-                    behavior: 'smooth'
-                });
-            }
+            ScrollToTop();
         }
     });
 
