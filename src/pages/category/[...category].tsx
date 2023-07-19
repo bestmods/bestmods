@@ -158,7 +158,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     return { 
         props: {
-            cat: JSON.parse(JSON.stringify(cat, (_, v) => typeof v === 'bigint' ? v.toString() : v)),
+            cat: JSON.parse(JSON.stringify(cat, (_, v) => typeof v === "bigint" ? v.toString() : v)),
             cookies: cookies
         }
     };

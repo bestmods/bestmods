@@ -22,7 +22,7 @@ export const Insert_Or_Update_User = async (
     let avatar_path: string | boolean | null = false;
 
     if (avatar != null && avatar.length > 0) {
-        const base64Data = avatar.split(',')[1];
+        const base64Data = avatar.split(",")[1];
 
         if (base64Data != null) {
             // Retrieve file type.
@@ -37,7 +37,7 @@ export const Insert_Or_Update_User = async (
                 avatar_path = "images/users/" + fileName;
 
                 // Convert to binary from base64.
-                const buffer = Buffer.from(base64Data, 'base64');
+                const buffer = Buffer.from(base64Data, "base64");
 
                 // Write file to disk.
                 try {

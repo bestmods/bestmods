@@ -325,7 +325,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     
     return {
         props: {
-            mods: JSON.parse(JSON.stringify(mods, (_, v) => typeof v === 'bigint' ? v.toString() : v))
+            mods: JSON.parse(JSON.stringify(mods, (_, v) => typeof v === "bigint" ? v.toString() : v))
         }
     };
 }

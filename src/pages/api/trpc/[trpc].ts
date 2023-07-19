@@ -6,9 +6,9 @@ import { appRouter } from "@server/trpc/router/_app";
 
 export const config = {
     api: {
-        responseLimit: '8mb',
+        responseLimit: "8mb",
         bodyParser: {
-            sizeLimit: '8mb'
+            sizeLimit: "8mb"
         }
     },
 }

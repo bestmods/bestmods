@@ -3,51 +3,51 @@
 @tailwind utilities;
 
 /* Main */
-@import 'main/header.css';
-@import 'main/login_mobie.css';
-@import 'main/mobile.css';
+@import "main/header.css";
+@import "main/login_mobie.css";
+@import "main/mobile.css";
 
-@import 'main/header/filters.css';
+@import "main/header/filters.css";
 
 /* Mod Browser */
-@import 'modbrowser/cards.css';
-@import 'modbrowser/table.css';
-@import 'modbrowser/grid.css';
+@import "modbrowser/cards.css";
+@import "modbrowser/table.css";
+@import "modbrowser/grid.css";
 
 
 /* Components */
-@import 'components/background.css';
-@import 'components/loading.css';
-@import 'components/notfound.css';
-@import 'components/unauthorized.css';
-@import 'components/buttons.css';
-@import 'components/alerts.css';
-@import 'components/drop_down.css';
-@import 'components/markdown.css';
+@import "components/background.css";
+@import "components/loading.css";
+@import "components/notfound.css";
+@import "components/unauthorized.css";
+@import "components/buttons.css";
+@import "components/alerts.css";
+@import "components/drop_down.css";
+@import "components/markdown.css";
 
 /* Forms */
-@import 'forms/main.css';
-@import 'forms/preview.css';
+@import "forms/main.css";
+@import "forms/preview.css";
 
-@import 'forms/content/mod.css';
-@import 'forms/content/category.css';
-@import 'forms/content/source.css';
+@import "forms/content/mod.css";
+@import "forms/content/category.css";
+@import "forms/content/source.css";
 
-@import 'forms/user/permissions.css';
+@import "forms/user/permissions.css";
 
 /* Users */
-@import 'user/table.css';
+@import "user/table.css";
 
 /* Categories */
-@import 'category/index.css';
-@import 'category/row.css';
+@import "category/index.css";
+@import "category/row.css";
 
 /* Mods */
-@import 'mod/view.css';
-@import 'mod/rating.css';
+@import "mod/view.css";
+@import "mod/rating.css";
 
 /* Admin Area */
-@import 'admin/index.css';
+@import "admin/index.css";
 
 @layer base {
     /* Main */

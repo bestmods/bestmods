@@ -38,7 +38,7 @@ export const Insert_Or_Update_Source = async (
         banner_path = null;
 
     if (icon != null && icon.length > 0 && !iremove) {
-        const base64Data = icon.split(',')[1];
+        const base64Data = icon.split(",")[1];
 
         if (base64Data != null) {
             // Retrieve file type.
@@ -53,7 +53,7 @@ export const Insert_Or_Update_Source = async (
                 icon_path = "/images/source/" + fileName;
 
                 // Convert to binary from base64.
-                const buffer = Buffer.from(base64Data, 'base64');
+                const buffer = Buffer.from(base64Data, "base64");
 
                 // Write file to disk.
                 try {
@@ -68,7 +68,7 @@ export const Insert_Or_Update_Source = async (
     }
 
     if (banner && banner.length > 0 && !bremove) {
-        const base64Data = banner.split(',')[1];
+        const base64Data = banner.split(",")[1];
 
         if (base64Data) {
             // Retrieve file type.
@@ -83,7 +83,7 @@ export const Insert_Or_Update_Source = async (
                 banner_path = "/images/source/" + fileName;
 
                 // Convert to binary from base64.
-                const buffer = Buffer.from(base64Data, 'base64');
+                const buffer = Buffer.from(base64Data, "base64");
 
                 // Write file to disk.
                 try {

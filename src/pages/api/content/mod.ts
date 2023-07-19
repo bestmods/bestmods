@@ -52,7 +52,7 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(200).json({
             "message": "Mod fetched!",
             data: {
-                mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === 'bigint' ? v.toString() : v))
+                mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === "bigint" ? v.toString() : v))
             }
         });
     } else if (["POST", "PATCH", "PUT"].includes(req.method ?? "")) {
@@ -151,7 +151,7 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(200).json({
             message: `${update ? "Inserted" : "Updated"} mod successfully!`,
             data: {
-                mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === 'bigint' ? v.toString() : v))
+                mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === "bigint" ? v.toString() : v))
             }
         });
     } else if (req.method == "DELETE") {

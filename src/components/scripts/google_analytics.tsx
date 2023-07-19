@@ -12,9 +12,9 @@ const GoogleAnalytics: React.FC<{
                 {`
                     window.dataLayer = window.dataLayer || [];
                     function gtag(){window.dataLayer.push(arguments);}
-                    gtag('js', new Date());
+                    gtag("js", new Date());
 
-                    gtag('config', '${id}');
+                    gtag("config", "${id}");
                 `}
             </Script>
         </>
