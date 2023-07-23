@@ -74,9 +74,9 @@ const Home: NextPage<{
             <ModCtx.Provider value={mod}>
                 <ModViewCtx.Provider value={modView}>
                     <HeadInfo
-                        title={mod ? titleName + " - " + cat_head_name + " - Best Mods" : null}
-                        description={mod ? mod.descriptionShort : null}
-                        image={mod && mod.banner ? cdn + mod.banner : null}
+                        title={mod ? titleName + " - " + cat_head_name + " - Best Mods" : undefined}
+                        description={mod ? mod.descriptionShort : undefined}
+                        image={mod && mod.banner ? cdn + mod.banner : undefined}
                         webtype="article"
                         author={(mod && mod.ownerName && mod.ownerName.length > 0) ? mod.ownerName : "Best Mods"}
                         excludeCdn={true}

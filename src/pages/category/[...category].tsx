@@ -71,9 +71,9 @@ const Home: NextPage<{
         </div>
         : error;
 
-    let headTitle = null;
-    let headDesc = null;
-    let headerImg = null;
+    let headTitle = undefined;
+    let headDesc = undefined;
+    let headerImg = undefined;
 
     if (bgFile)
         headerImg = cdn + bgPath

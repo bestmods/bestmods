@@ -1,17 +1,17 @@
 import Head from "next/head";
 
 type HeadArgs = {
-    title?: string | null
-    description?: string | null
-    robots?: string | null
-    image?: string | null
-    webtype?: string | null
-    ptime?: string | null
-    mtime?: string | null
-    etime?: string | null
-    author?: string | null
-    section?: string | null
-    tags?: string | null,
+    title?: string
+    description?: string
+    robots?: string
+    image?: string
+    webtype?: string
+    ptime?: string
+    mtime?: string
+    etime?: string
+    author?: string
+    section?: string
+    tags?: string
     excludeCdn?: boolean
 }
 
