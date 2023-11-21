@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { type GetServerSidePropsContext, type NextPage } from "next";
+import { type GetServerSidePropsContext } from "next";
 import Link from "next/link";
 
-import { BestModsPage } from "@components/main";
-import HeadInfo from "@components/head";
+import Main from "@components/main";
+import MetaInfo from "@components/meta";
 
-import { type CategoriesWithChildren } from "types/category";
+import { type CategoryWithChildren } from "~/types/category";
 import { type Source } from "@prisma/client";
 
 import { prisma } from "../../server/db/client";
@@ -15,22 +15,22 @@ import { trpc } from "@utils/trpc";
 import { Has_Perm } from "@utils/permissions";
 import { AlertForm } from "@utils/alert";
 
-import EditIcon from "@utils/icons/edit";
-import DeleteIcon from "@utils/icons/delete";
+import EditIcon from "@components/icons/edit";
+import DeleteIcon from "@components/icons/delete";
 
-const Home: NextPage<{
-    authed: boolean,
-    cats: CategoriesWithChildren[],
-    srcs: Source[]
-}> = ({
+export default function Page ({
     authed,
     cats,
     srcs
-}) => {
+} : {
+    authed: boolean,
+    cats: CategoryWithChildren[],
+    srcs: Source[]
+}) {
     return (
         <>
-            <HeadInfo />
-            <BestModsPage>
+            <MetaInfo />
+            <Main>
                 {authed ? (
                     <div className="admin-index-container">
                         <div>
@@ -51,13 +51,13 @@ const Home: NextPage<{
                         <p>You are not authorized to view this page.</p>
                     </div>
                 )}
-            </BestModsPage>
+            </Main>
         </>
-    );
-};
+    )
+}
 
 const Categories: React.FC<{
-    cats: CategoriesWithChildren[]
+    cats: CategoryWithChildren[]
 }> = ({
     cats
 }) => {
@@ -146,7 +146,7 @@ const Categories: React.FC<{
                 >Add Category!</Link>
             </div>
         </div>
-    );
+    )
 }
 
 const Sources: React.FC<{
@@ -210,12 +210,12 @@ const Sources: React.FC<{
                 >Add Source!</Link>
             </div>
         </div>
-    );
+    )
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     let authed = false;
-    let cats: CategoriesWithChildren[] = [];
+    let cats: CategoryWithChildren[] = [];
     let srcs: Source[] = [];
 
     const session = await getSession(ctx);
@@ -244,7 +244,5 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             cats: cats,
             srcs: srcs
         }
-    };
+    }
 }
-
-export default Home;

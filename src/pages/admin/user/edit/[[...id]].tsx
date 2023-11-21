@@ -2,8 +2,8 @@ import { type User } from "@prisma/client";
 import { type GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 
-import { BestModsPage } from "@components/main";
-import HeadInfo from "@components/head";
+import Main from "@components/main";
+import MetaInfo from "@components/meta";
 
 import EditForm from "@components/forms/user/create_user";
 
@@ -11,19 +11,19 @@ import { prisma } from "@server/db/client";
 
 import { Has_Perm } from "@utils/permissions";
 
-const EditUser: React.FC<{
-    authed: boolean,
-    user: User | null
-}> = ({
+export default function EditUser ({
     authed,
     user
-}) => {
+} : {
+    authed: boolean,
+    user: User | null
+}) {
     return (
         <>
-            <HeadInfo
+            <MetaInfo
                 title={"Editing User " + user?.name ?? "N/A" + " - Best Mods"}
             />
-            <BestModsPage>
+            <Main>
                 <div className="container mx-auto">
                     {authed ? (
                         <>
@@ -36,9 +36,9 @@ const EditUser: React.FC<{
                         </div>
                     )}
                 </div>
-            </BestModsPage>
+            </Main>
         </>
-    );
+    )
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
@@ -70,5 +70,3 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         }
     }
 }
-
-export default EditUser;

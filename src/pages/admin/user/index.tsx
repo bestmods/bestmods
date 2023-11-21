@@ -1,8 +1,8 @@
 import { type GetServerSidePropsContext } from "next";
 import Link from "next/link";
 
-import { BestModsPage } from "@components/main";
-import HeadInfo from "@components/head";
+import Main from "@components/main";
+import MetaInfo from "@components/meta";
 
 import { type User } from "@prisma/client";
 
@@ -12,25 +12,25 @@ import { getSession } from "next-auth/react";
 import { trpc } from "@utils/trpc";
 import { Has_Perm } from "@utils/permissions";
 
-const Index: React.FC<{
-    authed: boolean,
-    users: User[],
-    page_number: number
-}> = ({
+export default function Page ({
     authed,
     users,
     page_number
-}) => {
+} : {
+    authed: boolean,
+    users: User[],
+    page_number: number
+}) {
     // Build list of page numbers (<3 before>, cur_page, <3 after>).
     const pages = Gen_Page_Numbers(page_number, 3);
 
     return (
         <>
-            <HeadInfo 
+            <MetaInfo 
                 title="User Management - Best Mods"
             />
 
-            <BestModsPage>
+            <Main>
                 {authed ? (
                     <div className="container mx-auto">
                         <h1 className="page-title">User Management</h1>
@@ -73,9 +73,9 @@ const Index: React.FC<{
                         <p>You are not authorized to view this page!</p>
                     </div>                    
                 )}
-            </BestModsPage>
+            </Main>
         </>
-    );
+    )
 }
 
 const UserRow: React.FC<{
@@ -120,7 +120,7 @@ const UserRow: React.FC<{
                 }}>Delete</Link>
             </td>
         </tr>
-    );
+    )
 }
 
 function Gen_Page_Numbers(page_num: number, count: number): number[] {
@@ -182,5 +182,3 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         }
     }
 }
-
-export default Index;

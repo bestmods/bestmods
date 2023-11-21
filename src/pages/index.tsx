@@ -1,24 +1,28 @@
 import React from "react";
-import { type GetServerSidePropsContext, type NextPage } from "next";
+import { type GetServerSidePropsContext } from "next";
 
-import { BestModsPage } from "@components/main";
-import HeadInfo from "@components/head";
+import Main from "@components/main";
+import MetaInfo from "@components/meta";
 
-import ModBrowser from "@components/mod_browser";
+import ModBrowser from "@components/mod/browser";
 
-const Home: NextPage<{ cookies: { [key: string]: string } }> = ({ cookies }) => {
+export default function Page ({
+    cookies
+} : {
+    cookies: { [key: string]: string }
+}) {
     return (
         <>
-            <HeadInfo />
-            <BestModsPage
+            <MetaInfo />
+            <Main
                 cookies={cookies}
                 showFilters={true}
             >
                 <ModBrowser visible={true} />
-            </BestModsPage>
+            </Main>
         </>
-    );
-};
+    )
+}
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const cookies: { [key: string]: string | undefined; } = { ...ctx.req.cookies };
@@ -27,7 +31,5 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         props: { 
             cookies: cookies
         }
-    };
+    }
 }
-
-export default Home;
