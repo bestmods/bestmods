@@ -1,12 +1,12 @@
 import { useState } from "react";
 
-import NavItems from "@components/main/header/nav_items";
-import Filters from "@components/main/header/filters";
+import NavItems from "./nav_items";
+import Filters from "../filters";
 
-import HamburgerIcon from "@utils/icons/hamburger";
-import LeftArrowIcon from "@utils/icons/left_arrow";
+import HamburgerIcon from "@components/icons/hamburger";
+import LeftArrowIcon from "@components/icons/left_arrow";
 
-const MobileMenu: React.FC = () => {
+export default function MobileMenu () {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -28,16 +28,14 @@ const MobileMenu: React.FC = () => {
             <div className={`${isOpen ? "block" : "hidden"} p-4`}>
                 <div className="text-white">
                     <NavItems
-                        classes="mobile-menu-nav-items"
+                        className="mobile-menu-nav-items"
                     />
                 </div>
 
                 <Filters 
-                    classes="!block"
+                    className="!block"
                 />
             </div>
         </div>
-    );
+    )
 }
-
-export default MobileMenu;

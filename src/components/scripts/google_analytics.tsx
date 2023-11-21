@@ -1,10 +1,10 @@
 import Script from "next/script";
 
-const GoogleAnalytics: React.FC<{
-    id: string
-}> = ({
+export default function GoogleAnalytics ({
     id
-}) => {
+} : {
+    id: string
+}) {
     return (
         <>
             <Script id="google-tag-manager" src={"https://www.googletagmanager.com/gtag/js?id=" + id} strategy="afterInteractive" />
@@ -18,7 +18,5 @@ const GoogleAnalytics: React.FC<{
                 `}
             </Script>
         </>
-    );
+    )
 }
-
-export default GoogleAnalytics;

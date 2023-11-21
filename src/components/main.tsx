@@ -4,9 +4,10 @@ import { setCookie } from "cookies-next";
 
 import GoogleAnalytics from "@components/scripts/google_analytics";
 
-import Header from "@components/main/header";
-import MobileMenu from "@components/main/mobile_menu";
-import Login from "@components/main/login";
+import Header from "@components/header";
+import MobileMenu from "@components/header/mobile_menu";
+import Login from "@components/login";
+import Background from "./background";
 
 export type filterArgs = {
     timeframe: number
@@ -28,16 +29,7 @@ export const FilterCtx = React.createContext<filterArgs | null>(null);
 export const DisplayCtx = React.createContext<displayArgs | null>(null);
 export const CookiesCtx = React.createContext<{ [key: string]: string }>({});
 
-export const BestModsPage: React.FC<{
-    children: ReactNode,
-    classes?: string,
-    background?: string,
-    image?: string,
-    overlay?: string,
-    excludeCdn?: boolean,
-    cookies?: { [key: string]: string },
-    showFilters?: boolean
-}> = ({
+export default function Main ({
     children,
     classes,
     background = "bg-gradient-to-b from-[#002736] to-[#00151b]",
@@ -46,7 +38,16 @@ export const BestModsPage: React.FC<{
     excludeCdn = false,
     cookies,
     showFilters = false
-}) => {
+} : {
+    children: ReactNode,
+    classes?: string,
+    background?: string,
+    image?: string,
+    overlay?: string,
+    excludeCdn?: boolean,
+    cookies?: { [key: string]: string },
+    showFilters?: boolean
+}) {
     // Handle filtering and display options.
     const [timeframe, setTimeframe] = useState<number>(0);
     const [sort, setSort] = useState<number>(0);
@@ -138,27 +139,5 @@ export const BestModsPage: React.FC<{
                 </DisplayCtx.Provider>
             </FilterCtx.Provider>
         </main>
-    );
-};
-
-const Background: React.FC<{
-    background?: string,
-    image?: string | null,
-    overlay?: boolean | string
-}> = ({
-    background = "bg-gradient-to-b from-[#002736] to-[#00151b]",
-    image = null,
-    overlay = true 
-}) => {
-    return (<>
-        {overlay && (
-            <div id="bgol" className={typeof (overlay) === "string" ? overlay : "bg-black/80"}></div>
-        )}
-
-        <div id="bg" className={background}>
-            {image && (
-                <img src={image} className="hidden md:block w-full h-full" alt="background" />
-            )}
-        </div>
-    </>);
-};
+    )
+}

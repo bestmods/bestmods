@@ -15,7 +15,7 @@ type HeadArgs = {
     excludeCdn?: boolean
 }
 
-const HeadInfo: React.FC<HeadArgs> = ({
+export default function MetaInfo ({
     title = "Best Mods - Discover The Top Mods On The Internet!",
     description = "Browse the best mods in gaming from many sources on the Internet! Project ran by The Modding Community!",
     robots = "index, follow",
@@ -27,8 +27,8 @@ const HeadInfo: React.FC<HeadArgs> = ({
     author = "Best Mods",
     section = "Technology",
     tags = "mod",
-    excludeCdn = false 
-}) => {
+    excludeCdn = false
+} : HeadArgs) {
     // Check if we must prepend CDN URL.
     if (process.env.NEXT_PUBLIC_CDN_URL && !excludeCdn)
         image = process.env.NEXT_PUBLIC_CDN_URL + image;
@@ -134,7 +134,5 @@ const HeadInfo: React.FC<HeadArgs> = ({
             <meta name="apple-touch-fullscreen" content="yes" />
             <meta name="apple-mobile-web-app-capable" content="yes" />
         </Head>
-    );
-};
-
-export default HeadInfo;
+    )
+}

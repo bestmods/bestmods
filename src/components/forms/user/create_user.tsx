@@ -10,11 +10,11 @@ import { AlertForm } from "@utils/alert";
 import Link from "next/link";
 import ScrollToTop from "@utils/scroll";
 
-const UserForm: React.FC<{
-    user: User | null
-}> = ({
+export default function UserForm({
     user
-}) => {
+} : {
+    user: User | null
+}) {
     // Mutations.
     const user_add_mut = trpc.user.updateUser.useMutation();
 
@@ -241,7 +241,5 @@ const Permissions: React.FC<{
                 </div>
             </div>
         </>
-    );
+    )
 }
-
-export default UserForm;

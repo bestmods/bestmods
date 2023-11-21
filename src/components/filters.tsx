@@ -4,16 +4,16 @@ import Link from "next/link";
 import { DisplayCtx, FilterCtx } from "@components/main";
 import { Field, Form, Formik } from "formik";
 
-import SearchIcon from "@utils/icons/search";
-import CategoryIcon from "@utils/icons/category";
-import TableIcon from "@utils/icons/table";
-import GridIcon from "@utils/icons/grid";
+import SearchIcon from "@components/icons/search";
+import CategoryIcon from "@components/icons/category";
+import TableIcon from "@components/icons/table";
+import GridIcon from "@components/icons/grid";
 
-const Filters: React.FC<{
-    classes?: string
-}> = ({
-    classes
-}) => {
+export default function Filters ({
+    className
+} : {
+    className?: string
+}) {
     const filters = useContext(FilterCtx);
     const display = useContext(DisplayCtx);
 
@@ -26,7 +26,7 @@ const Filters: React.FC<{
                 history.pushState(null, "", `?search=${e.search}`);
             }}
         >
-            <Form className={`header-filters ${classes ?? ""}`}>
+            <Form className={`header-filters${className ? ` ${className}` : ``}`}>
                 <div className="header-filter-timeframe">
                     <select name="filterTimeframe" value={filters?.timeframe?.toString() ?? ""} onChange={filters?.timeframeCb ?? ((e) => {
                         if (typeof window !== "undefined")
@@ -55,7 +55,7 @@ const Filters: React.FC<{
                 <div className="header-filter-search">
                     <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                         <SearchIcon
-                            classes={["w-5", "h-5", "text-gray-400"]}
+                            className={"w-5 h-5"}
                         />
                     </div>
 
@@ -84,7 +84,5 @@ const Filters: React.FC<{
                 </div>
             </Form>
         </Formik>
-    );
-};
-
-export default Filters;
+    )
+}

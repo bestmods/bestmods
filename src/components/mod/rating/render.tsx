@@ -3,18 +3,18 @@ import { useState } from "react";
 
 import { trpc } from "@utils/trpc";
 
-import DownArrow2 from "@utils/icons/down_arrow2";
-import UpArrow2 from "@utils/icons/up_arrow2";
+import DownArrow2 from "@components/icons/down_arrow2";
+import UpArrow2 from "@components/icons/up_arrow2";
 
-const RatingRender: React.FC<{
-    mod: any,
-    classes?: string[],
-    rating?: number
-}> = ({
+export default function ModRating ({
     mod,
     classes,
     rating
-}) => {
+} : {
+    mod: any,
+    classes?: string[],
+    rating?: number
+}) {
     // Convert to number instead of BigInt.
     rating = Number(mod.rating ?? rating ?? 1);
 
@@ -41,17 +41,6 @@ const RatingRender: React.FC<{
     }
 
     const myRatingMut = trpc.modRating.addModUserRating.useMutation();
-
-    // Arrow classes.
-    const classes_up = ["w-12", "h-12", "text-center"];
-    const classes_down = ["w-12", "h-12", "text-center"];
-
-    if (didRate) {
-        if (rateIsPositive)
-            classes_down.push("opacity-20");
-        else
-            classes_up.push("opacity-20");
-    }
 
     // Container classes.
     let classes_container = "mod-rating-container";
@@ -88,7 +77,7 @@ const RatingRender: React.FC<{
                         signIn("discord");
                 }}>
                     <DownArrow2
-                        classes={classes_down}
+                        className={`w-12 h-12 text-center${(didRate && rateIsPositive) ? ` opacity-20` : ``}`}
                     />
                 </button>
             </div>
@@ -122,12 +111,10 @@ const RatingRender: React.FC<{
                         signIn("discord");
                 }}>
                     <UpArrow2
-                        classes={classes_up}
+                        className={`w-12 h-12 text-center${(didRate && !rateIsPositive) ? ` opacity-20` : ``}`}
                     />
                 </button>
             </div>
         </div>
-    );
+    )
 }
-
-export default RatingRender;

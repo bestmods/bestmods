@@ -1,13 +1,13 @@
 import Link from "next/link";
 
-import NavItems from "@components/main/header/nav_items";
-import Filters from "@components/main/header/filters";
+import NavItems from "./header/nav_items";
+import Filters from "./filters";
 
-const Header: React.FC<{
+export default function Header ({
+    showFilters
+} : {
     showFilters?: boolean
-}> = ({
-    showFilters = false
-}) => {
+}) {
     return (
         <header>
             <h1>
@@ -21,7 +21,5 @@ const Header: React.FC<{
                 <Filters />
             )}
         </header>
-    );
-};
-
-export default Header;
+    )
+}

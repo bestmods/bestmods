@@ -8,16 +8,16 @@ import FormTemplate from "@components/forms/main";
 import { AlertForm } from "@utils/alert";
 
 import { type Category } from "@prisma/client";
-import { type CategoriesWithChildren } from "types/category";
+import { type CategoryWithChildren } from "~/types/category";
 import ScrollToTop from "@utils/scroll";
 
-const CategoryForm: React.FC<{ 
-    cat: Category,
-    cats: CategoriesWithChildren[]
- }> = ({ 
+export default function CategoryForm ({
     cat,
     cats
-  }) => {
+} : {
+    cat?: Category,
+    cats: CategoryWithChildren[]
+ }) {
     // Errors and success handles.
     let error: string | undefined = undefined;
     let success: string | undefined = undefined;
@@ -252,7 +252,5 @@ const CategoryForm: React.FC<{
                 </div>
             </FormTemplate>
         </>
-    );
-};
-
-export default CategoryForm;
+    )
+}

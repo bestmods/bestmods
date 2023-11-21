@@ -10,11 +10,11 @@ import FormTemplate from "@components/forms/main";
 import { type Source } from "@prisma/client";
 import ScrollToTop from "@utils/scroll";
 
-const SourceForm: React.FC<{ 
-    src: Source | null 
-}> = ({ 
-    src 
-}) => {
+export default function SourceForm ({
+    src
+} : {
+    src?: Source 
+}) {
     // Errors and success handles.
     let error: string | undefined = undefined;
     let success: string | undefined = undefined;
@@ -221,7 +221,5 @@ const SourceForm: React.FC<{
                 </div>
             </FormTemplate>
         </>
-    );
-};
-
-export default SourceForm;
+    )
+}

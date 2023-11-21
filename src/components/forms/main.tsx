@@ -2,15 +2,15 @@ import React, { type ReactNode } from "react";
 
 import { FormikProvider } from "formik";
 
-const FormTemplate: React.FC<{ 
+export default function MainForm ({
+    form,
+    submitBtn,
+    children
+} : {
     form: any,
     submitBtn: JSX.Element,
     children: ReactNode 
-}> = ({
-    form,
-    submitBtn,
-    children 
-}) => {
+}) {
     return (
         <>
             {form && (
@@ -22,7 +22,5 @@ const FormTemplate: React.FC<{
                 </FormikProvider>
             )}
         </>
-    );
+    )
 }
-
-export default FormTemplate;

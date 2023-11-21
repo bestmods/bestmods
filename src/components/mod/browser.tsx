@@ -3,92 +3,19 @@ import React, { useContext } from "react";
 import InfiniteScroll from "react-infinite-scroller";
 
 import { FilterCtx, CookiesCtx } from "@components/main";
-import GridRow from "@components/modbrowser/grid_row";
-import TableRow from "@components/modbrowser/table_row";
-
+import ModRow from "./browser/row";
 import { trpc } from "@utils/trpc";
-import LoadingIcon from "@utils/icons/loading";
+import LoadingIcon from "@components/icons/loading";
 
-import { type ModRowBrowser } from "types/mod";
+import { type ModRowBrowser } from "~/types/mod";
 
-const ModRow: React.FC<{
-    mod: ModRowBrowser,
-    display?: string
-}> = ({
-    mod,
-    display = "grid"
-}) => {
-    const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
-
-    // Generate correct banner.   
-    let banner = cdn + "/images/default_mod_banner.png";
-
-    if (mod.banner && mod.banner.length > 0)
-        banner = cdn + mod.banner;
-
-    // Categories.
-    const cat = mod.category;
-    const cat_par = cat?.parent;
-
-    // Generate category info.
-    const defaultCatIcon = cdn + "/images/default_icon.png";
-    const catIcon = (cat && cat.icon) ? cdn + cat.icon : defaultCatIcon;
-    const catParIcon = (cat_par && cat_par.icon) ? cdn + cat_par.icon : defaultCatIcon;
-
-    // Generate links.
-    const viewLink = "/view/" + mod.url;
-
-    const catParLink = (cat_par) ? "/category/" + cat_par.url : null;
-    const catLink = ((cat) ? "/category" + ((cat_par) ? "/" + cat_par.url : "") + "/" + cat.url : null);
-
-    // Generate classes.
-    const addClasses = (cat && cat.classes) ? " " + cat.classes : "";
-
-    // Handle short description.
-    const descShort = String(mod.descriptionShort);
-
-    return (
-        <>
-            {display == "grid" ? (
-                <GridRow
-                    mod={mod}
-                    addClasses={addClasses}
-                    banner={banner}
-                    descShort={descShort}
-                    cat={cat}
-                    catIcon={catIcon}
-                    catLink={catLink}
-                    catPar={cat_par}
-                    catParIcon={catParIcon}
-                    catParLink={catParLink}
-                    viewLink={viewLink}
-                />
-            ) : (
-                <TableRow
-                    mod={mod}
-                    addClasses={addClasses}
-                    banner={banner}
-                    descShort={descShort}
-                    cat={cat}
-                    catIcon={catIcon}
-                    catLink={catLink}
-                    catPar={cat_par}
-                    catParIcon={catParIcon}
-                    catParLink={catParLink}
-                    viewLink={viewLink}
-                />
-            )}
-        </>
-    );
-};
-
-const ModBrowser: React.FC<{
-    categories?: Array<number> | null,
-    visible?: boolean | null
-}> = ({
+export default function ModBrowser ({
     categories,
     visible
-}) => {
+} : {
+    categories?: Array<number> | null,
+    visible?: boolean | null
+}) {
     const filters = useContext(FilterCtx);
 
     let requireItems = true;
@@ -135,7 +62,7 @@ const ModBrowser: React.FC<{
                 loader={
                     <h3 key="loading" className="loading-bar">
                         <LoadingIcon
-                            classes={["w-8", "h-8", "mr-2", "text-gray-200", "animate-spin", "fill-blue-600"]}
+                            className={"w-8 h-8 mr-2 text-gray-200 animate-spin fill-blue-600"}
                         />
                         <span>Loading...</span>
                     </h3>
@@ -145,7 +72,7 @@ const ModBrowser: React.FC<{
                     <>
                         {items.length > 0 ? (
                             <>
-                                {items.map((mod: ModRowBrowser) => {
+                                {items.map((mod) => {
                                     return (
                                         <ModRow
                                             key={mod.id + "-row"}
@@ -168,7 +95,7 @@ const ModBrowser: React.FC<{
                         {items.length > 0 ? (
                             <table className="modbrowser-table">
                                 <tbody>
-                                    {items.map((mod: ModRowBrowser) => {
+                                    {items.map((mod) => {
                                         return (
                                             <ModRow
                                                 key={mod.id + "-row"}
@@ -190,7 +117,5 @@ const ModBrowser: React.FC<{
                 )}
             </InfiniteScroll>
         </div>
-    );
-};
-
-export default ModBrowser;
+    )
+}

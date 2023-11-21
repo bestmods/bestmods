@@ -2,27 +2,15 @@ import Link from "next/link";
 
 import ModRatingRender from "@components/mod/rating/render";
 
-import DropDown, { type Drop_Down_Menu_Type } from "@utils/drop_down";
+import DropDown, { type Drop_Down_Menu_Type } from "@components/drop_down";
 
-import EyeIcon from "@utils/icons/eye";
-import DownloadIcon from "@utils/icons/download";
+import EyeIcon from "@components/icons/eye";
+import DownloadIcon from "@components/icons/download";
 
 import { type Category } from "@prisma/client";
-import { type ModRowBrowser } from "types/mod";
+import { type ModRowBrowser } from "~/types/mod";
 
-const TableRow: React.FC<{
-    mod: ModRowBrowser,
-    addClasses: string,
-    banner: string,
-    descShort: string,
-    cat: any,
-    catPar?: Category | null,
-    catParIcon: string,
-    catParLink: string | null,
-    catIcon: string,
-    catLink: string | null,
-    viewLink: string
-}> = ({
+export default function ModRowTable ({
     mod,
     addClasses,
     banner,
@@ -34,7 +22,19 @@ const TableRow: React.FC<{
     catIcon,
     catLink,
     viewLink
-}) => {
+} : {
+    mod: ModRowBrowser,
+    addClasses: string,
+    banner: string,
+    descShort: string,
+    cat: any,
+    catPar?: Category | null,
+    catParIcon: string,
+    catParLink: string | null,
+    catIcon: string,
+    catLink: string | null,
+    viewLink: string
+}) {
     const cdn: string | undefined = process.env.NEXT_PUBLIC_CDN_URL;
 
     // Compile installer drop-down items.
@@ -178,7 +178,7 @@ const TableRow: React.FC<{
                         <DropDown
                             html={<>Install</>}
                             drop_down_items={installer_items}
-                            classes={["w-1/3"]}
+                            className={"w-1/3"}
                         />
                     )}
                 </div>
@@ -189,13 +189,11 @@ const TableRow: React.FC<{
                         <DropDown
                             html={<>Sources</>}
                             drop_down_items={source_items}
-                            classes={["w-1/3"]}
+                            className={"w-1/3"}
                         />
                     )}
                 </div>
             </td>
         </tr>
-    );
+    )
 }
-
-export default TableRow;

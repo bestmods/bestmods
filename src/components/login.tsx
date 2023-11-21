@@ -1,8 +1,8 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 
-import UserIcon from "@utils/icons/user";
+import UserIcon from "@components/icons/user";
 
-const Login: React.FC = () => {
+export default function Login () {
     const { data: session } = useSession();
 
     return (
@@ -13,7 +13,7 @@ const Login: React.FC = () => {
                 }}>
                     <span>
                         <UserIcon
-                            classes={["w-6", "h-6"]}
+                            className={"w-6 h-6"}
                         />
                     </span>
                 </button>
@@ -23,7 +23,5 @@ const Login: React.FC = () => {
                 }}>Sign Out</button>
             )}
         </div>
-    );
-};
-
-export default Login;
+    )
+}

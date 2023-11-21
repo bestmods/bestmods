@@ -2,26 +2,14 @@ import { type Category } from "@prisma/client";
 
 import ModRatingRender from "@components/mod/rating/render";
 
-import DropDown, { type Drop_Down_Menu_Type } from "@utils/drop_down";
+import DropDown, { type Drop_Down_Menu_Type } from "@components/drop_down";
 import Link from "next/link";
 
-import EyeIcon from "@utils/icons/eye";
-import DownloadIcon from "@utils/icons/download";
-import { type ModRowBrowser } from "types/mod";
+import EyeIcon from "@components/icons/eye";
+import DownloadIcon from "@components/icons/download";
+import { type ModRowBrowser } from "~/types/mod";
 
-const GridRow: React.FC<{
-    mod: ModRowBrowser,
-    addClasses: string,
-    banner: string,
-    descShort: string,
-    cat: any,
-    catPar?: Category | null,
-    catParIcon: string,
-    catParLink: string | null,
-    catIcon: string,
-    catLink: string | null,
-    viewLink: string
-}> = ({
+export default function ModRowGrid ({
     mod,
     addClasses,
     banner,
@@ -33,7 +21,19 @@ const GridRow: React.FC<{
     catIcon,
     catLink,
     viewLink
-}) => {
+} : {
+    mod: ModRowBrowser,
+    addClasses: string,
+    banner: string,
+    descShort: string,
+    cat: any,
+    catPar?: Category | null,
+    catParIcon: string,
+    catParLink: string | null,
+    catIcon: string,
+    catLink: string | null,
+    viewLink: string
+}) {
     const cdn: string | undefined = process.env.NEXT_PUBLIC_CDN_URL;
 
     // Compile installer drop-down items.
@@ -139,7 +139,7 @@ const GridRow: React.FC<{
             <div className="modbrowser-grid-stats">
                 <div className="modbrowser-grid-stats-views">
                     <EyeIcon
-                        classes={["w-4", "h-4"]}
+                        className={"w-4 h-4"}
                     />
                     <span className="text-white text-sm">{mod.totalViews.toString()}</span>
                 </div>
@@ -151,7 +151,7 @@ const GridRow: React.FC<{
 
                 <div className="modbrowser-grid-stats-downloads">
                     <DownloadIcon
-                        classes={["w-4", "h-4"]}
+                        className={"w-4 h-4"}
                     />
                     <span>{mod.totalDownloads.toString()}</span>
                 </div>
@@ -162,19 +162,17 @@ const GridRow: React.FC<{
                     <DropDown
                         html={<>Install</>}
                         drop_down_items={installer_items}
-                        classes={["w-1/3"]}
+                        className={"w-1/3"}
                     />
                 )}
                 {source_items.length > 0 && (
                     <DropDown
                         html={<>Sources</>}
                         drop_down_items={source_items}
-                        classes={["w-1/3"]}
+                        className={"w-1/3"}
                     />
                 )}
             </div>
         </div>
-    );
+    )
 }
-
-export default GridRow;

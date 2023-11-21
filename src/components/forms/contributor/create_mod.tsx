@@ -9,10 +9,9 @@ import FormTemplate from "@components/forms/main";
 import { AlertForm } from "@utils/alert";
 import { type Source } from "@prisma/client";
 
-import { type CategoriesWithChildren } from "types/category";
-import { type ModWithRelations } from "types/mod";
-
-import { ReactMarkdown } from "react-markdown/lib/react-markdown";
+import { type CategoryWithChildren } from "~/types/category";
+import { type ModWithRelations } from "~/types/mod";
+import Markdown from "@components/markdown/markdown";
 
 const DownloadForm: React.FC<{
     form: any,
@@ -261,15 +260,15 @@ const CreditForm: React.FC<{
     );
 }
 
-const ModForm: React.FC<{
-    cats: CategoriesWithChildren[],
-    srcs: Source[],
-    mod: ModWithRelations | null 
-}> = ({
+export default function ModForm ({
     cats,
     srcs,
     mod
- }) => {
+} : {
+    cats: CategoryWithChildren[],
+    srcs: Source[],
+    mod?: ModWithRelations 
+}) {
     // Errors and success handles.
     let error: string | undefined = undefined;
     let success: string | undefined = undefined;
@@ -440,7 +439,7 @@ const ModForm: React.FC<{
                 </div>
             </>
         );
-    }, [form.values]);
+    }, [form.values, EMPTY_DOWNLOAD_VALUE]);
 
     // Sources form.
     const sources_form = useMemo(() => {
@@ -490,7 +489,7 @@ const ModForm: React.FC<{
                 </div>
             </>
         );
-    }, [form.values]);
+    }, [form, EMPTY_SOURCE_VALUE]);
 
     // Screenshots form.
     const screenshots_form = useMemo(() => {
@@ -540,7 +539,7 @@ const ModForm: React.FC<{
                 </div>
             </>
         );
-    }, [form.values]);
+    }, [form, EMPTY_SCREENSHOT_VALUE]);
 
     // Installers form.
     const installers_form = useMemo(() => {
@@ -590,7 +589,7 @@ const ModForm: React.FC<{
                 </div>
             </>
         );
-    }, [form.values]);
+    }, [form, EMPTY_INSTALLER_VALUE]);
 
     // Credits form.
     const credits_form = useMemo(() => {
@@ -638,7 +637,7 @@ const ModForm: React.FC<{
                 </div>
             </>
         );
-    }, [form.values]);
+    }, [form.values, EMPTY_CREDIT_VALUE]);
 
     // Preview mode.
     const [previewMode, setPreviewMode] = useState(false);
@@ -790,9 +789,9 @@ const ModForm: React.FC<{
                         className="form-label"
                     >Description</label>
                     {previewMode && (
-                        <ReactMarkdown className="content-markdown">
+                        <Markdown className="markdown" rehype={true}>
                             {description_val}
-                        </ReactMarkdown>
+                        </Markdown>
                     )}
                     <Field
                         as="textarea"
@@ -811,9 +810,9 @@ const ModForm: React.FC<{
                         className="form-label"
                     >Installation</label>
                     {previewMode && (
-                        <ReactMarkdown className="content-markdown">
+                        <Markdown className="markdown" rehype={true}>
                             {install_val}
-                        </ReactMarkdown>
+                        </Markdown>
                     )}
                     <Field
                         as="textarea"
@@ -860,7 +859,5 @@ const ModForm: React.FC<{
                 </div>
             </FormTemplate>
         </>
-    );
-};
-
-export default ModForm;
+    )
+}
