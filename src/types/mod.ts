@@ -59,3 +59,29 @@ const modRowBrowser = Prisma.validator<Prisma.ModArgs>()({
 export type ModRowBrowser = Prisma.ModGetPayload<typeof modRowBrowser> & {
     rating?: number
 };
+
+// Mod view items.
+export const ModViewItemInc = {
+    category: {
+        include: {
+            parent: true
+        },
+    },
+    ModSource: {
+        include: {
+            source: true
+        }
+    },
+    ModDownload: true,
+    ModInstaller: {
+        include: {
+            source: true
+        }
+    },
+    ModRating: true,
+    ModCredit: true
+}
+
+export type ModViewItem = Prisma.ModGetPayload<{
+    include: typeof ModViewItemInc
+}>
