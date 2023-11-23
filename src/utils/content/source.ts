@@ -1,8 +1,5 @@
-import fs from "fs";
-
 import { type PrismaClient, type Source } from "@prisma/client";
-
-import FileType from "@utils/base64";
+import { UploadFile } from "@utils/fileupload";
 
 export const Insert_Or_Update_Source = async (
     prisma: PrismaClient,
@@ -20,7 +17,7 @@ export const Insert_Or_Update_Source = async (
     name?: string,
     description?: string,
     classes?: string | null
-): Promise<[Source | null, boolean, string | null | any]> => {
+): Promise<[Source | null, boolean, string | null | unknown]> => {
     // Returns.
     let src: Source | null = null;
 
@@ -37,64 +34,26 @@ export const Insert_Or_Update_Source = async (
     if (bremove)
         banner_path = null;
 
-    if (icon != null && icon.length > 0 && !iremove) {
-        const base64Data = icon.split(",")[1];
+    if (!iremove && (icon && icon.length > 0)) {
+        const path = `/images/source/${url}`;
 
-        if (base64Data != null) {
-            // Retrieve file type.
-            const fileExt = FileType(base64Data);
+        const [success, err, full_path] = UploadFile(path, icon);
 
-            // Make sure we don't have an unknown file type.
-            if (fileExt != "unknown") {
-                // Now let's compile our file name.
-                const fileName = url + "." + fileExt;
+        if (!success || !full_path)
+            return [null, false, err];
 
-                // Set icon path.
-                icon_path = "/images/source/" + fileName;
-
-                // Convert to binary from base64.
-                const buffer = Buffer.from(base64Data, "base64");
-
-                // Write file to disk.
-                try {
-                    fs.writeFileSync(process.env.UPLOADS_DIR + "/" + icon_path, buffer);
-                } catch (error) {
-                    return [null, false, error];
-                }
-            } else
-                return [null, false, "Icon's file extension is unknown."];
-        } else
-            return [null, false, "Parsing base64 data is null."];
+        icon_path = full_path;
     }
 
-    if (banner && banner.length > 0 && !bremove) {
-        const base64Data = banner.split(",")[1];
+    if (!bremove && (banner && banner.length > 0)) {
+        const path = `/images/source/${url}_banner`;
 
-        if (base64Data) {
-            // Retrieve file type.
-            const fileExt = FileType(base64Data);
+        const [success, err, full_path] = UploadFile(path, banner);
 
-            // Make sure we don't have an unknown file type.
-            if (fileExt != "unknown") {
-                // Now let's compile our file name.
-                const fileName = url + "_banner." + fileExt;
+        if (!success || !full_path)
+            return [null, false, err];
 
-                // Set banner path.
-                banner_path = "/images/source/" + fileName;
-
-                // Convert to binary from base64.
-                const buffer = Buffer.from(base64Data, "base64");
-
-                // Write file to disk.
-                try {
-                    fs.writeFileSync(process.env.UPLOADS_DIR + "/" + banner_path, buffer);
-                } catch (error) {
-                    return [null, false, error];
-                }
-            } else
-                return [null, false, "Banner's file extension is unknown."];
-        } else
-            return [src, false, "Parsing base64 data is null."];
+        banner_path = full_path;
     }
 
     try {
@@ -152,7 +111,7 @@ export const Insert_Or_Update_Source = async (
 export const Delete_Source = async (
     prisma: PrismaClient,
     url: string
-): Promise<[boolean, string | any | null]> => {
+): Promise<[boolean, string | unknown | null]> => {
     try {
         await prisma.source.delete({
             where: {

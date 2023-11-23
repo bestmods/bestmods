@@ -1,8 +1,6 @@
-import fs from "fs";
-
 import { type Category, type PrismaClient } from "@prisma/client";
 
-import FileType from "@utils/base64";
+import { UploadFile } from "@utils/fileupload";
 
 export const Insert_Or_Update_Category = async (
     prisma: PrismaClient,
@@ -15,12 +13,15 @@ export const Insert_Or_Update_Category = async (
     lookup_id?: number,
 
     icon?: string,
+    banner?: string,
+
     iremove?: boolean,
-    
+    bremove?: boolean,
+
     parent_id?: number | null,
     classes?: string | null,
     has_bg?: boolean
-): Promise<[Category | null, boolean, string | null | any]> => {
+): Promise<[Category | null, boolean, string | null | unknown]> => {
     // Returns.
     let cat: Category | null = null;
 
@@ -92,53 +93,54 @@ export const Insert_Or_Update_Category = async (
     if (!cat) {
         return [cat, false, "Category is null."];
     }
+
     // Let's now handle file uploads.
-    let icon_path = null;
+    let icon_path: string | boolean | null = false;
 
-    if (icon && icon.length > 0) {
-        const base64Data = icon.split(',')[1];
+    if (iremove)
+        icon_path = null;
 
-        if (base64Data) {
-            // Retrieve file type.
-            const file_ext = FileType(base64Data);
+    if (!iremove && (icon && icon.length > 0)) {
+        const path = `/images/category/${cat.id.toString()}`;
 
-            // Make sure we don't have an unknown file type.
-            if (file_ext != "unknown") {
-                // Now let's compile our file name.
-                const fileName = cat.id + "." + file_ext;
+        const [success, err, full_path] = UploadFile(path, icon);
 
-                // Set icon path.
-                icon_path = "/images/category/" + fileName;
+        if (!success || !full_path)
+            return [null, false, err];
 
-                // Convert to binary from base64.
-                const buffer = Buffer.from(base64Data, 'base64');
+        icon_path = full_path;
+    }
 
-                // Write file to disk.
-                try {
-                    fs.writeFileSync(process.env.UPLOADS_DIR + "/" + icon_path, buffer);
-                } catch (error) {                 
-                    return [cat, false, error];
-                }
-            } else {
-                return [cat, false, "Icon's file extension is unknown."];
-            }
-        } else
-            return [cat, false, "Parsing base64 data is null."];
+    let banner_path: string | boolean | null = false;
+
+    if (bremove)
+    banner_path = null;
+
+    if (!bremove && (banner && banner.length > 0)) {
+        const path = `/images/category/${cat.id.toString()}_banner`;
+
+        const [success, err, full_path] = UploadFile(path, banner);
+
+        if (!success || !full_path)
+            return [null, false, err];
+
+            banner_path = full_path;
     }
 
     // If we have a file upload, update database.
-    if (icon_path != null || iremove) {
-        // If we're removing the icon or banner, make sure our data is null before updating again.
-        if (iremove)
-            icon_path = null;
-
+    if (icon_path !== false || banner_path !== false) {
         try {
             await prisma.category.update({
                 where: {
                     id: cat.id
                 },
                 data: {
-                    icon: icon_path
+                    ...(icon_path !== false && {
+                        icon: icon_path
+                    }),
+                    ...(banner_path !== false && {
+                        banner: banner_path
+                    })
                 }
             })
         } catch (error) {
@@ -152,7 +154,7 @@ export const Insert_Or_Update_Category = async (
 export const Delete_Category = async (
     prisma: PrismaClient,
     id: number
-): Promise<[boolean, string | any | null]> => {
+): Promise<[boolean, string | unknown | null]> => {
     try {
         await prisma.category.delete({
             where: {

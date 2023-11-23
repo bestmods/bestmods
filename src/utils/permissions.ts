@@ -6,8 +6,8 @@ export const Has_Perm = (
 ): boolean => {
     if (!session)
         return false;
-    
-    const permissions = session?.user?.permissions;
+
+    const permissions = session.user?.permissions;
 
     if (!permissions)
         return false;

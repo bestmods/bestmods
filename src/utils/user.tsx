@@ -14,7 +14,7 @@ export const Insert_Or_Update_User = async (
 
     avatar?: string,
     aremove?: boolean
-): Promise<[User | null, boolean, string | null | any]> => {
+): Promise<[User | null, boolean, string | null | unknown]> => {
     // Returns.
     let user: User | null = null;
 
@@ -83,7 +83,7 @@ export const Insert_Or_Update_User = async (
 export const Delete_User = async (
     prisma: PrismaClient,
     id: string
-): Promise<[boolean, string | any | null]> => {
+): Promise<[boolean, string | unknown | null]> => {
     try {
         await prisma.user.delete({
             where: {
