@@ -40,7 +40,7 @@ export default function ModRowGrid ({
     // Compile installer drop-down items.
     const installer_items: Drop_Down_Menu_Type[] = [];
 
-    mod.ModInstaller.map((ins) => {
+    mod.ModInstaller?.map((ins) => {
         const name = ins.source.name;
         const url = ins.url;
 
@@ -71,7 +71,7 @@ export default function ModRowGrid ({
     // Compile source drop-down items.
     const source_items: Drop_Down_Menu_Type[] = [];
 
-    mod.ModSource.map((src) => {
+    mod.ModSource?.map((src) => {
         if (!src || !src.source || !src.sourceUrl || !src.query)
             return;
         
