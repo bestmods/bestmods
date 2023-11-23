@@ -37,6 +37,7 @@ model Category {
   description String?    @db.Text
   url         String?
   classes     String?
+  banner      String?
   icon        String?
   Mod         Mod[]
   hasBg       Boolean    @default(false)
