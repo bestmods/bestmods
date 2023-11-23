@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { type ModViewItem } from "~/types/mod";
 
 export default function ModViewSources ({
@@ -25,7 +26,12 @@ export default function ModViewSources ({
                             <a rel="noreferrer" key={"src-" + src.modId + "-" + src.sourceUrl + "-" + src.query} href={srcLink} target="_blank" className="mod-source-item">
                                 <div>
                                     <div className="mod-source-item-image">
-                                        <img src={banner} alt="Source Banner" />
+                                        <Image
+                                            src={banner}
+                                            width={720}
+                                            height={320}
+                                            alt="Source Banner"
+                                        />
                                     </div>
                                     <div className="mod-source-item-name">
                                         <h3>{name}</h3>

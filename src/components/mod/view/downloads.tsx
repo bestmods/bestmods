@@ -7,7 +7,7 @@ export default function ModViewDownloads ({
 } : {
     mod: ModViewItem
 }) {
-    const modDownloadMut = trpc.modDownload.incModDownloadCnt.useMutation();
+    const modDownloadMut = trpc.modDownload.incCnt.useMutation();
 
     const downloads = mod.ModDownload ?? [];
 

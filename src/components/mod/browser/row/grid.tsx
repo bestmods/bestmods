@@ -8,6 +8,7 @@ import Link from "next/link";
 import EyeIcon from "@components/icons/eye";
 import DownloadIcon from "@components/icons/download";
 import { type ModRowBrowser } from "~/types/mod";
+import Image from "next/image";
 
 export default function ModRowGrid ({
     mod,
@@ -26,7 +27,7 @@ export default function ModRowGrid ({
     addClasses: string,
     banner: string,
     descShort: string,
-    cat: any,
+    cat?: Category | null,
     catPar?: Category | null,
     catParIcon: string,
     catParLink: string | null,
@@ -39,68 +40,78 @@ export default function ModRowGrid ({
     // Compile installer drop-down items.
     const installer_items: Drop_Down_Menu_Type[] = [];
 
-    if (mod.ModInstaller && mod.ModInstaller.length > 0) {
-        mod.ModInstaller.map((ins: any) => {
-            const name = ins.source.name;
-            const url = ins.url;
+    mod.ModInstaller.map((ins) => {
+        const name = ins.source.name;
+        const url = ins.url;
 
-            let icon = ins.source.icon ?? undefined;
+        let icon = ins.source.icon ?? undefined;
 
-            if (cdn && icon)
-                icon = cdn + icon;
+        if (cdn && icon)
+            icon = cdn + icon;
 
-            const html = <>
-                {icon && (
-                    <img src={icon} />
-                )}
+        const html = <>
+            {icon && (
+                <Image
+                    src={icon}
+                    width={32}
+                    height={32}
+                    alt="Installer Icon"
+                />
+            )}
+            {name}
+        </>;
 
-                {name}
-            </>;
-
-            installer_items.push({
-                link: url,
-                html: html,
-                new_tab: false
-            });
+        installer_items.push({
+            link: url,
+            html: html,
+            new_tab: false
         });
-    }
+    });
 
     // Compile source drop-down items.
     const source_items: Drop_Down_Menu_Type[] = [];
 
-    if (mod.ModSource && mod.ModSource.length > 0) {
-        mod.ModSource.map((src: any) => {
-            if (!src || !src.source || !src.sourceUrl || !src.query)
-                return;
-            
-            const name = src.source.name;
-            const url = "https://" + src.sourceUrl + "/" + src.query;
+    mod.ModSource.map((src) => {
+        if (!src || !src.source || !src.sourceUrl || !src.query)
+            return;
+        
+        const name = src.source.name;
+        const url = "https://" + src.sourceUrl + "/" + src.query;
 
-            let icon = src.source.icon ?? undefined;
+        let icon = src.source.icon ?? undefined;
 
-            if (cdn && icon)
-                icon = cdn + icon;
+        if (cdn && icon)
+            icon = cdn + icon;
 
-            const html = <>
-                {icon && (
-                    <img src={icon} />
-                )}
+        const html = <>
+            {icon && (
+                <Image
+                    src={icon}
+                    width={32}
+                    height={32}
+                    alt="Source Icon"
+                />
+            )}
 
-                {name}
-            </>;
+            {name}
+        </>;
 
-            source_items.push({
-                link: url,
-                html: html,
-                new_tab: true
-            });
+        source_items.push({
+            link: url,
+            html: html,
+            new_tab: true
         });
-    }
+    });
 
     return (
         <div key={mod.id} className={"modbrowser-grid-row " + addClasses}>
             <div className="modbrowser-grid-image">
-                <img src={banner} alt="Mod Banner" />
+                <Image
+                    src={banner}
+                    width={720}
+                    height={360}
+                    alt="Mod Banner"
+                />
                 {mod.ownerName && mod.ownerName.length > 0 && (
                     <div className="modbrowser-grid-image-owner">
                         <p>By {mod.ownerName}</p>
@@ -114,7 +125,12 @@ export default function ModRowGrid ({
             <div className="grow"></div>
             {catPar && (
                 <div className="modbrowser-grid-category">
-                    <img src={catParIcon} alt="Category Icon" />
+                    <Image
+                        src={catParIcon}
+                        width={32}
+                        height={32}
+                        alt="Category Icon"
+                    />
                     <span>
                         {catParLink ? (
                             <a href={catParLink}>{catPar.name}</a>
@@ -126,7 +142,12 @@ export default function ModRowGrid ({
             )}
             {cat && (
                 <div className="modbrowser-grid-category">
-                    <img src={catIcon} alt="Category Icon" />
+                    <Image
+                        src={catIcon}
+                        width={32}
+                        height={32}
+                        alt="Category Icon"
+                    />
                     <span>
                         {catLink ? (
                             <a href={catLink}>{cat.name}</a>

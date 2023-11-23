@@ -5,13 +5,14 @@ import { trpc } from "@utils/trpc";
 
 import DownArrow2 from "@components/icons/down_arrow2";
 import UpArrow2 from "@components/icons/up_arrow2";
+import { type ModRowBrowser, type ModViewItem } from "~/types/mod";
 
 export default function ModRating ({
     mod,
     classes,
     rating
 } : {
-    mod: any,
+    mod: ModRowBrowser | ModViewItem,
     classes?: string[],
     rating?: number
 }) {
@@ -40,7 +41,7 @@ export default function ModRating ({
         setDidRate(true);
     }
 
-    const myRatingMut = trpc.modRating.addModUserRating.useMutation();
+    const myRatingMut = trpc.modRating.add.useMutation();
 
     // Container classes.
     let classes_container = "mod-rating-container";

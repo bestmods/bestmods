@@ -1,4 +1,4 @@
-import { ReactNode } from "react"
+import { type ReactNode } from "react"
 import { type ModViewItem } from "~/types/mod"
 
 export default function ModTabs ({

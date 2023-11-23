@@ -1,4 +1,5 @@
 import { type Category } from "@prisma/client";
+import Image from "next/image";
 import Link from "next/link";
 import { type CategoryWithCount, type CategoryWithChildrenAndCounts } from "~/types/category";
 
@@ -30,7 +31,11 @@ export default function CategoryRow ({
     return (
         <div className={`category-row${className ? ` ${className}` : ``}`}>
             <Link href={view_url}>
-                <img src={icon} alt="Category icon" />
+                <Image
+                    src={icon}
+                    width={32}
+                    height={32}
+                    alt="Category icon" />
                 <span>
                     {name}
 

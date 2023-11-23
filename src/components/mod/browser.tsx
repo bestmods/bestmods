@@ -21,7 +21,7 @@ export default function ModBrowser ({
     let requireItems = true;
     const items: ModRowBrowser[] = [];
 
-    const { data, fetchNextPage } = trpc.mod.getAllModsBrowser.useInfiniteQuery({
+    const { data, fetchNextPage } = trpc.mod.getAllBrowser.useInfiniteQuery({
         categories: (categories) ? JSON.stringify(categories) : undefined,
         timeframe: filters?.timeframe,
         sort: filters?.sort,

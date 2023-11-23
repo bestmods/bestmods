@@ -1,4 +1,4 @@
-import React, { useState, type ReactNode } from "react";
+import React, { useState, type ReactNode, useContext, useEffect, createContext, type ChangeEvent } from "react";
 
 import { setCookie } from "cookies-next";
 
@@ -8,15 +8,18 @@ import Header from "@components/header";
 import MobileMenu from "@components/header/mobile_menu";
 import Login from "@components/login";
 import Background from "./background";
+import { ErrorCtx, SuccessCtx } from "@pages/_app";
+import Error from "./responses/error";
+import Success from "./responses/success";
 
 export type filterArgs = {
     timeframe: number
     sort: number
     search?: string
 
-    timeframeCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void)
-    sortCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void)
-    searchCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void)
+    timeframeCb: ((e: ChangeEvent<HTMLSelectElement>) => void)
+    sortCb: ((e: ChangeEvent<HTMLSelectElement>) => void)
+    searchCb: ((e: ChangeEvent<HTMLSelectElement>) => void)
 }
 
 export type displayArgs = {
@@ -25,13 +28,17 @@ export type displayArgs = {
     displayCb: (e: React.MouseEvent) => void
 }
 
-export const FilterCtx = React.createContext<filterArgs | null>(null);
-export const DisplayCtx = React.createContext<displayArgs | null>(null);
-export const CookiesCtx = React.createContext<{ [key: string]: string }>({});
+export const FilterCtx = createContext<filterArgs | null>(null);
+export const DisplayCtx = createContext<displayArgs | null>(null);
+export const CookiesCtx = createContext<{ [key: string]: string }>({});
+
+export const ViewPortCtx = createContext({
+    isMobile: false
+})
 
 export default function Main ({
     children,
-    classes,
+    className,
     background = "bg-gradient-to-b from-[#002736] to-[#00151b]",
     image = "/images/backgrounds/default.jpg",
     overlay = "bg-none md:bg-black/80",
@@ -40,7 +47,7 @@ export default function Main ({
     showFilters = false
 } : {
     children: ReactNode,
-    classes?: string,
+    className?: string,
     background?: string,
     image?: string,
     overlay?: string,
@@ -48,6 +55,28 @@ export default function Main ({
     cookies?: { [key: string]: string },
     showFilters?: boolean
 }) {
+    const errorCtx = useContext(ErrorCtx);
+    const successCtx = useContext(SuccessCtx);
+
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const checkResize = () => {
+                if (window.innerWidth < 640)
+                    setIsMobile(true);
+                else
+                    setIsMobile(false);
+            }
+
+            // Check for mobile now.
+            checkResize();
+
+            // Add event listener for resize events.
+            window.addEventListener("resize", checkResize);
+        }
+    }, [])
+    
     // Handle filtering and display options.
     const [timeframe, setTimeframe] = useState<number>(0);
     const [sort, setSort] = useState<number>(0);
@@ -107,37 +136,57 @@ export default function Main ({
     if (process.env.NEXT_PUBLIC_CDN_URL && !excludeCdn)
         image = process.env.NEXT_PUBLIC_CDN_URL + image;
 
+    const gId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+
     return (
-        <main key="main" className={classes ?? ""}>
-            {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
-                <GoogleAnalytics 
-                    id={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}
-                />
-            )}
-            <FilterCtx.Provider value={filters}>
-                <DisplayCtx.Provider value={display}>
-                    <CookiesCtx.Provider value={cookies ?? {}}>
-                        <div id="mobile-and-login">
-                            <MobileMenu />
-                            <Login />
-                        </div>
-
-                        <Background
-                            background={background}
-                            image={image}
-                            overlay={overlay}
+        <ViewPortCtx.Provider value={{
+            isMobile: isMobile
+        }}>
+            <CookiesCtx.Provider value={cookies ?? {}}>
+                <main key="main" className={className}>
+                    {gId && (
+                        <GoogleAnalytics 
+                            id={gId}
                         />
+                    )}
+                    <FilterCtx.Provider value={filters}>
+                        <DisplayCtx.Provider value={display}>
+                            <div id="mobile-and-login">
+                                <MobileMenu />
+                                <Login />
+                            </div>
 
-                        <Header
-                            showFilters={showFilters}
-                        />
+                            <Background
+                                background={background}
+                                image={image}
+                                overlay={overlay}
+                            />
 
-                        <div className="relative">
-                            {children}
-                        </div>
-                    </CookiesCtx.Provider>
-                </DisplayCtx.Provider>
-            </FilterCtx.Provider>
-        </main>
+                            <Header
+                                showFilters={showFilters}
+                            />
+
+                            {errorCtx?.title && errorCtx?.msg && (
+                                <Error
+                                    title={errorCtx.title}
+                                    msg={errorCtx.msg}
+                                />
+                            )}
+
+                            {successCtx?.title && successCtx?.msg && (
+                                <Success
+                                    title={successCtx.title}
+                                    msg={successCtx.msg}
+                                />
+                            )}
+
+                            <div className="relative">
+                                {children}
+                            </div>
+                        </DisplayCtx.Provider>
+                    </FilterCtx.Provider>
+                </main>
+            </CookiesCtx.Provider>
+        </ViewPortCtx.Provider>
     )
 }

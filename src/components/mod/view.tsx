@@ -12,6 +12,7 @@ import ModViewCredits from "./view/credits";
 import { Has_Perm } from "@utils/permissions";
 import Link from "next/link";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function ModView ({
     mod,
@@ -38,8 +39,8 @@ export default function ModView ({
     const [modVisibility, setModVisibility] = useState<boolean>(mod.visible);
 
     // Mutations.
-    const mod_hide_mut = trpc.mod.setModVisibility.useMutation();
-    const mod_del_mut = trpc.mod.delMod.useMutation();
+    const mod_hide_mut = trpc.mod.setVisibility.useMutation();
+    const mod_del_mut = trpc.mod.del.useMutation();
 
     // Generate installer drop-down items.
     const installer_items: Drop_Down_Menu_Type[] = [];
@@ -55,7 +56,12 @@ export default function ModView ({
 
         const html = <>
             {icon && (
-                <img src={icon} />
+                <Image
+                    src={icon}
+                    width={32}
+                    height={32}
+                    alt="Icon"
+                />
             )}
 
             {name}
@@ -82,7 +88,12 @@ export default function ModView ({
     return (
         <div>
             <div>
-                <img src={banner} alt="Mod Banner" />
+                <Image
+                    src={banner}
+                    width={720}
+                    height={360}
+                    alt="Mod Banner"
+                />
             </div>
 
             <h1>{mod.name}</h1>
@@ -92,19 +103,34 @@ export default function ModView ({
                     {mod.category.parent ? (
                         <>
                             <a href={catParLink ?? "/category"}>
-                                <img src={catParIcon} alt="Category Icon" />
+                                <Image
+                                    src={catParIcon}
+                                    width={32}
+                                    height={32}
+                                    alt="Category Icon"
+                                />
                                 <span>{mod.category.parent.name ?? "Category"}</span>
                             </a>
                             <span> → </span>
                             <a href={catLink ?? "/category"}>
-                                <img src={catIcon} alt="Category Icon" />
+                                <Image
+                                    src={catIcon}
+                                    width={32}
+                                    height={32}
+                                    alt="Category Icon"
+                                />
                                 <span>{mod.category.name ?? "Category"}</span>
                             </a>
                         </>
                     ) : (
                         <>
                             <a href={catLink ?? "/category"}>
-                                <img src={catIcon} alt="Category Icon" />
+                                <Image
+                                    src={catIcon}
+                                    width={32}
+                                    height={32}
+                                    alt="Category Icon" 
+                                />
                                 <span>{mod.category.name ?? "Category"}</span>
                             </a>
                         </>
