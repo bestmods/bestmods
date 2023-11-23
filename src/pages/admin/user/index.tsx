@@ -97,7 +97,7 @@ const UserRow: React.FC<{
             <td className="user-table-avatar">
                 {avatar && (
                     <Image
-                        src={avatar}
+                        src={`/${avatar}`}
                         width={32}
                         height={32}
                         alt="User Avatar"
