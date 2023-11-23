@@ -13,7 +13,7 @@ const modWithRelations = Prisma.validator<Prisma.ModArgs>()({
 
 export type ModWithRelations = Prisma.ModGetPayload<typeof modWithRelations>;
 
-const modRowBrowser = Prisma.validator<Prisma.ModArgs>()({
+export type ModRowBrowser = Prisma.ModGetPayload<{
     select: {
         id: true,
         url: true,
@@ -54,9 +54,7 @@ const modRowBrowser = Prisma.validator<Prisma.ModArgs>()({
         },
         ModRating: true
     }
-});
-
-export type ModRowBrowser = Prisma.ModGetPayload<typeof modRowBrowser> & {
+}> & {
     rating?: number
 };
 
@@ -84,4 +82,14 @@ export const ModViewItemInc = {
 
 export type ModViewItem = Prisma.ModGetPayload<{
     include: typeof ModViewItemInc
-}>
+}> & {
+    rating?: number
+}
+
+export type ModWithRating = Prisma.ModGetPayload<{
+    include: {
+        ModRating: true
+    }
+}> & {
+    rating?: number
+}
