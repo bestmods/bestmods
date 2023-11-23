@@ -8,7 +8,7 @@ import { prisma } from "@server/db/client";
 import MetaInfo from "@components/meta";
 import Main from "@components/main";
 import ModView from "@components/mod/view";
-import NotFound from "@components/responses/notfound";
+import NotFound from "@components/errors/notfound";
 
 import { Get_Mod_Rating } from "@utils/content/mod";
 

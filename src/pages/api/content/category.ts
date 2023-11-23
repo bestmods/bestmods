@@ -65,17 +65,21 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
             url,
             classes,
             icon,
+            banner,
             iremove,
+            bremove,
             has_bg 
         } : { 
-            parent_id?: number,
-            name?: string,
-            name_short?: string,
-            description?: string,
-            url?: string,
-            classes?: string,
-            icon?: string,
-            iremove?: boolean,
+            parent_id?: number
+            name?: string
+            name_short?: string
+            description?: string
+            url?: string
+            classes?: string
+            icon?: string
+            banner?: string
+            iremove?: boolean
+            bremove?: boolean
             has_bg?: boolean
         } = req.body;
 
@@ -114,7 +118,7 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
             }
         }
 
-        const [cat, success, err] = await Insert_Or_Update_Category(prisma, name, name_short, description, url, (update && id) ? Number(id) : undefined, icon, iremove, parent_id, classes, has_bg);
+        const [cat, success, err] = await Insert_Or_Update_Category(prisma, name, name_short, description, url, (update && id) ? Number(id) : undefined, icon, banner, iremove, bremove, parent_id, classes, has_bg);
 
         if (!success || !cat) {
             return res.status(400).json({

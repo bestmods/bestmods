@@ -9,7 +9,7 @@ import { type CategoryWithChildren } from "~/types/category";
 import { type Source } from "@prisma/client";
 
 import { prisma } from "../../server/db/client";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 
 import { trpc } from "@utils/trpc";
 import { Has_Perm } from "@utils/permissions";
@@ -17,21 +17,22 @@ import { AlertForm } from "@utils/alert";
 
 import EditIcon from "@components/icons/edit";
 import DeleteIcon from "@components/icons/delete";
+import Image from "next/image";
 
 export default function Page ({
-    authed,
     cats,
     srcs
 } : {
-    authed: boolean,
     cats: CategoryWithChildren[],
     srcs: Source[]
 }) {
+    const { data: session } = useSession();
+
     return (
         <>
             <MetaInfo />
             <Main>
-                {authed ? (
+                {Has_Perm(session, "admin") ? (
                     <div className="admin-index-container">
                         <div>
                             <div>
@@ -65,7 +66,7 @@ const Categories: React.FC<{
 
     const [success, setSuccess] = useState<string | undefined>(undefined);
 
-    const delCats = trpc.category.delCategory.useMutation();
+    const delCats = trpc.category.del.useMutation();
 
     return (
         <div>
@@ -84,7 +85,12 @@ const Categories: React.FC<{
                         return (
                             <div key={"cat-" + cat.id} className="admin-index-category">
                                 <div>
-                                    <img src={icon} alt="Category Icon" />
+                                    <Image
+                                        src={icon}
+                                        width={32}
+                                        height={32}
+                                        alt="Category Icon"
+                                    />
                                     <span>{cat.name}</span>
                                     <Link href={editLink} className="text-white hover:text-cyan-800 ml-2">
                                         <EditIcon />
@@ -111,7 +117,13 @@ const Categories: React.FC<{
 
                                             return (
                                                 <div key={"catchild-" + catChild.id}>
-                                                    <img src={iconChild} className="w-8 h-8" alt="Category Child Icon" />
+                                                    <Image
+                                                        src={iconChild}
+                                                        width={32}
+                                                        height={32}
+                                                        className="w-8 h-8" 
+                                                        alt="Category Child Icon"
+                                                    />
                                                     <span className="text-white ml-2">{catChild.name}</span>
                                                     <Link href={editLinkChild}>
                                                         <EditIcon />
@@ -158,7 +170,7 @@ const Sources: React.FC<{
 
     const [success, setSuccess] = useState<string | undefined>(undefined);
 
-    const delSrcs = trpc.source.delSource.useMutation();
+    const delSrcs = trpc.source.del.useMutation();
 
     return (
         <div>
@@ -177,7 +189,12 @@ const Sources: React.FC<{
                         return (
                             <div key={"src-" + src.url} className="admin-index-category">
                                 <div>
-                                    <img src={icon} alt="Source Icon" />
+                                    <Image
+                                        src={icon}
+                                        width={32}
+                                        height={32}
+                                        alt="Source Icon"
+                                    />
                                     <span>{src.name}</span>
                                     <Link href={editLink}>
                                         <EditIcon />
@@ -214,18 +231,14 @@ const Sources: React.FC<{
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    let authed = false;
     let cats: CategoryWithChildren[] = [];
     let srcs: Source[] = [];
 
     const session = await getSession(ctx);
 
-    const perm_check = session && (Has_Perm(session, "admin") || Has_Perm(session, "contributor"));
+    const perm_check = Has_Perm(session, "admin") || Has_Perm(session, "contributor");
 
-    if (session?.user && perm_check)
-        authed = true;
-
-    if (authed) {
+    if (perm_check) {
         cats = await prisma.category.findMany({
             where: {
                 parentId: null
@@ -240,7 +253,6 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     return {
         props: {
-            authed: authed,
             cats: cats,
             srcs: srcs
         }

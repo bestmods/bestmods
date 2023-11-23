@@ -7,20 +7,23 @@ import MetaInfo from "@components/meta";
 import { type User } from "@prisma/client";
 
 import { prisma } from "@server/db/client";
-import { getSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 import { trpc } from "@utils/trpc";
 import { Has_Perm } from "@utils/permissions";
+import NoAccess from "@components/errors/noaccess";
+import { getServerAuthSession } from "@server/common/get-server-auth-session";
+import Image from "next/image";
 
 export default function Page ({
-    authed,
     users,
     page_number
 } : {
-    authed: boolean,
-    users: User[],
+    users: User[]
     page_number: number
 }) {
+    const { data: session } = useSession();
+
     // Build list of page numbers (<3 before>, cur_page, <3 after>).
     const pages = Gen_Page_Numbers(page_number, 3);
 
@@ -31,7 +34,7 @@ export default function Page ({
             />
 
             <Main>
-                {authed ? (
+                {Has_Perm(session, "admin") ? (
                     <div className="container mx-auto">
                         <h1 className="page-title">User Management</h1>
                         {users.length > 0 ? (
@@ -46,7 +49,7 @@ export default function Page ({
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {users.map((user: any) => {
+                                    {users.map((user) => {
                                         return (
                                             <UserRow key={"user-" + user.id} user={user} />
                                         );
@@ -61,7 +64,7 @@ export default function Page ({
                             
                         )}
                         <div className="user-page-numbers">
-                            {pages.map((i: number) => {
+                            {pages.map((i) => {
                                 return (
                                     <Link key={"page-num-" + i} href={"/admin/user/?p=" + i}>{i.toString()}</Link>
                                 );
@@ -69,9 +72,7 @@ export default function Page ({
                         </div>
                     </div>
                 ) : (
-                    <div className="unauthorized-div">
-                        <p>You are not authorized to view this page!</p>
-                    </div>                    
+                    <NoAccess />                
                 )}
             </Main>
         </>
@@ -79,7 +80,7 @@ export default function Page ({
 }
 
 const UserRow: React.FC<{
-    user: any
+    user: User
 }> = ({
     user
 }) => {
@@ -89,13 +90,18 @@ const UserRow: React.FC<{
     // Actions.
     const edit_link = "/admin/user/edit/" + user.id;
 
-    const user_del_mut = trpc.user.delUser.useMutation();
+    const user_del_mut = trpc.user.del.useMutation();
 
     return (
         <tr>
             <td className="user-table-avatar">
                 {avatar && (
-                    <img src={avatar} alt="User Avatar" />
+                    <Image
+                        src={avatar}
+                        width={32}
+                        height={32}
+                        alt="User Avatar"
+                    />
                 )}
             </td>
             <td className="user-table-id">
@@ -155,17 +161,14 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     //const contributors_only = (ctx.query?.contributors_only) ? true : false;
     
     let users: User[] = [];
-    let authed = false;
 
     // Retrieve session.
-    const session = await getSession(ctx);
+    const session = await getServerAuthSession(ctx);
 
     // Permission check.
     const perm_check = session && Has_Perm(session, "admin");
 
-    if (perm_check) {
-        authed = true;
-        
+    if (perm_check) {        
         const offset = Number(users_per_page) * (page_number - 1);
 
         users = await prisma.user.findMany({
@@ -177,7 +180,6 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     return {
         props: {
             users: users,
-            authed: authed,
             page_number: page_number
         }
     }

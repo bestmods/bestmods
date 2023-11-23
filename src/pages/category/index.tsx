@@ -6,7 +6,7 @@ import MetaInfo from "@components/meta";
 import CategoryRow from "@components/category/row";
 
 import { prisma } from "@server/db/client";
-import { CategoryWithChildrenAndCounts } from "~/types/category";
+import { type CategoryWithChildrenAndCounts } from "~/types/category";
 
 export default function Page ({
     categories

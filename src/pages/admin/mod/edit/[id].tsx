@@ -1,17 +1,17 @@
 import Main from "@components/main";
 import MetaInfo from "@components/meta";
-import NoAccess from "@components/responses/noaccess";
+import NoAccess from "@components/errors/noaccess";
 import { getServerAuthSession } from "@server/common/get-server-auth-session";
 import { Has_Perm } from "@utils/permissions";
-import { GetServerSidePropsContext } from "next";
+import { type GetServerSidePropsContext } from "next";
 import { useSession } from "next-auth/react";
-import { CategoryWithChildren } from "~/types/category";
+import { type CategoryWithChildren } from "~/types/category";
 
 import { prisma } from "@server/db/client";
-import { Source } from "@prisma/client";
-import ModForm from "@components/forms/contributor/create_mod";
-import { ModWithRelations } from "~/types/mod";
-import NotFound from "@components/responses/notfound";
+import { type Source } from "@prisma/client";
+import ModForm from "@components/forms/mod/main";
+import { type ModWithRelations } from "~/types/mod";
+import NotFound from "@components/errors/notfound";
 
 export default function Page ({
     mod,
@@ -35,8 +35,8 @@ export default function Page ({
                         {mod ? (
                             <ModForm
                                 mod={mod}
-                                cats={categories}
-                                srcs={sources}
+                                categories={categories}
+                                sources={sources}
                             />
                         ) : (
                             <NotFound item="mod" />

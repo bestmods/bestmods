@@ -1,14 +1,15 @@
 import Main from "@components/main";
 import MetaInfo from "@components/meta";
-import NoAccess from "@components/responses/noaccess";
+import NoAccess from "@components/errors/noaccess";
 import { getServerAuthSession } from "@server/common/get-server-auth-session";
 import { Has_Perm } from "@utils/permissions";
-import { GetServerSidePropsContext } from "next";
+import { type GetServerSidePropsContext } from "next";
 import { useSession } from "next-auth/react";
 
 import { prisma } from "@server/db/client";
-import { Source } from "@prisma/client";
-import SourceForm from "@components/forms/contributor/create_source";
+import { type Source } from "@prisma/client";
+import SourceForm from "@components/forms/source/main";
+import NotFound from "@components/errors/notfound";
 
 export default function Page ({
     source
@@ -24,7 +25,13 @@ export default function Page ({
             />
             <Main>
                 {Has_Perm(session, "admin") ? (
-                    <SourceForm src={source} />
+                    <>
+                        {source ? (
+                            <SourceForm source={source} />
+                        ) : (
+                            <NotFound item="source" />
+                        )}
+                    </>
                 ) : (
                     <NoAccess />
                 )}

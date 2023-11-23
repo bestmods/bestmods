@@ -1,16 +1,16 @@
-import CategoryForm from "@components/forms/contributor/create_category";
+import CategoryForm from "@components/forms/category/main";
 import Main from "@components/main";
 import MetaInfo from "@components/meta";
-import NoAccess from "@components/responses/noaccess";
+import NoAccess from "@components/errors/noaccess";
 import { getServerAuthSession } from "@server/common/get-server-auth-session";
 import { Has_Perm } from "@utils/permissions";
-import { GetServerSidePropsContext } from "next";
+import { type GetServerSidePropsContext } from "next";
 import { useSession } from "next-auth/react";
-import { CategoryWithChildren } from "~/types/category";
+import { type CategoryWithChildren } from "~/types/category";
 
 import { prisma } from "@server/db/client";
-import { Category } from "@prisma/client";
-import NotFound from "@components/responses/notfound";
+import { type Category } from "@prisma/client";
+import NotFound from "@components/errors/notfound";
 
 export default function Page ({
     category,
@@ -31,8 +31,8 @@ export default function Page ({
                     <>
                         {category ? (
                             <CategoryForm
-                                cat={category}
-                                cats={categories}
+                                category={category}
+                                categories={categories}
                             />
                         ) : (
                             <NotFound item="category" />

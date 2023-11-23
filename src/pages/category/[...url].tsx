@@ -9,13 +9,13 @@ import ModBrowser from "@components/mod/browser";
 import { prisma } from "@server/db/client";
 
 import { type Category } from "@prisma/client";
-import { CategoryWithChildrenAndParent } from "~/types/category";
+import { type CategoryWithChildrenAndParent } from "~/types/category";
 
 export default function Page ({
     category,
     cookies
 } : {
-    category: any,
+    category?: CategoryWithChildrenAndParent,
     cookies: { [key: string]: string }
 }) {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
