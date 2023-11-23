@@ -26,7 +26,7 @@ export default function Background ({
             id="bg"
             className={background}
             style={{
-                backgroundImage: (!viewPort.isMobile && image) ? image : undefined
+                backgroundImage: (!viewPort.isMobile && image) ? `url('${image}')` : undefined
             }}
         >
         </div>
