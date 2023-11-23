@@ -7,7 +7,7 @@ import { z } from "zod";
 import { Delete_User, Insert_Or_Update_User } from "@utils/user";
 
 export const userRouter = router({
-    updateUser: adminProcedure
+    update: adminProcedure
         .input(z.object({
             id: z.string(),
 
@@ -29,7 +29,7 @@ export const userRouter = router({
                 })
             }
         }),
-    delUser: adminProcedure
+    del: adminProcedure
         .input(z.object({
             id: z.string()
         }))

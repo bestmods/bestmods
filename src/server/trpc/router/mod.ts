@@ -9,13 +9,13 @@ import { type ModRowBrowser } from "~/types/mod";
 import { Prisma } from "@prisma/client";
 
 export const modRouter = router({
-    addMod: contributorProcedure
+    add: contributorProcedure
         .input(z.object({
             id: z.number().optional(),
             visible: z.boolean().default(true),
 
-            owner_id: z.string().optional(),
-            owner_name: z.string().optional(),
+            ownerId: z.string().optional(),
+            ownerName: z.string().optional(),
 
             name: z.string(),
             banner: z.string().optional(),
@@ -24,7 +24,7 @@ export const modRouter = router({
 
             // The following should be parsed via Markdown Syntax.
             description: z.string(),
-            description_short: z.string(),
+            descriptionShort: z.string(),
             install: z.string().optional(),
 
             // Relation data (we try to replicate Prisma types for consistency).
@@ -69,17 +69,17 @@ export const modRouter = router({
         }))
         .mutation(async ({ ctx, input }) => {
             // Insert ot update mod.
-            const [mod, success, err] = await Insert_Or_Update_Mod(ctx.prisma, input.name, input.url, input.description, input.visible, input.id, undefined, input.owner_id, input.owner_name, input.banner, input.bremove, input.category, input.description_short, input.install, input.downloads, input.screenshots, input.sources, input.installers, input.credits);
+            const [mod, success, err] = await Insert_Or_Update_Mod(ctx.prisma, input.name, input.url, input.description, input.visible, input.id, undefined, input.ownerId, input.ownerName, input.banner, input.bremove, input.category, input.descriptionShort, input.install, input.downloads, input.screenshots, input.sources, input.installers, input.credits);
 
             // Check for error.
             if (!success || !mod) {
                 throw new TRPCError({
                     code: "PARSE_ERROR",
-                    message: err
+                    message: `Received error when adding mod. Error => ${err}`
                 });
             }
         }),
-    setModVisibility: contributorProcedure
+    setVisibility: contributorProcedure
         .input(z.object({
             id: z.number(),
             visible: z.boolean().default(true)
@@ -101,7 +101,7 @@ export const modRouter = router({
                 });
             }
         }),
-    delMod: contributorProcedure
+    del: contributorProcedure
         .input(z.object({
             id: z.number(),
         }))
@@ -119,7 +119,7 @@ export const modRouter = router({
                 });
             }
         }),
-    getAllModsBrowser: publicProcedure
+    getAllBrowser: publicProcedure
         .input(z.object({
             cursor: z.number().nullish(),
             count: z.number().default(10),

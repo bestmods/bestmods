@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server"
 import { z } from "zod";
 
 export const modRatingRouter = router({
-    addModUserRating: protectedProcedure
+    add: protectedProcedure
         .input(z.object({
             userId: z.string(),
             modId: z.number(),

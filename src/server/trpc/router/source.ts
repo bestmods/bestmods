@@ -6,7 +6,7 @@ import { z } from "zod";
 import { Delete_Source, Insert_Or_Update_Source } from "@utils/content/source";
 
 export const sourceRouter = router({
-    addSource: contributorProcedure
+    add: contributorProcedure
         .input(z.object({
             update: z.boolean().default(false),
             name: z.string(),
@@ -24,21 +24,21 @@ export const sourceRouter = router({
             if (!success || !src) {
                 throw new TRPCError({
                     code: "PARSE_ERROR",
-                    message: err
+                    message: `Received error when adding source. Error => ${err}`
                 });
             }
         }),
-    delSource: contributorProcedure
+    del: contributorProcedure
         .input(z.object({
             url: z.string()
         }))
         .mutation(async ({ ctx, input }) => {
-            const [success, error] = await Delete_Source(ctx.prisma, input.url);
+            const [success, err] = await Delete_Source(ctx.prisma, input.url);
 
             if (!success) {
                 throw new TRPCError({
                     code: "BAD_REQUEST",
-                    message: error
+                    message: `Received error when deleting source. Error => ${err}`
                 });
             }
         })

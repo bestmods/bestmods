@@ -90,7 +90,7 @@ export const modInputSchema = z.object({
     modId: z.string().nullable(),
     id: z.string().nullable(),
 
-    userId: z.number()
+    userId: z.string()
 })
 
 const ownsMod = t.middleware(async ({ ctx, rawInput, next }) => {
@@ -111,9 +111,9 @@ const ownsMod = t.middleware(async ({ ctx, rawInput, next }) => {
     const modId = input.modId ?? input.id;
 
     // Now retrieve our mod and compare to user ID.
-    const mod: any = ctx.prisma.mod.findFirst({
+    const mod = await ctx.prisma.mod.findFirst({
         select: {
-            owner: true
+            ownerId: true
         },
         where: {
             ownerId: modId
@@ -124,7 +124,7 @@ const ownsMod = t.middleware(async ({ ctx, rawInput, next }) => {
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
     // Are we valid?
-    if (mod.owner.id != input.userId)
+    if (!mod.ownerId || mod.ownerId != input.userId)
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
     return next({

@@ -6,43 +6,47 @@ import { z } from "zod";
 import { Delete_Category, Insert_Or_Update_Category } from "@utils/content/category";
 
 export const categoryRouter = router({
-    addCategory: contributorProcedure
+    add: contributorProcedure
         .input(z.object({
             id: z.number().optional(),
-            parent_id: z.number().nullable().default(null),
+            parentId: z.number().nullable().default(null),
+
             description: z.string().optional(),
             name: z.string(),
-            name_short: z.string(),
+            nameShort: z.string(),
             url: z.string(),
-            icon: z.string().optional(),
             classes: z.string().optional(),
 
+            banner: z.string().optional(),
+            icon: z.string().optional(),
+
+            bremove: z.boolean().default(false),
             iremove: z.boolean().default(false),
 
-            has_bg: z.boolean().default(false)
+            hasBg: z.boolean().default(false)
         }))
         .mutation(async ({ ctx, input }) => {
             // Use our helper funtion to insert our update category.
-            const [cat, success, err] = await Insert_Or_Update_Category(ctx.prisma, input.name, input.name_short, input.description, input.url, input.id ?? 0, input.icon, input.iremove, input.parent_id, input.classes, input.has_bg);
+            const [cat, success, err] = await Insert_Or_Update_Category(ctx.prisma, input.name, input.nameShort, input.description, input.url, input.id ?? 0, input.icon, input.banner, input.iremove, input.bremove, input.parentId, input.classes, input.hasBg);
 
             if (!success || !cat) {
                 throw new TRPCError({
                     code: "PARSE_ERROR",
-                    message: err
+                    message: `Retrieved error when adding category. Error => ${err}`
                 });
             }
         }),
-    delCategory: contributorProcedure
+    del: contributorProcedure
         .input(z.object({
             id: z.number()
         }))
         .mutation(async ({ ctx, input }) => {
-            const [success, error] = await Delete_Category(ctx.prisma, input.id);
+            const [success, err] = await Delete_Category(ctx.prisma, input.id);
 
             if (!success) {
                 throw new TRPCError({
                     code: "BAD_REQUEST",
-                    message: error
+                    message: `Received error when deleting category. Error => ${err}`
                 });
             }
         })
