@@ -90,7 +90,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     return {
         props: {
-            mod: mod,
+            mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === "bigint" ? v.toString() : v)),
             categories: categories,
             sources: sources
         }
