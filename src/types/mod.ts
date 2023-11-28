@@ -13,47 +13,49 @@ const modWithRelations = Prisma.validator<Prisma.ModArgs>()({
 
 export type ModWithRelations = Prisma.ModGetPayload<typeof modWithRelations>;
 
+export const ModRowBrowserSel = {
+    id: true,
+    url: true,
+    ownerName: true,
+    name: true,
+    description: true,
+    descriptionShort: true,
+    install: true,
+
+    banner: true,
+
+    updateAt: false,
+    createAt: false,
+    editAt: false,
+    needsRecounting: false,
+
+    totalDownloads: true,
+    totalViews: true,
+
+    owner: true,
+    
+    category: {
+        include: {
+            parent: true
+        }
+    },
+    ModSource: {
+        include: {
+            source: true
+        }
+    },
+    ModDownload: true,
+    ModScreenshot: true,
+    ModInstaller: {
+        include: {
+            source: true
+        }
+    },
+    ModRating: true
+}
+
 export type ModRowBrowser = Prisma.ModGetPayload<{
-    select: {
-        id: true,
-        url: true,
-        ownerName: true,
-        name: true,
-        description: true,
-        descriptionShort: true,
-        install: true,
-
-        banner: true,
-
-        updateAt: true,
-        createAt: true,
-        editAt: true,
-        needsRecounting: false,
-
-        totalDownloads: true,
-        totalViews: true,
-
-        owner: true,
-        
-        category: {
-            include: {
-                parent: true
-            }
-        },
-        ModSource: {
-            include: {
-                source: true
-            }
-        },
-        ModDownload: true,
-        ModScreenshot: true,
-        ModInstaller: {
-            include: {
-                source: true
-            }
-        },
-        ModRating: true
-    }
+    select: typeof ModRowBrowserSel
 }> & {
     rating?: number
 };

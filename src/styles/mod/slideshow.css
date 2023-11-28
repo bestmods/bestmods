@@ -1,0 +1,7 @@
+.mod-slideshow {
+    @apply grid;
+    @apply grid-cols-4;
+    @apply gap-x-4;
+    @apply gap-y-6;
+    @apply auto-rows-fr;
+}

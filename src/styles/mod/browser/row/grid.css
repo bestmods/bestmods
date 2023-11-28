@@ -14,8 +14,8 @@
     @apply md:w-96;
     @apply rounded;
     @apply bg-gradient-to-b;
-    @apply from-cyan-800;
-    @apply to-cyan-900;
+    @apply from-sky-700/80;
+    @apply to-sky-800/80;
     @apply flex;
     @apply flex-col;
     @apply shadow-lg;

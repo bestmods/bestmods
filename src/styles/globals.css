@@ -114,6 +114,7 @@
     /* Mods */
     @import "mod/view.css";
     @import "mod/rating.css";
+    @import "mod/slideshow.css";
     @import "mod/browser/filters.css";
     @import "mod/browser/cards.css";
     @import "mod/browser/row/grid.css";

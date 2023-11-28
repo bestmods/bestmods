@@ -122,7 +122,7 @@ export default function Main ({
 
                         <Header />
 
-                        <div className="w-full px-20 mx-auto">
+                        <div className="w-full px-20 mx-auto py-2">
                             {errorCtx?.title && errorCtx?.msg && (
                                 <Error
                                     title={errorCtx.title}

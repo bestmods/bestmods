@@ -11,7 +11,7 @@ import MagnifyingGlassIcon from "./icons/browse";
 
 export default function Header () {
     return (
-        <header className="flex gap-2 w-full bg-gray-900/90 p-2">
+        <header className="flex gap-2 w-full bg-cyan-950/80 p-2">
             <nav className="container mx-auto flex items-center gap-8">
                 <Link href="/">
                     <h1 className="flex gap-2">

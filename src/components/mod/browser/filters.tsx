@@ -3,7 +3,7 @@ import GridIcon from "@components/icons/grid"
 import SearchIcon from "@components/icons/search"
 import TableIcon from "@components/icons/table"
 import { setCookie } from "cookies-next"
-import { Dispatch, SetStateAction } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 
 export default function ModBrowserFilters ({
     setTimeframe,
@@ -20,45 +20,56 @@ export default function ModBrowserFilters ({
     display: string
     setDisplay: Dispatch<SetStateAction<string>>
 }) {
+    const [filtersOpen, setFiltersOpen] = useState(false);
+
     return (
         <form className="mod-filters flex flex-wrap justify-end gap-2">
-            <div className="hidden">
-                <select
-                    className="mod-filter-timeframe"
-                    onChange={(e) => {
-                        const val = e.target.value;
+            <div className={`z-10 bg-cyan-800 absolute top-0 left-0 w-1/3 p-6 h-full${!filtersOpen ? ` hidden`: ``}`}>
+                <h2>General</h2>
+                <div className="flex flex-col gap-2">
+                    <div className="flex flex-col">
+                        <label>Time Frame</label>
+                        <select
+                            className=""
+                            onChange={(e) => {
+                                const val = e.target.value;
 
-                        setTimeframe(Number(val));
-                    }}
-                >
-                    <option value="0">Hourly</option>
-                    <option value="1">Today</option>
-                    <option value="2">Week</option>
-                    <option value="3">Month</option>
-                    <option value="4">Year</option>
-                    <option value="5">All Time</option>
-                </select>
-                <select
-                    className="mod-filter-sort"
-                    onChange={(e) => {
-                        e.preventDefault();
+                                setTimeframe(Number(val));
+                            }}
+                        >
+                            <option value="0">Hourly</option>
+                            <option value="1">Today</option>
+                            <option value="2">Week</option>
+                            <option value="3">Month</option>
+                            <option value="4">Year</option>
+                            <option value="5">All Time</option>
+                        </select>
+                    </div>
+                    <div className="flex flex-col">
+                        <label>Sort</label>
+                        <select
+                            className=""
+                            onChange={(e) => {
+                                e.preventDefault();
 
-                        const val = e.target.value;
+                                const val = e.target.value;
 
-                        setSort(Number(val));
-                    }}
-                >
-                    <option value="0">Top Rated</option>
-                    <option value="1">Most Viewed</option>
-                    <option value="2">Most Downloaded</option>
-                    <option value="3">Most Recently Updated</option>
-                    <option value="4">Most Recently Created</option>
-                </select>
+                                setSort(Number(val));
+                            }}
+                        >
+                            <option value="0">Top Rated</option>
+                            <option value="1">Most Viewed</option>
+                            <option value="2">Most Downloaded</option>
+                            <option value="3">Most Recently Updated</option>
+                            <option value="4">Most Recently Created</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             <div className="flex flex-wrap gap-2 items-center">
                 <div className="relative w-[32rem]">
                     <input
-                        className="w-full pr-10 bg-gray-800 p-2 rounded-md focus:ring-2 focus:ring-cyan-800"
+                        className="w-full pr-10 bg-cyan-950/80 p-2 rounded-md focus:ring-2 focus:ring-cyan-800"
                         type="text"
                         placeholder="Search for your favorite mods!"
                         onChange={(e) => {
@@ -80,7 +91,7 @@ export default function ModBrowserFilters ({
                     onClick={(e) => {
                         e.preventDefault();
 
-                        // ...
+                        setFiltersOpen(!filtersOpen);
                     }}
                 >
                     <FilterIcon className="w-6 h-6 stroke-white" />
