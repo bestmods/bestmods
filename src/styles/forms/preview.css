@@ -1,8 +1,4 @@
-@tailwind utilities;
-
-@layer utilities {
-    .form-preview-mode-container {
-        @apply mx-auto;
-        @apply p-6;
-    }
+.form-preview-mode-container {
+    @apply mx-auto;
+    @apply p-6;
 }

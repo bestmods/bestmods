@@ -11,30 +11,31 @@ export default function ModTabs ({
     view?: string
 }) {
     // Links.
-    const overviewLink = "/view/" + mod.url;
-    const installLink = "/view/" + mod.url + "/install";
-    const sourcesLink = "/view/" + mod.url + "/sources";
-    const downloadsLink = "/view/" + mod.url + "/downloads";
-    const credits_link = "/view/" + mod.url + "/credits";
+    const baseUrl = `/view/${mod.url}`;
+    
+    const installLink = `${baseUrl}/install`;
+    const sourcesLink = `${baseUrl}/sources`;
+    const downloadsLink = `${baseUrl}/downloads`;
+    const creditsLink = `${baseUrl}/credits`;
 
     return (
-        <div className="mod-tab">
-            <div className="mod-tab-items">
-                <a href={overviewLink} className={`mod-button-item ${view == "overview" ? ` mod-button-item-active` : ``}`}>Overview</a>
+        <div className="flex flex-wrap sm:flex-nowrap gap-2">
+            <div className="flex flex-col gap-2">
+                <a href={baseUrl} className={`mod-tab-item${view == "overview" ? ` mod-tab-item-active` : ``}`}>Overview</a>
                 {mod.install && (
-                    <a href={installLink} className={`mod-button-item ${view == "install" ? ` mod-button-item-active` : ``}`}>Installation</a>
+                    <a href={installLink} className={`mod-tab-item${view == "install" ? ` mod-tab-item-active` : ``}`}>Installation</a>
                 )}
                 {mod.ModSource.length > 0 && (
-                    <a href={sourcesLink} className={`mod-button-item${view == "sources" ? ` mod-button-item-active` : ``}`}>Sources</a>
+                    <a href={sourcesLink} className={`mod-tab-item${view == "sources" ? ` mod-tab-item-active` : ``}`}>Sources</a>
                 )}
                 {mod.ModDownload.length > 0 && (
-                    <a href={downloadsLink} className={`mod-button-item${view == "downloads" ? ` mod-button-item-active` : ``}`}>Downloads</a>
+                    <a href={downloadsLink} className={`mod-tab-item${view == "downloads" ? ` mod-tab-item-active` : ``}`}>Downloads</a>
                 )}
                 {mod?.ModCredit?.length > 0 && (
-                    <a href={credits_link} className={`mod-button-item${view == "credits" ? ` mod-button-item-active` : ``}`}>Credits</a>
+                    <a href={creditsLink} className={`mod-tab-item${view == "credits" ? ` mod-tab-item-active` : ``}`}>Credits</a>
                 )}
             </div>
-            <div>
+            <div className="grow">
                 {children}
             </div>
         </div>

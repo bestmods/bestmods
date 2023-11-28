@@ -12,7 +12,6 @@ import { prisma } from "@server/db/client";
 import { Has_Perm } from "@utils/permissions";
 import { getServerAuthSession } from "@server/common/get-server-auth-session";
 
-
 export default function Page ({
     user
 } : {

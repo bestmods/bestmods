@@ -22,7 +22,7 @@ export default function Page ({
     return (
         <>
             <MetaInfo
-                title={mod ? `Viewing ${mod.name} Downloads - Best Mods` : "Not Found - Best Mods"}
+                title={`${mod?.name ?? `Not Found`} Downloads - Best Mods`}
                 description={mod?.descriptionShort ?? undefined}
             />
             <Main>

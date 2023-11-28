@@ -1,8 +1,5 @@
 import { useState } from "react";
 
-import NavItems from "./nav_items";
-import Filters from "../filters";
-
 import HamburgerIcon from "@components/icons/hamburger";
 import LeftArrowIcon from "@components/icons/left_arrow";
 
@@ -27,14 +24,8 @@ export default function MobileMenu () {
             </div>
             <div className={`${isOpen ? "block" : "hidden"} p-4`}>
                 <div className="text-white">
-                    <NavItems
-                        className="mobile-menu-nav-items"
-                    />
-                </div>
 
-                <Filters 
-                    className="!block"
-                />
+                </div>
             </div>
         </div>
     )

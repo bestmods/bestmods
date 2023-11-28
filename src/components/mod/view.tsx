@@ -13,6 +13,7 @@ import { Has_Perm } from "@utils/permissions";
 import Link from "next/link";
 import { useState } from "react";
 import Image from "next/image";
+import ModViewCategory from "./view/category";
 
 export default function ModView ({
     mod,
@@ -28,7 +29,7 @@ export default function ModView ({
 
     // Links.
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
-    const editLink = "/admin/add/mod/" + mod.url;
+    const editLink = `/admin/mod/edit/${mod.id.toString()}`;
 
     // Banner.
     let banner = cdn + "/images/default_mod_banner.png"
@@ -76,18 +77,9 @@ export default function ModView ({
     // Check rating.
     const onlyRating = ((mod.ModInstaller && mod.ModInstaller.length > 0) || (mod.ownerName && mod.ownerName.length > 0)) ? false : true;
 
-    // Generate category icons and links.
-    const defaultIcon = "/images/default_icon.png";
-
-    const catIcon = (mod.category && mod.category.icon) ? cdn + mod.category.icon : cdn + defaultIcon;
-    const catParIcon = (mod.category && mod.category.parent && mod.category.parent.icon) ? cdn + mod.category.parent.icon : cdn + defaultIcon;
-
-    const catParLink = (mod.category && mod.category.parent) ? "/category/" + mod.category.parent.url : null;
-    const catLink = ((mod.category) ? "/category" + ((mod.category.parent) ? "/" + mod.category.parent.url : "") + "/" + mod.category.url : null);
-
     return (
-        <div>
-            <div>
+        <div className="flex flex-col gap-2">
+            <div className="flex justify-center">
                 <Image
                     src={banner}
                     width={720}
@@ -96,56 +88,24 @@ export default function ModView ({
                 />
             </div>
 
-            <h1>{mod.name}</h1>
-
-            {mod.category && (
-                <div>
-                    {mod.category.parent ? (
-                        <>
-                            <a href={catParLink ?? "/category"}>
-                                <Image
-                                    src={catParIcon}
-                                    width={32}
-                                    height={32}
-                                    alt="Category Icon"
-                                />
-                                <span>{mod.category.parent.name ?? "Category"}</span>
-                            </a>
-                            <span> → </span>
-                            <a href={catLink ?? "/category"}>
-                                <Image
-                                    src={catIcon}
-                                    width={32}
-                                    height={32}
-                                    alt="Category Icon"
-                                />
-                                <span>{mod.category.name ?? "Category"}</span>
-                            </a>
-                        </>
-                    ) : (
-                        <>
-                            <a href={catLink ?? "/category"}>
-                                <Image
-                                    src={catIcon}
-                                    width={32}
-                                    height={32}
-                                    alt="Category Icon" 
-                                />
-                                <span>{mod.category.name ?? "Category"}</span>
-                            </a>
-                        </>
-                    )}
-                </div>
-            )}
+            <div className="flex justify-center">
+                <h1>{mod.name}</h1>
+            </div>
 
             <ModTabs
                 mod={mod}
                 view={view}
             >
-                <div className="flex flex-col p-2 gap-2">
+                <div className="flex flex-col p-4 gap-2 bg-gray-800/80">
                     <div className={`flex flex-wrap gap-2 ${onlyRating ? "justify-end" : "justify-between"}`}>
                         {mod.ownerName && mod.ownerName.length > 0 && (
-                            <div id="mod-owner">
+                            <div className="flex flex-col gap-2">
+                                {mod.category && (
+                                    <ModViewCategory
+                                        cat={mod.category}
+                                        catPar={mod.category?.parent}
+                                    />
+                                )}
                                 <p>Maintained By <span className="font-bold">{mod.ownerName}</span></p>
                             </div>
                         )}
@@ -181,7 +141,7 @@ export default function ModView ({
                         )}
                     </div>
                     {session && Has_Perm(session, "contributor") && (
-                        <div className="">
+                        <div className="flex flex-wrap justify-center gap-4">
                             <Link
                                 className="btn btn-primary" 
                                 href={editLink}

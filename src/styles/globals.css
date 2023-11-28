@@ -2,53 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Main */
-@import "main/header.css";
-@import "main/login_mobie.css";
-@import "main/mobile.css";
-
-@import "main/header/filters.css";
-
-/* Mod Browser */
-@import "modbrowser/cards.css";
-@import "modbrowser/table.css";
-@import "modbrowser/grid.css";
-
-
-/* Components */
-@import "components/background.css";
-@import "components/loading.css";
-@import "components/notfound.css";
-@import "components/unauthorized.css";
-@import "components/buttons.css";
-@import "components/alerts.css";
-@import "components/drop_down.css";
-@import "components/markdown.css";
-
-/* Forms */
-@import "forms/main.css";
-@import "forms/preview.css";
-
-@import "forms/content/mod.css";
-@import "forms/content/category.css";
-@import "forms/content/source.css";
-
-@import "forms/user/permissions.css";
-
-/* Users */
-@import "user/table.css";
-
-/* Categories */
-@import "category/index.css";
-@import "category/row.css";
-
-/* Mods */
-@import "mod/view.css";
-@import "mod/rating.css";
-
-/* Admin Area */
-@import "admin/index.css";
-
 @layer base {
     /* Main */
     main {
@@ -57,6 +10,49 @@
         @apply flex-col;
         @apply pb-20;
         @apply text-gray-200;
+    }
+
+    p {
+        @apply leading-5;
+    }
+
+    a {
+        @apply text-gray-50;
+    }
+
+    a:hover {
+        @apply text-blue-300;
+    }
+
+    hr {
+        @apply border-t-2;
+        @apply border-cyan-900;
+    }
+
+    h1, h2, h3, h4, h5 {
+        @apply font-bold;
+        @apply text-white;
+        @apply leading-10;
+    }
+    
+    h1 {
+        @apply text-4xl;
+    }
+    
+    h2 {
+        @apply text-3xl;
+    }
+    
+    h3 {
+        @apply text-2xl;
+    }
+    
+    h4 {
+        @apply text-xl;
+    }
+    
+    h5 {
+        @apply text-lg;
     }
 
     /* Scroll Bar */
@@ -80,11 +76,53 @@
     }
 }
 
-@layer utilities {
-    .page-title {
-        @apply text-3xl;
-        @apply font-bold;
-        @apply text-white;
-    }
+@layer components {
+    /* Main */
+    @import "main/header.css";
+    @import "main/login_mobie.css";
+    @import "main/mobile.css";
+
+    @import "main/header/filters.css";
+
+    /* Components */
+    @import "components/background.css";
+    @import "components/loading.css";
+    @import "components/notfound.css";
+    @import "components/unauthorized.css";
+    @import "components/buttons.css";
+    @import "components/alerts.css";
+    @import "components/drop_down.css";
+    @import "components/markdown.css";
+
+    /* Forms */
+    @import "forms/main.css";
+    @import "forms/preview.css";
+
+    @import "forms/content/mod.css";
+    @import "forms/content/category.css";
+    @import "forms/content/source.css";
+
+    @import "forms/user/permissions.css";
+
+    /* Users */
+    @import "user/table.css";
+
+    /* Categories */
+    @import "category/index.css";
+    @import "category/row.css";
+
+    /* Mods */
+    @import "mod/view.css";
+    @import "mod/rating.css";
+    @import "mod/browser/filters.css";
+    @import "mod/browser/cards.css";
+    @import "mod/browser/row/grid.css";
+    @import "mod/browser/row/table.css";
+
+    /* Admin Area */
+    @import "admin/index.css";
 }
 
+@layer utilities {
+    @import "utils/mod/tabs.css";
+}

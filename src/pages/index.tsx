@@ -16,7 +16,6 @@ export default function Page ({
             <MetaInfo />
             <Main
                 cookies={cookies}
-                showFilters={true}
             >
                 <ModBrowser visible={true} />
             </Main>

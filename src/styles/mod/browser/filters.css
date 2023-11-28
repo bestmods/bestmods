@@ -1,0 +1,6 @@
+.mod-browser-filter-btn {
+    @apply bg-cyan-800;
+    @apply hover:bg-cyan-700;
+    @apply p-2;
+    @apply rounded;
+}

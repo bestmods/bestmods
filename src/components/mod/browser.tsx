@@ -1,13 +1,14 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 
 import InfiniteScroll from "react-infinite-scroller";
 
-import { FilterCtx, CookiesCtx } from "@components/main";
+import { CookiesCtx } from "@components/main";
 import ModRow from "./browser/row";
 import { trpc } from "@utils/trpc";
 import LoadingIcon from "@components/icons/loading";
 
 import { type ModRowBrowser } from "~/types/mod";
+import ModBrowserFilters from "./browser/filters";
 
 export default function ModBrowser ({
     categories,
@@ -16,17 +17,20 @@ export default function ModBrowser ({
     categories?: Array<number> | null,
     visible?: boolean | null
 }) {
-    const filters = useContext(FilterCtx);
+    // Filters
+    const [timeframe, setTimeframe] = useState(0);
+    const [sort, setSort] = useState(0);
+    const [search, setSearch] = useState<string | undefined>(undefined);
 
     let requireItems = true;
     const items: ModRowBrowser[] = [];
 
     const { data, fetchNextPage } = trpc.mod.getAllBrowser.useInfiniteQuery({
         categories: (categories) ? JSON.stringify(categories) : undefined,
-        timeframe: filters?.timeframe,
-        sort: filters?.sort,
-        search: filters?.search,
-        visible: (visible != null) ? visible : true
+        timeframe: timeframe,
+        sort: sort,
+        search: search || undefined,
+        visible: visible ?? true
     }, {
         getNextPageParam: (lastPage) => lastPage.next_cur,
     });
@@ -46,14 +50,20 @@ export default function ModBrowser ({
     }
 
     // Figure out which display.
-    let display = "grid";
     const cookies = useContext(CookiesCtx);
 
-    if (cookies && cookies["bm_display"] != undefined && cookies["bm_display"] != "grid")
-        display = "table";
+    const [display, setDisplay] = useState(cookies?.["bm_display"] ?? "grid");
 
     return (
-        <div className="mx-auto w-full sm:w-4/5">
+        <div className="flex flex-col gap-4">
+            <ModBrowserFilters
+                setTimeframe={setTimeframe}
+                setSort={setSort}
+                setSearch={setSearch}
+
+                display={display}
+                setDisplay={setDisplay}
+            />
             <InfiniteScroll
                 pageStart={0}
                 className={display + `View${(items.length < 1) ? " !grid-cols-1 sm:!grid-cols-1" : ""}`}

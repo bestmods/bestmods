@@ -1,96 +1,92 @@
-@tailwind components;
+.content-markdown {
+    @apply text-gray-200;
+    @apply break-all;
+}
 
-@layer components {
-    .content-markdown {
-        @apply text-gray-200;
-        @apply break-all;
-    }
+.content-markdown > strong {
+    @apply font-bold;
+}
 
-    .content-markdown > strong {
-        @apply font-bold;
-    }
+.content-markdown h1,
+.content-markdown h2,
+.content-markdown h3,
+.content-markdown h4,
+.content-markdown h5,
+.content-markdown h6 {
+    @apply font-bold;
+    @apply text-white;
+}
 
-    .content-markdown h1,
-    .content-markdown h2,
-    .content-markdown h3,
-    .content-markdown h4,
-    .content-markdown h5,
-    .content-markdown h6 {
-        @apply font-bold;
-        @apply text-white;
-    }
+.content-markdown pre{
+    @apply mt-1;
+    @apply mb-1;
+    @apply p-4;
+    @apply m-1;
+    @apply bg-cyan-800/80;
+    @apply rounded-sm;
+    @apply inline-block;
+    @apply break-all;
+}
 
-    .content-markdown pre{
-        @apply mt-1;
-        @apply mb-1;
-        @apply p-4;
-        @apply m-1;
-        @apply bg-cyan-800/80;
-        @apply rounded-sm;
-        @apply inline-block;
-        @apply break-all;
-    }
+.content-markdown code {
+    @apply p-1;
+    @apply m-1;
+    @apply bg-cyan-800/80;
+    @apply rounded-sm;
+    @apply inline-block;
+    @apply break-all;
+}
 
-    .content-markdown code {
-        @apply p-1;
-        @apply m-1;
-        @apply bg-cyan-800/80;
-        @apply rounded-sm;
-        @apply inline-block;
-        @apply break-all;
-    }
+.content-markdown pre > code {
+    @apply !p-0;
+    @apply !m-0;
+    @apply !bg-none;
+    @apply !bg-transparent;
+    @apply !rounded-none;
+    @apply !whitespace-pre-line;
+}
 
-    .content-markdown pre > code {
-        @apply !p-0;
-        @apply !m-0;
-        @apply !bg-none;
-        @apply !bg-transparent;
-        @apply !rounded-none;
-        @apply !whitespace-pre-line;
-    }
+.content-markdown h1 {
+    @apply text-5xl;
+}
 
-    .content-markdown h1 {
-        @apply text-5xl;
-    }
+.content-markdown h2 {
+    @apply text-4xl;
+}
 
-    .content-markdown h2 {
-        @apply text-4xl;
-    }
+.content-markdown h3 {
+    @apply text-3xl;
+}
 
-    .content-markdown h3 {
-        @apply text-3xl;
-    }
+.content-markdown h4 {
+    @apply text-2xl;
+}
 
-    .content-markdown h4 {
-        @apply text-2xl;
-    }
+.content-markdown h4 {
+    @apply text-xl;
+}
 
-    .content-markdown h4 {
-        @apply text-xl;
-    }
+.content-markdown h5 {
+    @apply text-lg;
+}
 
-    .content-markdown h5 {
-        @apply text-lg;
-    }
+.content-markdown ul, ol {
+    padding: revert;
+    margin: revert;
+}
 
-    .content-markdown ul, ol {
-        padding: revert;
-        margin: revert;
-    }
+.content-markdown ul {
+    @apply list-disc;
+}
 
-    .content-markdown ul {
-        @apply list-disc;
-    }
+.content-markdown ol {
+    @apply list-decimal;
+}
 
-    .content-markdown ol {
-        @apply list-decimal;
-    }
+.content-markdown p {
+    @apply mb-5;
+}
 
-    .content-markdown p {
-        @apply mb-5;
-    }
-
-    .content-markdown a:not(.modDownload) {
-        @apply underline;
-    }
+.content-markdown a:not(.modDownload) {
+    @apply underline;
 }

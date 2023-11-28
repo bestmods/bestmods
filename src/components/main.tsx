@@ -12,23 +12,12 @@ import { ErrorCtx, SuccessCtx } from "@pages/_app";
 import Error from "./responses/error";
 import Success from "./responses/success";
 
-export type filterArgs = {
-    timeframe: number
-    sort: number
-    search?: string
-
-    timeframeCb: ((e: ChangeEvent<HTMLSelectElement>) => void)
-    sortCb: ((e: ChangeEvent<HTMLSelectElement>) => void)
-    searchCb: ((e: ChangeEvent<HTMLSelectElement>) => void)
-}
-
 export type displayArgs = {
     display: string
 
     displayCb: (e: React.MouseEvent) => void
 }
 
-export const FilterCtx = createContext<filterArgs | null>(null);
 export const DisplayCtx = createContext<displayArgs | null>(null);
 export const CookiesCtx = createContext<{ [key: string]: string }>({});
 
@@ -43,8 +32,7 @@ export default function Main ({
     image = "/images/backgrounds/default.jpg",
     overlay = "bg-none md:bg-black/80",
     excludeCdn = false,
-    cookies,
-    showFilters = false
+    cookies
 } : {
     children: ReactNode,
     className?: string,
@@ -52,8 +40,7 @@ export default function Main ({
     image?: string,
     overlay?: string,
     excludeCdn?: boolean,
-    cookies?: { [key: string]: string },
-    showFilters?: boolean
+    cookies?: { [key: string]: string }
 }) {
     const errorCtx = useContext(ErrorCtx);
     const successCtx = useContext(SuccessCtx);
@@ -77,26 +64,7 @@ export default function Main ({
         }
     }, [])
     
-    // Handle filtering and display options.
-    const [timeframe, setTimeframe] = useState<number>(0);
-    const [sort, setSort] = useState<number>(0);
-    const [search, setSearch] = useState<string | undefined>(undefined);
     const [displayStr, setDisplay] = useState((cookies) ? cookies["bm_display"] ?? "grid" : "grid");
-
-    const timeframeCb = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setTimeframe(Number(e.target.value));
-    };
-
-    const sortCb = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSort(Number(e.target.value));
-    };
-
-    const searchCb = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        if (e.target.value.length > 0)
-            setSearch(e.target.value);
-        else
-            setSearch(undefined);
-    };
 
     const displayCb = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -117,15 +85,6 @@ export default function Main ({
                 cookies["bm_display"] = "table";
         }
     }
-
-    const filters: filterArgs = {
-        timeframe: timeframe,
-        sort: sort,
-        search: search,
-        timeframeCb: timeframeCb,
-        sortCb: sortCb,
-        searchCb: searchCb
-    };
 
     const display: displayArgs = {
         display: displayStr,
@@ -149,23 +108,21 @@ export default function Main ({
                             id={gId}
                         />
                     )}
-                    <FilterCtx.Provider value={filters}>
-                        <DisplayCtx.Provider value={display}>
-                            <div id="mobile-and-login">
-                                <MobileMenu />
-                                <Login />
-                            </div>
+                    <DisplayCtx.Provider value={display}>
+                        <div id="mobile-and-login">
+                            <MobileMenu />
+                            <Login />
+                        </div>
 
-                            <Background
-                                background={background}
-                                image={image}
-                                overlay={overlay}
-                            />
+                        <Background
+                            background={background}
+                            image={image}
+                            overlay={overlay}
+                        />
 
-                            <Header
-                                showFilters={showFilters}
-                            />
+                        <Header />
 
+                        <div className="w-full px-20 mx-auto">
                             {errorCtx?.title && errorCtx?.msg && (
                                 <Error
                                     title={errorCtx.title}
@@ -179,12 +136,9 @@ export default function Main ({
                                     msg={successCtx.msg}
                                 />
                             )}
-
-                            <div className="relative">
-                                {children}
-                            </div>
-                        </DisplayCtx.Provider>
-                    </FilterCtx.Provider>
+                            {children}
+                        </div>
+                    </DisplayCtx.Provider>
                 </main>
             </CookiesCtx.Provider>
         </ViewPortCtx.Provider>

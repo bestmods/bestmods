@@ -1,9 +1,5 @@
-@tailwind utilities;
-
-@layer utilities {
-    #mobile-and-login {
-        @apply flex;
-        @apply flex-wrap;
-        @apply justify-between;
-    }
+#mobile-and-login {
+    @apply flex;
+    @apply flex-wrap;
+    @apply justify-between;
 }
