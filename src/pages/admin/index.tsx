@@ -13,7 +13,6 @@ import { getSession, useSession } from "next-auth/react";
 
 import { trpc } from "@utils/trpc";
 import { Has_Perm } from "@utils/permissions";
-import { AlertForm } from "@utils/alert";
 
 import EditIcon from "@components/icons/edit";
 import DeleteIcon from "@components/icons/delete";
@@ -33,22 +32,22 @@ export default function Page ({
             <MetaInfo />
             <Main>
                 {Has_Perm(session, "admin") ? (
-                    <div className="admin-index-container">
-                        <div>
-                            <div>
-                                <h3>View Users</h3>
-                                <p>View and modify users <Link href="/admin/user/">here!</Link></p>
-                            </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 justify-items-center">
+                        <div className="p-4">
+                            <h2>View Users</h2>
+                            <p>View and modify users <Link href="/admin/user/">here!</Link></p>
                         </div>
-                        <div>
+                        <div className="p-4">
+                            <h2>Categories</h2>
                             <Categories cats={cats} />
                         </div>
-                        <div>
+                        <div className="p-4">
+                            <h2>Sources</h2>
                             <Sources srcs={srcs} />
                         </div>
                     </div>
                 ) : (
-                    <div className="unauthorized-div">
+                    <div>
                         <p>You are not authorized to view this page.</p>
                     </div>
                 )}
@@ -64,18 +63,10 @@ const Categories: React.FC<{
 }) => {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
-    const [success, setSuccess] = useState<string | undefined>(undefined);
-
     const delCats = trpc.category.del.useMutation();
 
     return (
         <div>
-            <AlertForm
-                success={success}
-            />
-
-            <h3>Categories</h3>
-
             {cats.length > 0 ? (
                 <>
                     {cats.map((cat) => {
@@ -102,8 +93,6 @@ const Categories: React.FC<{
                                             delCats.mutate({
                                                 id: cat.id
                                             });
-
-                                            setSuccess("Deleted category #" + cat.id + " (" + cat.name + ")!");
                                         }
                                     }}>
                                         <DeleteIcon />
@@ -133,8 +122,6 @@ const Categories: React.FC<{
 
                                                         if (confirm("Are you sure?")) {
                                                             delCats.mutate({ id: catChild.id });
-
-                                                            setSuccess("Deleted child category #" + catChild.id + " (" + catChild.name + ")!");
                                                         }
                                                     }}>
                                                         <DeleteIcon />
@@ -168,18 +155,10 @@ const Sources: React.FC<{
 }) => {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
-    const [success, setSuccess] = useState<string | undefined>(undefined);
-
     const delSrcs = trpc.source.del.useMutation();
 
     return (
         <div>
-            <AlertForm
-                success={success}
-            />
-
-            <h3>Sources</h3>
-
             {srcs.length > 0 ? (
                 <>
                     {srcs.map((src) => {
@@ -206,8 +185,6 @@ const Sources: React.FC<{
                                             delSrcs.mutate({
                                                 url: src.url
                                             });
-
-                                            setSuccess("Deleted source '" + src.url + "' (" + src.name + ")!");
                                         }
                                     }}>
                                         <DeleteIcon />

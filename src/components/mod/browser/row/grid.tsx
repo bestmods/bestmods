@@ -1,6 +1,6 @@
 import { type Category } from "@prisma/client";
 
-import ModRatingRender from "@components/mod/rating/render";
+import Rating from "@components/mod/rating";
 
 import DropDown, { type Drop_Down_Menu_Type } from "@components/drop_down";
 import Link from "next/link";
@@ -9,10 +9,11 @@ import EyeIcon from "@components/icons/eye";
 import DownloadIcon from "@components/icons/download";
 import { type ModRowBrowser } from "~/types/mod";
 import Image from "next/image";
+import IconAndText from "@components/icon_and_text";
 
 export default function ModRowGrid ({
     mod,
-    addClasses,
+    className,
     banner,
     descShort,
     cat,
@@ -24,15 +25,15 @@ export default function ModRowGrid ({
     viewLink
 } : {
     mod: ModRowBrowser,
-    addClasses: string,
-    banner: string,
-    descShort: string,
-    cat?: Category | null,
-    catPar?: Category | null,
-    catParIcon: string,
-    catParLink: string | null,
-    catIcon: string,
-    catLink: string | null,
+    className?: string
+    banner: string
+    descShort: string
+    cat?: Category | null
+    catPar?: Category | null
+    catParIcon: string
+    catParLink: string | null
+    catIcon: string
+    catLink: string | null
     viewLink: string
 }) {
     const cdn: string | undefined = process.env.NEXT_PUBLIC_CDN_URL;
@@ -64,7 +65,8 @@ export default function ModRowGrid ({
         installer_items.push({
             link: url,
             html: html,
-            new_tab: false
+            new_tab: false,
+            className: "font-normal"
         });
     });
 
@@ -99,98 +101,93 @@ export default function ModRowGrid ({
         source_items.push({
             link: url,
             html: html,
-            new_tab: true
+            new_tab: true,
+            className: "font-normal"
         });
     });
 
     return (
-        <div key={mod.id} className={"modbrowser-grid-row " + addClasses}>
-            <div className="modbrowser-grid-image">
+        <div
+            key={mod.id}
+            className={`${className ?`${className} ` : ``}group rounded bg-bestmods-2/80 flex flex-col shadow-lg ring-4 ring-bestmods-3/80 hover:ring-bestmods-4/80 duration-300`}
+        >
+            <div className="relative w-full h-64 max-h-64">
                 <Image
                     src={banner}
                     width={720}
                     height={360}
                     alt="Mod Banner"
+                    className="w-full h-full rounded-t brightness-[75%] group-hover:brightness-100 group-hover:duration-500"
                 />
                 {mod.ownerName && mod.ownerName.length > 0 && (
-                    <div className="modbrowser-grid-image-owner">
-                        <p>By {mod.ownerName}</p>
+                    <div className="absolute bottom-0 left-0 h-8 pr-4 rounded-tr bg-slate-700/80 hover:bg-black/80 hover:font-bold flex items-center text-white text-sm">
+                        <p className="ml-1">By {mod.ownerName}</p>
                     </div>
                 )}
             </div>
-            <div className="modbrowser-grid-main">
-                <h3><a href={viewLink}>{mod.name}</a></h3>
-                <p>{descShort}</p>
+            <div className="p-2 grow text-ellipsis overflow-clip w-full">
+                <h3 className="text-center"><a href={viewLink}>{mod.name}</a></h3>
+                <p className="text-sm">{descShort}</p>
             </div>
-            <div className="grow"></div>
-            {catPar && (
-                <div className="modbrowser-grid-category">
-                    <Image
-                        src={catParIcon}
-                        width={32}
-                        height={32}
-                        alt="Category Icon"
+            {catPar && catParLink && (
+                <Link
+                    href={catParLink}
+                    className="p-2"
+                >
+                    <IconAndText
+                        icon={catParIcon}
+                        text={<>{catPar.name}</>}
+                        alt="Parent Category Icon"
+                        imgClassName="w-8 h-8 rounded"
                     />
-                    <span>
-                        {catParLink ? (
-                            <a href={catParLink}>{catPar.name}</a>
-                        ) : (
-                            <span>{catPar.name}</span>
-                        )}
-                    </span>
-                </div>
+                </Link>
             )}
-            {cat && (
-                <div className="modbrowser-grid-category">
-                    <Image
-                        src={catIcon}
-                        width={32}
-                        height={32}
+            {cat && catLink && (
+                <Link
+                    href={catLink}
+                    className="p-2"
+                >
+                    <IconAndText
+                        icon={catIcon}
+                        text={<>{cat.name}</>}
                         alt="Category Icon"
+                        imgClassName="w-8 h-8 rounded"
                     />
-                    <span>
-                        {catLink ? (
-                            <a href={catLink}>{cat.name}</a>
-                        ) : (
-                            <span>{cat.name}</span>
-                        )}
-                    </span>
-                </div>
+                </Link>
             )}
-            <div className="modbrowser-grid-stats">
-                <div className="modbrowser-grid-stats-views">
-                    <EyeIcon
-                        className={"w-4 h-4"}
-                    />
-                    <span className="text-white text-sm">{mod.totalViews.toString()}</span>
-                </div>
+            <div className="p-2 flex justify-between items-center">
+                <IconAndText
+                    icon={<EyeIcon className="w-4 h-4 stroke-white" />}
+                    text={<span className="text-sm">{mod.totalViews.toString()}</span>}
+                />
 
-                <ModRatingRender
+                <Rating
                     mod={mod}
                     rating={mod.rating}
                 />
 
-                <div className="modbrowser-grid-stats-downloads">
-                    <DownloadIcon
-                        className={"w-4 h-4"}
-                    />
-                    <span>{mod.totalDownloads.toString()}</span>
-                </div>
+                <IconAndText
+                    icon={<DownloadIcon className="w-4 h-4" />}
+                    text={<span className="text-sm">{mod.totalDownloads.toString()}</span>}
+                />
             </div>
-            <div className="modbrowser-grid-links">
-                <Link href={viewLink}>View</Link>
+            <div className="flex justify-between items-center text-center bg-bestmods-3/80 rounded-b">
+                <Link
+                    href={viewLink}
+                    className="mod-grid-button"
+                >View</Link>
                 {installer_items.length > 0 && (
                     <DropDown
                         html={<>Install</>}
                         drop_down_items={installer_items}
-                        className={"w-1/3"}
+                        className="mod-grid-button"
                     />
                 )}
                 {source_items.length > 0 && (
                     <DropDown
                         html={<>Sources</>}
                         drop_down_items={source_items}
-                        className={"w-1/3"}
+                        className="mod-grid-button"
                     />
                 )}
             </div>

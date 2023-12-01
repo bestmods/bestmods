@@ -32,8 +32,6 @@ export default function ModRow ({
     const catParLink = (cat_par) ? "/category/" + cat_par.url : null;
     const catLink = ((cat) ? "/category" + ((cat_par) ? "/" + cat_par.url : "") + "/" + cat.url : null);
 
-    // Generate classes.
-    const addClasses = (cat && cat.classes) ? " " + cat.classes : "";
 
     // Handle short description.
     const descShort = String(mod.descriptionShort);
@@ -43,7 +41,6 @@ export default function ModRow ({
             {display == "grid" ? (
                 <ModRowGrid
                     mod={mod}
-                    addClasses={addClasses}
                     banner={banner}
                     descShort={descShort}
                     cat={cat}
@@ -57,7 +54,6 @@ export default function ModRow ({
             ) : (
                 <ModRowTable
                     mod={mod}
-                    addClasses={addClasses}
                     banner={banner}
                     descShort={descShort}
                     cat={cat}

@@ -23,6 +23,13 @@
     a:hover {
         @apply text-blue-300;
     }
+    
+    header {
+        & > nav > * {
+            @apply p-2;
+            @apply h-full;
+        }
+    }
 
     hr {
         @apply border-t-2;
@@ -77,53 +84,10 @@
 }
 
 @layer components {
-    /* Main */
-    @import "main/header.css";
-    @import "main/login_mobie.css";
-    @import "main/mobile.css";
-
-    @import "main/header/filters.css";
-
-    /* Components */
-    @import "components/background.css";
-    @import "components/loading.css";
-    @import "components/notfound.css";
-    @import "components/unauthorized.css";
-    @import "components/buttons.css";
-    @import "components/alerts.css";
-    @import "components/drop_down.css";
-    @import "components/markdown.css";
-
-    /* Forms */
-    @import "forms/main.css";
-    @import "forms/preview.css";
-
-    @import "forms/content/mod.css";
-    @import "forms/content/category.css";
-    @import "forms/content/source.css";
-
-    @import "forms/user/permissions.css";
-
-    /* Users */
-    @import "user/table.css";
-
-    /* Categories */
-    @import "category/index.css";
-    @import "category/row.css";
-
-    /* Mods */
-    @import "mod/view.css";
-    @import "mod/rating.css";
-    @import "mod/slideshow.css";
-    @import "mod/browser/filters.css";
-    @import "mod/browser/cards.css";
-    @import "mod/browser/row/grid.css";
-    @import "mod/browser/row/table.css";
-
-    /* Admin Area */
-    @import "admin/index.css";
 }
 
 @layer utilities {
-    @import "utils/mod/tabs.css";
+    @import "utils/buttons.css";
+    
+    @import "utils/mod/grid.css";
 }

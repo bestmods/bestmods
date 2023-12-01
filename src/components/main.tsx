@@ -28,18 +28,16 @@ export const ViewPortCtx = createContext({
 export default function Main ({
     children,
     className,
-    background = "bg-gradient-to-b from-[#002736] to-[#00151b]",
     image = "/images/backgrounds/default.jpg",
     overlay = "bg-none md:bg-black/80",
     excludeCdn = false,
     cookies
 } : {
-    children: ReactNode,
-    className?: string,
-    background?: string,
-    image?: string,
-    overlay?: string,
-    excludeCdn?: boolean,
+    children: ReactNode
+    className?: string
+    image?: string
+    overlay?: string
+    excludeCdn?: boolean
     cookies?: { [key: string]: string }
 }) {
     const errorCtx = useContext(ErrorCtx);
@@ -109,13 +107,7 @@ export default function Main ({
                         />
                     )}
                     <DisplayCtx.Provider value={display}>
-                        <div id="mobile-and-login">
-                            <MobileMenu />
-                            <Login />
-                        </div>
-
                         <Background
-                            background={background}
                             image={image}
                             overlay={overlay}
                         />

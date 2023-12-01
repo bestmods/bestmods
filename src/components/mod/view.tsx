@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import { type ModViewItem } from "~/types/mod"
 import ModTabs from "./view/tabs";
 import DropDown, { type Drop_Down_Menu_Type } from "@components/drop_down";
-import ModRating from "./rating/render";
+import ModRating from "./rating";
 import ModViewOverview from "./view/overview";
 import ModViewSources from "./view/sources";
 import ModViewDownloads from "./view/downloads";
@@ -74,6 +74,7 @@ export default function ModView ({
             new_tab: false
         });
     });
+    
     // Check rating.
     const onlyRating = ((mod.ModInstaller && mod.ModInstaller.length > 0) || (mod.ownerName && mod.ownerName.length > 0)) ? false : true;
 
@@ -96,7 +97,7 @@ export default function ModView ({
                 mod={mod}
                 view={view}
             >
-                <div className="flex flex-col p-4 gap-2 bg-gray-800/80">
+                <div className="flex flex-col p-4 gap-2 bg-bestmods-2/80">
                     <div className={`flex flex-wrap gap-2 ${onlyRating ? "justify-end" : "justify-between"}`}>
                         {mod.ownerName && mod.ownerName.length > 0 && (
                             <div className="flex flex-col gap-2">
@@ -113,7 +114,7 @@ export default function ModView ({
                                 <DropDown
                                     html={<>Install</>}
                                     drop_down_items={installer_items}
-                                    className={"mod-view-installer"}
+                                    className="btn btn-primary"
                                 />
                         )}
                         <div className="relative flex justify-center">
@@ -136,7 +137,7 @@ export default function ModView ({
                         {view == "install" && (
                             <ModViewInstall mod={mod} />
                         )}
-                        {view == "crediits" && (
+                        {view == "credits" && (
                             <ModViewCredits mod={mod} />
                         )}
                     </div>

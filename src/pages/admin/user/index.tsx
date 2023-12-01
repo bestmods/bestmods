@@ -38,9 +38,9 @@ export default function Page ({
                     <div className="container mx-auto">
                         <h1 className="page-title">User Management</h1>
                         {users.length > 0 ? (
-                            <table className="user-table">
+                            <table className="table table-auto w-full">
                                 <thead>
-                                    <tr>
+                                    <tr className="bg-cyan-600 font-bold">
                                         <th>Avatar</th>
                                         <th>ID</th>
                                         <th>Username</th>
@@ -58,12 +58,12 @@ export default function Page ({
                             </table>
 
                         ): (
-                            <div className="unauthorized-div">
+                            <div>
                                 <p>No users found.</p>
                             </div>
                             
                         )}
-                        <div className="user-page-numbers">
+                        <div>
                             {pages.map((i) => {
                                 return (
                                     <Link key={"page-num-" + i} href={"/admin/user/?p=" + i}>{i.toString()}</Link>
@@ -94,7 +94,7 @@ const UserRow: React.FC<{
 
     return (
         <tr>
-            <td className="user-table-avatar">
+            <td>
                 {avatar && (
                     <Image
                         src={`/${avatar}`}
@@ -104,26 +104,29 @@ const UserRow: React.FC<{
                     />
                 )}
             </td>
-            <td className="user-table-id">
+            <td>
                 {user.id.toString()}
             </td>
-            <td className="user-table-username">
+            <td>
                 {user.name}
             </td>
-            <td className="user-table-email">
+            <td>
                 {user.email}
             </td>
-            <td className="user-table-actions">
-                <Link href={edit_link} className="user-table-action-edit">Edit</Link>
-                <Link href="#" className="user-table-action-delete" onClick={(e) => {
-                    e.preventDefault();
+            <td className="flex gap-5 justify-center">
+                <Link href={edit_link}>Edit</Link>
+                <Link
+                    href="#"
+                    onClick={(e) => {
+                        e.preventDefault();
 
-                    if (confirm("Are you sure?")) {
-                        user_del_mut.mutate({
-                            id: user.id
-                        });
-                    }
-                }}>Delete</Link>
+                        if (confirm("Are you sure?")) {
+                            user_del_mut.mutate({
+                                id: user.id
+                            });
+                        }
+                    }}
+                >Delete</Link>
             </td>
         </tr>
     )

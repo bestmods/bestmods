@@ -5,10 +5,10 @@ import InfiniteScroll from "react-infinite-scroller";
 import { CookiesCtx } from "@components/main";
 import ModRow from "./browser/row";
 import { trpc } from "@utils/trpc";
-import LoadingIcon from "@components/icons/loading";
 
 import { type ModRowBrowser } from "~/types/mod";
 import ModBrowserFilters from "./browser/filters";
+import Loading from "@components/loading";
 
 export default function ModBrowser ({
     categories,
@@ -64,24 +64,46 @@ export default function ModBrowser ({
                 display={display}
                 setDisplay={setDisplay}
             />
-            <InfiniteScroll
-                pageStart={0}
-                className={display + `View${(items.length < 1) ? " !grid-cols-1 sm:!grid-cols-1" : ""}`}
-                loadMore={loadMore}
-                hasMore={requireItems}
-                loader={
-                    <h3 key="loading" className="loading-bar">
-                        <LoadingIcon
-                            className={"w-8 h-8 mr-2 text-gray-200 animate-spin fill-blue-600"}
-                        />
-                        <span>Loading...</span>
-                    </h3>
-                }
-            >
-                {display == "grid" ? (
-                    <>
-                        {items.length > 0 ? (
-                            <>
+            {display == "grid" ? (
+                <InfiniteScroll
+                    pageStart={0}
+                    className="grid gap-x-4 gap-y-6"
+                    style={{
+                        gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr)"
+                    }}
+                    loadMore={loadMore}
+                    hasMore={requireItems}
+                    loader={<Loading key="loading" />}
+                >
+                    {items.length > 0 ? (
+                        <>
+                            {items.map((mod) => {
+                                return (
+                                    <ModRow
+                                        key={mod.id + "-row"}
+                                        mod={mod}
+                                        display={display}
+                                    />
+                                );
+                            })}
+                        </>
+                    ) : (
+                        <>
+                            {!requireItems && (
+                                <p className="mods-not-found">No mods found.</p>
+                            )}
+                        </>
+                    )}
+                </InfiniteScroll>
+            ) : (
+                <InfiniteScroll
+                    pageStart={0}
+                    loadMore={loadMore}
+                    hasMore={requireItems}
+                >
+                    {items.length > 0 ? (
+                        <table className="table table-auto w-full">
+                            <tbody>
                                 {items.map((mod) => {
                                     return (
                                         <ModRow
@@ -91,41 +113,17 @@ export default function ModBrowser ({
                                         />
                                     );
                                 })}
-                            </>
-                        ) : (
-                            <>
-                                {!requireItems && (
-                                    <p className="mods-not-found">No mods found.</p>
-                                )}
-                            </>
-                        )}
-                    </>
-                ) : (
-                    <>
-                        {items.length > 0 ? (
-                            <table className="modbrowser-table">
-                                <tbody>
-                                    {items.map((mod) => {
-                                        return (
-                                            <ModRow
-                                                key={mod.id + "-row"}
-                                                mod={mod}
-                                                display={display}
-                                            />
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        ) : (
-                            <>
-                                {!requireItems && (
-                                    <p className="mods-not-found">No mods found.</p>
-                                )}
-                            </>
-                        )}
-                    </>
-                )}
-            </InfiniteScroll>
+                            </tbody>
+                        </table>
+                    ) : (
+                        <>
+                            {!requireItems && (
+                                <p className="mods-not-found">No mods found.</p>
+                            )}
+                        </>
+                    )}
+                </InfiniteScroll>
+            )}
         </div>
     )
 }

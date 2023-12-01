@@ -43,7 +43,7 @@ export default function Page ({
                 image={bgFile ? bgPath : undefined}
             />
             <Main
-                background={bgFile ? bgPath : undefined}
+                image={bgFile ? bgPath : undefined}
             >
                 <h1>
                     {category?.parent && (

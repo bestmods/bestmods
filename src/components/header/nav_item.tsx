@@ -1,31 +1,32 @@
+import DropDown, { type Drop_Down_Menu_Type } from "@components/drop_down"
 import Link from "next/link"
-
-export type DropdownItem = {
-    content: JSX.Element
-    url: string
-    separator?: boolean
-}
 
 export default function NavItem ({
     content,
     url,
-    className = "header-nav-item",
     external = false,
     dropdown_items = []
 } : {
     content: JSX.Element
     url: string
-    className?: string
     external?: boolean
-    dropdown_items?: DropdownItem[]
+    dropdown_items?: Drop_Down_Menu_Type[]
 }) {
     return (
-        <Link
-            href={url}
-            target={external ? "_blank" : undefined}
-            className={className}
-        >
-            {content}
-        </Link>
+        <>
+            {dropdown_items.length > 0 ? (
+                <DropDown
+                    html={content}
+                    drop_down_items={dropdown_items}
+                />
+            ) : (
+                <Link
+                    href={url}
+                    target={external ? "_blank" : undefined}
+                    className="header-nav-item text-gray-200 hover:text-white"
+                >{content}</Link>
+            )}
+            
+        </>
     )
 }

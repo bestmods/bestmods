@@ -9,12 +9,12 @@ import { type ModRowBrowser, type ModViewItem } from "~/types/mod";
 
 export default function ModRating ({
     mod,
-    classes,
-    rating
+    rating,
+    className = "relative flex gap-1 text-center justify-center items-center"
 } : {
-    mod: ModRowBrowser | ModViewItem,
-    classes?: string[],
+    mod: ModRowBrowser | ModViewItem
     rating?: number
+    className?: string
 }) {
     // Convert to number instead of BigInt.
     rating = Number(mod.rating ?? rating ?? 1);
@@ -43,14 +43,8 @@ export default function ModRating ({
 
     const myRatingMut = trpc.modRating.add.useMutation();
 
-    // Container classes.
-    let classes_container = "mod-rating-container";
-
-    if (classes)
-        classes_container = classes_container + " " + classes.join(" ");
-
     return (
-        <div className={classes_container}>
+        <div className={className}>
             <div>
                 <button onClick={(e) => {
                     e.preventDefault();
@@ -83,7 +77,7 @@ export default function ModRating ({
                 </button>
             </div>
             <div>
-                <span>{tempRatingVal?.toString() ?? rating?.toString() ?? 1}</span>
+                <span className="text-white font-bold text-4xl text-center">{tempRatingVal?.toString() ?? rating?.toString() ?? 1}</span>
             </div>
             <div>
                 <button onClick={(e) => {

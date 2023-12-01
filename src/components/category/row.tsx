@@ -6,12 +6,10 @@ import { type CategoryWithCount, type CategoryWithChildrenAndCounts } from "~/ty
 export default function CategoryRow ({
     parent,
     cat,
-    className,
     include_mod_count
 } : {
-    parent?: Category,
-    cat: CategoryWithChildrenAndCounts | CategoryWithCount,
-    className?: string,
+    parent?: Category
+    cat: CategoryWithChildrenAndCounts | CategoryWithCount
     include_mod_count?: boolean
 }) {
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
@@ -29,8 +27,11 @@ export default function CategoryRow ({
     view_url += cat.url;
 
     return (
-        <div className={`category-row${className ? ` ${className}` : ``}`}>
-            <Link href={view_url}>
+        <div>
+            <Link
+                href={view_url}
+                className={`${parent ? `ml-10 ` : ``}p-4 flex flex-wrap items-center gap-1`}
+            >
                 <Image
                     src={icon}
                     width={32}

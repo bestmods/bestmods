@@ -1,0 +1,44 @@
+.btn {
+    @apply rounded;
+    @apply p-2;
+}
+
+.btn-primary {
+    @apply text-white;
+    @apply !bg-green-700/80;
+
+    @apply hover:!bg-green-600/80;
+
+    @apply focus:ring-4;
+    @apply focus:ring-green-300/80;
+}
+
+.btn-secondary {
+    @apply text-white;
+    @apply !bg-bestmods-2/80;
+    
+    @apply hover:!bg-bestmods-3/80;
+
+    @apply focus:ring-4;
+    @apply focus:ring-bestmods-4/80;
+}
+
+.btn-danger {
+    @apply text-white;
+    @apply !bg-red-700/80;
+
+    @apply hover:!bg-red-600/80;
+
+    @apply focus:ring-4;
+    @apply focus:ring-red-300/30;
+}
+
+.btn-warning {
+    @apply text-white;
+    @apply !bg-orange-700/80;
+
+    @apply hover:!bg-orange-600/80;
+
+    @apply focus:ring-4;
+    @apply focus:ring-orange-300/80;
+}

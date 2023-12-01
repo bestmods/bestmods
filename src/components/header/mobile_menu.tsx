@@ -7,7 +7,7 @@ export default function MobileMenu () {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div id="mobile-menu" className={isOpen ? "mobile-menu-open" : ""}>
+        <div>
             <div className={isOpen ? "flex justify-end" : ""}>
                 <button id="mobile-menu-toggle" onClick={() => {
                     if (isOpen)

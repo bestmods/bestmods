@@ -6,7 +6,7 @@ export default function Error ({
     msg: string
 }) {
     return (
-        <div className="error">
+        <div className="p-4 bg-red-500/80">
             <h2>{title}</h2>
             <p>{msg}</p>
         </div>

@@ -5,12 +5,14 @@ export default function IconAndText({
     text,
     width = 32,
     height = 32,
+    imgClassName,
     alt = "Icon"
 } : {
     icon: string | JSX.Element
     text: JSX.Element
     width?: number
     height?: number
+    imgClassName?: string
     alt?: string
 }) {
     return (
@@ -22,6 +24,7 @@ export default function IconAndText({
                         width={width}
                         height={height}
                         alt={alt}
+                        className={imgClassName}
                     />
                 )}
                 {typeof icon != "string" && (

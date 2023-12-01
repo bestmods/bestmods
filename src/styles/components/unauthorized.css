@@ -1,9 +1,0 @@
-.unauthorized-div {
-    @apply text-center;
-    @apply mx-auto;
-}
-
-.unauthorized-div > p {
-    @apply text-white;
-    @apply font-bold;
-}

@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { type ReactNode } from "react"
 import { type ModViewItem } from "~/types/mod"
 
@@ -21,23 +22,62 @@ export default function ModTabs ({
     return (
         <div className="flex flex-wrap sm:flex-nowrap gap-2">
             <div className="flex flex-col gap-2">
-                <a href={baseUrl} className={`mod-tab-item${view == "overview" ? ` mod-tab-item-active` : ``}`}>Overview</a>
+                <Tab
+                    url={baseUrl}
+                    text={<>Overview</>}
+                    active={view == "overview"}
+                />
                 {mod.install && (
-                    <a href={installLink} className={`mod-tab-item${view == "install" ? ` mod-tab-item-active` : ``}`}>Installation</a>
+                    <Tab
+                        url={installLink}
+                        text={<>Installation</>}
+                        active={view == "install"}
+                    />
                 )}
                 {mod.ModSource.length > 0 && (
-                    <a href={sourcesLink} className={`mod-tab-item${view == "sources" ? ` mod-tab-item-active` : ``}`}>Sources</a>
+                    <Tab
+                        url={sourcesLink}
+                        text={<>Sources</>}
+                        active={view == "sources"}
+                    />
                 )}
                 {mod.ModDownload.length > 0 && (
-                    <a href={downloadsLink} className={`mod-tab-item${view == "downloads" ? ` mod-tab-item-active` : ``}`}>Downloads</a>
+                    <Tab
+                        url={downloadsLink}
+                        text={<>Downloads</>}
+                        active={view == "downloads"}
+                    />
                 )}
-                {mod?.ModCredit?.length > 0 && (
-                    <a href={creditsLink} className={`mod-tab-item${view == "credits" ? ` mod-tab-item-active` : ``}`}>Credits</a>
+                {mod.ModCredit.length > 0 && (
+                    <Tab
+                        url={creditsLink}
+                        text={<>Credits</>}
+                        active={view == "credits"}
+                    />
                 )}
             </div>
             <div className="grow">
                 {children}
             </div>
         </div>
+    )
+}
+
+function Tab({
+    url,
+    text,
+    active = false,
+} : {
+    url: string
+    text: JSX.Element
+    active?: boolean
+}) {
+    return (
+        <Link
+            href={url}
+            className={`bg-bestmods-3/80 hover:bg-bestmods-4/80 text-center text-gray-200 visited:text-gray-200 active:text-gray-200 hover:text-gray-200 p-4 rounded-sm${active ? ` bg-bestmods-4/80 font-bold` : ``}`}
+        >
+            {text}
+        </Link>
     )
 }

@@ -67,9 +67,9 @@ export default function ModBrowserFilters ({
                 </div>
             </div>
             <div className="flex flex-wrap gap-2 items-center">
-                <div className="relative w-[32rem]">
+                <div className="relative w-full sm:w-[32rem]">
                     <input
-                        className="w-full pr-10 bg-cyan-950/80 p-2 rounded-md focus:ring-2 focus:ring-cyan-800"
+                        className="w-full pr-10 bg-bestmods-1/80 p-2 rounded-md focus:ring-2 focus:ring-bestmods-2/80 text-gray-50"
                         type="text"
                         placeholder="Search for your favorite mods!"
                         onChange={(e) => {
@@ -87,7 +87,7 @@ export default function ModBrowserFilters ({
                     </div>
                 </div>
                 <button
-                    className="mod-browser-filter-btn"
+                    className="btn btn-secondary"
                     onClick={(e) => {
                         e.preventDefault();
 
@@ -97,7 +97,7 @@ export default function ModBrowserFilters ({
                     <FilterIcon className="w-6 h-6 stroke-white" />
                 </button>
                 <button
-                    className="mod-browser-filter-btn"
+                    className="btn btn-secondary"
                     onClick={(e) => {
                         e.preventDefault();
 

@@ -1,13 +1,17 @@
 import Link from "next/link";
-import { useState } from "react";
+import React, { MouseEventHandler, useState } from "react";
 
 import UpArrow from "@components/icons/up_arrow";
 import DownArrow from "@components/icons/down_arrow";
 
 export type Drop_Down_Menu_Type = {
-    link: string,
-    html: JSX.Element,
+    link: string
+    html: JSX.Element
     new_tab: boolean
+    className?: string
+    onClick?: MouseEventHandler<HTMLAnchorElement>
+    seperator?: boolean
+    noLink?: boolean
 }
 
 export default function DropDown ({
@@ -23,25 +27,46 @@ export default function DropDown ({
     const [menuOpen, setMenuOpen] = useState(false);
 
     return (
-        <button className={`utils-drop-down${className ? ` ${className}`: ``}`} onClick={() => {
-            setMenuOpen(!menuOpen);
-        }}>
-            <div>
+        <button
+            className={`${className ? `${className} `: ``}relative flex items-center rounded`}
+            onClick={() => {
+                setMenuOpen(!menuOpen);
+            }}
+        >
+            <div className="flex gap-1 items-center">
                 <span>{html}</span>
 
                 {menuOpen ? (
-                    <UpArrow />
+                    <UpArrow className="w-4 h-4 stroke-white" />
                 ) : (
-                    <DownArrow />
+                    <DownArrow className="w-4 h-4 stroke-white" />
                 )}
             </div>
             
-            <ul className={menuOpen ? "block" : "hidden"}>
-                {drop_down_items.map((item) => {
+            <ul className={`${menuOpen ? `visible` : `hidden`} break-all absolute w-full sm:w-[300%] top-[100%] left-[-200%] z-30 rounded-b p-2 bg-bestmods-2`}>
+                {drop_down_items.map((item, index) => {
                     return (
-                        <Link key={"dd_item-" + item.link} href={item.link} target={item.new_tab ? "_blank" : ""}>
-                            <li>{item.html}</li>
-                        </Link>
+                        <React.Fragment key={`navitem-${index.toString()}`}>
+                            {item.seperator ? (
+                                <li className={item.className}><hr /></li>
+                            ) : (
+                                <>
+                                    {item.noLink ? (
+                                        <li className={item.className}>{item.html}</li>
+                                    ) : (
+                                        <Link
+                                            href={item.link}
+                                            target={item.new_tab ? "_blank" : undefined}
+                                            className={item.className}
+                                            onClick={item.onClick}
+                                        >
+                                            <li className="py-5 px-2 hover:bg-bestmods-2 divide-y-2 divide-slate-800 hover:divide-cyan-700 flex items-center gap-2 text-sm">{item.html}</li>
+                                        </Link>
+                                    )}
+                                </>
+                            )}
+                            
+                        </React.Fragment>
                     );
                 })}
             </ul>

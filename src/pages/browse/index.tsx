@@ -14,7 +14,7 @@ export default function Page ({
     return (
         <>
             <MetaInfo 
-                title={"Browser - Best Mods"}
+                title={"Browse - Best Mods"}
             />
             <Main
                 cookies={cookies}
