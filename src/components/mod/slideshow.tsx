@@ -10,7 +10,7 @@ export default function ModSlideshow ({
         <div
             className="grid gap-x-4 gap-y-6 py-6"
             style={{
-                gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr)"
+                gridTemplateColumns: `repeat(auto-fill, minmax(320px, 1fr))`
             }}
         >
             {mods.map((mod, index) => {

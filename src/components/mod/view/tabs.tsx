@@ -1,5 +1,6 @@
+import { ViewPortCtx } from "@components/main"
 import Link from "next/link"
-import { type ReactNode } from "react"
+import { useState, type ReactNode, useContext } from "react"
 import { type ModViewItem } from "~/types/mod"
 
 export default function ModTabs ({
@@ -19,42 +20,57 @@ export default function ModTabs ({
     const downloadsLink = `${baseUrl}/downloads`;
     const creditsLink = `${baseUrl}/credits`;
 
+    // View ports and mobile menu.
+    const viewPort = useContext(ViewPortCtx);
+    const [mobileOpen, setMobileOpen] = useState(false);
+
     return (
-        <div className="flex flex-wrap sm:flex-nowrap gap-2">
+        <div className="flex flex-wrap sm:flex-nowrap gap-2 justify-center">
             <div className="flex flex-col gap-2">
-                <Tab
-                    url={baseUrl}
-                    text={<>Overview</>}
-                    active={view == "overview"}
-                />
-                {mod.install && (
-                    <Tab
-                        url={installLink}
-                        text={<>Installation</>}
-                        active={view == "install"}
-                    />
+                <button
+                    className={`sm:hidden px-10 py-4 text-center text-gray-200 ${mobileOpen ? "bg-bestmods-4/80 hover:bg-bestmods-5/80" : "bg-bestmods-3/80 hover:bg-bestmods-4/80"}`}
+                    onClick={(e) => {
+                        setMobileOpen(!mobileOpen);
+                    }}
+                >{mobileOpen ? "Hide Tabs" : "Show Tabs"}</button>
+                {(!viewPort.isMobile || mobileOpen) && (
+                    <>
+                        <Tab
+                            url={baseUrl}
+                            text={<>Overview</>}
+                            active={view == "overview"}
+                        />
+                        {mod.install && (
+                            <Tab
+                                url={installLink}
+                                text={<>Installation</>}
+                                active={view == "install"}
+                            />
+                        )}
+                        {mod.ModSource.length > 0 && (
+                            <Tab
+                                url={sourcesLink}
+                                text={<>Sources</>}
+                                active={view == "sources"}
+                            />
+                        )}
+                        {mod.ModDownload.length > 0 && (
+                            <Tab
+                                url={downloadsLink}
+                                text={<>Downloads</>}
+                                active={view == "downloads"}
+                            />
+                        )}
+                        {mod.ModCredit.length > 0 && (
+                            <Tab
+                                url={creditsLink}
+                                text={<>Credits</>}
+                                active={view == "credits"}
+                            />
+                        )}
+                    </>
                 )}
-                {mod.ModSource.length > 0 && (
-                    <Tab
-                        url={sourcesLink}
-                        text={<>Sources</>}
-                        active={view == "sources"}
-                    />
-                )}
-                {mod.ModDownload.length > 0 && (
-                    <Tab
-                        url={downloadsLink}
-                        text={<>Downloads</>}
-                        active={view == "downloads"}
-                    />
-                )}
-                {mod.ModCredit.length > 0 && (
-                    <Tab
-                        url={creditsLink}
-                        text={<>Credits</>}
-                        active={view == "credits"}
-                    />
-                )}
+                
             </div>
             <div className="grow">
                 {children}

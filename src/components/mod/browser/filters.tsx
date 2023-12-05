@@ -5,8 +5,8 @@ import SearchIcon from "@components/icons/search"
 import TableIcon from "@components/icons/table"
 import Loading from "@components/loading"
 import { trpc } from "@utils/trpc"
-import { setCookie } from "cookies-next"
 import { Dispatch, SetStateAction, useState } from "react"
+import { useCookies } from "react-cookie"
 import InfiniteScroll from "react-infinite-scroller"
 import { CategoryWithChildren } from "~/types/category"
 
@@ -31,7 +31,9 @@ export default function ModBrowserFilters ({
     display: string
     setDisplay: Dispatch<SetStateAction<string>>
 }) {
-    const [filtersOpen, setFiltersOpen] = useState(false); 
+    const [filtersOpen, setFiltersOpen] = useState(false);
+
+    const [, setCookie] = useCookies(["bm_display"]);
 
     return (
         <form className="flex flex-wrap justify-end gap-2">
@@ -123,6 +125,7 @@ export default function ModBrowserFilters ({
 
                         setDisplay(newDisplay);
                         setCookie("bm_display", newDisplay);
+                        
                     }}
                 >
                     {display == "grid" ? (

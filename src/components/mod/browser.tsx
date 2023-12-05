@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import InfiniteScroll from "react-infinite-scroller";
 
-import { CookiesCtx } from "@components/main";
 import ModRow from "./browser/row";
 import { trpc } from "@utils/trpc";
 
 import { type ModRowBrowser } from "~/types/mod";
 import ModBrowserFilters from "./browser/filters";
 import Loading from "@components/loading";
+import { useCookies } from "react-cookie";
 
 export default function ModBrowser ({
     preCategories = [],
@@ -60,9 +60,14 @@ export default function ModBrowser ({
     const modsOrLoading = !data || mods.length > 0;
 
     // Figure out which display.
-    const cookies = useContext(CookiesCtx);
+    const [cookies] = useCookies(["bm_display"]);
 
-    const [display, setDisplay] = useState(cookies?.["bm_display"] ?? "grid");
+    const [display, setDisplay] = useState("grid");
+
+    useEffect(() => {
+        if (cookies["bm_display"] === "table")
+            setDisplay("table");
+    }, [cookies])
 
     return (
         <div className="flex flex-col gap-4">
@@ -82,7 +87,7 @@ export default function ModBrowser ({
                     pageStart={0}
                     className="grid gap-x-4 gap-y-6"
                     style={{
-                        gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr)"
+                        gridTemplateColumns: `repeat(auto-fill, minmax(320px, 1fr))`
                     }}
                     loadMore={loadMore}
                     hasMore={needMoreMods}
