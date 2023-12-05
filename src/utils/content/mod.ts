@@ -11,7 +11,6 @@ export const Insert_Or_Update_Mod = async (
     visible?: boolean,
     
     lookup_id?: number,
-    lookup_url?: string,
 
     owner_id?: string,
     owner_name?: string,
@@ -34,7 +33,7 @@ export const Insert_Or_Update_Mod = async (
     let mod: Mod | null = null;
 
     // Make sure we have text in required fields.
-    if (!lookup_id && !lookup_url && (!url || url.length < 1 || !name || name.length < 1 || !description || description.length < 1)) {
+    if (!lookup_id && (!url || url.length < 1 || !name || name.length < 1 || !description || description.length < 1)) {
         let err = "URL is empty.";
 
         if (!name || name.length < 1)
@@ -64,11 +63,10 @@ export const Insert_Or_Update_Mod = async (
     }
 
     try {
-        if (lookup_id || lookup_url) {
+        if (lookup_id) {
             mod = await prisma.mod.update({
                 where: {
-                    id: lookup_id,
-                    url: lookup_url
+                    id: lookup_id
                 },
                 data: {
                     editAt: new Date(Date.now()),
@@ -104,7 +102,7 @@ export const Insert_Or_Update_Mod = async (
                     }),
                     ModDownload: {
                         deleteMany: {
-                            modId: Number(lookup_id)
+                            modId: lookup_id
                         },
                         create: downloads?.map((download) => ({
                             name: download.name,
@@ -113,7 +111,7 @@ export const Insert_Or_Update_Mod = async (
                     },
                     ModSource: {
                         deleteMany: {
-                            modId: Number(lookup_id)
+                            modId: lookup_id
                         },
                         create: sources?.map((source) => ({
                             sourceUrl: source.sourceUrl,
@@ -123,7 +121,7 @@ export const Insert_Or_Update_Mod = async (
                     },
                     ModInstaller: {
                         deleteMany: {
-                            modId: Number(lookup_id)
+                            modId: lookup_id
                         },
                         create: installers?.map((installer) => ({
                             sourceUrl: installer.sourceUrl,
@@ -132,7 +130,7 @@ export const Insert_Or_Update_Mod = async (
                     },
                     ModScreenshot: {
                         deleteMany: {
-                            modId: Number(lookup_id)
+                            modId: lookup_id
                         },
                         create: screenshots?.map((screenshot) => ({
                             url: screenshot.url
@@ -140,7 +138,7 @@ export const Insert_Or_Update_Mod = async (
                     },
                     ModCredit: {
                         deleteMany: {
-                            modId: Number(lookup_id)
+                            modId: lookup_id
                         },
                         create: credits?.map((credit) => ({
                             name: credit.name,

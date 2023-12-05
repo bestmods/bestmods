@@ -20,7 +20,7 @@ export const modRouter = router({
             name: z.string(),
             banner: z.string().optional(),
             url: z.string(),
-            category: z.number().optional(),
+            categoryId: z.number().optional(),
 
             // The following should be parsed via Markdown Syntax.
             description: z.string(),
@@ -69,7 +69,7 @@ export const modRouter = router({
         }))
         .mutation(async ({ ctx, input }) => {
             // Insert ot update mod.
-            const [mod, success, err] = await Insert_Or_Update_Mod(ctx.prisma, input.name, input.url, input.description, input.visible, input.id, undefined, input.ownerId, input.ownerName, input.banner, input.bremove, input.category, input.descriptionShort, input.install, input.downloads, input.screenshots, input.sources, input.installers, input.credits);
+            const [mod, success, err] = await Insert_Or_Update_Mod(ctx.prisma, input.name, input.url, input.description, input.visible, input.id, input.ownerId, input.ownerName, input.banner, input.bremove, input.categoryId, input.descriptionShort, input.install, input.downloads, input.screenshots, input.sources, input.installers, input.credits);
 
             // Check for error.
             if (!success || !mod) {
@@ -124,7 +124,7 @@ export const modRouter = router({
             cursor: z.number().nullish(),
             count: z.number().default(10),
 
-            categories: z.string().optional(),
+            categories: z.array(z.number()).optional(),
             search: z.string().optional(),
             timeframe: z.number().default(0),
             sort: z.number().default(0),
@@ -180,9 +180,6 @@ export const modRouter = router({
                     time_range_date.getUTCMilliseconds()
                 );
             }
-
-            // Process categories.
-            const cats_arr = JSON.parse(input.categories ?? "[]");
 
             // Retrieve the cursor item and fields we need to use as the cursor.
             let cursor_item: ModRowBrowser | undefined = undefined;
@@ -420,8 +417,8 @@ export const modRouter = router({
                         AND
                             "ModRating"."userId" = ${ctx.session?.user?.id ?? ""}
                 WHERE
-                    ${cats_arr.length > 0 ?
-                            Prisma.sql`"Mod"."categoryId" IN (${Prisma.join(cats_arr)}) ${(input.visible != undefined || input.search || input.cursor) ? Prisma.sql`AND` : Prisma.empty}`
+                    ${input.categories && input.categories.length > 0 ?
+                            Prisma.sql`"Mod"."categoryId" IN (${Prisma.join(input.categories)}) ${(input.visible != undefined || input.search || input.cursor) ? Prisma.sql`AND` : Prisma.empty}`
                         :
                             Prisma.empty
                     }
