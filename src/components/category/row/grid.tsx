@@ -31,10 +31,10 @@ export default function CategoryRowGrid ({
             <div className="w-full h-64">
                 <Image
                     src={banner}
-                    width={256}
-                    height={128}
+                    width={720}
+                    height={360}
                     alt="Category Banner"
-                    className="w-full h-full brightness-[70%] group-hover:brightness-100 group-hover:duration-300"
+                    className="w-full h-full brightness-[70%] group-hover:brightness-100 group-hover:duration-300 object-cover"
                 />
             </div>
             <div className="p-4">
