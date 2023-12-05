@@ -26,7 +26,7 @@ export default function CategoryRowGrid ({
                 if (typeof window !== "undefined")
                     window.location.href = viewLink;  
             }}
-            className="bg-bestmods-2/80 cursor-pointer group translate-y-0 hover:-translate-y-3 duration-300"
+            className="bg-bestmods-2/80 ring-4 ring-bestmods-3/80 hover:ring-bestmods-4/80 rounded cursor-pointer group translate-y-0 hover:-translate-y-3 duration-300"
         >
             <div className="w-full h-64">
                 <Image
