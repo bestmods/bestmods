@@ -1,12 +1,10 @@
-import React, { useState, type ReactNode, useContext, useEffect, createContext, type ChangeEvent } from "react";
+import React, { useState, type ReactNode, useContext, useEffect, createContext, type ChangeEvent, useRef } from "react";
 
 import { setCookie } from "cookies-next";
 
 import GoogleAnalytics from "@components/scripts/google_analytics";
 
 import Header from "@components/header";
-import MobileMenu from "@components/header/mobile_menu";
-import Login from "@components/login";
 import Background from "./background";
 import { ErrorCtx, SuccessCtx } from "@pages/_app";
 import Error from "./responses/error";
@@ -22,7 +20,9 @@ export const DisplayCtx = createContext<displayArgs | null>(null);
 export const CookiesCtx = createContext<{ [key: string]: string }>({});
 
 export const ViewPortCtx = createContext({
-    isMobile: false
+    isMobile: false,
+    width: 0,
+    height: 0
 })
 
 export default function Main ({
@@ -43,7 +43,30 @@ export default function Main ({
     const errorCtx = useContext(ErrorCtx);
     const successCtx = useContext(SuccessCtx);
 
+    // View ports.
     const [isMobile, setIsMobile] = useState(false);
+    const [width, setWidth] = useState(0);
+    const [height, setHeight] = useState(0);
+
+    // Make sure to reset error and success contexts on first render.
+    const firstRender = useRef(true);
+
+    useEffect(() => {
+        if (!firstRender.current)
+            return;
+
+        if (errorCtx) {
+            errorCtx.setTitle(undefined);
+            errorCtx.setMsg(undefined);
+        }
+
+        if (successCtx) {
+            successCtx.setTitle(undefined);
+            successCtx.setMsg(undefined);
+        }
+
+        firstRender.current = false;
+    }, [errorCtx, successCtx])
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -52,6 +75,9 @@ export default function Main ({
                     setIsMobile(true);
                 else
                     setIsMobile(false);
+
+                setWidth(window.innerWidth);
+                setHeight(window.innerHeight);
             }
 
             // Check for mobile now.
@@ -97,7 +123,9 @@ export default function Main ({
 
     return (
         <ViewPortCtx.Provider value={{
-            isMobile: isMobile
+            isMobile: isMobile,
+            width: width,
+            height: height
         }}>
             <CookiesCtx.Provider value={cookies ?? {}}>
                 <main key="main" className={className}>
