@@ -1,4 +1,4 @@
-import { router, contributorProcedure } from "@server/trpc/trpc";
+import { router, contributorProcedure, publicProcedure } from "@server/trpc/trpc";
 import { TRPCError } from "@trpc/server"
 
 import { z } from "zod";
@@ -48,6 +48,35 @@ export const categoryRouter = router({
                     code: "BAD_REQUEST",
                     message: `Received error when deleting category. Error => ${err}`
                 });
+            }
+        }),
+    getCategoryMappings: publicProcedure
+        .input(z.object({
+            cursor: z.number().nullish(),
+            limit: z.number().default(10)
+        }))
+        .query(async ({ ctx, input }) => {
+            const categories = await ctx.prisma.category.findMany({
+                take: input.limit + 1,
+                cursor: input.cursor ? { id: input.cursor } : undefined,
+                include: {
+                    children: true
+                },
+                where: {
+                    parent: null
+                }
+            })
+
+            let nextCat: typeof input.cursor | undefined = undefined;
+
+            if (categories.length > input.limit) {
+                const next = categories.pop();
+                nextCat = next?.id;
+            }
+
+            return {
+                categories,
+                nextCat
             }
         })
 });
