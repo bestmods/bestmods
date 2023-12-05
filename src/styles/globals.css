@@ -62,6 +62,23 @@
         @apply text-lg;
     }
 
+    label {
+        @apply text-2xl;
+        @apply font-bold;
+        @apply text-white;
+        @apply block;
+    }
+
+    input:not([type="checkbox"]), select, textarea {
+        @apply bg-bestmods-1/80;
+        @apply focus:ring-2;
+        @apply focus:ring-bestmods-2/80;
+        @apply text-gray-50;
+        @apply rounded;
+        @apply p-2;
+        @apply w-full;
+    }
+
     /* Scroll Bar */
     ::-webkit-scrollbar
     {
@@ -88,6 +105,7 @@
 
 @layer utilities {
     @import "utils/buttons.css";
-    
+    @import "utils/inputs.css";
+
     @import "utils/mod/grid.css";
 }
