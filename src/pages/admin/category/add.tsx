@@ -23,11 +23,16 @@ export default function Page ({
                 title="New Category - Best Mods"
             />
             <Main>
-                {Has_Perm(session, "admin") ? (
-                    <CategoryForm categories={categories} />
-                ) : (
-                    <NoAccess />
-                )}
+                <div className="flex flex-col gap-2">
+                    {Has_Perm(session, "admin") ? (
+                        <>
+                            <h1>Add Category</h1>
+                            <CategoryForm categories={categories} />
+                        </>
+                    ) : (
+                        <NoAccess />
+                    )}
+                </div>
             </Main>
         </>
     )

@@ -14,6 +14,8 @@ import { Has_Perm } from "@utils/permissions";
 import NoAccess from "@components/errors/noaccess";
 import { getServerAuthSession } from "@server/common/get-server-auth-session";
 import Image from "next/image";
+import { useContext } from "react";
+import { ErrorCtx, SuccessCtx } from "@pages/_app";
 
 export default function Page ({
     users,
@@ -35,38 +37,43 @@ export default function Page ({
 
             <Main>
                 {Has_Perm(session, "admin") ? (
-                    <div className="container mx-auto">
-                        <h1 className="page-title">User Management</h1>
-                        {users.length > 0 ? (
-                            <table className="table table-auto w-full">
-                                <thead>
-                                    <tr className="bg-cyan-600 font-bold">
-                                        <th>Avatar</th>
-                                        <th>ID</th>
-                                        <th>Username</th>
-                                        <th>Email</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {users.map((user) => {
-                                        return (
-                                            <UserRow key={"user-" + user.id} user={user} />
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
+                    <div className="flex flex-col gap-2">
+                        <h1>User Management</h1>
+                        <div>
+                            {users.length > 0 ? (
+                                <table className="table table-auto w-full">
+                                    <thead>
+                                        <tr className="bg-bestmods-2/80 font-bold">
+                                            <th>Avatar</th>
+                                            <th>ID</th>
+                                            <th>Username</th>
+                                            <th>Email</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {users.map((user, index) => {
+                                            return (
+                                                <UserRow
+                                                    key={`user-${index.toString()}`}
+                                                    user={user}
+                                                />
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
 
-                        ): (
-                            <div>
+                            ): (
                                 <p>No users found.</p>
-                            </div>
-                            
-                        )}
+                            )}
+                        </div>
                         <div>
                             {pages.map((i) => {
                                 return (
-                                    <Link key={"page-num-" + i} href={"/admin/user/?p=" + i}>{i.toString()}</Link>
+                                    <Link
+                                        key={`page-${i.toString()}`}
+                                        href={`/admin/user/?p=${i.toString()}`}
+                                    >{i.toString()}</Link>
                                 );
                             })}
                         </div>
@@ -84,16 +91,36 @@ const UserRow: React.FC<{
 }> = ({
     user
 }) => {
+    const errorCtx = useContext(ErrorCtx);
+    const successCtx = useContext(SuccessCtx);
+
     // User image/avatar.
     const avatar = user.image || null;
 
     // Actions.
-    const edit_link = "/admin/user/edit/" + user.id;
+    const edit_link = `/admin/user/edit/${user.id.toString()}`;
 
-    const user_del_mut = trpc.user.del.useMutation();
+    const user_del_mut = trpc.user.del.useMutation({
+        onError: (opts) => {
+            const { message } = opts;
+
+            console.error(message);
+
+            if (errorCtx) {
+                errorCtx.setTitle("Unable To Delete User!");
+                errorCtx.setMsg("Unable to delete this user. Check the console!");
+            }
+        },
+        onSuccess: () => {
+            if (successCtx) {
+                successCtx.setTitle("Deleted User!");
+                successCtx.setMsg("Deleted the user successfully!");
+            }
+        }
+    });
 
     return (
-        <tr>
+        <tr className="odd:bg-bestmods-3/80 even:bg-bestmods-4/30">
             <td>
                 {avatar && (
                     <Image
@@ -114,9 +141,12 @@ const UserRow: React.FC<{
                 {user.email}
             </td>
             <td className="flex gap-5 justify-center">
-                <Link href={edit_link}>Edit</Link>
                 <Link
-                    href="#"
+                    href={edit_link}
+                    className="btn btn-primary"
+                >Edit</Link>
+                <button
+                    className="btn btn-danger"
                     onClick={(e) => {
                         e.preventDefault();
 
@@ -126,7 +156,7 @@ const UserRow: React.FC<{
                             });
                         }
                     }}
-                >Delete</Link>
+                >Delete</button>
             </td>
         </tr>
     )

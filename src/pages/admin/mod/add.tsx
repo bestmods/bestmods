@@ -26,14 +26,19 @@ export default function Page ({
                 title="New Mod - Best Mods"
             />
             <Main>
-                {Has_Perm(session, "admin") ? (
-                    <ModForm
-                        categories={categories}
-                        sources={sources}
-                    />
-                ) : (
-                    <NoAccess />
-                )}
+                <div className="flex flex-col gap-2">
+                    {Has_Perm(session, "admin") ? (
+                        <>
+                            <h1>Add Mod</h1>
+                            <ModForm
+                                categories={categories}
+                                sources={sources}
+                            />
+                        </>
+                    ) : (
+                        <NoAccess />
+                    )}
+                </div>
             </Main>
         </>
     )

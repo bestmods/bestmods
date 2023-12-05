@@ -11,6 +11,7 @@ import { prisma } from "@server/db/client";
 
 import { Has_Perm } from "@utils/permissions";
 import { getServerAuthSession } from "@server/common/get-server-auth-session";
+import NoAccess from "@components/errors/noaccess";
 
 export default function Page ({
     user
@@ -25,16 +26,14 @@ export default function Page ({
                 title={"Editing User " + user?.name ?? "N/A" + " - Best Mods"}
             />
             <Main>
-                <div className="container mx-auto">
+                <div className="flex flex-col gap-2">
                     {Has_Perm(session, "admin") ? (
                         <>
                             <h1 className="page-title">Editing User</h1>
                             <EditForm user={user} />
                         </>
                     ) : (
-                        <div className="unauthorized-div">
-                            <p>You do not have permissions to edit a user.</p>
-                        </div>
+                        <NoAccess />
                     )}
                 </div>
             </Main>

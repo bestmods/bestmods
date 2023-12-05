@@ -27,20 +27,25 @@ export default function Page ({
                 title={`Editing Category ${category?.name ?? "N/A"} - Best Mods`}
             />
             <Main>
-                {Has_Perm(session, "admin") ? (
-                    <>
-                        {category ? (
-                            <CategoryForm
-                                category={category}
-                                categories={categories}
-                            />
-                        ) : (
-                            <NotFound item="category" />
-                        )}
-                    </>
-                ) : (
-                    <NoAccess />
-                )}
+                <div className="flex flex-col gap-2">
+                    {Has_Perm(session, "admin") ? (
+                        <>
+                            {category ? (
+                                <>
+                                    <h1>Editing Category {category.name}</h1>
+                                    <CategoryForm
+                                        category={category}
+                                        categories={categories}
+                                    />
+                                </>
+                            ) : (
+                                <NotFound item="category" />
+                            )}
+                        </>
+                    ) : (
+                        <NoAccess />
+                    )}
+                </div>
             </Main>
         </>
     )

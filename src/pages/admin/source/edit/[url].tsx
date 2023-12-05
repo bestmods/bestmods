@@ -24,17 +24,22 @@ export default function Page ({
                 title={`Editing Source ${source?.name ?? "N/A"} - Best Mods`}
             />
             <Main>
-                {Has_Perm(session, "admin") ? (
-                    <>
-                        {source ? (
-                            <SourceForm source={source} />
-                        ) : (
-                            <NotFound item="source" />
-                        )}
-                    </>
-                ) : (
-                    <NoAccess />
-                )}
+                <div className="flex flex-col gap-2">
+                    {Has_Perm(session, "admin") ? (
+                        <>
+                            {source ? (
+                                <>
+                                    <h1>Editing Source {source.name}</h1>
+                                    <SourceForm source={source} />
+                                </>
+                            ) : (
+                                <NotFound item="source" />
+                            )}
+                        </>
+                    ) : (
+                        <NoAccess />
+                    )}
+                </div>
             </Main>
         </>
     )

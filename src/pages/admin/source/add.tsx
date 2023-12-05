@@ -15,11 +15,16 @@ export default function Page () {
                 title="New Source - Best Mods"
             />
             <Main>
-                {Has_Perm(session, "admin") ? (
-                    <SourceForm  />
-                ) : (
-                    <NoAccess />
-                )}
+                <div className="flex flex-col gap-2">
+                    {Has_Perm(session, "admin") ? (
+                        <>
+                            <h1>Add Source</h1>
+                            <SourceForm  />
+                        </>
+                    ) : (
+                        <NoAccess />
+                    )}
+                </div>
             </Main>
         </>
     )

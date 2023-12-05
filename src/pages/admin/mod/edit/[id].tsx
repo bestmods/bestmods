@@ -30,21 +30,26 @@ export default function Page ({
                 title={`Editing Mod ${mod?.name ?? "N/A"}  - Best Mods`}
             />
             <Main>
-                {Has_Perm(session, "admin") ? (
-                    <>
-                        {mod ? (
-                            <ModForm
-                                mod={mod}
-                                categories={categories}
-                                sources={sources}
-                            />
-                        ) : (
-                            <NotFound item="mod" />
-                        )}
-                    </>
-                ) : (
-                    <NoAccess />
-                )}
+                <div className="flex flex-col gap-2">
+                    {Has_Perm(session, "admin") ? (
+                        <>
+                            {mod ? (
+                                <>
+                                    <h1>Editing Mod {mod.name}</h1>
+                                    <ModForm
+                                        mod={mod}
+                                        categories={categories}
+                                        sources={sources}
+                                    />
+                                </>
+                            ) : (
+                                <NotFound item="mod" />
+                            )}
+                        </>
+                    ) : (
+                        <NoAccess />
+                    )}
+                </div>
             </Main>
         </>
     )

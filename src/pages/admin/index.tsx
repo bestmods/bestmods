@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { type GetServerSidePropsContext } from "next";
 import Link from "next/link";
 
@@ -16,7 +16,10 @@ import { Has_Perm } from "@utils/permissions";
 
 import EditIcon from "@components/icons/edit";
 import DeleteIcon from "@components/icons/delete";
-import Image from "next/image";
+import NoAccess from "@components/errors/noaccess";
+import IconAndText from "@components/icon_and_text";
+import { ErrorCtx, SuccessCtx } from "@pages/_app";
+import ScrollToTop from "@utils/scroll";
 
 export default function Page ({
     cats,
@@ -33,23 +36,21 @@ export default function Page ({
             <Main>
                 {Has_Perm(session, "admin") ? (
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 justify-items-center">
-                        <div className="p-4">
+                        <div className="p-4 bg-bestmods-2/80 rounded">
                             <h2>View Users</h2>
                             <p>View and modify users <Link href="/admin/user/">here!</Link></p>
                         </div>
-                        <div className="p-4">
+                        <div className="p-4 bg-bestmods-2/80 rounded">
                             <h2>Categories</h2>
                             <Categories cats={cats} />
                         </div>
-                        <div className="p-4">
+                        <div className="p-4 bg-bestmods-2/80 rounded">
                             <h2>Sources</h2>
                             <Sources srcs={srcs} />
                         </div>
                     </div>
                 ) : (
-                    <div>
-                        <p>You are not authorized to view this page.</p>
-                    </div>
+                    <NoAccess />
                 )}
             </Main>
         </>
@@ -61,84 +62,130 @@ const Categories: React.FC<{
 }> = ({
     cats
 }) => {
-    const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
+    const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
 
-    const delCats = trpc.category.del.useMutation();
+    const errorCtx = useContext(ErrorCtx);
+    const successCtx = useContext(SuccessCtx);
+
+    const delCats = trpc.category.del.useMutation({
+        onError: (opts) => {
+            const { message } = opts;
+
+            console.error(message);
+
+            if (errorCtx) {
+                errorCtx.setTitle("Unable To Delete Category!");
+                errorCtx.setMsg("Unable to remove category. Check the console!");
+
+                ScrollToTop();
+            }
+        },
+        onSuccess: () => {
+            if (successCtx) {
+                successCtx.setTitle("Removed Category!");
+                successCtx.setMsg("Removed the category successfully!");
+
+                ScrollToTop();
+            }
+        }
+    });
 
     return (
-        <div>
+        <div className="flex flex-col gap-2">
             {cats.length > 0 ? (
-                <>
-                    {cats.map((cat) => {
-                        const editLink = "/admin/add/category/" + cat.id;
-                        const icon = (cat.icon) ? cdn + cat.icon : cdn + "/images/default_icon.png"
+                <div className="flex flex-col gap-4">
+                    {cats.map((cat, index) => {
+                        // Generate links.
+                        const editLink = `/admin/category/edit/${cat.id.toString()}`;
+
+                        // Retrieve icon.
+                        let icon = "/images/default_icon.png";
+
+                        if (cat.icon)
+                            icon = cdn + cat.icon;
 
                         return (
-                            <div key={"cat-" + cat.id} className="admin-index-category">
-                                <div>
-                                    <Image
-                                        src={icon}
-                                        width={32}
-                                        height={32}
-                                        alt="Category Icon"
+                            <div
+                                key={`cat-${index.toString()}`}
+                                className="p-1"
+                            >
+                                <div className="flex flex-wrap gap-2">
+                                    <IconAndText
+                                        icon={icon}
+                                        text={<span>{cat.name}</span>}
                                     />
-                                    <span>{cat.name}</span>
-                                    <Link href={editLink} className="text-white hover:text-cyan-800 ml-2">
-                                        <EditIcon />
+                                
+                                    <Link
+                                        href={editLink}
+                                        className="btn btn-primary p-1"
+                                    >
+                                        <EditIcon className="w-4 h-4 stroke-white" />
                                     </Link>
-                                    <Link href="#" onClick={(e) => {
-                                        e.preventDefault();
+                                    <button
+                                        className="btn btn-danger p-1"
+                                        onClick={(e) => {
+                                            e.preventDefault();
 
-                                        if (confirm("Are you sure?")) {
-                                            delCats.mutate({
-                                                id: cat.id
-                                            });
-                                        }
-                                    }}>
-                                        <DeleteIcon />
-                                    </Link>
+                                            if (confirm("Are you sure?")) {
+                                                delCats.mutate({
+                                                    id: cat.id
+                                                });
+                                            }
+                                        }}
+                                    >
+                                        <DeleteIcon className="w-4 h-4 stroke-white" />
+                                    </button>
                                 </div>
                                 {cat.children.length > 0 && (
-                                    <>
-                                        {cat.children.map((catChild) => {
-                                            const editLinkChild = "/admin/add/category/" + catChild.id;
-                                            const iconChild = (catChild.icon) ? cdn + catChild.icon : cdn + "/images/default_icon.png";
+                                    <ul className="flex flex-col gap-1 p-2">
+                                        {cat.children.map((child, index) => {
+                                            const editLink = `/admin/category/edit/${child.id.toString()}`;
+
+                                            let icon = "/images/default_icon.png";
+
+                                            if (child.icon)
+                                                icon = cdn + child.icon;
 
                                             return (
-                                                <div key={"catchild-" + catChild.id}>
-                                                    <Image
-                                                        src={iconChild}
-                                                        width={32}
-                                                        height={32}
-                                                        className="w-8 h-8" 
-                                                        alt="Category Child Icon"
+                                                <li
+                                                    key={`child-${index.toString()}`}
+                                                    className="pl-5 flex flex-wrap gap-2"
+                                                >
+                                                    <IconAndText
+                                                        icon={icon}
+                                                        text={<span>{child.name}</span>}
                                                     />
-                                                    <span className="text-white ml-2">{catChild.name}</span>
-                                                    <Link href={editLinkChild}>
-                                                        <EditIcon />
+                                                    <Link
+                                                        href={editLink}
+                                                        className="btn btn-primary p-1"
+                                                    >
+                                                        <EditIcon className="w-4 h-4 stroke-white" />
                                                     </Link>
-                                                    <Link href="#" onClick={(e) => {
-                                                        e.preventDefault();
+                                                    <button
+                                                        className="btn btn-danger p-1"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
 
-                                                        if (confirm("Are you sure?")) {
-                                                            delCats.mutate({ id: catChild.id });
-                                                        }
-                                                    }}>
-                                                        <DeleteIcon />
-                                                    </Link>
-                                                </div>
+                                                            if (confirm("Are you sure?")) {
+                                                                delCats.mutate({ id: child.id });
+                                                            }
+                                                        }}
+                                                    >
+                                                        <DeleteIcon className="w-4 h-4 stroke-white" />
+                                                    </button>
+                                                </li>
                                             )
                                         })}
-                                    </>
+                                    </ul>
                                 )}
                             </div>
                         );
                     })}
-                </>
+                </div>
             ) : (
-                <p className="text-white">No categories found.</p>
+                <p>No categories found.</p>
             )}
-            <div className="admin-index-add">
+            <div className="flex justify-center">
                 <Link
                     className="btn btn-primary" 
                     href="/admin/add/category"
@@ -153,32 +200,64 @@ const Sources: React.FC<{
 }> = ({
     srcs
 }) => {
-    const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
+    const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
 
-    const delSrcs = trpc.source.del.useMutation();
+    const errorCtx = useContext(ErrorCtx);
+    const successCtx = useContext(SuccessCtx);
+
+    const delSrcs = trpc.source.del.useMutation({
+        onError: (opts) => {
+            const { message } = opts;
+
+            console.error(message);
+
+            if (errorCtx) {
+                errorCtx.setTitle("Unable To Delete Source!");
+                errorCtx.setMsg("An error occurred when deleting source. Check the console!");
+
+                ScrollToTop();
+            }
+        },
+        onSuccess: () => {
+            if (successCtx) {
+                successCtx.setTitle("Deleted Source!");
+                successCtx.setMsg("Deleted the source successfully!");
+
+                ScrollToTop();
+            }
+        }
+    });
 
     return (
-        <div>
+        <div className="flex flex-col gap-2">
             {srcs.length > 0 ? (
-                <>
-                    {srcs.map((src) => {
-                        const editLink = "/admin/add/source/" + src.url;
-                        const icon = (src.icon) ? cdn + src.icon : cdn + "/images/default_icon.png"
+                <div className="flex flex-col gap-4">
+                    {srcs.map((src, index) => {
+                        const editLink = `/admin/source/edit/${src.url}`;
+                        
+                        let icon = "/images/default_icon.png";
+
+                        if (src.icon)
+                            icon = cdn + src.icon;
 
                         return (
-                            <div key={"src-" + src.url} className="admin-index-category">
-                                <div>
-                                    <Image
-                                        src={icon}
-                                        width={32}
-                                        height={32}
-                                        alt="Source Icon"
-                                    />
-                                    <span>{src.name}</span>
-                                    <Link href={editLink}>
-                                        <EditIcon />
-                                    </Link>
-                                    <Link href="#" onClick={(e) => {
+                            <div
+                                key={`source-${index.toString()}`}
+                                className="flex flex-wrap gap-2"
+                            >
+                                <IconAndText
+                                    icon={icon}
+                                    text={<>{src.name}</>}
+                                />
+                                <Link
+                                    href={editLink}
+                                    className="btn btn-primary p-1"
+                                >
+                                    <EditIcon className="w-4 h-4 stroke-white" />
+                                </Link>
+                                <button
+                                    className="btn btn-danger p-1"
+                                    onClick={(e) => {
                                         e.preventDefault();
 
                                         if (confirm("Are you sure?")) {
@@ -186,18 +265,18 @@ const Sources: React.FC<{
                                                 url: src.url
                                             });
                                         }
-                                    }}>
-                                        <DeleteIcon />
-                                    </Link>
-                                </div>
+                                    }}
+                                >
+                                    <DeleteIcon className="w-4 h-4 stroke-white" />
+                                </button>
                             </div>
                         );
                     })}
-                </>
+                </div>
             ) : (
-                <p className="text-white">No sources found.</p>
+                <p>No sources found.</p>
             )}
-            <div className="admin-index-add">
+            <div className="flex justify-center">
                 <Link
                     className="btn btn-primary" 
                     href="/admin/add/source"
