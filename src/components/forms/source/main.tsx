@@ -4,6 +4,8 @@ import { GetContents } from "@utils/file";
 import { trpc } from "@utils/trpc";
 import { Field, Form, Formik } from "formik";
 import { useContext, useState } from "react";
+import FormCheckbox from "../checkbox";
+import ScrollToTop from "@utils/scroll";
 
 export default function SourceForm ({
     source
@@ -22,13 +24,17 @@ export default function SourceForm ({
 
             if (errorCtx) {
                 errorCtx.setTitle(`Failed To ${source ? `Save` : `Add`} Source`);
-                errorCtx.setMsg(`Failed to ${source ? `save` : `add`} source. Please check the console for more information.`)
+                errorCtx.setMsg(`Failed to ${source ? `save` : `add`} source. Please check the console for more information.`);
+
+                ScrollToTop();
             }
         },
         onSuccess: () => {
             if (successCtx) {
                 successCtx.setTitle(`Successfully ${source ? "Saved" : "Added"} Source!`);
                 successCtx.setMsg(`Successfully ${source ? `saved` : `added`} source!`);
+
+                ScrollToTop();
             }
         }
     });
@@ -50,26 +56,19 @@ export default function SourceForm ({
             }}
             onSubmit={(values) => {
                 mut.mutate({
+                    ...values,
+                    update: source ? true : false,
                     banner: banner?.toString(),
                     icon: icon?.toString(),
-
-                    bremove: values.bremove,
-                    iremove: values.iremove,
-
-                    name: values.name,
-                    description: values.description,
-                    url: values.url,
-                    classes: values.classes
                 })
             }}
         >
             {() => (
-                <Form>
-                    <div className="form-container">
+                <Form className="bg-bestmods-2/80 p-2 rounded">
+                    <div className="p-2">
                         <label htmlFor="icon">Icon</label>
                         <input
                             type="file"
-                            className="form-input"
                             name="icon"
                             onChange={async (e) => {
                                 const file = e.target.files?.[0];
@@ -83,20 +82,18 @@ export default function SourceForm ({
                         />
 
                         {source?.icon && (
-                            <div className="form-checkbox">
-                                <Field
-                                    type="checkbox"
+                            <div className="p-2">
+                                <FormCheckbox
                                     name="iremove"
+                                    text={<span>Remove Current</span>}
                                 />
-                                <label htmlFor="iremove">Remove Current</label>
                             </div>
                         )}
                     </div>
-                    <div className="form-container">
+                    <div className="p-2">
                         <label htmlFor="icon">Banner</label>
                         <input
                             type="file"
-                            className="form-input"
                             name="banner"
                             onChange={async (e) => {
                                 const file = e.target.files?.[0];
@@ -110,23 +107,22 @@ export default function SourceForm ({
                         />
 
                         {source?.banner && (
-                            <div className="form-checkbox">
-                                <Field
-                                    type="checkbox"
+                            <div className="p-2">
+                                <FormCheckbox
                                     name="bremove"
+                                    text={<span>Remove Current</span>}
                                 />
-                                <label htmlFor="bremove">Remove Current</label>
                             </div>
                         )}
                     </div>
-                    <div className="form-container">
+                    <div className="p-2">
                         <label htmlFor="name">Name</label>
                         <Field
                             name="name"
                             placeholder="Source Name..."
                         />
                     </div>
-                    <div className="form-container">
+                    <div className="p-2">
                         <label htmlFor="description">Description</label>
                         <Field
                             as="textarea"
@@ -136,14 +132,14 @@ export default function SourceForm ({
                             placeholder="Source description..."
                         />
                     </div>
-                    <div className="form-container">
+                    <div className="p-2">
                         <label htmlFor="name">URL</label>
                         <Field
                             name="url"
                             placeholder="Source URL..."
                         />
                     </div>
-                    <div className="form-container">
+                    <div className="p-2">
                         <label htmlFor="name">Classes</label>
                         <Field
                             name="classes"

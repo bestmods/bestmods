@@ -6,6 +6,8 @@ import { Field, Form, Formik } from "formik";
 import React from "react";
 import { useContext, useState } from "react";
 import { type CategoryWithChildren } from "~/types/category";
+import FormCheckbox from "../checkbox";
+import ScrollToTop from "@utils/scroll";
 
 export default function CategoryForm ({
     category,
@@ -26,13 +28,17 @@ export default function CategoryForm ({
 
             if (errorCtx) {
                 errorCtx.setTitle(`Failed To ${category ? `Save` : `Add`} Category`);
-                errorCtx.setMsg(`Failed to ${category ? `save` : `add`} category. Please check the console for more information.`)
+                errorCtx.setMsg(`Failed to ${category ? `save` : `add`} category. Please check the console for more information.`);
+                
+                ScrollToTop();
             }
         },
         onSuccess: () => {
             if (successCtx) {
                 successCtx.setTitle(`Successfully ${category ? "Saved" : "Added"} Category!`);
                 successCtx.setMsg(`Successfully ${category ? `saved` : `added`} category!`);
+
+                ScrollToTop();
             }
         }
     });
@@ -58,18 +64,18 @@ export default function CategoryForm ({
             onSubmit={(values) => {
                 mut.mutate({
                     ...values,
+                    id: category?.id,
                     banner: banner?.toString(),
                     icon: icon?.toString(),
                 })
             }}
         >
             {(form) => (
-                <Form>
-                    <div className="form-container">
+                <Form className="bg-bestmods-2/80 p-2 rounded">
+                    <div className="p-2">
                         <label htmlFor="icon">Icon</label>
                         <input
                             type="file"
-                            className="form-input"
                             name="icon"
                             onChange={async (e) => {
                                 const file = e.target.files?.[0];
@@ -83,20 +89,18 @@ export default function CategoryForm ({
                         />
 
                         {category?.icon && (
-                            <div className="form-checkbox">
-                                <Field
-                                    type="checkbox"
+                            <div className="p-2">
+                                <FormCheckbox
                                     name="iremove"
+                                    text={<span>Remove Current</span>}
                                 />
-                                <label htmlFor="iremove">Remove Current</label>
                             </div>
                         )}
                     </div>
-                    <div className="form-container">
-                        <label htmlFor="icon">Banner</label>
+                    <div className="p-2">
+                        <label htmlFor="banner">Banner</label>
                         <input
                             type="file"
-                            className="form-input"
                             name="banner"
                             onChange={async (e) => {
                                 const file = e.target.files?.[0];
@@ -110,20 +114,16 @@ export default function CategoryForm ({
                         />
 
                         {category?.banner && (
-                            <div className="form-checkbox">
-                                <Field
-                                    type="checkbox"
+                            <div className="p-2">
+                                <FormCheckbox
                                     name="bremove"
+                                    text={<span>Remove Current</span>}
                                 />
-                                <label htmlFor="bremove">Remove Current</label>
                             </div>
                         )}
                     </div>
-                    <div className="form-container">
-                        <label
-                            htmlFor="parentId"
-                            className="form-label"
-                        >Parent</label> 
+                    <div className="p-2">
+                        <label htmlFor="parentId">Parent</label> 
                         <select 
                             name="parentId"
                             value={form.values.parentId}
@@ -144,21 +144,21 @@ export default function CategoryForm ({
                             })}
                         </select>
                     </div>
-                    <div className="form-container">
+                    <div className="p-2">
                         <label htmlFor="name">Name</label>
                         <Field
                             name="name"
                             placeholder="Category Name..."
                         />
                     </div>
-                    <div className="form-container">
+                    <div className="p-2">
                         <label htmlFor="nameShort">Short Name</label>
                         <Field
                             name="nameShort"
                             placeholder="Category Short Name..."
                         />
                     </div>
-                    <div className="form-container">
+                    <div className="p-2">
                         <label htmlFor="description">Description</label>
                         <Field
                             as="textarea"
@@ -168,14 +168,14 @@ export default function CategoryForm ({
                             placeholder="Category description..."
                         />
                     </div>
-                    <div className="form-container">
+                    <div className="p-2">
                         <label htmlFor="url">URL</label>
                         <Field
                             name="url"
                             placeholder="Category URL..."
                         />
                     </div>
-                    <div className="form-container">
+                    <div className="p-2">
                         <label htmlFor="classes">Classes</label>
                         <Field
                             name="classes"
@@ -183,14 +183,12 @@ export default function CategoryForm ({
                         />
                     </div>
                     <h2>Other Settings</h2>
-                    <div className="form-container">
-                        <div className="form-checkbox">
-                            <Field
-                                type="checkbox"
+                    <div className="p-2">
+                        <div className="p-2">
+                            <FormCheckbox
                                 name="hasBg"
-                                checked={category?.hasBg ?? false}
+                                text={<span>Has Background?</span>}
                             />
-                            <label htmlFor="hasBg">Has Background?</label>
                         </div>
                     </div>
                     <div className="flex justify-center">

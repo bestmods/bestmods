@@ -7,6 +7,8 @@ import { Field, Form, Formik } from "formik";
 import React, { useContext, useState } from "react";
 import { type CategoryWithChildren } from "~/types/category";
 import { type ModWithRelations } from "~/types/mod";
+import FormCheckbox from "../checkbox";
+import ScrollToTop from "@utils/scroll";
 
 const EMPTY_DOWNLOAD = {
     name: "",
@@ -66,13 +68,17 @@ export default function ModForm ({
 
             if (errorCtx) {
                 errorCtx.setTitle(`Failed To ${mod ? `Save` : `Add`} Mod`);
-                errorCtx.setMsg(`Failed to ${mod ? `save` : `add`} mod. Please check the console for more information.`)
+                errorCtx.setMsg(`Failed to ${mod ? `save` : `add`} mod. Please check the console for more information.`);
+
+                ScrollToTop();
             }
         },
         onSuccess: () => {
             if (successCtx) {
-                successCtx.setTitle(`Successfully ${mod ? "Saved" : "Added"} Source!`);
-                successCtx.setMsg(`Successfully ${mod ? `saved` : `added`} source!`);
+                successCtx.setTitle(`Successfully ${mod ? "Saved" : "Added"} Mod!`);
+                successCtx.setMsg(`Successfully ${mod ? `saved` : `added`} Mod!`);
+
+                ScrollToTop();
             }
         }
     });
@@ -106,20 +112,19 @@ export default function ModForm ({
             onSubmit={(values) => {
                 mut.mutate({
                     ...values,
+                    categoryId: typeof values.categoryId !== "undefined" ? Number(values.categoryId) : undefined,
                     banner: banner?.toString(),
-                    category: values.categoryId || undefined,
                     id: mod?.id,
                 })
             }}
         >
             {(form) => (
-                <Form>
+                <Form className="bg-bestmods-2/80 p-2 rounded">
                     <h2>General</h2>
-                    <div className="form-container">
+                    <div className="p-2">
                         <label htmlFor="icon">Banner</label>
                         <input
                             type="file"
-                            className="form-input"
                             name="banner"
                             onChange={async (e) => {
                                 const file = e.target.files?.[0];
@@ -131,16 +136,15 @@ export default function ModForm ({
                         />
 
                         {mod?.banner && (
-                            <div className="form-checkbox">
-                                <Field
-                                    type="checkbox"
+                            <div className="p-2">
+                                <FormCheckbox
                                     name="bremove"
+                                    text={<span>Remove Current</span>}
                                 />
-                                <label htmlFor="bremove">Remove Current</label>
                             </div>
                         )}
                     </div>
-                    <div className="form-div">
+                    <div className="p-2">
                         <label htmlFor="categoryId">Category</label>
                         {previewMode ? (
                             <p>{form.values.categoryId?.toString()}</p>
@@ -152,17 +156,17 @@ export default function ModForm ({
                                 onBlur={form.handleBlur}
                             >
                             <option value={0}>None</option>
-                                {categories.map((category) => {
+                                {categories.map((category, index) => {
                                     return (
-                                        <React.Fragment key={`category-${category.id.toString()}`}>
+                                        <React.Fragment key={`category-${index.toString()}`}>
                                             <option value={category.id}>{category.name}</option>
 
-                                            {category.children.map((categoryChild) => {
+                                            {category.children.map((child, index) => {
                                                 return (
                                                     <option
-                                                        key={`category-${categoryChild.id.toString()}`}
-                                                        value={categoryChild.id}
-                                                    >-- {categoryChild.name}</option>
+                                                        key={`child-${index.toString()}`}
+                                                        value={child.id}
+                                                    >-- {child.name}</option>
                                                 )
                                             })}
                                         </React.Fragment>
@@ -171,7 +175,7 @@ export default function ModForm ({
                             </select>
                         )}
                     </div>
-                    <div className="form-container">
+                    <div className="p-2">
                         <label htmlFor="name">Name</label>
                         {previewMode ? (
                             <p>{form.values.name}</p>
@@ -183,7 +187,7 @@ export default function ModForm ({
                         )}
                         
                     </div>
-                    <div className="form-container">
+                    <div className="p-2">
                         <label htmlFor="ownerName">Owner Name</label>
                         {previewMode ? (
                             <p>{form.values.ownerName}</p>
@@ -195,7 +199,7 @@ export default function ModForm ({
                         )}
                         
                     </div>
-                    <div className="form-container">
+                    <div className="p-2">
                         <label htmlFor="name">URL</label>
                         {previewMode ? (
                             <p>{form.values.url}</p>
@@ -205,9 +209,8 @@ export default function ModForm ({
                                 placeholder="Mod URL..."
                             />
                         )}
-                        
                     </div>
-                    <div className="form-container">
+                    <div className="p-2">
                         <label htmlFor="descriptionShort">Short Description</label>
                         {previewMode ? (
                             <Markdown rehype={true}>
@@ -224,7 +227,7 @@ export default function ModForm ({
                         )}
                         
                     </div>
-                    <div className="form-container">
+                    <div className="p-2">
                         <label htmlFor="description">Description</label>
                         {previewMode ? (
                             <Markdown rehype={true}>
@@ -240,7 +243,7 @@ export default function ModForm ({
                             />
                         )}
                     </div>
-                    <div className="form-container">
+                    <div className="p-2">
                         <label htmlFor="install">Installation</label>
                         {previewMode ? (
                             <Markdown rehype={true}>
@@ -258,62 +261,59 @@ export default function ModForm ({
                         
                     </div>
                     <h2>Downloads</h2>
-                    <div className="mod-form-relation">
-                        <div>
-                            {form.values.downloads.map((_download, index) => {
-                                return (
-                                    <div
-                                        key={`download-${index.toString()}`}
-                                    >
-                                        <h3>Download #{(index + 1).toString()}</h3>
-                                        <div>
-                                            <div className="form-div">
-                                                <label htmlFor={`downloads[${index.toString()}].name`}>Name</label>
+                    <div className="p-2 flex flex-col gap-2">
+                        {form.values.downloads.map((_download, index) => {
+                            return (
+                                <div
+                                    key={`download-${index.toString()}`}
+                                    className="flex flex-col gap-1 bg-bestmods-3/80 rounded p-2"
+                                >
+                                    <h3>Download #{(index + 1).toString()}</h3>
+                                    <div>
+                                        <div className="p-2">
+                                            <label htmlFor={`downloads[${index.toString()}].name`}>Name</label>
 
-                                                {previewMode ? (
-                                                    <p>{form.values.downloads?.[index]?.name ?? "N/A"}</p>
-                                                ) : (
-                                                    <Field
-                                                        name={`downloads[${index.toString()}].name`}
-                                                    />
-                                                )}
-                                            </div>
-                                            <div className="form-div">
-                                                <label htmlFor={`downloads[${index.toString()}].url`}>URL</label>
-
-                                                {previewMode ? (
-                                                    <p>{form.values.downloads?.[index]?.url ?? "N/A"}</p>
-                                                ) : (
-                                                    <Field
-                                                        name={`downloads[${index.toString()}].url`}
-                                                    />
-                                                )}
-                                            </div>
+                                            {previewMode ? (
+                                                <p>{form.values.downloads?.[index]?.name ?? "N/A"}</p>
+                                            ) : (
+                                                <Field name={`downloads[${index.toString()}].name`} />
+                                            )}
                                         </div>
-                                        <div>
-                                            <button
-                                                className="btn btn-danger"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
+                                        <div className="p-2">
+                                            <label htmlFor={`downloads[${index.toString()}].url`}>URL</label>
 
-                                                    const downloads = form.values.downloads;
-
-                                                    downloads.splice(index, 1);
-
-                                                    form.setValues({
-                                                        ...form.values,
-                                                        downloads: downloads
-                                                    });
-                                                }}
-                                            >Remove</button>
+                                            {previewMode ? (
+                                                <p>{form.values.downloads?.[index]?.url ?? "N/A"}</p>
+                                            ) : (
+                                                <Field
+                                                    name={`downloads[${index.toString()}].url`}
+                                                />
+                                            )}
                                         </div>
                                     </div>
-                                )
-                            })}
-                        </div>
+                                    <div>
+                                        <button
+                                            className="btn btn-danger"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+
+                                                const downloads = form.values.downloads;
+
+                                                downloads.splice(index, 1);
+
+                                                form.setValues({
+                                                    ...form.values,
+                                                    downloads: downloads
+                                                });
+                                            }}
+                                        >Remove</button>
+                                    </div>
+                                </div>
+                            )
+                        })}
                         <div>
                             <button
-                                className="btn btn-success"
+                                className="btn btn-primary"
                                 onClick={(e) => {
                                     e.preventDefault();
 
@@ -326,88 +326,85 @@ export default function ModForm ({
                         </div>
                     </div>
                     <h2>Sources</h2>
-                    <div className="mod-form-relation">
-                        <div>
-                            {form.values.sources.map((_source, index) => {
-                                return (
-                                    <div
-                                        key={`source-${index.toString()}`}
-                                    >
-                                        <h3>Source #{(index + 1).toString()}</h3>
-                                        <div>
-                                            <div className="form-div">
-                                                <label htmlFor={`sources[${index.toString()}].sourceUrl`}>Source</label>
+                    <div className="p-2 flex flex-col gap-2">
+                        {form.values.sources.map((_source, index) => {
+                            return (
+                                <div
+                                    key={`source-${index.toString()}`}
+                                    className="flex flex-col gap-1 bg-bestmods-3/80 rounded p-2"
+                                >
+                                    <h3>Source #{(index + 1).toString()}</h3>
+                                    <div className="p-2">
+                                        <label htmlFor={`sources[${index.toString()}].sourceUrl`}>Source</label>
 
-                                                {previewMode ? (
-                                                    <p>{form.values.sources?.[index]?.sourceUrl ?? "N/A"}</p>
-                                                ) : (
-                                                    <select
-                                                        name={`sources[${index.toString()}].sourceUrl`}
-                                                        value={form.values.sources[index]?.sourceUrl}
-                                                        onChange={form.handleChange}
-                                                        onBlur={form.handleBlur}
-                                                    >
-                                                        {sources.map((source, index) => {
-                                                            return (
-                                                                <option
-                                                                    key={`source-${index.toString()}`}
-                                                                    value={source.url}
-                                                                >{source.name}</option>
-                                                            )
-                                                        })}
-                                                    </select>
-                                                )}
-                                            </div>
-                                            <div className="form-div">
-                                                <label htmlFor={`sources[${index.toString()}].query`}>Query</label>
-
-                                                {previewMode ? (
-                                                    <p>{form.values.sources?.[index]?.query ?? "N/A"}</p>
-                                                ) : (
-                                                    <Field
-                                                        name={`sources[${index.toString()}].query`}
-                                                    />
-                                                )}
-                                            </div>
-                                            <div className="form-div">
-                                                <label htmlFor={`sources[${index.toString()}].primary`}>Primary</label>
-
-                                                {previewMode ? (
-                                                    <p>{form.values.sources?.[index]?.primary ? "Yes" : "No"}</p>
-                                                ) : (
-                                                    <>
-                                                        <Field
-                                                            as="checkbox"
-                                                            name={`sources[${index.toString()}].primary`}
-                                                        /> <span>Yes</span>
-                                                    </>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <button
-                                                className="btn btn-danger"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-
-                                                    const sources = form.values.sources;
-
-                                                    sources.splice(index, 1);
-
-                                                    form.setValues({
-                                                        ...form.values,
-                                                        sources: sources
-                                                    });
-                                                }}
-                                            >Remove</button>
-                                        </div>
+                                        {previewMode ? (
+                                            <p>{form.values.sources?.[index]?.sourceUrl ?? "N/A"}</p>
+                                        ) : (
+                                            <select
+                                                name={`sources[${index.toString()}].sourceUrl`}
+                                                value={form.values.sources[index]?.sourceUrl}
+                                                onChange={form.handleChange}
+                                                onBlur={form.handleBlur}
+                                            >
+                                                {sources.map((source, index) => {
+                                                    return (
+                                                        <option
+                                                            key={`source-${index.toString()}`}
+                                                            value={source.url}
+                                                        >{source.name}</option>
+                                                    )
+                                                })}
+                                            </select>
+                                        )}
                                     </div>
-                                )
-                            })}
-                        </div>
+                                    <div className="p-2">
+                                        <label htmlFor={`sources[${index.toString()}].query`}>Query</label>
+
+                                        {previewMode ? (
+                                            <p>{form.values.sources?.[index]?.query ?? "N/A"}</p>
+                                        ) : (
+                                            <Field
+                                                name={`sources[${index.toString()}].query`}
+                                            />
+                                        )}
+                                    </div>
+                                    <div className="p-2">
+                                        <label htmlFor={`sources[${index.toString()}].primary`}>Primary</label>
+
+                                        {previewMode ? (
+                                            <p>{form.values.sources?.[index]?.primary ? "Yes" : "No"}</p>
+                                        ) : (
+                                            <>
+                                                <FormCheckbox
+                                                    name={`sources[${index.toString()}].primary`}
+                                                    text={<span>Yes</span>}
+                                                />
+                                            </>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <button
+                                            className="btn btn-danger"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+
+                                                const sources = form.values.sources;
+
+                                                sources.splice(index, 1);
+
+                                                form.setValues({
+                                                    ...form.values,
+                                                    sources: sources
+                                                });
+                                            }}
+                                        >Remove</button>
+                                    </div>
+                                </div>
+                            )
+                        })}
                         <div>
                             <button
-                                className="btn btn-success"
+                                className="btn btn-primary"
                                 onClick={(e) => {
                                     e.preventDefault();
 
@@ -420,74 +417,71 @@ export default function ModForm ({
                         </div>
                     </div>
                     <h2>Installers</h2>
-                    <div className="mod-form-relation">
-                        <div>
-                            {form.values.installers.map((_installer, index) => {
-                                return (
-                                    <div
-                                        key={`installer-${index.toString()}`}
-                                    >
-                                        <h3>Installer #{(index + 1).toString()}</h3>
-                                        <div>
-                                            <div className="form-div">
-                                                <label htmlFor={`installers[${index.toString()}].sourceUrl`}>Source</label>
+                    <div className="p-2 flex flex-col gap-2">
+                        {form.values.installers.map((_installer, index) => {
+                            return (
+                                <div
+                                    key={`installer-${index.toString()}`}
+                                    className="flex flex-col gap-1 bg-bestmods-3/80 rounded p-2"
+                                >
+                                    <h3>Installer #{(index + 1).toString()}</h3>
+                                    <div className="p-2">
+                                        <label htmlFor={`installers[${index.toString()}].sourceUrl`}>Source</label>
 
-                                                {previewMode ? (
-                                                    <p>{form.values.installers?.[index]?.sourceUrl ?? "N/A"}</p>
-                                                ) : (
-                                                    <select
-                                                        name={`installers[${index.toString()}].sourceUrl`}
-                                                        value={form.values.installers[index]?.sourceUrl}
-                                                        onChange={form.handleChange}
-                                                        onBlur={form.handleBlur}
-                                                    >
-                                                        {sources.map((source, index) => {
-                                                            return (
-                                                                <option
-                                                                    key={`source-${index.toString()}`}
-                                                                    value={source.url}
-                                                                >{source.name}</option>
-                                                            )
-                                                        })}
-                                                    </select>
-                                                )}
-                                            </div>
-                                            <div className="form-div">
-                                                <label htmlFor={`installers[${index.toString()}].url`}>URL</label>
-
-                                                {previewMode ? (
-                                                    <p>{form.values.installers?.[index]?.url ?? "N/A"}</p>
-                                                ) : (
-                                                    <Field
-                                                        name={`installers[${index.toString()}].url`}
-                                                    />
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <button
-                                                className="btn btn-danger"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-
-                                                    const installers = form.values.installers;
-
-                                                    installers.splice(index, 1);
-
-                                                    form.setValues({
-                                                        ...form.values,
-                                                        installers: installers
-                                                    });
-                                                }}
-                                            >Remove</button>
-                                        </div>
+                                        {previewMode ? (
+                                            <p>{form.values.installers?.[index]?.sourceUrl ?? "N/A"}</p>
+                                        ) : (
+                                            <select
+                                                name={`installers[${index.toString()}].sourceUrl`}
+                                                value={form.values.installers[index]?.sourceUrl}
+                                                onChange={form.handleChange}
+                                                onBlur={form.handleBlur}
+                                            >
+                                                {sources.map((source, index) => {
+                                                    return (
+                                                        <option
+                                                            key={`source-${index.toString()}`}
+                                                            value={source.url}
+                                                        >{source.name}</option>
+                                                    )
+                                                })}
+                                            </select>
+                                        )}
                                     </div>
-                                )
-                            })}
-                        </div>
+                                    <div className="p-2">
+                                        <label htmlFor={`installers[${index.toString()}].url`}>URL</label>
+
+                                        {previewMode ? (
+                                            <p>{form.values.installers?.[index]?.url ?? "N/A"}</p>
+                                        ) : (
+                                            <Field
+                                                name={`installers[${index.toString()}].url`}
+                                            />
+                                        )}
+                                    </div>
+                                    <div>
+                                        <button
+                                            className="btn btn-danger"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+
+                                                const installers = form.values.installers;
+
+                                                installers.splice(index, 1);
+
+                                                form.setValues({
+                                                    ...form.values,
+                                                    installers: installers
+                                                });
+                                            }}
+                                        >Remove</button>
+                                    </div>
+                                </div>
+                            )
+                        })}
                         <div>
                             <button
-                                className="btn btn-success"
+                                className="btn btn-primary"
                                 onClick={(e) => {
                                     e.preventDefault();
 
@@ -500,51 +494,48 @@ export default function ModForm ({
                         </div>
                     </div>
                     <h2>Screenshots</h2>
-                    <div className="mod-form-relation">
-                        <div>
-                            {form.values.screenshots.map((_screenshot, index) => {
-                                return (
-                                    <div
-                                        key={`screenshot-${index.toString()}`}
-                                    >
-                                        <h3>Screenshot #{(index + 1).toString()}</h3>
-                                        <div>
-                                            <div className="form-div">
-                                                <label htmlFor={`screenshots[${index.toString()}].url`}>URL</label>
+                    <div className="p-2 flex flex-col gap-2">
+                        {form.values.screenshots.map((_screenshot, index) => {
+                            return (
+                                <div
+                                    key={`screenshot-${index.toString()}`}
+                                    className="flex flex-col gap-1 bg-bestmods-3/80 rounded p-2"
+                                >
+                                    <h3>Screenshot #{(index + 1).toString()}</h3>
+                                    <div className="p-2">
+                                        <label htmlFor={`screenshots[${index.toString()}].url`}>URL</label>
 
-                                                {previewMode ? (
-                                                    <p>{form.values.screenshots?.[index]?.url ?? "N/A"}</p>
-                                                ) : (
-                                                    <Field
-                                                        name={`screenshots[${index.toString()}].url`}
-                                                    />
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <button
-                                                className="btn btn-danger"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-
-                                                    const screenshots = form.values.screenshots;
-
-                                                    screenshots.splice(index, 1);
-
-                                                    form.setValues({
-                                                        ...form.values,
-                                                        screenshots: screenshots
-                                                    });
-                                                }}
-                                            >Remove</button>
-                                        </div>
+                                        {previewMode ? (
+                                            <p>{form.values.screenshots?.[index]?.url ?? "N/A"}</p>
+                                        ) : (
+                                            <Field
+                                                name={`screenshots[${index.toString()}].url`}
+                                            />
+                                        )}
                                     </div>
-                                )
-                            })}
-                        </div>
+                                    <div>
+                                        <button
+                                            className="btn btn-danger"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+
+                                                const screenshots = form.values.screenshots;
+
+                                                screenshots.splice(index, 1);
+
+                                                form.setValues({
+                                                    ...form.values,
+                                                    screenshots: screenshots
+                                                });
+                                            }}
+                                        >Remove</button>
+                                    </div>
+                                </div>
+                            )
+                        })}
                         <div>
                             <button
-                                className="btn btn-success"
+                                className="btn btn-primary"
                                 onClick={(e) => {
                                     e.preventDefault();
 
@@ -557,62 +548,59 @@ export default function ModForm ({
                         </div>
                     </div>
                     <h2>Credits</h2>
-                    <div className="mod-form-relation">
-                        <div>
-                            {form.values.credits.map((_credit, index) => {
-                                return (
-                                    <div
-                                        key={`credit-${index.toString()}`}
-                                    >
-                                        <h3>Credit #{(index + 1).toString()}</h3>
-                                        <div>
-                                            <div className="form-div">
-                                                <label htmlFor={`credits[${index.toString()}].name`}>Name</label>
+                    <div className="p-2 flex flex-col gap-2">
+                        {form.values.credits.map((_credit, index) => {
+                            return (
+                                <div
+                                    key={`credit-${index.toString()}`}
+                                    className="flex flex-col gap-1 bg-bestmods-3/80 rounded p-2"
+                                >
+                                    <h3>Credit #{(index + 1).toString()}</h3>
+                                    <div className="p-2">
+                                        <label htmlFor={`credits[${index.toString()}].name`}>Name</label>
 
-                                                {previewMode ? (
-                                                    <p>{form.values.credits?.[index]?.name ?? "N/A"}</p>
-                                                ) : (
-                                                    <Field
-                                                        name={`credits[${index.toString()}].name`}
-                                                    />
-                                                )}
-                                            </div>
-                                            <div className="form-div">
-                                                <label htmlFor={`credits[${index.toString()}].credit`}>Credit</label>
-
-                                                {previewMode ? (
-                                                    <p>{form.values.credits?.[index]?.credit ?? "N/A"}</p>
-                                                ) : (
-                                                    <Field
-                                                        name={`credits[${index.toString()}].credit`}
-                                                    />
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <button
-                                                className="btn btn-danger"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-
-                                                    const credits = form.values.credits;
-
-                                                    credits.splice(index, 1);
-
-                                                    form.setValues({
-                                                        ...form.values,
-                                                        credits: credits
-                                                    });
-                                                }}
-                                            >Remove</button>
-                                        </div>
+                                        {previewMode ? (
+                                            <p>{form.values.credits?.[index]?.name ?? "N/A"}</p>
+                                        ) : (
+                                            <Field
+                                                name={`credits[${index.toString()}].name`}
+                                            />
+                                        )}
                                     </div>
-                                )
-                            })}
-                        </div>
+                                    <div className="p-2">
+                                        <label htmlFor={`credits[${index.toString()}].credit`}>Credit</label>
+
+                                        {previewMode ? (
+                                            <p>{form.values.credits?.[index]?.credit ?? "N/A"}</p>
+                                        ) : (
+                                            <Field
+                                                name={`credits[${index.toString()}].credit`}
+                                            />
+                                        )}
+                                    </div>
+                                    <div>
+                                        <button
+                                            className="btn btn-danger"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+
+                                                const credits = form.values.credits;
+
+                                                credits.splice(index, 1);
+
+                                                form.setValues({
+                                                    ...form.values,
+                                                    credits: credits
+                                                });
+                                            }}
+                                        >Remove</button>
+                                    </div>
+                                </div>
+                            )
+                        })}
                         <div>
                             <button
-                                className="btn btn-success"
+                                className="btn btn-primary"
                                 onClick={(e) => {
                                     e.preventDefault();
 
@@ -637,7 +625,6 @@ export default function ModForm ({
                     </div>
                 </Form>    
             )}
-
         </Formik>
     )
 }
