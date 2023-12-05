@@ -8,134 +8,239 @@ import CodeIcon from "./icons/code";
 import TrashIcon from "./icons/trash";
 import UsersIcon from "./icons/users";
 import MagnifyingGlassIcon from "./icons/browse";
-import DropDown, { Drop_Down_Menu_Type } from "./drop_down";
+import DropDown from "./drop_down";
 import TwitterIcon from "./icons/twitter";
 import FacebookIcon from "./icons/facebook";
 import InstagramIcon from "./icons/instagram";
+import { useRouter } from "next/router";
+import { useContext, useState } from "react";
+import { ViewPortCtx } from "./main";
+import HamburgerIcon from "./icons/hamburger";
+import LeftArrowIcon from "./icons/left_arrow";
+import HomeIcon from "./icons/home";
 
 export default function Header () {
+    const router = useRouter();
+
+    const cur = router.asPath;
+
+    const viewPort = useContext(ViewPortCtx);
+
+    const [mobileOpen, setMobileOpen] = useState(false);
+
     return (
         <header className="w-full bg-bestmods-3/80">
-            <nav className="container mx-auto flex items-center gap-8">
-                <Link href="/">
-                    <h1 className="flex gap-2">
-                        <span>
-                            <span className="text-blue-400">B</span>est
-                        </span>
-                        <span>
-                            <span className="text-blue-400">M</span>ods
-                        </span>
-                    </h1>
-                </Link>
-                <NavItem
-                    url={"/browse"}
-                    content={
-                        <IconAndText
-                            icon={<MagnifyingGlassIcon className="w-6 h-6 stroke-white" />}
-                            text={<>Browse</>}
-                        />
-                    }
-                />
-                <NavItem
-                    url={"/category"}
-                    content={
-                        <IconAndText
-                            icon={<Squares2x2Icon className="w-6 h-6 stroke-white" />}
-                            text={<>Categories</>}
-                        />
-                    }
-                />
-                <DropDown
-                    html={<>Social</>}
-                    drop_down_items={[
-                        {
-                            link: "https://twitter.com/bestmodsio",
-                            html:
+            {viewPort.isMobile ? (
+                <nav>
+                    <button
+                        className=""
+                        onClick={() => {
+                            setMobileOpen(!mobileOpen);
+                        }}
+                    >
+                        <HamburgerIcon className="w-6 h-6 stroke-white" />
+                    </button>
+                    <div className={`${mobileOpen ? "block" : "hidden"} fixed z-30 top-0 left-0 w-1/2 bg-bestmods-2 flex justify-between overflow-y-scroll`}>
+                        <div className="grow flex flex-col gap-4">
+                            <Link
+                                href="/"
+                            >
                                 <IconAndText
-                                    icon={<TwitterIcon className="w-6 h-6 fill-white" />}
+                                    icon={<HomeIcon className="w-6 h-6 stroke-white" />}
+                                    text={<>Home</>}
+                                />
+                            </Link>
+                            <Link
+                                href="/browse"
+                            >
+                                <IconAndText
+                                    icon={<MagnifyingGlassIcon className="w-6 h-6 stroke-white" />}
+                                    text={<>Browse</>}
+                                />
+                            </Link>
+                            <Link
+                                href="/category"
+                            >
+                                <IconAndText
+                                    icon={<Squares2x2Icon className="w-6 h-6 stroke-white" />}
+                                    text={<>Categories</>}
+                                />
+                            </Link>
+                            <h2>Socials</h2>
+                            <Link
+                                href="https://twitter.com/bestmodsio"
+                                target="_blank"
+                            >
+                                <IconAndText
+                                    icon={<TwitterIcon className="w-6 h-6 stroke-white" />}
                                     text={<>Twitter</>}
                                 />
-                            ,
-                            new_tab: true
-                        },
-                        {
-                            link: "https://facebook.com/bestmodsio",
-                            html:
+                            </Link>
+                            <Link
+                                href="https://facebook.com/bestmodsio"
+                                target="_blank"
+                            >
                                 <IconAndText
-                                    icon={<FacebookIcon className="w-6 h-6 fill-white" />}
+                                    icon={<FacebookIcon className="w-6 h-6 stroke-white" />}
                                     text={<>Facebook</>}
                                 />
-                            ,
-                            new_tab: true
-                        },
-                        {
-                            link: "https://instagram.com/bestmodsio",
-                            html:
+                            </Link>
+                            <Link
+                                href="https://instagram.com/bestmodsio"
+                                target="_blank"
+                            >
                                 <IconAndText
-                                    icon={<InstagramIcon className="w-6 h-6 fill-white" />}
+                                    icon={<InstagramIcon className="w-6 h-6 stroke-white" />}
                                     text={<>Instagram</>}
                                 />
-                            ,
-                            new_tab: true
-                        }
-                    ]}
-                />
-                <DropDown
-                    html={<>More</>}
-                    drop_down_items={[
-                        {
-                            link: "https://github.com/orgs/bestmods/discussions/categories/feedback-idea",
-                            html:
+                            </Link>
+                            <h2>More</h2>
+                            <Link
+                                href="https://github.com/orgs/bestmods/discussions/categories/feedback-idea"
+                                target="_blank"
+                            >
                                 <IconAndText
                                     icon={<ChatBubbleIcon className="w-6 h-6 stroke-white" />}
                                     text={<>Feedback</>}
                                 />
-                            ,
-                            new_tab: true
-                        },
-                        {
-                            link: "https://github.com/bestmods/bestmods/milestones",
-                            html:
-                                <IconAndText
-                                    icon={<MapIcon className="w-6 h-6 stroke-white" />}
-                                    text={<>Roadmap</>}
-                                />
-                            ,
-                            new_tab: true
-                        },
-                        {
-                            link: "https://github.com/BestMods/bestmods",
-                            html:
-                                <IconAndText
-                                    icon={<CodeIcon className="w-6 h-6 stroke-white" />}
-                                    text={<>Source Code</>}
-                                />
-                            ,
-                            new_tab: true
-                        },
-                        {
-                            link: "https://github.com/orgs/bestmods/discussions/35",
-                            html:
-                                <IconAndText
-                                    icon={<TrashIcon className="w-6 h-6 stroke-white" />}
-                                    text={<>Removals</>}
-                                />
-                            ,
-                            new_tab: true
-                        },
-                        {
-                            link: "https://moddingcommunity.com/",
-                            html:
-                                <IconAndText
-                                    icon={<UsersIcon className="w-6 h-6 stroke-white" />}
-                                    text={<>Community</>}
-                                />
-                            ,
-                            new_tab: true
+                            </Link>
+                        </div>
+                        <div>
+                            <button
+                                onClick={() => {
+                                    setMobileOpen(!mobileOpen);
+                                }}
+                            >
+                                <LeftArrowIcon className="w-6 h-6 stroke-white" />
+                            </button>
+                        </div>
+                    </div>
+                </nav>
+            ) : (
+                <nav className="container mx-auto flex items-center gap-4">
+                    <Link href="/">
+                        <h1 className="flex gap-2">
+                            <span>
+                                <span className="text-blue-400">B</span>est
+                            </span>
+                            <span>
+                                <span className="text-blue-400">M</span>ods
+                            </span>
+                        </h1>
+                    </Link>
+                    <NavItem
+                        url={"/browse"}
+                        content={
+                            <IconAndText
+                                icon={<MagnifyingGlassIcon className="w-6 h-6 stroke-white" />}
+                                text={<>Browse</>}
+                            />
                         }
-                    ]}
-                />
-            </nav>
+                        active={cur == "/browse"}
+                    />
+                    <NavItem
+                        url={"/category"}
+                        content={
+                            <IconAndText
+                                icon={<Squares2x2Icon className="w-6 h-6 stroke-white" />}
+                                text={<>Categories</>}
+                            />
+                        }
+                        active={cur == "/category"}
+                    />
+                    <DropDown
+                        html={<>Social</>}
+                        drop_down_items={[
+                            {
+                                link: "https://twitter.com/bestmodsio",
+                                html:
+                                    <IconAndText
+                                        icon={<TwitterIcon className="w-6 h-6 fill-white" />}
+                                        text={<>Twitter</>}
+                                    />
+                                ,
+                                new_tab: true
+                            },
+                            {
+                                link: "https://facebook.com/bestmodsio",
+                                html:
+                                    <IconAndText
+                                        icon={<FacebookIcon className="w-6 h-6 fill-white" />}
+                                        text={<>Facebook</>}
+                                    />
+                                ,
+                                new_tab: true
+                            },
+                            {
+                                link: "https://instagram.com/bestmodsio",
+                                html:
+                                    <IconAndText
+                                        icon={<InstagramIcon className="w-6 h-6 fill-white" />}
+                                        text={<>Instagram</>}
+                                    />
+                                ,
+                                new_tab: true
+                            }
+                        ]}
+                    />
+                    <DropDown
+                        html={<>More</>}
+                        drop_down_items={[
+                            {
+                                link: "https://github.com/orgs/bestmods/discussions/categories/feedback-idea",
+                                html:
+                                    <IconAndText
+                                        icon={<ChatBubbleIcon className="w-6 h-6 stroke-white" />}
+                                        text={<>Feedback</>}
+                                    />
+                                ,
+                                new_tab: true
+                            },
+                            {
+                                link: "https://github.com/bestmods/bestmods/milestones",
+                                html:
+                                    <IconAndText
+                                        icon={<MapIcon className="w-6 h-6 stroke-white" />}
+                                        text={<>Roadmap</>}
+                                    />
+                                ,
+                                new_tab: true
+                            },
+                            {
+                                link: "https://github.com/BestMods/bestmods",
+                                html:
+                                    <IconAndText
+                                        icon={<CodeIcon className="w-6 h-6 stroke-white" />}
+                                        text={<>Source Code</>}
+                                    />
+                                ,
+                                new_tab: true
+                            },
+                            {
+                                link: "https://github.com/orgs/bestmods/discussions/35",
+                                html:
+                                    <IconAndText
+                                        icon={<TrashIcon className="w-6 h-6 stroke-white" />}
+                                        text={<>Removals</>}
+                                    />
+                                ,
+                                new_tab: true
+                            },
+                            {
+                                link: "https://moddingcommunity.com/",
+                                html:
+                                    <IconAndText
+                                        icon={<UsersIcon className="w-6 h-6 stroke-white" />}
+                                        text={<>Community</>}
+                                    />
+                                ,
+                                new_tab: true
+                            }
+                        ]}
+                    />
+                </nav>
+            )}
+            
         </header>
     )
 }

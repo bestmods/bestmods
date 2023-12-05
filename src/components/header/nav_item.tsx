@@ -5,12 +5,14 @@ export default function NavItem ({
     content,
     url,
     external = false,
-    dropdown_items = []
+    dropdown_items = [],
+    active = false
 } : {
     content: JSX.Element
     url: string
     external?: boolean
     dropdown_items?: Drop_Down_Menu_Type[]
+    active?: boolean
 }) {
     return (
         <>
@@ -23,10 +25,9 @@ export default function NavItem ({
                 <Link
                     href={url}
                     target={external ? "_blank" : undefined}
-                    className="header-nav-item text-gray-200 hover:text-white"
+                    className={`header-nav-item hover:text-white ${active ? `text-white` : `text-gray-200`}`}
                 >{content}</Link>
             )}
-            
         </>
     )
 }
