@@ -6,7 +6,8 @@ export default function IconAndText({
     width = 32,
     height = 32,
     imgClassName,
-    alt = "Icon"
+    alt = "Icon",
+    className = "flex flex-wrap gap-1 items-center"
 } : {
     icon: string | JSX.Element
     text: JSX.Element
@@ -14,9 +15,10 @@ export default function IconAndText({
     height?: number
     imgClassName?: string
     alt?: string
+    className?: string
 }) {
     return (
-        <div className="flex flex-wrap gap-1 items-center">
+        <div className={className}>
             <div>
                 {typeof icon == "string" && (
                     <Image
