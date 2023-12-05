@@ -7,7 +7,8 @@ export default function ModViewInstall ({
     mod: ModViewItem
 }) {
     return (
-        <>
+        <div className="flex flex-col gap-2">
+            <h2>Installation</h2>
             {mod.install ? (
                 <Markdown rehype={true}>
                     {mod.install}
@@ -15,6 +16,6 @@ export default function ModViewInstall ({
             ) : (
                 <p>No installation guide found.</p>
             )}
-        </>
+        </div>
     )
 }

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import InfiniteScroll from "react-infinite-scroller";
 
@@ -11,22 +11,30 @@ import ModBrowserFilters from "./browser/filters";
 import Loading from "@components/loading";
 
 export default function ModBrowser ({
-    categories,
+    preCategories = [],
     visible
 } : {
-    categories?: Array<number> | null,
+    preCategories?: number[]
     visible?: boolean | null
 }) {
+    const [needMoreMods, setNeedMoreMods] = useState(true);
+
     // Filters
     const [timeframe, setTimeframe] = useState(0);
     const [sort, setSort] = useState(0);
     const [search, setSearch] = useState<string | undefined>(undefined);
 
-    let requireItems = true;
-    const items: ModRowBrowser[] = [];
+    const [categories, setCategories] = useState(preCategories);
+
+    // Reset need more mods when filters change.
+    useEffect(() => {
+        setNeedMoreMods(true);
+    }, [timeframe, sort, search, categories])
+
+    const mods: ModRowBrowser[] = [];
 
     const { data, fetchNextPage } = trpc.mod.getAllBrowser.useInfiniteQuery({
-        categories: (categories) ? JSON.stringify(categories) : undefined,
+        categories: categories,
         timeframe: timeframe,
         sort: sort,
         search: search || undefined,
@@ -35,19 +43,21 @@ export default function ModBrowser ({
         getNextPageParam: (lastPage) => lastPage.next_cur,
     });
 
-    const loadMore = () => {
-        fetchNextPage();
+    const loadMore = async () => {
+        await fetchNextPage();
     };
 
     if (data) {
         data.pages.forEach((pg) => {
-            items.push(...pg.items);
+            mods.push(...pg.items);
 
             // If next cursor is undefined, we're at the end.
-            if (!pg.next_cur)
-                requireItems = false;
+            if (!pg.next_cur && needMoreMods)
+                setNeedMoreMods(false)
         });
     }
+
+    const modsOrLoading = !data || mods.length > 0;
 
     // Figure out which display.
     const cookies = useContext(CookiesCtx);
@@ -61,6 +71,9 @@ export default function ModBrowser ({
                 setSort={setSort}
                 setSearch={setSearch}
 
+                categories={categories}
+                setCategories={setCategories}
+
                 display={display}
                 setDisplay={setDisplay}
             />
@@ -72,12 +85,12 @@ export default function ModBrowser ({
                         gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr)"
                     }}
                     loadMore={loadMore}
-                    hasMore={requireItems}
+                    hasMore={needMoreMods}
                     loader={<Loading key="loading" />}
                 >
-                    {items.length > 0 ? (
+                    {modsOrLoading ? (
                         <>
-                            {items.map((mod) => {
+                            {mods.map((mod) => {
                                 return (
                                     <ModRow
                                         key={mod.id + "-row"}
@@ -88,23 +101,20 @@ export default function ModBrowser ({
                             })}
                         </>
                     ) : (
-                        <>
-                            {!requireItems && (
-                                <p className="mods-not-found">No mods found.</p>
-                            )}
-                        </>
+                        <p className="mods-not-found">No mods found.</p>
+
                     )}
                 </InfiniteScroll>
             ) : (
                 <InfiniteScroll
                     pageStart={0}
                     loadMore={loadMore}
-                    hasMore={requireItems}
+                    hasMore={needMoreMods}
                 >
-                    {items.length > 0 ? (
+                    {modsOrLoading ? (
                         <table className="table table-auto w-full">
                             <tbody>
-                                {items.map((mod) => {
+                                {mods.map((mod) => {
                                     return (
                                         <ModRow
                                             key={mod.id + "-row"}
@@ -116,11 +126,7 @@ export default function ModBrowser ({
                             </tbody>
                         </table>
                     ) : (
-                        <>
-                            {!requireItems && (
-                                <p className="mods-not-found">No mods found.</p>
-                            )}
-                        </>
+                        <p className="mods-not-found">No mods found.</p>
                     )}
                 </InfiniteScroll>
             )}

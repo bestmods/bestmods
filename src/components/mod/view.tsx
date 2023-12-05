@@ -11,9 +11,11 @@ import ModViewInstall from "./view/install";
 import ModViewCredits from "./view/credits";
 import { Has_Perm } from "@utils/permissions";
 import Link from "next/link";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Image from "next/image";
 import ModViewCategory from "./view/category";
+import { ErrorCtx, SuccessCtx } from "@pages/_app";
+import ScrollToTop from "@utils/scroll";
 
 export default function ModView ({
     mod,
@@ -31,6 +33,9 @@ export default function ModView ({
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
     const editLink = `/admin/mod/edit/${mod.id.toString()}`;
 
+    const errorCtx = useContext(ErrorCtx);
+    const successCtx = useContext(SuccessCtx);
+
     // Banner.
     let banner = cdn + "/images/default_mod_banner.png"
 
@@ -40,8 +45,51 @@ export default function ModView ({
     const [modVisibility, setModVisibility] = useState<boolean>(mod.visible);
 
     // Mutations.
-    const mod_hide_mut = trpc.mod.setVisibility.useMutation();
-    const mod_del_mut = trpc.mod.del.useMutation();
+    const mod_hide_mut = trpc.mod.setVisibility.useMutation({
+        onError: (opts) => {
+            const { message } = opts;
+
+            console.error(message);
+
+            if (errorCtx) {
+                errorCtx.setTitle("Unable To Hide Mod!");
+                errorCtx.setMsg("An error occurred when trying to hide this mod. Check the console!");
+
+                ScrollToTop();
+            }
+        },
+        onSuccess: () => {
+            if (successCtx) {
+                successCtx.setTitle("Hid Mod!");
+                successCtx.setMsg("Successfully hid this mod!");
+
+                ScrollToTop();
+            }
+        }
+    });
+
+    const mod_del_mut = trpc.mod.del.useMutation({
+        onError: (opts) => {
+            const { message } = opts;
+
+            console.error(message);
+
+            if (errorCtx) {
+                errorCtx.setTitle("Unable To Delete Mod!");
+                errorCtx.setMsg("An error occurred when trying to delete this mod. Check the console!");
+
+                ScrollToTop();
+            }
+        },
+        onSuccess: () => {
+            if (successCtx) {
+                successCtx.setTitle("Deleted Mod!");
+                successCtx.setMsg("Successfully deleted this mod!");
+
+                ScrollToTop();
+            }
+        }
+    });
 
     // Generate installer drop-down items.
     const installer_items: Drop_Down_Menu_Type[] = [];
@@ -147,9 +195,8 @@ export default function ModView ({
                                 className="btn btn-primary" 
                                 href={editLink}
                             >Edit</Link>
-                            <Link 
+                            <button 
                                 className="btn btn-secondary"
-                                href="#"
                                 onClick={(e) => {
                                     e.preventDefault();
 
@@ -161,10 +208,9 @@ export default function ModView ({
 
                                     setModVisibility(!modVisibility);
                                 }}
-                            >{modVisibility ? "Hide" : "Show"}</Link>
-                            <Link
+                            >{modVisibility ? "Hide" : "Show"}</button>
+                            <button
                                 className="btn btn-danger"
-                                href="#"
                                 onClick={(e) => {
                                     e.preventDefault();
 
@@ -175,7 +221,7 @@ export default function ModView ({
                                         });
                                     }
                                 }}
-                            >Delete</Link>
+                            >Delete</button>
                     </div>
                     )}
                 </div>

@@ -75,7 +75,7 @@ function Tab({
     return (
         <Link
             href={url}
-            className={`bg-bestmods-3/80 hover:bg-bestmods-4/80 text-center text-gray-200 visited:text-gray-200 active:text-gray-200 hover:text-gray-200 p-4 rounded-sm${active ? ` bg-bestmods-4/80 font-bold` : ``}`}
+            className={`px-10 py-4 bg-bestmods-3/80 hover:bg-bestmods-4/80 text-center text-gray-200 visited:text-gray-200 active:text-gray-200 hover:text-gray-200 rounded${active ? ` bg-bestmods-4/80 font-bold` : ``}`}
         >
             {text}
         </Link>
