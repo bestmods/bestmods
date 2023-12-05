@@ -6,31 +6,15 @@ import MetaInfo from "@components/meta";
 
 import ModBrowser from "@components/mod/browser";
 
-export default function Page ({
-    cookies
-} : {
-    cookies: { [key: string]: string }
-}) {
+export default function Page () {
     return (
         <>
             <MetaInfo 
                 title={"Browse - Best Mods"}
             />
-            <Main
-                cookies={cookies}
-            >
+            <Main>
                 <ModBrowser visible={true} />
             </Main>
         </>
     )
-}
-
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    const cookies: { [key: string]: string | undefined; } = { ...ctx.req.cookies };
-
-    return { 
-        props: { 
-            cookies: cookies
-        }
-    }
 }
