@@ -18,7 +18,6 @@
     "@trpc/react-query": "^10.0.0",
     "@trpc/server": "^10.0.0",
     "@types/marked": "^4.0.8",
-    "cookies-next": "^2.1.1",
     "formik": "^2.2.9",
     "isomorphic-unfetch": "^4.0.2",
     "next": "^13.5.6",
