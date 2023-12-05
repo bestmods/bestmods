@@ -1,6 +1,4 @@
-import React, { useState, type ReactNode, useContext, useEffect, createContext, type ChangeEvent, useRef } from "react";
-
-import { setCookie } from "cookies-next";
+import React, { useState, type ReactNode, useContext, useEffect, createContext, useRef } from "react";
 
 import GoogleAnalytics from "@components/scripts/google_analytics";
 
@@ -9,14 +7,12 @@ import Background from "./background";
 import { ErrorCtx, SuccessCtx } from "@pages/_app";
 import Error from "./responses/error";
 import Success from "./responses/success";
+import PhotoIcon from "./icons/photo";
+import GearIcon from "./icons/gear";
+import { signIn, signOut, useSession } from "next-auth/react";
+import UserIcon from "./icons/user";
+import { useCookies } from "react-cookie";
 
-export type displayArgs = {
-    display: string
-
-    displayCb: (e: React.MouseEvent) => void
-}
-
-export const DisplayCtx = createContext<displayArgs | null>(null);
 export const CookiesCtx = createContext<{ [key: string]: string }>({});
 
 export const ViewPortCtx = createContext({
@@ -29,17 +25,20 @@ export default function Main ({
     children,
     className,
     image = "/images/backgrounds/default.jpg",
-    overlay = "bg-none md:bg-black/80",
-    excludeCdn = false,
-    cookies
+    overlay = true,
+    excludeCdn = false
 } : {
     children: ReactNode
     className?: string
     image?: string
-    overlay?: string
+    overlay?: boolean
     excludeCdn?: boolean
-    cookies?: { [key: string]: string }
 }) {
+    const { data: session } = useSession();
+    const [cookies, setCookie] = useCookies(["bm_display", "bm_showbg"]);
+
+    const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
+
     const errorCtx = useContext(ErrorCtx);
     const successCtx = useContext(SuccessCtx);
 
@@ -88,38 +87,29 @@ export default function Main ({
         }
     }, [])
     
-    const [displayStr, setDisplay] = useState((cookies) ? cookies["bm_display"] ?? "grid" : "grid");
+    // Check if we should be showing a background image.
+    const [bgImage, setBgImage] = useState<string | undefined>(undefined);
 
-    const displayCb = (e: React.MouseEvent) => {
-        e.preventDefault();
+    const [showBg, setShowBg] = useState(false);
 
-        // We treat this as a switch/toggle.
-        if (displayStr == "table") {
-            setDisplay("grid");
-            setCookie("bm_display", "grid");
+    useEffect(() => {
+        if (cookies["bm_showbg"] !== undefined && Boolean(cookies["bm_showbg"]))
+            setShowBg(true);
 
-            if (cookies)
-                cookies["bm_display"] = "grid";
-        }
-        else {
-            setDisplay("table");
-            setCookie("bm_display", "table");
+        if (showBg && image) {
+            if (excludeCdn)
+                setBgImage(image);
+            else
+                setBgImage(cdn + image);
+        } else if (bgImage)
+            setBgImage(undefined);
+    }, [cdn, image, showBg, cookies])
 
-            if (cookies)
-                cookies["bm_display"] = "table";
-        }
-    }
-
-    const display: displayArgs = {
-        display: displayStr,
-        displayCb: displayCb
-    };
-
-    // Check if we must prepend CDN URL.
-    if (process.env.NEXT_PUBLIC_CDN_URL && !excludeCdn)
-        image = process.env.NEXT_PUBLIC_CDN_URL + image;
-
+    // Google Analytics ID.
     const gId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+
+    // Settings menu.
+    const [showSettings, setShowSettings] = useState(false);
 
     return (
         <ViewPortCtx.Provider value={{
@@ -134,31 +124,60 @@ export default function Main ({
                             id={gId}
                         />
                     )}
-                    <DisplayCtx.Provider value={display}>
-                        <Background
-                            image={image}
-                            overlay={overlay}
-                        />
 
-                        <Header />
+                    <Background
+                        image={bgImage}
+                        overlay={overlay}
+                    />
 
-                        <div className="w-full px-20 mx-auto py-2">
-                            {errorCtx?.title && errorCtx?.msg && (
-                                <Error
-                                    title={errorCtx.title}
-                                    msg={errorCtx.msg}
-                                />
-                            )}
+                    <Header />
 
-                            {successCtx?.title && successCtx?.msg && (
-                                <Success
-                                    title={successCtx.title}
-                                    msg={successCtx.msg}
-                                />
-                            )}
-                            {children}
+                    <div className="fixed z-50 bottom-0 left-0 p-4 duration-300 bg-bestmods-3 flex flex-col justify-center items-center gap-2 group rounded-tr">
+                        <button
+                            className={showSettings ? "block" : "hidden"}
+                            onClick={() => {
+                                setShowBg(!showBg);
+                                setCookie("bm_showbg", !showBg ? "1" : "0");
+                            }}
+                        >
+                            <PhotoIcon className={`w-6 h-6 rounded-full stroke-white fill-none ${showBg ? "brightness-100" : "brightness-50"}`} />
+                        </button>
+                        <button
+                            className={showSettings ? "block" : "hidden"}
+                            onClick={async () => {
+                                if (session?.user)
+                                    await signOut();
+                                else
+                                    await signIn("discord");
+                            }}
+                        >
+                            <UserIcon className="w-6 h-6 stroke-white fill-none" />
+                        </button>
+                        <div
+                            onClick={() => {
+                                setShowSettings(!showSettings);
+                            }}
+                        >
+                            <GearIcon className="w-6 h-6 stroke-white fill-none" />
                         </div>
-                    </DisplayCtx.Provider>
+                    </div>
+
+                    <div className="w-full px-2 sm:px-20 mx-auto py-2">
+                        {errorCtx?.title && errorCtx?.msg && (
+                            <Error
+                                title={errorCtx.title}
+                                msg={errorCtx.msg}
+                            />
+                        )}
+
+                        {successCtx?.title && successCtx?.msg && (
+                            <Success
+                                title={successCtx.title}
+                                msg={successCtx.msg}
+                            />
+                        )}
+                        {children}
+                    </div>
                 </main>
             </CookiesCtx.Provider>
         </ViewPortCtx.Provider>
