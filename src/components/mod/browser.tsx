@@ -40,7 +40,7 @@ export default function ModBrowser ({
         search: search || undefined,
         visible: visible ?? true
     }, {
-        getNextPageParam: (lastPage) => lastPage.next_cur,
+        getNextPageParam: (lastPage) => lastPage.nextMod,
     });
 
     const loadMore = async () => {
@@ -49,10 +49,10 @@ export default function ModBrowser ({
 
     if (data) {
         data.pages.forEach((pg) => {
-            mods.push(...pg.items);
+            mods.push(...pg.mods);
 
             // If next cursor is undefined, we're at the end.
-            if (!pg.next_cur && needMoreMods)
+            if (!pg.nextMod && needMoreMods)
                 setNeedMoreMods(false)
         });
     }
