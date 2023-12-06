@@ -450,7 +450,7 @@ export async function GetMods ({
                     Prisma.empty
             }
             "Mod"."id" DESC
-        LIMIT ${count + 1}
+        LIMIT ${count}
     `;
 
 
