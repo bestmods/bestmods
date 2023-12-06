@@ -10,17 +10,23 @@ import { prisma } from "@server/db/client";
 import { type CategoryWithChildrenAndParent } from "~/types/category";
 import { type ModRowBrowser, ModRowBrowserSel } from "~/types/mod";
 import ModCatalog from "@components/mod/catalog";
+import { getServerAuthSession } from "@server/common/get-server-auth-session";
+import { GetMods } from "@utils/content/mod";
 
 export default function Page ({
     category,
     latestMods = [],
     viewedMods = [],
-    downloadedMods = []
+    downloadedMods = [],
+    topMods = [],
+    topModsToday = []
 } : {
     category?: CategoryWithChildrenAndParent
     latestMods: ModRowBrowser[]
     viewedMods: ModRowBrowser[]
     downloadedMods: ModRowBrowser[]
+    topMods: ModRowBrowser[]
+    topModsToday: ModRowBrowser[] 
 }) {
     let bgFile: string | null = null;
 
@@ -57,6 +63,8 @@ export default function Page ({
                     latestMods={latestMods}
                     viewedMods={viewedMods}
                     downloadedMods={downloadedMods}
+                    topMods={topMods}
+                    topModsToday={topModsToday}
                 />
             </Main>
         </>
@@ -64,6 +72,8 @@ export default function Page ({
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+    const session = await getServerAuthSession(ctx);
+
     // We need to retrieve some props.
     const { params } = ctx;
 
@@ -71,6 +81,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const secUrl = params?.category?.[1]?.toString();
 
     let category: CategoryWithChildrenAndParent | null = null;
+    const categories: number[] = [];
 
     if (priUrl) {
         if (secUrl) {
@@ -100,70 +111,64 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         }
     }
 
+    if (category) {
+        categories.push(category.id);
+
+        if (category.children.length > 0) {
+            category.children.map((child) => {
+                categories.push(child.id);
+            })
+        }
+    }
+
     let latestMods: ModRowBrowser[] = [];
     let viewedMods: ModRowBrowser[] = [];
     let downloadedMods: ModRowBrowser[] = [];
+    let topMods: ModRowBrowser[] = [];
+    let topModsToday: ModRowBrowser[]  = []
 
-    if (category) {
-        latestMods = await prisma.mod.findMany({
-            take: 10,
-            select: ModRowBrowserSel,
-            orderBy: {
-                createAt: "desc"
-            },
-            where: {
-                OR: [
-                    {
-                        categoryId: category.id
-                    },
-                    {
-                        category: {
-                            parentId: category.id
-                        }
-                    }
-                ]
-            }
-        })
+    if (categories.length > 0) {
+        latestMods = (await GetMods ({
+            categories: categories,
+            sort: 4,
+            userId: session?.user?.id
+        }))[0]
 
-        viewedMods = await prisma.mod.findMany({
-            take: 10,
-            select: ModRowBrowserSel,
-            orderBy: {
-                totalViews: "desc"
-            },
-            where: {
-                OR: [
-                    {
-                        categoryId: category.id
-                    },
-                    {
-                        category: {
-                            parentId: category.id
-                        }
-                    }
-                ]
-            }
-        })
+        viewedMods = (await GetMods ({
+            categories: categories,
+            sort: 1,
+            userId: session?.user?.id
+        }))[0]
 
-        downloadedMods = await prisma.mod.findMany({
-            take: 10,
-            select: ModRowBrowserSel,
-            orderBy: {
-                totalDownloads: "desc"
-            },
-            where: {
-                OR: [
-                    {
-                        categoryId: category.id
-                    },
-                    {
-                        category: {
-                            parentId: category.id
-                        }
-                    }
-                ]
-            }
-        })
+        downloadedMods = (await GetMods ({
+            categories: categories,
+            sort: 2,
+            userId: session?.user?.id
+        }))[0]
+
+        topMods = (await GetMods ({
+            categories: categories,
+            userId: session?.user?.id
+        }))[0]
+    
+        // Retrieve time range for today.
+        let todayDate = new Date(Date.now() - (86400 * 1000));
+    
+        todayDate = new Date(
+            todayDate.getUTCFullYear(),
+            todayDate.getUTCMonth(),
+            todayDate.getUTCDate(),
+            todayDate.getUTCHours(),
+            todayDate.getUTCMinutes(),
+            todayDate.getUTCSeconds(),
+            todayDate.getUTCMilliseconds()
+        )
+    
+        topModsToday = (await GetMods ({
+            categories: categories,
+            ratingTimeRange: todayDate,
+            userId: session?.user?.id
+        }))[0]
     }
 
     return { 
@@ -171,7 +176,9 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             category: JSON.parse(JSON.stringify(category, (_, v) => typeof v === "bigint" ? v.toString() : v)),
             latestMods: JSON.parse(JSON.stringify(latestMods, (_, v) => typeof v === "bigint" ? v.toString() : v)),
             viewedMods: JSON.parse(JSON.stringify(viewedMods, (_, v) => typeof v === "bigint" ? v.toString() : v)),
-            downloadedMods: JSON.parse(JSON.stringify(downloadedMods, (_, v) => typeof v === "bigint" ? v.toString() : v))
+            downloadedMods: JSON.parse(JSON.stringify(downloadedMods, (_, v) => typeof v === "bigint" ? v.toString() : v)),
+            topMods: JSON.parse(JSON.stringify(topMods, (_, v) => typeof v === "bigint" ? v.toString() : v)),
+            topModsToday: JSON.parse(JSON.stringify(topModsToday, (_, v) => typeof v === "bigint" ? v.toString() : v))
         }
     }
 }
