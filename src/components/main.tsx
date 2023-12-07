@@ -13,8 +13,6 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import UserIcon from "./icons/user";
 import { useCookies } from "react-cookie";
 
-export const CookiesCtx = createContext<{ [key: string]: string }>({});
-
 export const ViewPortCtx = createContext({
     isMobile: false,
     width: 0,
@@ -117,69 +115,67 @@ export default function Main ({
             width: width,
             height: height
         }}>
-            <CookiesCtx.Provider value={cookies ?? {}}>
-                <main key="main" className={className}>
-                    {gId && (
-                        <GoogleAnalytics 
-                            id={gId}
+            <main key="main" className={className}>
+                {gId && (
+                    <GoogleAnalytics 
+                        id={gId}
+                    />
+                )}
+
+                <Background
+                    image={bgImage}
+                    overlay={overlay}
+                />
+
+                <Header />
+
+                <div className="fixed z-30 bottom-0 left-0 p-4 duration-300 bg-bestmods-3 flex flex-col justify-center items-center gap-2 group rounded-tr">
+                    <button
+                        className={showSettings ? "block" : "hidden"}
+                        onClick={() => {
+                            setShowBg(!showBg);
+                            setCookie("bm_showbg", !showBg ? "1" : "0");
+                        }}
+                    >
+                        <PhotoIcon className={`w-6 h-6 rounded-full stroke-white fill-none ${showBg ? "brightness-100" : "brightness-50"}`} />
+                    </button>
+                    <button
+                        className={showSettings ? "block" : "hidden"}
+                        onClick={async () => {
+                            if (session?.user)
+                                await signOut();
+                            else
+                                await signIn("discord");
+                        }}
+                    >
+                        <UserIcon className="w-6 h-6 stroke-white fill-none" />
+                    </button>
+                    <div
+                        onClick={() => {
+                            setShowSettings(!showSettings);
+                        }}
+                    >
+                        <GearIcon className="w-6 h-6 stroke-white fill-none" />
+                    </div>
+                </div>
+
+                <div className="w-full px-2 sm:px-20 mx-auto py-2">
+                    {errorCtx?.title && errorCtx?.msg && (
+                        <Error
+                            title={errorCtx.title}
+                            msg={errorCtx.msg}
                         />
                     )}
 
-                    <Background
-                        image={bgImage}
-                        overlay={overlay}
-                    />
-
-                    <Header />
-
-                    <div className="fixed z-30 bottom-0 left-0 p-4 duration-300 bg-bestmods-3 flex flex-col justify-center items-center gap-2 group rounded-tr">
-                        <button
-                            className={showSettings ? "block" : "hidden"}
-                            onClick={() => {
-                                setShowBg(!showBg);
-                                setCookie("bm_showbg", !showBg ? "1" : "0");
-                            }}
-                        >
-                            <PhotoIcon className={`w-6 h-6 rounded-full stroke-white fill-none ${showBg ? "brightness-100" : "brightness-50"}`} />
-                        </button>
-                        <button
-                            className={showSettings ? "block" : "hidden"}
-                            onClick={async () => {
-                                if (session?.user)
-                                    await signOut();
-                                else
-                                    await signIn("discord");
-                            }}
-                        >
-                            <UserIcon className="w-6 h-6 stroke-white fill-none" />
-                        </button>
-                        <div
-                            onClick={() => {
-                                setShowSettings(!showSettings);
-                            }}
-                        >
-                            <GearIcon className="w-6 h-6 stroke-white fill-none" />
-                        </div>
-                    </div>
-
-                    <div className="w-full px-2 sm:px-20 mx-auto py-2">
-                        {errorCtx?.title && errorCtx?.msg && (
-                            <Error
-                                title={errorCtx.title}
-                                msg={errorCtx.msg}
-                            />
-                        )}
-
-                        {successCtx?.title && successCtx?.msg && (
-                            <Success
-                                title={successCtx.title}
-                                msg={successCtx.msg}
-                            />
-                        )}
-                        {children}
-                    </div>
-                </main>
-            </CookiesCtx.Provider>
+                    {successCtx?.title && successCtx?.msg && (
+                        <Success
+                            title={successCtx.title}
+                            msg={successCtx.msg}
+                        />
+                    )}
+                    {children}
+                </div>
+            </main>
         </ViewPortCtx.Provider>
     )
 }

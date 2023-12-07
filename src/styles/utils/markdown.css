@@ -4,7 +4,7 @@
         @apply rounded-sm;
         @apply text-white;
         @apply p-4;
-        @apply overflow-scroll;
+        @apply overflow-y-scroll;
         @apply max-h-80;
         @apply whitespace-pre-line;
     }
