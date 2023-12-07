@@ -42,8 +42,7 @@ export default function DropDown ({
                     <DownArrow className="w-4 h-4 stroke-white" />
                 )}
             </div>
-            
-            <ul className={`${menuOpen ? `visible` : `hidden`} break-all absolute w-full sm:w-[300%] top-[100%] left-[-200%] z-30 rounded-b p-2 bg-bestmods-2`}>
+            <ul className={`${menuOpen ? `visible` : `hidden`} break-all absolute w-full sm:w-[300%] top-[100%] left-0 sm:left-[-200%] z-30 rounded-b p-2 bg-bestmods-2`}>
                 {drop_down_items.map((item, index) => {
                     return (
                         <React.Fragment key={`navitem-${index.toString()}`}>
@@ -65,7 +64,6 @@ export default function DropDown ({
                                     )}
                                 </>
                             )}
-                            
                         </React.Fragment>
                     );
                 })}
