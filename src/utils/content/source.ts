@@ -53,23 +53,23 @@ export async function InsertOrUpdateSource ({
     if (!iremove && (icon && icon.length > 0)) {
         const path = `/images/source/${url}`;
 
-        const [success, err, full_path] = UploadFile(path, icon);
+        const [success, err, fullPath] = UploadFile(path, icon);
 
-        if (!success || !full_path)
+        if (!success || !fullPath)
             return [null, false, err];
 
-        icon_path = full_path;
+        icon_path = fullPath;
     }
 
     if (!bremove && (banner && banner.length > 0)) {
         const path = `/images/source/${url}_banner`;
 
-        const [success, err, full_path] = UploadFile(path, banner);
+        const [success, err, fullPath] = UploadFile(path, banner);
 
-        if (!success || !full_path)
+        if (!success || !fullPath)
             return [null, false, err];
 
-        banner_path = full_path;
+        banner_path = fullPath;
     }
 
     try {

@@ -541,12 +541,12 @@ export async function InsertOrUpdateMod ({
     if (!bremove && (banner && banner.length > 0)) {
         const path = `/images/mod/${url}`
 
-        const [success, err, full_path] = UploadFile(path, banner);
+        const [success, err, fullPath] = UploadFile(path, banner);
 
-        if (!success || !full_path)
+        if (!success || !fullPath)
             return [null, false, err];
         
-        bannerPath = full_path;
+        bannerPath = fullPath;
     }
 
     try {
