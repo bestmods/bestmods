@@ -3,8 +3,6 @@ import React from "react";
 import Main from "@components/main";
 import MetaInfo from "@components/meta";
 
-import CategoryRow from "@components/category/row";
-
 import { prisma } from "@server/db/client";
 import { type CategoryWithChildrenAndCounts } from "~/types/category";
 import CategoryRowGrid from "@components/category/row/grid";
@@ -35,7 +33,7 @@ export default function Page ({
                                 <CategoryRowGrid
                                     key={`category-${index.toString()}`}
                                     category={category}
-                                    children={category.children}
+                                    subs={category.children}
                                 />
                             );
                         })}

@@ -103,7 +103,7 @@ export default function Main ({
                 setBgImage(cdn + image);
         } else if (bgImage)
             setBgImage(undefined);
-    }, [cdn, image, showBg, cookies])
+    }, [cdn, image, showBg, bgImage, excludeCdn, cookies])
 
     // Google Analytics ID.
     const gId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;

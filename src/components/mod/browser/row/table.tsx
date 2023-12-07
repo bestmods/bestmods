@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import Rating from "@components/mod/rating";
 
 import EyeIcon from "@components/icons/eye";
@@ -12,14 +10,8 @@ import IconAndText from "@components/icon_and_text";
 
 export default function ModRowTable ({
     mod,
-    banner,
     descShort,
-    cat,
-    catPar,
-    catParIcon,
-    catParLink,
     catIcon,
-    catLink,
     viewLink
 } : {
     mod: ModRowBrowser,

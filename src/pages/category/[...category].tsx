@@ -8,7 +8,7 @@ import MetaInfo from "@components/meta";
 import { prisma } from "@server/db/client";
 
 import { type CategoryWithChildrenAndParent } from "~/types/category";
-import { type ModRowBrowser, ModRowBrowserSel } from "~/types/mod";
+import { type ModRowBrowser } from "~/types/mod";
 import ModCatalog from "@components/mod/catalog";
 import { getServerAuthSession } from "@server/common/get-server-auth-session";
 import { GetMods } from "@utils/content/mod";

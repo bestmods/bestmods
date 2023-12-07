@@ -1,7 +1,7 @@
 import { type ModCredit, type Mod, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource, type PrismaClient } from "@prisma/client";
 
 import { UploadFile } from "@utils/file_upload";
-import { ModRowBrowser } from "~/types/mod";
+import { type ModRowBrowser } from "~/types/mod";
 
 import { prisma } from "@server/db/client";
 import { Prisma } from "@prisma/client";

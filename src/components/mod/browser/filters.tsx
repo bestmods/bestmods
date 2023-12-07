@@ -6,10 +6,10 @@ import SearchIcon from "@components/icons/search"
 import TableIcon from "@components/icons/table"
 import Loading from "@components/loading"
 import { trpc } from "@utils/trpc"
-import { Dispatch, SetStateAction, useState } from "react"
+import { type Dispatch, type SetStateAction, useState } from "react"
 import { useCookies } from "react-cookie"
 import InfiniteScroll from "react-infinite-scroller"
-import { CategoryWithChildren } from "~/types/category"
+import { type CategoryWithChildren } from "~/types/category"
 
 export default function ModBrowserFilters ({
     setTimeframe,
@@ -216,7 +216,7 @@ function Categories ({
                                     onClick={(e) => {
                                         e.preventDefault();
 
-                                        let newCats = [...categories];
+                                        const newCats = [...categories];
 
                                         const loc = newCats.findIndex(tmp => tmp == cat.id);
 
@@ -251,7 +251,7 @@ function Categories ({
                                                     onClick={(e) => {
                                                         e.preventDefault();
 
-                                                        let newCats = [...categories];
+                                                        const newCats = [...categories];
 
                                                         const loc = newCats.findIndex(tmp => tmp == child.id);
 

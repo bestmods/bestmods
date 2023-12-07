@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React, { MouseEventHandler, useState } from "react";
+import React, { type MouseEventHandler, useState } from "react";
 
 import UpArrow from "@components/icons/up_arrow";
 import DownArrow from "@components/icons/down_arrow";

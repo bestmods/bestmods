@@ -1,4 +1,4 @@
-import { ModRowBrowser } from "~/types/mod";
+import { type ModRowBrowser } from "~/types/mod";
 import ModSlideshow from "./slideshow";
 
 export default function ModCatalog ({

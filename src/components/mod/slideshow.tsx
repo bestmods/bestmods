@@ -1,4 +1,4 @@
-import { ModRowBrowser } from "~/types/mod";
+import { type ModRowBrowser } from "~/types/mod";
 import ModRow from "./browser/row";
 
 export default function ModSlideshow ({

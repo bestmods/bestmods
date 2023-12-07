@@ -1,5 +1,4 @@
 import { Field } from "formik"
-import { ChangeEventHandler } from "react"
 
 export default function FormCheckbox ({
     name,

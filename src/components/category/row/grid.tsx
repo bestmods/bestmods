@@ -4,10 +4,10 @@ import { type CategoryWithChildrenAndCounts, type CategoryWithCount } from "~/ty
 
 export default function CategoryRowGrid ({
     category,
-    children = []
+    subs = []
 } : {
     category: CategoryWithChildrenAndCounts
-    children: CategoryWithCount[]
+    subs: CategoryWithCount[]
 }) {
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
 
@@ -49,9 +49,9 @@ export default function CategoryRowGrid ({
                     <p>{modCnt.toString()} Mods</p>
                 )}
             </div>
-            {children.length > 0 && (
+            {subs.length > 0 && (
                 <div className="flex flex-wrap gap-4 p-4">
-                    {children.map((child, index) => {
+                    {subs.map((child, index) => {
                         const viewLink = `/category/${category.url}/${child.url}`;
 
                         return (

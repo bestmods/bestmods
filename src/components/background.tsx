@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react"
+import { useContext } from "react"
 import { ViewPortCtx } from "./main";
 
 export default function Background ({

@@ -29,7 +29,7 @@ export default function ModTabs ({
             <div className="flex flex-col gap-2">
                 <button
                     className={`sm:hidden px-10 py-4 text-center text-gray-200 ${mobileOpen ? "bg-bestmods-4/80 hover:bg-bestmods-5/80" : "bg-bestmods-3/80 hover:bg-bestmods-4/80"}`}
-                    onClick={(e) => {
+                    onClick={() => {
                         setMobileOpen(!mobileOpen);
                     }}
                 >{mobileOpen ? "Hide Tabs" : "Show Tabs"}</button>
