@@ -1,6 +1,7 @@
 import IconAndText from "@components/icon_and_text"
 import FilterIcon from "@components/icons/filter"
 import GridIcon from "@components/icons/grid"
+import LeftArrowIcon from "@components/icons/left_arrow"
 import SearchIcon from "@components/icons/search"
 import TableIcon from "@components/icons/table"
 import Loading from "@components/loading"
@@ -37,53 +38,68 @@ export default function ModBrowserFilters ({
 
     return (
         <form className="flex flex-wrap justify-end gap-2">
-            <div className={`z-10 bg-cyan-800 absolute top-0 left-0 w-1/3 p-6 h-full overflow-y-scroll${!filtersOpen ? ` hidden`: ``}`}>
-                <h2>General</h2>
-                <div className="flex flex-col gap-2">
-                    <div className="flex flex-col">
-                        <label>Time Frame</label>
-                        <select
-                            className=""
-                            onChange={(e) => {
-                                const val = e.target.value;
+            <div className={`${filtersOpen ? "flex": "hidden"} z-50 bg-bestmods-2 fixed top-0 left-0 w-1/2 p-6 h-full overflow-scroll flex justify-between`}>
+                <div className="grow flex flex-col gap-2">
+                    <div className="flex flex-col gap-2">
+                        <h2>Filters</h2>
+                        <div className="flex flex-col">
+                            <label>Time Frame</label>
+                            <select
+                                className=""
+                                onChange={(e) => {
+                                    const val = e.target.value;
 
-                                setTimeframe(Number(val));
-                            }}
-                        >
-                            <option value="0">Hourly</option>
-                            <option value="1">Today</option>
-                            <option value="2">Week</option>
-                            <option value="3">Month</option>
-                            <option value="4">Year</option>
-                            <option value="5">All Time</option>
-                        </select>
+                                    setTimeframe(Number(val));
+                                }}
+                            >
+                                <option value="0">Hourly</option>
+                                <option value="1">Today</option>
+                                <option value="2">Week</option>
+                                <option value="3">Month</option>
+                                <option value="4">Year</option>
+                                <option value="5">All Time</option>
+                            </select>
+                        </div>
+                        <div className="flex flex-col">
+                            <label>Sort</label>
+                            <select
+                                className=""
+                                onChange={(e) => {
+                                    e.preventDefault();
+
+                                    const val = e.target.value;
+
+                                    setSort(Number(val));
+                                }}
+                            >
+                                <option value="0">Top Rated</option>
+                                <option value="1">Most Viewed</option>
+                                <option value="2">Most Downloaded</option>
+                                <option value="3">Most Recently Updated</option>
+                                <option value="4">Most Recently Created</option>
+                            </select>
+                        </div>
                     </div>
-                    <div className="flex flex-col">
-                        <label>Sort</label>
-                        <select
-                            className=""
-                            onChange={(e) => {
-                                e.preventDefault();
-
-                                const val = e.target.value;
-
-                                setSort(Number(val));
-                            }}
-                        >
-                            <option value="0">Top Rated</option>
-                            <option value="1">Most Viewed</option>
-                            <option value="2">Most Downloaded</option>
-                            <option value="3">Most Recently Updated</option>
-                            <option value="4">Most Recently Created</option>
-                        </select>
+                    <div className="flex flex-col gap-2">
+                        <h3>Categories</h3>
+                        <div>
+                            <Categories
+                                categories={categories}
+                                setCategories={setCategories}
+                            />
+                        </div>
                     </div>
                 </div>
-                <h2>Categories</h2>
                 <div>
-                    <Categories
-                        categories={categories}
-                        setCategories={setCategories}
-                    />
+                    <button
+                        onClick={(e) => {
+                            e.preventDefault();
+
+                            setFiltersOpen(!filtersOpen);
+                        }}
+                    >
+                        <LeftArrowIcon className="w-6 h-6 stroke-white" />
+                    </button>
                 </div>
             </div>
             <div className="flex flex-wrap gap-2 items-center">
@@ -179,6 +195,7 @@ function Categories ({
             loadMore={loadMore}
             hasMore={needMoreCats}
             loader={<Loading key="loader" />}
+            useWindow={false}
         >
             {catsOrLoading ? (
                 <>
