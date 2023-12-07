@@ -9,7 +9,7 @@ import EditForm from "@components/forms/user/main";
 
 import { prisma } from "@server/db/client";
 
-import { Has_Perm } from "@utils/permissions";
+import { HasPerm } from "@utils/permissions";
 import { getServerAuthSession } from "@server/common/get-server-auth-session";
 import NoAccess from "@components/errors/noaccess";
 
@@ -27,7 +27,7 @@ export default function Page ({
             />
             <Main>
                 <div className="flex flex-col gap-2">
-                    {Has_Perm(session, "admin") ? (
+                    {HasPerm(session, "admin") ? (
                         <>
                             <h1 className="page-title">Editing User</h1>
                             <EditForm user={user} />
@@ -50,7 +50,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     // Retrieve session and permission check.
     const session = await getServerAuthSession(ctx);
 
-    const perm_check = session && Has_Perm(session, "admin");
+    const perm_check = session && HasPerm(session, "admin");
 
     if (perm_check) {
         user = await prisma.user.findFirst({

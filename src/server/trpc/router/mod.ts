@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server"
 
 import { z } from "zod";
 
-import { GetMods, Insert_Or_Update_Mod } from "@utils/content/mod";
+import { GetMods, InsertOrUpdateMod } from "@utils/content/mod";
 
 export const modRouter = router({
     add: contributorProcedure
@@ -66,7 +66,27 @@ export const modRouter = router({
         }))
         .mutation(async ({ ctx, input }) => {
             // Insert ot update mod.
-            const [mod, success, err] = await Insert_Or_Update_Mod(ctx.prisma, input.name, input.url, input.description, input.visible, input.id, input.ownerId, input.ownerName, input.banner, input.bremove, input.categoryId, input.descriptionShort, input.install, input.downloads, input.screenshots, input.sources, input.installers, input.credits);
+            const [mod, success, err] = await InsertOrUpdateMod({
+                prisma: ctx.prisma,
+
+                lookupId: input.id,
+
+                name: input.name,
+                url: input.url,
+                description: input.description,
+                descriptionShort: input.descriptionShort,
+                install: input.install,
+                visible: input.visible,
+
+                banner: input.banner,
+                bremove: input.bremove,
+
+                downloads: input.downloads,
+                screenshots: input.screenshots,
+                sources: input.sources,
+                installers: input.installers,
+                credits: input.credits
+            });
 
             // Check for error.
             if (!success || !mod) {

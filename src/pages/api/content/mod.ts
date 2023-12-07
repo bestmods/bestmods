@@ -2,7 +2,7 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 
 import { prisma } from "@server/db/client";
 
-import { Delete_Mod, Insert_Or_Update_Mod } from "@utils/content/mod";
+import { DeleteMod, InsertOrUpdateMod } from "@utils/content/mod";
 
 import { type ModCredit, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource } from "@prisma/client";
 
@@ -62,15 +62,15 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
         const { 
             url,
             visible,
-            owner_id,
-            owner_name,
+            ownerId,
+            ownerName,
             name,
             banner,
             bremove,
             description,
-            description_short,
+            descriptionShort,
             install,
-            category_id,
+            categoryId,
             downloads,
             screenshots,
             sources,
@@ -79,15 +79,15 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
         } : {
             url?: string,
             visible?: boolean,
-            owner_id?: string,
-            owner_name?: string,
+            ownerId?: string,
+            ownerName?: string,
             name?: string,
             banner?: string,
             bremove?: boolean
             description?: string,
-            description_short?: string,
+            descriptionShort?: string,
             install?: string,
-            category_id?: number | null,
+            categoryId?: number | null,
             downloads?: ModDownload[]
             screenshots?: ModScreenshot[],
             sources?: ModSource[],
@@ -138,8 +138,33 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         // Update or insert mod.
-        const [mod, success, err] = await Insert_Or_Update_Mod(prisma, name, url, description, visible, (update) ? Number(id) : undefined, (update) ? pre_url : undefined, owner_id, owner_name, banner, bremove, category_id, description_short, install, downloads, screenshots, sources, installers, credits);
+        const [mod, success, err] = await InsertOrUpdateMod ({
+            prisma: prisma,
 
+            lookupId: (update) ? Number(id) : undefined,
+
+            ownerId: ownerId,
+            ownerName: ownerName,
+
+            categoryId: categoryId,
+
+            name: name,
+            url: url,
+            description: description,
+            descriptionShort: descriptionShort,
+            install: install,
+            visible: visible,
+
+            banner: banner,
+            bremove: bremove,
+
+            downloads: downloads,
+            screenshots: screenshots,
+            sources: sources,
+            installers: installers,
+            credits: credits
+        })
+        
         // Check for error.
         if (!success || !mod) {
             return res.status(400).json({
@@ -157,21 +182,16 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
     } else if (req.method == "DELETE") {
         const { id, url } = req.query;
 
-        if (!id && !url) {
+        if (!id) {
             return res.status(404).json({
-                message: "Mod ID and URL both not present."
+                message: "Mod ID not present."
             });
         }
 
         // Check if exists.
         const mod = await prisma.mod.findFirst({
             where: {
-                ...(id && {
-                    id: Number(id.toString())
-                }),
-                ...(url && {
-                    url: url.toString()
-                })
+                id: Number(id.toString())
             }
         });
 
@@ -181,7 +201,11 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
             });
         }
 
-        const [success, err] = await Delete_Mod(prisma, (id) ? Number(id.toString()) : undefined, (url) ? url.toString() : undefined);
+        const [success, err] = await DeleteMod ({
+            prisma: prisma,
+            id: mod.id
+
+        });
 
         if (!success) {
             return res.status(400).json({

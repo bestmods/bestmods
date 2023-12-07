@@ -1,9 +1,9 @@
 import { type Session } from "next-auth";
 
-export const Has_Perm = (
+export function HasPerm (
     session: Session | null,
     perm: string
-): boolean => {
+): boolean {
     if (!session)
         return false;
 

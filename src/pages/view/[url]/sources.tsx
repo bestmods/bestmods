@@ -10,7 +10,7 @@ import Main from "@components/main";
 import ModView from "@components/mod/view";
 import NotFound from "@components/errors/notfound";
 
-import { Get_Mod_Rating } from "@utils/content/mod";
+import { GetModRating } from "@utils/content/mod";
 
 export default function Page ({
     mod,
@@ -78,7 +78,10 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         });
 
         // Retrieve mod rating.
-        rating = await Get_Mod_Rating(prisma, mod.id);
+        rating = await GetModRating({
+            prisma: prisma,
+            id: mod.id
+        });
     }
 
     return { 

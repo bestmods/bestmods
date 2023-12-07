@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server"
 
 import { z } from "zod";
 
-import { Delete_Source, Insert_Or_Update_Source } from "@utils/content/source";
+import { DeleteSource, InsertOrUpdateSource } from "@utils/content/source";
 
 export const sourceRouter = router({
     add: contributorProcedure
@@ -19,8 +19,24 @@ export const sourceRouter = router({
             bremove: z.boolean().default(false)
         }))
         .mutation(async ({ ctx, input }) => {
-            const [src, success, err] = await Insert_Or_Update_Source(ctx.prisma, input.url, input.update, input.icon, input.iremove, input.banner, input.bremove, input.name, input.description, input.classes);
+            const [src, success, err] = await InsertOrUpdateSource ({
+                prisma: ctx.prisma,
 
+                url: input.url,
+                
+                update: input.update,
+
+                name: input.name,
+                description: input.description,
+                classes: input.classes,
+
+                icon: input.icon,
+                banner: input.banner,
+
+                iremove: input.iremove,
+                bremove: input.bremove
+            });
+        
             if (!success || !src) {
                 throw new TRPCError({
                     code: "PARSE_ERROR",
@@ -33,7 +49,10 @@ export const sourceRouter = router({
             url: z.string()
         }))
         .mutation(async ({ ctx, input }) => {
-            const [success, err] = await Delete_Source(ctx.prisma, input.url);
+            const [success, err] = await DeleteSource ({
+                prisma: ctx.prisma,
+                url: input.url
+            });
 
             if (!success) {
                 throw new TRPCError({

@@ -2,7 +2,7 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 
 import { prisma } from "@server/db/client";
 
-import { Delete_Category, Insert_Or_Update_Category } from "@utils/content/category";
+import { DeleteCategory, InsertOrUpdateCategory } from "@utils/content/category";
 
 const category = async (req: NextApiRequest, res: NextApiResponse) => {
     // Check API key.
@@ -58,9 +58,9 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
 
         // Retrieve body data.
         const {
-            parent_id,
+            parentId,
             name,
-            name_short,
+            nameShort,
             description,
             url,
             classes,
@@ -68,11 +68,11 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
             banner,
             iremove,
             bremove,
-            has_bg 
+            hasBg 
         } : { 
-            parent_id?: number
+            parentId?: number
             name?: string
-            name_short?: string
+            nameShort?: string
             description?: string
             url?: string
             classes?: string
@@ -80,7 +80,7 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
             banner?: string
             iremove?: boolean
             bremove?: boolean
-            has_bg?: boolean
+            hasBg?: boolean
         } = req.body;
 
         let id: string | undefined = undefined;
@@ -95,7 +95,7 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         // If we're not updating, make sure we have a name and name short.
-        if (!update && (!name || !name_short)) {
+        if (!update && (!name || !nameShort)) {
             return res.status(400).json({
                 message: "Name or short name not found in POST data for new entry.",
                 data: null
@@ -118,8 +118,27 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
             }
         }
 
-        const [cat, success, err] = await Insert_Or_Update_Category(prisma, name, name_short, description, url, (update && id) ? Number(id) : undefined, icon, banner, iremove, bremove, parent_id, classes, has_bg);
+        const [cat, success, err] = await InsertOrUpdateCategory ({
+            prisma: prisma,
 
+            lookupId: (update && id) ? Number (id) : undefined,
+
+            parentId: parentId,
+
+            name: name,
+            nameShort: nameShort,
+            description: description,
+            url: url,
+            classes: classes,
+            hasBg: hasBg,
+
+            icon: icon,
+            banner: banner,
+
+            iremove: iremove,
+            bremove: bremove
+        });
+        
         if (!success || !cat) {
             return res.status(400).json({
                 message: `Unable to ${update ? "update" : "insert"} category. Error => ${err}`,
@@ -155,7 +174,10 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
             });
         }
 
-        const [success, err] = await Delete_Category(prisma, Number(id.toString()));
+        const [success, err] = await DeleteCategory ({
+            prisma: prisma,
+            id: Number(id.toString())
+        });
 
         if (!success) {
             return res.status(400).json({

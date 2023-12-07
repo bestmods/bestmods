@@ -1,63 +1,51 @@
-import fs from "fs";
-
 import { type User, type PrismaClient } from "@prisma/client";
 
-import FileType from "@utils/base64";
+import { UploadFile } from "./fileupload";
 
-export const Insert_Or_Update_User = async (
+export async function InsertOrUpdateUser ({
+    prisma,
+
+    lookupId,
+
+    name,
+    email,
+
+    avatar,
+    aremove
+} : {
     prisma: PrismaClient,
 
-    lookup_id: string,
+    lookupId: string,
 
     name?: string,
     email?: string,
 
     avatar?: string,
     aremove?: boolean
-): Promise<[User | null, boolean, string | null | unknown]> => {
+}): Promise<[User | null, boolean, string | null | unknown]> {
     // Returns.
     let user: User | null = null;
 
     // Let's now handle file uploads.
-    let avatar_path: string | boolean | null = false;
+    let avatarPath: string | boolean | null = false;
 
     if (avatar != null && avatar.length > 0) {
-        const base64Data = avatar.split(",")[1];
+        const path = `/images/users/${lookupId}`;
 
-        if (base64Data != null) {
-            // Retrieve file type.
-            const file_ext = FileType(base64Data);
+        const [success, err, fullPath] = UploadFile(path, avatar);
+        
+        if (!success || !fullPath)
+            return [user, false, err];
 
-            // Make sure we don't have an unknown file type.
-            if (file_ext != "unknown") {
-                // Now let's compile our file name.
-                const fileName =  lookup_id + "." + file_ext;
-
-                // Set avatar path.
-                avatar_path = "images/users/" + fileName;
-
-                // Convert to binary from base64.
-                const buffer = Buffer.from(base64Data, "base64");
-
-                // Write file to disk.
-                try {
-                    fs.writeFileSync(process.env.UPLOADS_DIR + "/" + avatar_path, buffer);
-                } catch (error) {                 
-                    return [null, false, error];
-                }
-            } else {
-                return [null, false, "Avatar's file extension is unknown."];
-            }
-        } else
-            return [null, false, "Parsing base64 data is null."];
+        avatarPath = fullPath;
     } else if (aremove)
-        avatar_path = null;
+        avatarPath = null;
 
     // We must insert/update our category first.
     try {
         user = await prisma.user.update({
             where: {
-                id: lookup_id
+                id: lookupId
             },
             data: {
                 ...(name && {
@@ -66,8 +54,8 @@ export const Insert_Or_Update_User = async (
                 ...(email && {
                     email: email
                 }),
-                ...(avatar_path !== false && {
-                    image: avatar_path
+                ...(avatarPath !== false && {
+                    image: avatarPath
                 })
             }
         });
@@ -76,14 +64,16 @@ export const Insert_Or_Update_User = async (
         return [user, false, error];
     }
 
-
     return [user, true, null];
 }
 
-export const Delete_User = async (
+export async function DeleteUser ({
+    prisma,
+    id
+} : {
     prisma: PrismaClient,
     id: string
-): Promise<[boolean, string | unknown | null]> => {
+}): Promise<[boolean, string | unknown | null]> {
     try {
         await prisma.user.delete({
             where: {

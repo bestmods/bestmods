@@ -12,7 +12,7 @@ import { prisma } from "../../server/db/client";
 import { getSession, useSession } from "next-auth/react";
 
 import { trpc } from "@utils/trpc";
-import { Has_Perm } from "@utils/permissions";
+import { HasPerm } from "@utils/permissions";
 
 import EditIcon from "@components/icons/edit";
 import DeleteIcon from "@components/icons/delete";
@@ -34,7 +34,7 @@ export default function Page ({
         <>
             <MetaInfo />
             <Main>
-                {Has_Perm(session, "admin") ? (
+                {HasPerm(session, "admin") ? (
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 justify-items-center">
                         <div className="p-4 bg-bestmods-2/80 rounded">
                             <h2>View Users</h2>
@@ -292,7 +292,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     const session = await getSession(ctx);
 
-    const perm_check = Has_Perm(session, "admin") || Has_Perm(session, "contributor");
+    const perm_check = HasPerm(session, "admin") || HasPerm(session, "contributor");
 
     if (perm_check) {
         cats = await prisma.category.findMany({

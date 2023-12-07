@@ -2,37 +2,56 @@ import { type Category, type PrismaClient } from "@prisma/client";
 
 import { UploadFile } from "@utils/fileupload";
 
-export const Insert_Or_Update_Category = async (
-    prisma: PrismaClient,
+export async function InsertOrUpdateCategory ({
+    prisma,
 
-    name?: string,
-    name_short?: string,
-    description?: string,
-    url?: string,
-    
-    lookup_id?: number,
+    lookupId,
 
-    icon?: string,
-    banner?: string,
+    parentId,
 
-    iremove?: boolean,
-    bremove?: boolean,
+    name,
+    nameShort,
+    description,
+    url,
+    classes,
+    hasBg,
 
-    parent_id?: number | null,
-    classes?: string | null,
-    has_bg?: boolean
-): Promise<[Category | null, boolean, string | null | unknown]> => {
+    icon,
+    banner,
+
+    iremove,
+    bremove
+} : {
+    prisma: PrismaClient
+
+    lookupId?: number
+
+    parentId?: number | null
+
+    name?: string
+    nameShort?: string
+    description?: string
+    url?: string
+    classes?: string | null
+    hasBg?: boolean
+
+    icon?: string
+    banner?: string
+
+    iremove?: boolean
+    bremove?: boolean
+}): Promise<[Category | null, boolean, string | null | unknown]> {
     // Returns.
     let cat: Category | null = null;
 
     // Make sure we have text in required fields.
-    if (!lookup_id && (!name || name.length < 1 || !name_short || name_short.length < 1 || !url || url.length < 1)) {
+    if (!lookupId && (!name || name.length < 1 || !nameShort || nameShort.length < 1 || !url || url.length < 1)) {
         let err = "URL is empty.";
 
         if (!name || name.length < 1)
             err = "Name is empty.";
 
-        if (!name_short || name_short.length < 1)
+        if (!nameShort || nameShort.length < 1)
             err = "Short name is empty.";
 
         return [cat, false, err]
@@ -40,49 +59,33 @@ export const Insert_Or_Update_Category = async (
 
     // We must insert/update our category first.
     try {
-        if (lookup_id) {
+        if (lookupId) {
             cat = await prisma.category.update({
                 where: {
-                    id: lookup_id
+                    id: lookupId
                 },
                 data: {
-                    ...(parent_id != undefined && {
-                        parentId: (parent_id > 0) ? parent_id : null
+                    ...(parentId != undefined && {
+                        parentId: parentId || null
                     }),
-                    ...(description != undefined && {
-                        description: description
-                    }),
-                    ...(name && {
-                        name: name
-                    }),
-                    ...(name_short && {
-                        nameShort: name_short
-                    }),
-                    ...(url && {
-                        url: url
-                    }),
-                    ...(classes && {
-                        classes: classes ?? null,
-                    }),
-                    ...(has_bg && {
-                        hasBg: has_bg
-                    })
+                    description: description,
+                    name: name,
+                    nameShort: nameShort,
+                    url: url,
+                    classes: classes,
+                    hasBg: hasBg
                 }
             });
         } else {
             cat = await prisma.category.create({
                 data: {
-                    parentId: parent_id ?? null,
-                    description: description ?? null,
+                    parentId: parentId || null,
+                    description: description || null,
                     name: name ?? "",
-                    nameShort: name_short ?? "",
+                    nameShort: nameShort ?? "",
                     url: url ?? "",
-                    ...(classes && {
-                        classes: classes
-                    }),
-                    ...(has_bg && {
-                        hasBg: has_bg
-                    })
+                    classes: classes,
+                    hasBg: hasBg
                 }
             });
         }
@@ -151,10 +154,13 @@ export const Insert_Or_Update_Category = async (
     return [cat, true, null];
 }
 
-export const Delete_Category = async (
+export async function DeleteCategory ({
+    prisma,
+    id
+} : {
     prisma: PrismaClient,
     id: number
-): Promise<[boolean, string | unknown | null]> => {
+}): Promise<[boolean, string | unknown | null]> {
     try {
         await prisma.category.delete({
             where: {

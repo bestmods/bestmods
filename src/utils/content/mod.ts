@@ -465,38 +465,62 @@ export async function GetMods ({
     return [mods, nextMod];
 }
 
-export const Insert_Or_Update_Mod = async (
-    prisma: PrismaClient,
+export async function InsertOrUpdateMod ({
+    prisma,
 
-    name?: string,
-    url?: string,
-    description?: string,
-    visible?: boolean,
-    
-    lookup_id?: number,
+    lookupId,
 
-    owner_id?: string,
-    owner_name?: string,
+    ownerId,
+    ownerName,
 
-    banner?: string,
-    bremove?: boolean,
-    
-    category_id?: number | null,
+    categoryId,
 
-    description_short?: string,
-    install?: string,
+    name,
+    url,
+    description,
+    descriptionShort,
+    install,
+    visible,
 
-    downloads?: ModDownload[],
-    screenshots?: ModScreenshot[],
-    sources?: ModSource[],
-    installers?: ModInstaller[],
+    banner,
+    bremove,
+
+    downloads = [],
+    screenshots = [],
+    sources = [],
+    installers = [],
+    credits = []
+} : {
+    prisma: PrismaClient
+
+    lookupId?: number
+
+    ownerId?: string,
+    ownerName?: string
+
+    categoryId?: number | null
+
+    name?: string
+    url?: string
+    description?: string
+    descriptionShort?: string
+    install?: string
+    visible?: boolean
+
+    banner?: string
+    bremove?: boolean
+
+    downloads?: ModDownload[]
+    screenshots?: ModScreenshot[]
+    sources?: ModSource[]
+    installers?: ModInstaller[]
     credits?: ModCredit[]
-): Promise<[Mod | null, boolean, string | null | unknown]> => {
+}): Promise<[Mod | null, boolean, string | null | unknown]> {
     // Returns.
     let mod: Mod | null = null;
 
     // Make sure we have text in required fields.
-    if (!lookup_id && (!url || url.length < 1 || !name || name.length < 1 || !description || description.length < 1)) {
+    if (!lookupId && (!url || url.length < 1 || !name || name.length < 1 || !description || description.length < 1)) {
         let err = "URL is empty.";
 
         if (!name || name.length < 1)
@@ -505,14 +529,14 @@ export const Insert_Or_Update_Mod = async (
         if (!description || description.length < 1)
             err = "Description is empty.";
 
-        return [null, false, err]
+        return [mod, false, err]
     }
 
     // Let's now handle file uploads.
-    let banner_path: string | boolean | null = false;
+    let bannerPath: string | boolean | null = false;
 
     if (bremove)
-        banner_path = null;
+    bannerPath = null;
 
     if (!bremove && (banner && banner.length > 0)) {
         const path = `/images/mod/${url}`
@@ -522,25 +546,25 @@ export const Insert_Or_Update_Mod = async (
         if (!success || !full_path)
             return [null, false, err];
         
-        banner_path = full_path;
+        bannerPath = full_path;
     }
 
     try {
-        if (lookup_id) {
+        if (lookupId) {
             mod = await prisma.mod.update({
                 where: {
-                    id: lookup_id
+                    id: lookupId
                 },
                 data: {
                     editAt: new Date(Date.now()),
                     ...(visible !== undefined && {
                         visible: visible
                     }),
-                    ...(owner_name && owner_name.length > 0 && {
-                        ownerName: owner_name
+                    ...(ownerName && ownerName.length > 0 && {
+                        ownerName: ownerName
                     }),
-                    ...(owner_id && {
-                        ownerId: owner_id
+                    ...(ownerId && {
+                        ownerId: ownerId
                     }),
                     ...(name && {
                         name: name
@@ -548,35 +572,35 @@ export const Insert_Or_Update_Mod = async (
                     ...(url && {
                         url: url
                     }),
-                    ...(category_id !== undefined && {
-                        categoryId: category_id
+                    ...(categoryId !== undefined && {
+                        categoryId: categoryId
                     }),
                     ...(description && {
                         description: description
                     }),
-                    ...(description && {
-                        descriptionShort: description_short
+                    ...(descriptionShort && {
+                        descriptionShort: descriptionShort
                     }),
                     ...(install && {
                         install: install
                     }),
-                    ...(banner_path !== false && {
-                        banner: banner_path
+                    ...(bannerPath !== false && {
+                        banner: bannerPath
                     }),
                     ModDownload: {
                         deleteMany: {
-                            modId: lookup_id
+                            modId: lookupId
                         },
-                        create: downloads?.map((download) => ({
+                        create: downloads.map((download) => ({
                             name: download.name,
                             url: download.url
                         }))
                     },
                     ModSource: {
                         deleteMany: {
-                            modId: lookup_id
+                            modId: lookupId
                         },
-                        create: sources?.map((source) => ({
+                        create: sources.map((source) => ({
                             sourceUrl: source.sourceUrl,
                             query: source.query,
                             primary: source.primary
@@ -584,26 +608,26 @@ export const Insert_Or_Update_Mod = async (
                     },
                     ModInstaller: {
                         deleteMany: {
-                            modId: lookup_id
+                            modId: lookupId
                         },
-                        create: installers?.map((installer) => ({
+                        create: installers.map((installer) => ({
                             sourceUrl: installer.sourceUrl,
                             url: installer.url
                         }))
                     },
                     ModScreenshot: {
                         deleteMany: {
-                            modId: lookup_id
+                            modId: lookupId
                         },
-                        create: screenshots?.map((screenshot) => ({
+                        create: screenshots.map((screenshot) => ({
                             url: screenshot.url
                         }))
                     },
                     ModCredit: {
                         deleteMany: {
-                            modId: lookup_id
+                            modId: lookupId
                         },
-                        create: credits?.map((credit) => ({
+                        create: credits.map((credit) => ({
                             name: credit.name,
                             credit: credit.credit,
                             userId: credit.userId
@@ -615,28 +639,28 @@ export const Insert_Or_Update_Mod = async (
             mod = await prisma.mod.create({
                 data: {
                     visible: visible,
-                    ownerName: owner_name,
-                    ownerId: owner_id,
+                    ownerName: ownerName,
+                    ownerId: ownerId,
 
                     name: name ?? "",
                     url: url ?? "",
-                    categoryId: category_id ?? null,
+                    categoryId: categoryId,
 
                     description: description ?? "",
-                    descriptionShort: description_short,
+                    descriptionShort: descriptionShort,
                     install: install,
 
-                    ...(banner_path !== false && {
-                        banner: banner_path
+                    ...(bannerPath !== false && {
+                        banner: bannerPath
                     }),
                     ModDownload: {
-                        create: downloads?.map((download) => ({
+                        create: downloads.map((download) => ({
                             name: download.name,
                             url: download.url
                         }))
                     },
                     ModSource: {
-                        create: sources?.map((source) => ({
+                        create: sources.map((source) => ({
                             sourceUrl: source.sourceUrl,
                             query: source.query,
                             primary: source.primary
@@ -649,12 +673,12 @@ export const Insert_Or_Update_Mod = async (
                         }))
                     },
                     ModScreenshot: {
-                        create: screenshots?.map((screenshot) => ({
+                        create: screenshots.map((screenshot) => ({
                             url: screenshot.url
                         }))
                     },
                     ModCredit: {
-                        create: credits?.map((credit) => ({
+                        create: credits.map((credit) => ({
                             name: credit.name,
                             credit: credit.credit,
                             userId: credit.userId
@@ -673,19 +697,17 @@ export const Insert_Or_Update_Mod = async (
     return [mod, true, null];
 }
 
-export const Delete_Mod = async (
-    prisma: PrismaClient,
-    id?: number,
-    url?: string
-): Promise<[boolean, string | unknown | null]> => {
-    if (!id && !url)
-        return [false, "ID and URL both not specified!"];
-
+export async function DeleteMod ({
+    prisma,
+    id,
+} : {
+    prisma: PrismaClient
+    id: number
+}): Promise<[boolean, string | unknown | null]> {
     try {
         await prisma.mod.delete({
             where: {
-                id: id,
-                url: url
+                id: id
             }
         });
     } catch (error) {
@@ -695,11 +717,15 @@ export const Delete_Mod = async (
     return [true, null];
 }
 
-export const Get_Mod_Rating = async (
+export async function GetModRating ({
+    prisma,
+    id,
+    date
+} : {
     prisma: PrismaClient,
     id: number,
     date?: Date
-): Promise<number> => {
+}): Promise<number> {
     const rating_pos = await prisma.modRating.count({
         where: {
             modId: id,

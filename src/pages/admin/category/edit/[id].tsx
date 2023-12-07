@@ -3,7 +3,7 @@ import Main from "@components/main";
 import MetaInfo from "@components/meta";
 import NoAccess from "@components/errors/noaccess";
 import { getServerAuthSession } from "@server/common/get-server-auth-session";
-import { Has_Perm } from "@utils/permissions";
+import { HasPerm } from "@utils/permissions";
 import { type GetServerSidePropsContext } from "next";
 import { useSession } from "next-auth/react";
 import { type CategoryWithChildren } from "~/types/category";
@@ -28,7 +28,7 @@ export default function Page ({
             />
             <Main>
                 <div className="flex flex-col gap-2">
-                    {Has_Perm(session, "admin") ? (
+                    {HasPerm(session, "admin") ? (
                         <>
                             {category ? (
                                 <>
@@ -61,7 +61,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     const session = await getServerAuthSession(ctx);
 
-    if (Has_Perm(session, "admin") && id) {
+    if (HasPerm(session, "admin") && id) {
         category = await prisma.category.findFirst({
             where: {
                 id: Number(id)

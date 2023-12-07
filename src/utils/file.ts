@@ -21,14 +21,6 @@ export function FileType (str: string): string {
             fileType = "webp";
 
             break;
-
-        // Not supporting PDF for now.
-        /*
-        case 'J':
-            fileType = "pdf";
-
-            break;
-        */
     }
 
     return fileType;

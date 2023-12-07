@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server"
 
 import { z } from "zod";
 
-import { Delete_Category, Insert_Or_Update_Category } from "@utils/content/category";
+import { DeleteCategory, InsertOrUpdateCategory } from "@utils/content/category";
 
 export const categoryRouter = router({
     add: contributorProcedure
@@ -27,7 +27,26 @@ export const categoryRouter = router({
         }))
         .mutation(async ({ ctx, input }) => {
             // Use our helper funtion to insert our update category.
-            const [cat, success, err] = await Insert_Or_Update_Category(ctx.prisma, input.name, input.nameShort, input.description, input.url, input.id ?? 0, input.icon, input.banner, input.iremove, input.bremove, input.parentId, input.classes, input.hasBg);
+            const [cat, success, err] = await InsertOrUpdateCategory ({
+                prisma: ctx.prisma,
+
+                lookupId: input.id,
+
+                parentId: input.parentId,
+
+                name: input.name,
+                nameShort: input.nameShort,
+                description: input.description,
+                url: input.url,
+                classes: input.classes,
+                hasBg: input.hasBg,
+
+                icon: input.icon,
+                banner: input.banner,
+
+                iremove: input.iremove,
+                bremove: input.bremove
+            });
 
             if (!success || !cat) {
                 throw new TRPCError({
@@ -41,7 +60,10 @@ export const categoryRouter = router({
             id: z.number()
         }))
         .mutation(async ({ ctx, input }) => {
-            const [success, err] = await Delete_Category(ctx.prisma, input.id);
+            const [success, err] = await DeleteCategory ({
+                prisma: ctx.prisma,
+                id: input.id   
+            });
 
             if (!success) {
                 throw new TRPCError({

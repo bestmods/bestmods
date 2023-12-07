@@ -1,7 +1,23 @@
 import { type PrismaClient, type Source } from "@prisma/client";
 import { UploadFile } from "@utils/fileupload";
 
-export const Insert_Or_Update_Source = async (
+export async function InsertOrUpdateSource ({
+    prisma,
+
+    url,
+
+    update,
+
+    name,
+    description,
+    classes,
+
+    icon,
+    banner,
+
+    iremove,
+    bremove,
+} : {
     prisma: PrismaClient,
 
     url: string,
@@ -17,7 +33,7 @@ export const Insert_Or_Update_Source = async (
     name?: string,
     description?: string,
     classes?: string | null
-): Promise<[Source | null, boolean, string | null | unknown]> => {
+}): Promise<[Source | null, boolean, string | null | unknown]> {
     // Returns.
     let src: Source | null = null;
 
@@ -108,10 +124,13 @@ export const Insert_Or_Update_Source = async (
     return [src, true, null];
 }
 
-export const Delete_Source = async (
-    prisma: PrismaClient,
+export async function DeleteSource ({
+    prisma,
+    url
+} : {
+    prisma: PrismaClient
     url: string
-): Promise<[boolean, string | unknown | null]> => {
+}): Promise<[boolean, string | unknown | null]> {
     try {
         await prisma.source.delete({
             where: {

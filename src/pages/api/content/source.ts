@@ -2,7 +2,7 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 
 import { prisma } from "@server/db/client";
 
-import { Delete_Source, Insert_Or_Update_Source } from "@utils/content/source";
+import { DeleteSource, InsertOrUpdateSource } from "@utils/content/source";
 
 const source = async (req: NextApiRequest, res: NextApiResponse) => {
     // Check API key.
@@ -73,13 +73,13 @@ const source = async (req: NextApiRequest, res: NextApiResponse) => {
             bremove?: boolean 
         } = req.body;
 
-        let pre_url: string | undefined = undefined;
+        let preUrl: string | undefined = undefined;
 
         if (update) {
             // Retrieve pre URL if any.
-            pre_url = req.query.url?.toString();
+            preUrl = req.query.url?.toString();
 
-            if (!pre_url) {
+            if (!preUrl) {
                 return res.status(400).json({
                     message: "Cannot update source. URL query parameter missing."
                 });
@@ -98,19 +98,35 @@ const source = async (req: NextApiRequest, res: NextApiResponse) => {
         if (update) {
             const src = await prisma.source.findFirst({
                 where: {
-                    url: pre_url ?? ""
+                    url: preUrl ?? ""
                 }
             });
 
             if (!src) {
                 return res.status(404).json({
-                    message: "Couldn't retrieve source (URL => " + pre_url + "). Source not found.",
+                    message: "Couldn't retrieve source (URL => " + preUrl + "). Source not found.",
                     data: null
                 });
             }
         }
 
-        const [src, success, err] = await Insert_Or_Update_Source(prisma, (update) ? pre_url ?? "" : url, update, icon, iremove, banner, bremove, name, description, classes);
+        const [src, success, err] = await InsertOrUpdateSource ({
+            prisma: prisma,
+            
+            url: (update) ? preUrl ?? "" : url,
+            
+            update: update,
+
+            name: name,
+            description: description,
+            classes: classes,
+
+            icon: icon,
+            banner: banner,
+
+            iremove: iremove,
+            bremove: bremove
+        });
 
         if (!success || !src) {
             return res.status(400).json({
@@ -147,7 +163,10 @@ const source = async (req: NextApiRequest, res: NextApiResponse) => {
             });
         }
 
-        const [success, err] = await Delete_Source(prisma, url.toString());
+        const [success, err] = await DeleteSource ({
+            prisma: prisma,
+            url: url.toString()
+        });
 
         if (!success) {
             return res.status(400).json({
