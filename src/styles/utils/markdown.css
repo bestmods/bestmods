@@ -1,0 +1,23 @@
+.markdown {
+    & pre {
+        @apply bg-gray-900;
+        @apply rounded-sm;
+        @apply text-white;
+        @apply p-4;
+        @apply overflow-scroll;
+        @apply max-h-80;
+        @apply whitespace-pre-line;
+    }
+
+    & code:not(pre code) {
+        @apply bg-gray-950;
+        @apply px-1;
+        @apply rounded-sm;
+        @apply text-cyan-300;
+    }
+
+    & p {
+        @apply py-1;
+        @apply leading-5;
+    }
+}

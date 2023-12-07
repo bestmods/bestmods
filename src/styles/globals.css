@@ -106,6 +106,7 @@
 @layer utilities {
     @import "utils/buttons.css";
     @import "utils/inputs.css";
+    @import "utils/markdown.css";
 
     @import "utils/mod/grid.css";
 }
