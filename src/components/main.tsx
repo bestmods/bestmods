@@ -132,7 +132,7 @@ export default function Main ({
 
                     <Header />
 
-                    <div className="fixed z-50 bottom-0 left-0 p-4 duration-300 bg-bestmods-3 flex flex-col justify-center items-center gap-2 group rounded-tr">
+                    <div className="fixed z-30 bottom-0 left-0 p-4 duration-300 bg-bestmods-3 flex flex-col justify-center items-center gap-2 group rounded-tr">
                         <button
                             className={showSettings ? "block" : "hidden"}
                             onClick={() => {
