@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import InfiniteScroll from "react-infinite-scroller";
 
@@ -9,6 +9,7 @@ import { type ModRowBrowser } from "~/types/mod";
 import ModBrowserFilters from "./browser/filters";
 import Loading from "@components/loading";
 import { useCookies } from "react-cookie";
+import { ViewPortCtx } from "@components/main";
 
 export default function ModBrowser ({
     preCategories = [],
@@ -17,6 +18,8 @@ export default function ModBrowser ({
     preCategories?: number[]
     visible?: boolean | null
 }) {
+    const viewPort = useContext(ViewPortCtx);
+
     const [needMoreMods, setNeedMoreMods] = useState(true);
 
     // Filters
@@ -87,7 +90,7 @@ export default function ModBrowser ({
                     pageStart={0}
                     className="grid gap-x-4 gap-y-6"
                     style={{
-                        gridTemplateColumns: `repeat(auto-fill, minmax(320px, 1fr))`
+                        gridTemplateColumns: `repeat(auto-fill, minmax(${viewPort.isMobile ? `100%` : `320px`}, 1fr))`
                     }}
                     loadMore={loadMore}
                     hasMore={needMoreMods}

@@ -10,6 +10,8 @@ import DownloadIcon from "@components/icons/download";
 import { type ModRowBrowser } from "~/types/mod";
 import Image from "next/image";
 import IconAndText from "@components/icon_and_text";
+import React, { useContext, useEffect, useState } from "react";
+import { ViewPortCtx } from "@components/main";
 
 export default function ModRowGrid ({
     mod,
@@ -36,75 +38,71 @@ export default function ModRowGrid ({
     catLink: string | null
     viewLink: string
 }) {
-    const cdn: string | undefined = process.env.NEXT_PUBLIC_CDN_URL;
+    const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
 
-    // Compile installer drop-down items.
-    const installer_items: Drop_Down_Menu_Type[] = [];
+    const viewPort = useContext(ViewPortCtx);
 
-    mod.ModInstaller?.map((ins) => {
-        const name = ins.source.name;
-        const url = ins.url;
+    const [sourceItems, setSourceItems] = useState<Drop_Down_Menu_Type[]>([]);
+    const [installerItems, setInstallerItems] = useState<Drop_Down_Menu_Type[]>([]);
 
-        let icon = ins.source.icon ?? undefined;
+    useEffect(() => {
+        if (!viewPort.isMobile) {
+            const newItems: Drop_Down_Menu_Type[] = [];
 
-        if (cdn && icon)
-            icon = cdn + icon;
+            mod.ModSource?.map((src) => {
+                const name = src.source.name;
+                const url = `https://${src.sourceUrl}/${src.query}`;
 
-        const html = <>
-            {icon && (
-                <Image
-                    src={icon}
-                    width={32}
-                    height={32}
-                    alt="Installer Icon"
-                />
-            )}
-            {name}
-        </>;
+                let icon = "/images/default_icon.png";
 
-        installer_items.push({
-            link: url,
-            html: html,
-            new_tab: false,
-            className: "font-normal"
-        });
-    });
 
-    // Compile source drop-down items.
-    const source_items: Drop_Down_Menu_Type[] = [];
+                if (src.source.icon)
+                    icon = cdn + src.source.icon;
 
-    mod.ModSource?.map((src) => {
-        if (!src || !src.source || !src.sourceUrl || !src.query)
-            return;
-        
-        const name = src.source.name;
-        const url = "https://" + src.sourceUrl + "/" + src.query;
+                newItems.push({
+                    link: url,
+                    html:
+                        <IconAndText
+                            icon={icon}
+                            text={<>{name}</>}
+                        />,
+                    new_tab: false
+                });
+            });
 
-        let icon = src.source.icon ?? undefined;
+            setSourceItems(newItems);
+        } else if (sourceItems.length > 0)
+            setSourceItems([]);
+    }, [viewPort.width, mod.ModSource])
 
-        if (cdn && icon)
-            icon = cdn + icon;
+    useEffect(() => {
+        if (!viewPort.isMobile) {
+            const newItems: Drop_Down_Menu_Type[] = [];
 
-        const html = <>
-            {icon && (
-                <Image
-                    src={icon}
-                    width={32}
-                    height={32}
-                    alt="Source Icon"
-                />
-            )}
+            mod.ModInstaller?.map((ins) => {
+                const name = ins.source.name;
+                const url = ins.url;
 
-            {name}
-        </>;
+                let icon = "/images/default_icon.png";
 
-        source_items.push({
-            link: url,
-            html: html,
-            new_tab: true,
-            className: "font-normal"
-        });
-    });
+                if (ins.source.icon)
+                    icon = cdn + ins.source.icon;
+
+                newItems.push({
+                    link: url,
+                    html:
+                        <IconAndText
+                            icon={icon}
+                            text={<>{name}</>}
+                        />,
+                    new_tab: false
+                })
+            })
+
+            setInstallerItems(newItems);
+        } else if (installerItems.length > 0)
+            setInstallerItems([]);
+    }, [viewPort.width, mod.ModInstaller])
 
     return (
         <div
@@ -117,10 +115,10 @@ export default function ModRowGrid ({
                     width={720}
                     height={360}
                     alt="Mod Banner"
-                    className="w-full h-full rounded-t brightness-[75%] group-hover:brightness-100 group-hover:duration-500"
+                    className="w-full h-full rounded-t brightness-[75%] group-hover:brightness-100 group-hover:duration-500 object-cover object-center"
                 />
                 {mod.ownerName && mod.ownerName.length > 0 && (
-                    <div className="absolute bottom-0 left-0 h-8 pr-4 rounded-tr bg-slate-700/80 hover:bg-black/80 hover:font-bold flex items-center text-white text-sm">
+                    <div className="absolute bottom-0 left-0 h-8 pr-4 rounded-tr bg-bestmods-1/40 hover:bg-bestmods-1/80 hover:font-bold flex items-center text-white text-sm duration-200">
                         <p className="ml-1">By {mod.ownerName}</p>
                     </div>
                 )}
@@ -171,22 +169,22 @@ export default function ModRowGrid ({
                     text={<span className="text-sm">{mod.totalDownloads.toString()}</span>}
                 />
             </div>
-            <div className="flex justify-between items-center text-center bg-bestmods-3/80 rounded-b">
+            <div className={`flex ${(sourceItems.length < 1 && installerItems.length < 1) ? "justify-center" : "justify-between"}  items-center text-center bg-bestmods-3/80 rounded-b`}>
                 <Link
                     href={viewLink}
                     className="mod-grid-button"
                 >View</Link>
-                {installer_items.length > 0 && (
+                {installerItems.length > 0 && (
                     <DropDown
                         html={<>Install</>}
-                        drop_down_items={installer_items}
+                        drop_down_items={installerItems}
                         className="mod-grid-button"
                     />
                 )}
-                {source_items.length > 0 && (
+                {sourceItems.length > 0 && (
                     <DropDown
                         html={<>Sources</>}
-                        drop_down_items={source_items}
+                        drop_down_items={sourceItems}
                         className="mod-grid-button"
                     />
                 )}

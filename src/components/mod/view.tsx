@@ -145,7 +145,7 @@ export default function ModView ({
                 mod={mod}
                 view={view}
             >
-                <div className="flex flex-col p-4 gap-2 bg-bestmods-2/80">
+                <div className="flex flex-col p-4 gap-2 bg-bestmods-2/80 [overflow-wrap:anywhere]">
                     <div className={`flex flex-wrap gap-2 ${onlyRating ? "justify-end" : "justify-between"}`}>
                         {mod.ownerName && mod.ownerName.length > 0 && (
                             <div className="flex flex-col gap-2">
@@ -162,7 +162,7 @@ export default function ModView ({
                                 <DropDown
                                     html={<>Install</>}
                                     drop_down_items={installer_items}
-                                    className="btn btn-primary"
+                                    className="btn btn-secondary"
                                 />
                         )}
                         <div className="relative flex justify-center">
