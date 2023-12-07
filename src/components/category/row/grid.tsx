@@ -21,24 +21,22 @@ export default function CategoryRowGrid ({
     const modCnt = category._count.Mod;
 
     return (
-        <div
-            onClick={() => {
-                if (typeof window !== "undefined")
-                    window.location.href = viewLink;  
-            }}
-            className="bg-bestmods-2/80 ring-4 ring-bestmods-3/80 hover:ring-bestmods-4/80 rounded cursor-pointer group translate-y-0 hover:-translate-y-3 duration-300"
-        >
+        <div className="bg-bestmods-2/80 ring-4 ring-bestmods-3/80 hover:ring-bestmods-4/80 rounded group translate-y-0 hover:-translate-y-3 duration-300 hover:text-inherit">
             <div className="w-full h-64">
-                <Image
-                    src={banner}
-                    width={720}
-                    height={360}
-                    alt="Category Banner"
-                    className="w-full h-full brightness-[70%] group-hover:brightness-100 group-hover:duration-300 object-cover"
-                />
+                <Link href={viewLink}>
+                    <Image
+                        src={banner}
+                        width={720}
+                        height={360}
+                        alt="Category Banner"
+                        className="w-full h-full brightness-[70%] group-hover:brightness-100 group-hover:duration-300 object-cover"
+                    />
+                </Link>
             </div>
             <div className="p-4">
-                <h2 className="text-center">{category.name}</h2>
+                <Link href={viewLink}>
+                    <h2 className="text-center">{category.name}</h2>
+                </Link>
             </div>
             <div className="p-4 grow">
                 {modCnt < 1 && (
