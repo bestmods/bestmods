@@ -1,6 +1,6 @@
 import { type User, type PrismaClient } from "@prisma/client";
 
-import { UploadFile } from "./fileupload";
+import { UploadFile } from "./file_upload";
 
 export async function InsertOrUpdateUser ({
     prisma,

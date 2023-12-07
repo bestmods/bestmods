@@ -1,6 +1,6 @@
 import { type Category, type PrismaClient } from "@prisma/client";
 
-import { UploadFile } from "@utils/fileupload";
+import { UploadFile } from "@utils/file_upload";
 
 export async function InsertOrUpdateCategory ({
     prisma,

@@ -1,5 +1,5 @@
 import { type PrismaClient, type Source } from "@prisma/client";
-import { UploadFile } from "@utils/fileupload";
+import { UploadFile } from "@utils/file_upload";
 
 export async function InsertOrUpdateSource ({
     prisma,
