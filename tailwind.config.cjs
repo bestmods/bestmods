@@ -11,6 +11,10 @@ module.exports = {
             "bestmods-5": "#00B4D8",
             "bestmods-6": "#48CAE4",
             "bestmods-7": "#46494C"
+        },
+        animation: {
+          "menu-left-to-right": "menu-left-to-right 1s",
+          "menu-right-to-left": "menu-right-to-left 1s"
         }
     },
   },

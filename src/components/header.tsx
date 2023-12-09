@@ -13,7 +13,7 @@ import TwitterIcon from "./icons/twitter";
 import FacebookIcon from "./icons/facebook";
 import InstagramIcon from "./icons/instagram";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import HamburgerIcon from "./icons/hamburger";
 import LeftArrowIcon from "./icons/left_arrow";
 import HomeIcon from "./icons/home";
@@ -24,10 +24,71 @@ export default function Header () {
 
     const cur = router.asPath;
 
+    // Figure out if this is our first render.
+    const firstRender = useRef(true);
+
+    useEffect(() => {
+        if (firstRender.current)
+            firstRender.current = false;
+    }, [])
+
+    const isFirstRender = firstRender.current;
+
     const [mobileOpen, setMobileOpen] = useState(false);
+    const mobileMenu = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        const ele = mobileMenu.current;
+
+        if (!ele)
+            return;
+
+        if (mobileOpen) {
+            ele.classList.remove("hidden");
+            ele.classList.remove("animate-menu-right-to-left");
+
+            ele.classList.add("flex");
+            ele.classList.add("animate-menu-left-to-right");
+        } else if (!isFirstRender) {
+            ele.classList.remove("animate-menu-left-to-right");
+            ele.classList.add("animate-menu-right-to-left");
+        }
+
+        const onAnimateEnd = (e: AnimationEvent) => {
+            if (e.animationName == "menu-right-to-left") {
+                ele.classList.remove("flex");
+                ele.classList.add("hidden");
+            }
+        }
+
+        ele.addEventListener("animationend", onAnimateEnd, {
+            once: true
+        });
+
+        return () => {
+            ele.removeEventListener("animationend", onAnimateEnd);
+        }
+    }, [mobileOpen])
+
+    // Handle stickied transparency of menu.
+    const [isSticked, setIsSticked] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const handleScroll = () => {
+                setIsSticked(window.scrollY > 0 ? true : false);
+            }
+
+            window.addEventListener("scroll", handleScroll)
+
+            return () => {
+                window.removeEventListener("scroll", handleScroll);
+            }
+        }
+    }, [])
 
     return (
-        <header className="w-full bg-bestmods-3/80">
+        <header className={`w-full ${isSticked ? "bg-bestmods-3" : "bg-bestmods-3/80"} sticky top-0 z-30`}>
             <nav className="block sm:hidden">
                 <button
                     onClick={() => {
@@ -36,7 +97,7 @@ export default function Header () {
                 >
                     <HamburgerIcon className="w-6 h-6 stroke-white" />
                 </button>
-                <div className={`${mobileOpen ? "flex" : "hidden"} fixed z-50 top-0 left-0 w-1/2 h-full bg-bestmods-2 justify-between overflow-scroll p-6`}>
+                <div ref={mobileMenu} className={`hidden fixed z-50 top-0 left-0 w-1/2 h-full bg-bestmods-2 justify-between overflow-scroll p-6`}>
                     <div className="grow flex flex-col gap-4">
                         <Link
                             href="/"

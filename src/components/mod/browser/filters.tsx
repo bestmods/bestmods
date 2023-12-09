@@ -6,7 +6,7 @@ import SearchIcon from "@components/icons/search"
 import TableIcon from "@components/icons/table"
 import Loading from "@components/loading"
 import { trpc } from "@utils/trpc"
-import { type Dispatch, type SetStateAction, useState } from "react"
+import { type Dispatch, type SetStateAction, useState, useEffect, useRef } from "react"
 import { useCookies } from "react-cookie"
 import InfiniteScroll from "react-infinite-scroller"
 import { type CategoryWithChildren } from "~/types/category"
@@ -32,13 +32,58 @@ export default function ModBrowserFilters ({
     display: string
     setDisplay: Dispatch<SetStateAction<string>>
 }) {
+    // Figure out if this is our first render.
+    const firstRender = useRef(true);
+
+    useEffect(() => {
+        if (firstRender.current)
+            firstRender.current = false;
+    }, [])
+
+    const isFirstRender = firstRender.current;
+
+    // Handle filters menu.
     const [filtersOpen, setFiltersOpen] = useState(false);
+    const filtersMenu = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        const ele = filtersMenu.current;
+
+        if (!ele)
+            return;
+
+        if (filtersOpen) {
+            ele.classList.remove("hidden");
+            ele.classList.remove("animate-menu-right-to-left");
+
+            ele.classList.add("flex");
+            ele.classList.add("animate-menu-left-to-right");
+        } else if (!isFirstRender) {
+            ele.classList.remove("animate-menu-left-to-right");
+            ele.classList.add("animate-menu-right-to-left");
+        }
+
+        const onAnimateEnd = (e: AnimationEvent) => {
+            if (e.animationName == "menu-right-to-left") {
+                ele.classList.remove("flex");
+                ele.classList.add("hidden");
+            }
+        }
+
+        ele.addEventListener("animationend", onAnimateEnd, {
+            once: true
+        });
+
+        return () => {
+            ele.removeEventListener("animationend", onAnimateEnd)
+        }
+    }, [filtersOpen])
 
     const [, setCookie] = useCookies(["bm_display"]);
 
     return (
         <form className="flex flex-wrap justify-end gap-2">
-            <div className={`${filtersOpen ? "flex": "hidden"} z-50 bg-bestmods-2 fixed top-0 left-0 w-1/2 p-6 h-full overflow-scroll flex justify-between`}>
+            <div ref={filtersMenu} className={`hidden z-50 fixed top-0 left-0 w-1/2 p-6 h-full bg-bestmods-2 overflow-scroll justify-between`}>
                 <div className="grow flex flex-col gap-2">
                     <div className="flex flex-col gap-2">
                         <h2>Filters</h2>
