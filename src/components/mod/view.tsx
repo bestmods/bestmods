@@ -16,6 +16,7 @@ import Image from "next/image";
 import ModViewCategory from "./view/category";
 import { ErrorCtx, SuccessCtx } from "@pages/_app";
 import ScrollToTop from "@utils/scroll";
+import IconAndText from "@components/icon_and_text";
 
 export default function ModView ({
     mod,
@@ -98,27 +99,21 @@ export default function ModView ({
         const name = ins.source.name;
         const url = ins.url;
 
-        let icon = ins.source.icon ?? undefined;
+        let icon = "/images/default_icon.png";
 
-        if (icon)
-            icon = cdn + icon;
-
-        const html = <>
-            {icon && (
-                <Image
-                    src={icon}
-                    width={32}
-                    height={32}
-                    alt="Icon"
-                />
-            )}
-
-            {name}
-        </>;
+        if (ins.source.icon)
+            icon = cdn + ins.source.icon;
 
         installer_items.push({
             link: url,
-            html: html,
+            html:
+                <IconAndText
+                    icon={icon}
+                    width={20}
+                    height={20}
+                    text={<span>{name}</span>}
+                />,
+            className: "font-normal hover:text-white",
             new_tab: false
         });
     });

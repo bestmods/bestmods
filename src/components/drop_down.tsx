@@ -27,13 +27,13 @@ export default function DropDown ({
     const [menuOpen, setMenuOpen] = useState(false);
 
     return (
-        <button
-            className={`${className ? `${className} `: ``}relative flex items-center rounded`}
-            onClick={() => {
-                setMenuOpen(!menuOpen);
-            }}
-        >
-            <div className="flex gap-1 items-center">
+        <div className="relative inline-block">
+            <button
+                className={`${className ? `${className} `: ``}inline-flex gap-1 items-center`}
+                onClick={() => {
+                    setMenuOpen(!menuOpen);
+                }}
+            >
                 <span>{html}</span>
 
                 {menuOpen ? (
@@ -41,33 +41,38 @@ export default function DropDown ({
                 ) : (
                     <DownArrow className="w-4 h-4 stroke-white" />
                 )}
-            </div>
-            <ul className={`${menuOpen ? `visible` : `hidden`} break-all absolute w-full sm:w-[300%] top-[100%] left-0 sm:left-[-200%] z-30 rounded-b p-2 bg-bestmods-2`}>
-                {drop_down_items.map((item, index) => {
-                    return (
-                        <React.Fragment key={`navitem-${index.toString()}`}>
-                            {item.seperator ? (
-                                <li className={item.className}><hr /></li>
-                            ) : (
-                                <>
-                                    {item.noLink ? (
-                                        <li className={item.className}>{item.html}</li>
+            </button>
+            {menuOpen && (
+                <div className={`origin-top-right break-all absolute right-0 mt-2 w-44 min-w-full top-[100%] z-30 rounded-b p-2 bg-bestmods-3`}>
+                    <ul role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                        {drop_down_items.map((item, index) => {
+                            return (
+                                <React.Fragment key={`navitem-${index.toString()}`}>
+                                    {item.seperator ? (
+                                        <li className={item.className}><hr /></li>
                                     ) : (
-                                        <Link
-                                            href={item.link}
-                                            target={item.new_tab ? "_blank" : undefined}
-                                            className={item.className}
-                                            onClick={item.onClick}
-                                        >
-                                            <li className="py-5 px-2 hover:bg-bestmods-2 divide-y-2 divide-slate-800 hover:divide-cyan-700 flex items-center gap-2 text-sm">{item.html}</li>
-                                        </Link>
+                                        <>
+                                            {item.noLink ? (
+                                                <li className={item.className}>{item.html}</li>
+                                            ) : (
+                                                <Link
+                                                    href={item.link}
+                                                    target={item.new_tab ? "_blank" : undefined}
+                                                    className={`${item.className} hover:text-inherit`}
+                                                    onClick={item.onClick}
+                                                >
+                                                    <li className="py-5 px-2 divide-y-2 divide-slate-800 hover:divide-cyan-700 flex items-center gap-2 text-sm">{item.html}</li>
+                                                </Link>
+                                            )}
+                                        </>
                                     )}
-                                </>
-                            )}
-                        </React.Fragment>
-                    );
-                })}
-            </ul>
-        </button>
+                                </React.Fragment>
+                            );
+                        })}
+                    </ul>
+                </div>
+            )}
+            
+        </div>
     );
 }
