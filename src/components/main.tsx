@@ -129,18 +129,18 @@ export default function Main ({
 
                 <Header />
 
-                <div className="fixed z-30 bottom-0 left-0 p-4 duration-300 bg-bestmods-3 flex flex-col justify-center items-center gap-2 group rounded-tr">
+                <div className="fixed z-30 bottom-0 left-0 p-4 duration-300 bg-bestmods-3 flex flex-col justify-center items-center gap-8 group rounded-tr">
                     <button
-                        className={showSettings ? "block" : "hidden"}
+                        className={showSettings ? "block cursor-pointer" : "hidden"}
                         onClick={() => {
                             setShowBg(!showBg);
                             setCookie("bm_showbg", !showBg ? "1" : "0");
                         }}
                     >
-                        <PhotoIcon className={`w-6 h-6 rounded-full stroke-white fill-none ${showBg ? "brightness-100" : "brightness-50"}`} />
+                        <PhotoIcon className={`w-8 h-8 rounded-full stroke-white fill-none ${showBg ? "brightness-100" : "brightness-50"}`} />
                     </button>
                     <button
-                        className={showSettings ? "block" : "hidden"}
+                        className={showSettings ? "block cursor-pointer" : "hidden"}
                         onClick={async () => {
                             if (session?.user)
                                 await signOut();
@@ -148,14 +148,15 @@ export default function Main ({
                                 await signIn("discord");
                         }}
                     >
-                        <UserIcon className="w-6 h-6 stroke-white fill-none" />
+                        <UserIcon className="w-8 h-8 stroke-white fill-none" />
                     </button>
                     <div
+                        className="cursor-pointer"
                         onClick={() => {
                             setShowSettings(!showSettings);
                         }}
                     >
-                        <GearIcon className="w-6 h-6 stroke-white fill-none" />
+                        <GearIcon className="w-8 h-8 stroke-white fill-none" />
                     </div>
                 </div>
 
