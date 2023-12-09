@@ -21,7 +21,7 @@ export default function CategoryRowGrid ({
     const modCnt = category._count.Mod;
 
     return (
-        <div className="bg-bestmods-2/80 ring-4 ring-bestmods-3/80 hover:ring-bestmods-4/80 rounded group translate-y-0 hover:-translate-y-3 duration-300 hover:text-inherit">
+        <div className="bg-bestmods-2/80 shadow-lg shadow-black ring-4 ring-bestmods-3/80 hover:ring-bestmods-4/80 rounded group translate-y-0 hover:-translate-y-3 duration-300 hover:text-inherit">
             <div className="w-full h-64">
                 <Link href={viewLink}>
                     <Image

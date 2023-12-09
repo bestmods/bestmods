@@ -107,7 +107,7 @@ export default function ModRowGrid ({
     return (
         <div
             key={mod.id}
-            className={`${className ?`${className} ` : ``}group rounded bg-bestmods-2/80 flex flex-col shadow-lg ring-4 ring-bestmods-3/80 hover:ring-bestmods-4/80 duration-300`}
+            className={`${className ?`${className} ` : ``}group rounded bg-bestmods-2/80 flex flex-col shadow-lg shadow-black ring-4 ring-bestmods-3/80 hover:ring-bestmods-4/80 duration-300`}
         >
             <div className="relative w-full h-64 max-h-64">
                 <Image
