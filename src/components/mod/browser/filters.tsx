@@ -125,15 +125,11 @@ export default function ModBrowserFilters ({
                             </select>
                         </div>
                     </div>
-                    <div className="flex flex-col gap-2">
-                        <h3>Categories</h3>
-                        <div>
-                            <Categories
-                                categories={categories}
-                                setCategories={setCategories}
-                            />
-                        </div>
-                    </div>
+                    <Categories
+                        categories={categories}
+                        setCategories={setCategories}
+                        parentNode={filtersMenu.current}
+                    />
                 </div>
                 <div>
                     <button
@@ -202,10 +198,12 @@ export default function ModBrowserFilters ({
 
 function Categories ({
     categories,
-    setCategories
+    setCategories,
+    parentNode
 } : {
     categories: number[]
     setCategories: Dispatch<SetStateAction<number[]>>
+    parentNode: HTMLDivElement | null
 }) {
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
 
@@ -241,9 +239,11 @@ function Categories ({
             hasMore={needMoreCats}
             loader={<Loading key="loader" />}
             useWindow={false}
+            getScrollParent={() => parentNode}
         >
-            {catsOrLoading ? (
+            {catsOrLoading && (
                 <>
+                    <h3>Categories</h3>
                     {allCats.map((cat, index) => {
                         let icon = "/images/default_icon.png";
 
@@ -321,8 +321,6 @@ function Categories ({
                         )
                     })}
                 </>
-            ) : (
-                <p>No categories found...</p>
             )}
         </InfiniteScroll>
     )
