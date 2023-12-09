@@ -132,13 +132,18 @@ export default function ModRowGrid ({
                 )}
             </div>
             <div className="p-2 grow text-ellipsis overflow-clip w-full">
-                <h3 className="text-center"><a href={viewLink}>{mod.name}</a></h3>
+                <h3 className="text-center">
+                    <Link
+                        href={viewLink}
+                        className="hover:text-inherit"
+                    >{mod.name}</Link>
+                </h3>
                 <p className="text-sm">{descShort}</p>
             </div>
             {catPar && catParLink && (
                 <Link
                     href={catParLink}
-                    className="p-2"
+                    className="p-2 hover:text-inherit"
                 >
                     <IconAndText
                         icon={catParIcon}
@@ -151,7 +156,7 @@ export default function ModRowGrid ({
             {cat && catLink && (
                 <Link
                     href={catLink}
-                    className="p-2"
+                    className="p-2 hover:text-inherit"
                 >
                     <IconAndText
                         icon={catIcon}
