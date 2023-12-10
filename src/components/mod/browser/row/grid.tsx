@@ -15,6 +15,7 @@ import { ViewPortCtx } from "@components/main";
 
 export default function ModRowGrid ({
     mod,
+    showRelations = true,
     className,
     banner,
     descShort,
@@ -26,7 +27,8 @@ export default function ModRowGrid ({
     catLink,
     viewLink
 } : {
-    mod: ModRowBrowser,
+    mod: ModRowBrowser
+    showRelations?: boolean
     className?: string
     banner: string
     descShort: string
@@ -46,7 +48,7 @@ export default function ModRowGrid ({
     const [installerItems, setInstallerItems] = useState<Drop_Down_Menu_Type[]>([]);
 
     useEffect(() => {
-        if (!viewPort.isMobile) {
+        if (!viewPort.isMobile && showRelations) {
             const newItems: Drop_Down_Menu_Type[] = [];
 
             mod.ModSource?.map((src) => {
@@ -79,7 +81,7 @@ export default function ModRowGrid ({
     }, [viewPort, mod.ModSource, cdn, sourceItems.length])
 
     useEffect(() => {
-        if (!viewPort.isMobile) {
+        if (!viewPort.isMobile && showRelations) {
             const newItems: Drop_Down_Menu_Type[] = [];
 
             mod.ModInstaller?.map((ins) => {
@@ -113,7 +115,7 @@ export default function ModRowGrid ({
     return (
         <div
             key={mod.id}
-            className={`${className ?`${className} ` : ``}group rounded bg-bestmods-2/80 flex flex-col shadow-lg shadow-black ring-4 ring-bestmods-3/80 hover:ring-bestmods-4/80 duration-300`}
+            className={`${className ?`${className} ` : ``}group rounded bg-bestmods-2/80 flex flex-col shadow-lg shadow-black ring-4 ring-bestmods-3/80 hover:ring-bestmods-4/80 duration-300 h-full`}
         >
             <div className="relative w-full h-64 max-h-64">
                 <Link href={viewLink}>

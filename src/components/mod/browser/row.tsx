@@ -4,10 +4,12 @@ import ModRowTable from "./row/table";
 
 export default function ModRow ({
     mod,
-    display = "grid"
+    display = "grid",
+    showRelations = true
 } : {
-    mod: ModRowBrowser,
+    mod: ModRowBrowser
     display?: string
+    showRelations?: boolean
 }) {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
@@ -41,6 +43,7 @@ export default function ModRow ({
             {display == "grid" ? (
                 <ModRowGrid
                     mod={mod}
+                    showRelations={showRelations}
                     banner={banner}
                     descShort={descShort}
                     cat={cat}
