@@ -18,6 +18,7 @@ import HamburgerIcon from "./icons/hamburger";
 import LeftArrowIcon from "./icons/left_arrow";
 import HomeIcon from "./icons/home";
 import SteamIcon from "./icons/steam";
+import InfoIcon from "./icons/info";
 
 export default function Header () {
     const router = useRouter();
@@ -123,6 +124,14 @@ export default function Header () {
                                 text={<>Categories</>}
                             />
                         </Link>
+                        <Link
+                            href="/about"
+                        >
+                            <IconAndText
+                                icon={<InfoIcon className="w-6 h-6 stroke-white fill-none" />}
+                                text={<>About</>}
+                            />
+                        </Link>
                         <h3>Socials</h3>
                         <Link
                             href="https://instagram.com/bestmodsio"
@@ -218,14 +227,14 @@ export default function Header () {
                     </div>
                 </div>
             </nav>
-            <nav className="hidden sm:flex container mx-auto items-center gap-4">
+            <nav className="hidden sm:flex container mx-auto items-center sm:gap-1 md:gap-4">
                 <Link href="/">
-                    <h1 className="flex gap-2">
+                    <h1 className="sm:text-2xl md:text-4xl flex gap-2">
                         <span>
-                            <span className="text-blue-400">B</span>est
+                            <span className="text-blue-300">B</span>est
                         </span>
                         <span>
-                            <span className="text-blue-400">M</span>ods
+                            <span className="text-blue-300">M</span>ods
                         </span>
                     </h1>
                 </Link>
@@ -248,6 +257,16 @@ export default function Header () {
                         />
                     }
                     active={cur == "/category"}
+                />
+                <NavItem
+                    url={"/about"}
+                    content={
+                        <IconAndText
+                            icon={<InfoIcon className="w-6 h-6 stroke-white fill-none" />}
+                            text={<>About</>}
+                        />
+                    }
+                    active={cur == "/about"}
                 />
                 <DropDown
                     html={<>Socials</>}
