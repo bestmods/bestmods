@@ -32,6 +32,18 @@
 
     p {
         @apply leading-5;
+
+        & a {
+            @apply text-cyan-300;
+
+            &:link, :active {
+                @apply text-cyan-300;
+            }
+
+            &:hover {
+                @apply text-cyan-200;
+            }
+        }
     }
 
     a {
