@@ -11,6 +11,7 @@ import ModView from "@components/mod/view";
 import NotFound from "@components/errors/notfound";
 
 import { GetModRating } from "@utils/content/mod";
+import { GetBgImage } from "@utils/images";
 
 export default function Page ({
     mod,
@@ -19,13 +20,17 @@ export default function Page ({
     mod?: ModViewItem,
     rating: number
 }) {
+    // Retrieve background image if any.
+    const bgPath = GetBgImage(mod?.category);
+
     return (
         <>
             <MetaInfo
                 title={`${mod?.name ?? `Not Found`} Credits - Best Mods`}
                 description={mod?.descriptionShort ?? undefined}
+                image={bgPath}
             />
-            <Main>
+            <Main image={bgPath}>
                 {mod ? (
                     <ModView
                         view="credits"
