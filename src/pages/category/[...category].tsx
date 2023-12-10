@@ -12,6 +12,7 @@ import { type ModRowBrowser } from "~/types/mod";
 import ModCatalog from "@components/mod/catalog";
 import { getServerAuthSession } from "@server/common/get-server-auth-session";
 import { GetMods } from "@utils/content/mod";
+import { GetBgImage } from "@utils/images";
 
 export default function Page ({
     category,
@@ -28,29 +29,16 @@ export default function Page ({
     topMods: ModRowBrowser[]
     topModsToday: ModRowBrowser[] 
 }) {
-    let bgFile: string | null = null;
-
-    if (category) {
-        if (category.hasBg && category.parent)
-            bgFile = category.parent.url + "_" + category.url + ".png";
-        else if (category.hasBg && category.parent == null)
-            bgFile = category.url + ".png";
-        else if (category.parent && category.parent.hasBg)
-            bgFile = category.parent.url + ".png";
-    }
-
-    const bgPath = "/images/backgrounds/" + bgFile;
+    const bgPath = GetBgImage(category);
 
     return (
         <>
             <MetaInfo
                 title={`${category?.parent?.name ? `${category.parent.name} ` : ``}${category?.name ? `${category.name} ` : ``} - Best Mods`}
                 description={category?.description ?? category?.parent?.description ?? undefined}
-                image={bgFile ? bgPath : undefined}
+                image={bgPath}
             />
-            <Main
-                image={bgFile ? bgPath : undefined}
-            >
+            <Main image={bgPath}>
                 <h1>
                     {category?.parent && (
                         <>{category.parent.name} - </>
