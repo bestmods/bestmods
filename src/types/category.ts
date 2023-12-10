@@ -41,3 +41,9 @@ export type CategoryWithChildrenAndCounts = Prisma.CategoryGetPayload<{
         }
     }
 }>
+
+export type CategoryWithParent = Prisma.CategoryGetPayload<{
+    include: {
+        parent: true
+    }
+}>
