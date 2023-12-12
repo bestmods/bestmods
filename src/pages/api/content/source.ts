@@ -3,54 +3,60 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 import { prisma } from "@server/db/client";
 
 import { DeleteSource, InsertOrUpdateSource } from "@utils/content/source";
+import { CheckApiAccess } from "@utils/content/api";
 
 const source = async (req: NextApiRequest, res: NextApiResponse) => {
-    // Check API key.
-    const authHeaderVal = req.headers.authorization ?? "";
-    const authKey = "Bearer " + process.env.API_AUTH_KEY;
+    // Retrieve method and check.
+    const method = req.method;
 
-    if (authHeaderVal != authKey) {
-        return res.status(401).json({ 
-            message: "Unauthorized.",
-            data: null
+    if (!method) {
+        return res.status(405).json({
+            message: "No method specified."
+        });
+    }
+
+    // Check API key.
+    const token = req.headers.authorization;
+    
+    // Perform API access check.
+    const [suc, err] = await CheckApiAccess({
+        req: req,
+        token: token
+    });
+
+    if (!suc) {
+        return res.status(400).json({
+            message: err
         });
     }
 
     // If this is a GET request, we are retrieving an item.
-    if (req.method == "GET") {
-        // Retrieve ID and check.
+    if (method == "GET") {
+        // Retrieve URL.
         const { url } = req.query;
 
-        if (!url) {
-            return res.status(400).json({
-                message: "No URL present.",
-                data: null
-            });
-        }
+        // Limit.
+        const limit = Number(req.query?.limit?.toString() ?? 10);
 
         // Retrieve source and check.
-        const src = await prisma.source.findFirst({
+        const srcs = await prisma.source.findMany({
             where: {
-                url: url.toString()
-            }
+                ...(url && {
+                    url: url.toString()
+                })
+            },
+            take: limit
         });
-
-        if (!src) {
-            return res.status(404).json({
-                message: "Source URL " + url + " not found.",
-                data: null
-            });
-        }
 
         // Return source.
         return res.status(200).json({
-            "message": "Source fetched!",
+            "message": `${srcs.length.toString()} sources fetched!`,
             data: {
-                src: src
+                sources: srcs
             }
         });
-    } else if (["POST", "PATCH", "PUT"].includes(req.method ?? "")) {
-        const update = ["PATCH", "PUT"].includes(req.method ?? "");
+    } else if (["POST", "PATCH", "PUT"].includes(method)) {
+        const update = ["PATCH", "PUT"].includes(method);
 
         // Retrieve POST data.
         const { 
@@ -75,6 +81,7 @@ const source = async (req: NextApiRequest, res: NextApiResponse) => {
 
         let preUrl: string | undefined = undefined;
 
+        // If update is specified.
         if (update) {
             // Retrieve pre URL if any.
             preUrl = req.query.url?.toString();
@@ -84,27 +91,23 @@ const source = async (req: NextApiRequest, res: NextApiResponse) => {
                     message: "Cannot update source. URL query parameter missing."
                 });
             }
-        }
 
-        // If we're not updating, check to make sure we have a URL and name.
-        if (!update && (!url || !name)) {
-            return res.status(400).json({
-                message: "Name or URL missing or too short.",
-                data: null
-            });
-        }
-
-        // If update is specified.
-        if (update) {
             const src = await prisma.source.findFirst({
                 where: {
-                    url: preUrl ?? ""
+                    url: preUrl
                 }
             });
 
             if (!src) {
                 return res.status(404).json({
-                    message: "Couldn't retrieve source (URL => " + preUrl + "). Source not found.",
+                    message: `Couldn't retrieve source (URL => ${preUrl}. Source not found.`,
+                    data: null
+                });
+            }
+        } else {
+            if (!url || !name) {
+                return res.status(400).json({
+                    message: "Name or URL missing or too short.",
                     data: null
                 });
             }
@@ -113,7 +116,7 @@ const source = async (req: NextApiRequest, res: NextApiResponse) => {
         const [src, success, err] = await InsertOrUpdateSource ({
             prisma: prisma,
             
-            url: (update) ? preUrl ?? "" : url,
+            url: (update && preUrl) ? preUrl : url,
             
             update: update,
 

@@ -3,58 +3,65 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 import { prisma } from "@server/db/client";
 
 import { DeleteCategory, InsertOrUpdateCategory } from "@utils/content/category";
+import { CheckApiAccess } from "@utils/content/api";
 
 const category = async (req: NextApiRequest, res: NextApiResponse) => {
-    // Check API key.
-    const authHeaderVal = req.headers.authorization ?? "";
-    const authKey = "Bearer " + process.env.API_AUTH_KEY;
+    // Retrieve method and check.
+    const method = req.method;
 
-    if (authHeaderVal != authKey) {
-        return res.status(401).json({ 
-            message: "Unauthorized.",
-            data: null
+    if (!method) {
+        return res.status(405).json({
+            message: "No method specified."
+        });
+    }
+
+    // Check API key.
+    const token = req.headers.authorization;
+    
+    // Perform API access check.
+    const [suc, err] = await CheckApiAccess({
+        req: req,
+        token: token
+    });
+
+    if (!suc) {
+        return res.status(400).json({
+            message: err
         });
     }
 
     // If this is a GET request, we are retrieving an item.
-    if (req.method == "GET") {
+    if (method == "GET") {
         // Retrieve ID and check.
         const { id } = req.query;
 
-        if (!id) {
-            return res.status(400).json({
-                message: "No ID present.",
-                data: null
-            });
-        }
+        // Limit.
+        const limit = Number(req.query?.limit?.toString() ?? 10);
 
         // Retrieve category and check.
-        const cat = await prisma.category.findFirst({
+        const cats = await prisma.category.findMany({
             include: {
-                parent: true
+                parent: true,
+                children: true
             },
             where: {
-                id: Number(id)
-            }
+                ...(id && {
+                    id: Number(id.toString())
+                })
+            },
+            take: limit
         });
-
-        if (!cat) {
-            return res.status(404).json({
-                message: "Category ID " + id + " not found.",
-                data: null
-            });
-        }
 
         // Return category.
         return res.status(200).json({
-            "message": "Category fetched!",
+            "message": `${cats.length.toString()} categories fetched!`,
             data: {
-                category: cat
+                categories: cats
             }
         });
-    } else if (["POST", "PATCH", "PUT"].includes(req.method ?? "")) {
+    } else if (["POST", "PATCH", "PUT"].includes(method)) {
         // Check if this should be an update.
-        const update = ["PATCH", "PUT"].includes(req.method ?? "");
+        const update = ["PATCH", "PUT"].includes(method);
 
         // Retrieve body data.
         const {
@@ -85,25 +92,16 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
 
         let id: string | undefined = undefined;
 
-        if (update)
-            id = req.query.id?.toString();
-
-        if (update && !id) {
-            return res.status(400).json({
-                message: "Cannot update category. Missing ID query parameter."
-            })
-        }
-
-        // If we're not updating, make sure we have a name and name short.
-        if (!update && (!name || !nameShort)) {
-            return res.status(400).json({
-                message: "Name or short name not found in POST data for new entry.",
-                data: null
-            });
-        }
-
         // If the ID is specified, do a lookup here.
         if (update) {
+            id = req.query.id?.toString();
+
+            if (!id) {
+                return res.status(400).json({
+                    message: "Cannot update category. Missing ID query parameter."
+                });
+            }
+
             const cat = await prisma.category.findFirst({
                 where: {
                     id: Number(id)
@@ -113,6 +111,13 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
             if (!cat) {
                 return res.status(404).json({
                     message: "Couldn't retrieve category (ID " + id + "). Category not found.",
+                    data: null
+                });
+            }
+        } else {
+            if (!name || !nameShort) {
+                return res.status(400).json({
+                    message: "Name or short name not found in POST data for new entry.",
                     data: null
                 });
             }
@@ -152,7 +157,7 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
                 category: cat
             }
         })
-    } else if (req.method == "DELETE") {
+    } else if (method == "DELETE") {
         const { id } = req.query;
 
         if (!id) {

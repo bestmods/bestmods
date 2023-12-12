@@ -5,58 +5,98 @@ import { prisma } from "@server/db/client";
 import { DeleteMod, InsertOrUpdateMod } from "@utils/content/mod";
 
 import { type ModCredit, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource } from "@prisma/client";
+import { CheckApiAccess } from "@utils/content/api";
 
-const mod = async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
+    // Retrieve method and check.
+    const method = req.method;
+
+    if (!method) {
+        return res.status(405).json({
+            message: "No method specified."
+        });
+    }
+
     // Check API key.
-    const authHeaderVal = req.headers.authorization ?? "";
-    const authKey = "Bearer " + process.env.API_AUTH_KEY;
+    const token = req.headers.authorization;
+    
+    // Perform API access check.
+    const [suc, err] = await CheckApiAccess({
+        req: req,
+        token: token
+    });
 
-    if (authHeaderVal != authKey) {
-        return res.status(401).json({ 
-            message: "Unauthorized.",
-            data: null
+    if (!suc) {
+        return res.status(400).json({
+            message: err
         });
     }
 
     // If this is a GET request, we are retrieving an item.
-    if (req.method == "GET") {
-        // Retrieve ID and check.
-        const { id } = req.query;
+    if (method == "GET") {
+        // Retrieve where clauses.
+        const { id, visible, needsRecounting } = req.query;
 
-        if (!id) {
-            return res.status(400).json({
-                message: "No ID present.",
-                data: null
-            });
-        }
+        // Limit.
+        const limit = Number(req.query?.limit?.toString() ?? 10);
+
+        // Sorting.
+        const sort = Number(req.query?.sort?.toString() ?? 0);
+        const sortInvert = Boolean(req.query?.sortInvert?.toString() ?? false);
+
+        const sortDir = sortInvert ? "asc" : "desc";
 
         // Retrieve category and check.
-        const mod = await prisma.mod.findFirst({
+        const mods = await prisma.mod.findMany({
             include: {
                 owner: true,
-                category: true
+                category: true,
+
+                ModSource: true,
+                ModInstaller: true,
+                ModDownload: true,
+                ModScreenshot: true,
+                ModCredit: true,
+                ModCollections: true
             },
             where: {
-                id: Number(id)
+                ...(id && {
+                    id: Number(id.toString())
+                }),
+                ...(visible && {
+                    visible: Boolean(visible?.toString())
+                }),
+                ...(needsRecounting && {})
+            },
+            take: limit,
+            orderBy: {
+                ...(sort == 0 && {
+                    createAt: sortDir
+                }),
+                ...(sort == 1 && {
+                    updateAt: sortDir
+                }),
+                ...(sort == 2 && {
+                    editAt: sortDir
+                }),
+                ...(sort == 3 && {
+                    recountedAt: sortDir
+                }),
+                ...(sort == 4 && {
+                    lastScanned: sortDir
+                })
             }
         });
-
-        if (!mod) {
-            return res.status(404).json({
-                message: "Mod ID " + id + " not found.",
-                data: null
-            });
-        }
 
         // Return mod.
         return res.status(200).json({
-            "message": "Mod fetched!",
+            "message": `${mods.length.toString()} mods fetched!`,
             data: {
-                mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === "bigint" ? v.toString() : v))
+                mods: JSON.parse(JSON.stringify(mods, (_, v) => typeof v === "bigint" ? v.toString() : v))
             }
         });
-    } else if (["POST", "PATCH", "PUT"].includes(req.method ?? "")) {
-        const update = ["PATCH", "PUT"].includes(req.method ?? "");
+    } else if (["POST", "PATCH", "PUT"].includes(method)) {
+        const update = ["PATCH", "PUT"].includes(method);
 
         // Retrieve POST data.
         const { 
@@ -75,7 +115,8 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
             screenshots,
             sources,
             installers,
-            credits
+            credits,
+            lastScanned
         } : {
             url?: string,
             visible?: boolean,
@@ -93,46 +134,39 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
             sources?: ModSource[],
             installers?: ModInstaller[],
             credits?: ModCredit[]
+            lastScanned?: Date | string
         } = req.body;
 
         let id: string | undefined = undefined;
-        let pre_url: string | undefined = undefined;
-
-        if (update) {
-            // Retrieve ID and pre URL if any.
-            id = req.query.id?.toString();
-            pre_url = req.query.url?.toString();
-
-            if (!id && !pre_url) {
-                return res.status(400).json({
-                    message: "Cannot update mod. Missing both ID and URL parameters. Please use one."
-                });
-            }
-        }
-
-        if (!update && (!name || !description || !url)) {
-            return res.status(400).json({
-                message: "Name, description, or URL not found in POST data for new entry.",
-                data: null
-            });
-        }
 
         // If we have an ID, try to find it first.
         if (update) {
+            // Retrieve ID and check.
+            id = req.query.id?.toString();
+
+            if (!id) {
+                return res.status(400).json({
+                    message: "Cannot update mod. Missing ID."
+                });
+            }
+
             const mod = await prisma.mod.findFirst({
                 where: {
-                    ...(id && {
-                        id: Number(id)
-                    }),
-                    ...(pre_url && {
-                        url: pre_url
-                    })
+                    id: Number(id)
                 }
             });
 
             if (!mod) {
                 return res.status(404).json({
-                    message:"Mod not found. Mod ID =>" + id ?? "N/A" + ". URL => " + pre_url ?? "N/A"
+                    message: `Mod not found. Mod ID => ${id?.toString() ?? "N/A"}`
+                });
+            }
+        } else {
+            // Make sure specified fields are filled first.
+            if (!name || !description || !url) {
+                return res.status(400).json({
+                    message: "Name, description, or URL not found in POST data for new entry.",
+                    data: null
                 });
             }
         }
@@ -158,6 +192,8 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
             banner: banner,
             bremove: bremove,
 
+            lastScanned: lastScanned ? new Date(lastScanned) : undefined,
+
             downloads: downloads,
             screenshots: screenshots,
             sources: sources,
@@ -179,8 +215,8 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
                 mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === "bigint" ? v.toString() : v))
             }
         });
-    } else if (req.method == "DELETE") {
-        const { id, url } = req.query;
+    } else if (method == "DELETE") {
+        const { id } = req.query;
 
         if (!id) {
             return res.status(404).json({
@@ -197,7 +233,7 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
 
         if (!mod) {
             return res.status(400).json({
-                message: "Mod not found. ID => " + id?.toString() ?? "N/A" + ". URL => " + url?.toString() ?? "N/A" + "."
+                message: `Mod not found. ID => ${id.toString()}`
             });
         }
 
@@ -222,5 +258,3 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
         message: "Method not allowed."
     });
 };
-
-export default mod;
