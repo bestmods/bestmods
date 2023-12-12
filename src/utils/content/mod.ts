@@ -469,6 +469,8 @@ export async function InsertOrUpdateMod ({
     prisma,
 
     lookupId,
+    srcUrl,
+    srcQuery,
 
     ownerId,
     ownerName,
@@ -496,6 +498,8 @@ export async function InsertOrUpdateMod ({
     prisma: PrismaClient
 
     lookupId?: number
+    srcUrl?: string
+    srcQuery?: string
 
     ownerId?: string,
     ownerName?: string
@@ -544,7 +548,15 @@ export async function InsertOrUpdateMod ({
         if (lookupId) {
             mod = await prisma.mod.update({
                 where: {
-                    id: lookupId
+                    id: lookupId,
+                    ...((srcUrl || srcQuery) && {
+                        ModSource: {
+                            some: {
+                                sourceUrl: srcUrl,
+                                query: srcQuery
+                            }
+                        }
+                    })
                 },
                 data: {
                     editAt: new Date(Date.now()),

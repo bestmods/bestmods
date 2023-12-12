@@ -31,7 +31,7 @@ export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
     // If this is a GET request, we are retrieving an item.
     if (method == "GET") {
         // Retrieve where clauses.
-        const { id, visible, needsRecounting } = req.query;
+        const { id, visible, srcUrl, srcQuery } = req.query;
 
         // Limit.
         const limit = Number(req.query?.limit?.toString() ?? 10);
@@ -62,7 +62,14 @@ export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
                 ...(visible && {
                     visible: Boolean(visible?.toString())
                 }),
-                ...(needsRecounting && {})
+                ...((srcUrl || srcQuery) && {
+                    ModSource: {
+                        some: {
+                            sourceUrl: srcUrl?.toString(),
+                            query: srcQuery?.toString()
+                        }
+                    }
+                })
             },
             take: limit,
             orderBy: {
@@ -167,6 +174,10 @@ export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
             }
         }
 
+        // Retrieve source URL and query if any.
+        const srcUrl = req.query.srcUrl?.toString();
+        const srcQuery = req.query.srcQuery?.toString();
+
         // Update or insert mod.
         const [mod, success, err] = await InsertOrUpdateMod ({
             prisma: prisma,
@@ -189,6 +200,9 @@ export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
             bremove: bremove,
 
             lastScanned: lastScanned ? new Date(lastScanned) : undefined,
+
+            srcUrl: srcUrl,
+            srcQuery: srcQuery,
 
             downloads: downloads,
             screenshots: screenshots,
