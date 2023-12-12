@@ -274,7 +274,7 @@ model ApiKey {
   agent    String?
   endPoint String?
 
-  key       String
+  key       String @unique
   rateLimit Int?   @default(100)
 
   log ApiLog[]
