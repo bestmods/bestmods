@@ -1,5 +1,4 @@
 import React from "react";
-import { type GetServerSidePropsContext } from "next";
 
 import Main from "@components/main";
 import MetaInfo from "@components/meta";
@@ -32,7 +31,7 @@ export default function Page ({
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="sm:col-span-2 flex flex-col gap-4">
                         <Section title="About">
-                            <p><Link href="/"  className="font-bold">Best Mods</Link> is an <Link href="https://github.com/bestmods/bestmods" target="_blank">open source</Link> website developed by <Link href="https://github.com/gamemann" target="_blank">Christian Deacon</Link> that acts as a global index for game mods. Our main goal is to allow users to discover mods in one place. With that being said, all download links direct back to the mod's origin. We do not store</p>
+                            <p><Link href="/"  className="font-bold">Best Mods</Link> is an <Link href="https://github.com/bestmods/bestmods" target="_blank">open source</Link> website developed by <Link href="https://github.com/gamemann" target="_blank">Christian Deacon</Link> that acts as a global index for game mods. Our main goal is to allow users to discover mods in one place. With that being said, all download links direct back to the mod&apos;s origin. We do not store</p>
                         </Section>
                         <Section title="F.A.Q.">
                             <FAQ
@@ -121,7 +120,7 @@ function FAQ ({
     )
 }
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+export async function getServerSideProps() {
     const modCnt = await prisma.mod.count({
         where: {
             visible: true

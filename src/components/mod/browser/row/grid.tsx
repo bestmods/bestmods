@@ -78,7 +78,7 @@ export default function ModRowGrid ({
             setSourceItems(newItems);
         } else if (sourceItems.length > 0)
             setSourceItems([]);
-    }, [viewPort, mod.ModSource, cdn, sourceItems.length])
+    }, [viewPort, showRelations, mod.ModSource, cdn, sourceItems.length])
 
     useEffect(() => {
         if (!viewPort.isMobile && showRelations) {
@@ -110,7 +110,7 @@ export default function ModRowGrid ({
             setInstallerItems(newItems);
         } else if (installerItems.length > 0)
             setInstallerItems([]);
-    }, [viewPort, mod.ModInstaller, cdn, installerItems.length])
+    }, [viewPort, showRelations, mod.ModInstaller, cdn, installerItems.length])
 
     return (
         <div

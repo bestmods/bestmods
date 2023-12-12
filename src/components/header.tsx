@@ -31,7 +31,7 @@ export default function Header () {
     useEffect(() => {
         if (firstRender.current)
             firstRender.current = false;
-    }, [])
+    }, [firstRender])
 
     const isFirstRender = firstRender.current;
 
@@ -69,7 +69,7 @@ export default function Header () {
         return () => {
             ele.removeEventListener("animationend", onAnimateEnd);
         }
-    }, [mobileOpen])
+    }, [mobileOpen, isFirstRender])
 
     // Handle stickied transparency of menu.
     const [isSticked, setIsSticked] = useState(false);

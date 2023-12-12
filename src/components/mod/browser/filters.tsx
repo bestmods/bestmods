@@ -38,7 +38,7 @@ export default function ModBrowserFilters ({
     useEffect(() => {
         if (firstRender.current)
             firstRender.current = false;
-    }, [])
+    }, [firstRender])
 
     const isFirstRender = firstRender.current;
 
@@ -77,7 +77,7 @@ export default function ModBrowserFilters ({
         return () => {
             ele.removeEventListener("animationend", onAnimateEnd)
         }
-    }, [filtersOpen])
+    }, [filtersOpen, isFirstRender])
 
     const [, setCookie] = useCookies(["bm_display"]);
 
