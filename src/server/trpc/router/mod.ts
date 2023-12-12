@@ -17,7 +17,7 @@ export const modRouter = router({
             name: z.string(),
             banner: z.string().optional(),
             url: z.string(),
-            categoryId: z.number().optional(),
+            categoryId: z.number().optional().nullable(),
 
             // The following should be parsed via Markdown Syntax.
             description: z.string(),
@@ -70,6 +70,11 @@ export const modRouter = router({
                 prisma: ctx.prisma,
 
                 lookupId: input.id,
+
+                categoryId: input.categoryId,
+
+                ownerId: input.ownerId,
+                ownerName: input.ownerName,
 
                 name: input.name,
                 url: input.url,
