@@ -30,7 +30,7 @@ export async function InsertOrUpdateCategory ({
 
     name?: string
     nameShort?: string
-    description?: string
+    description?: string | null
     url?: string
     classes?: string | null
     hasBg?: boolean
@@ -43,19 +43,6 @@ export async function InsertOrUpdateCategory ({
 }): Promise<[Category | null, boolean, string | null | unknown]> {
     // Returns.
     let cat: Category | null = null;
-
-    // Make sure we have text in required fields.
-    if (!lookupId && (!name || name.length < 1 || !nameShort || nameShort.length < 1 || !url || url.length < 1)) {
-        let err = "URL is empty.";
-
-        if (!name || name.length < 1)
-            err = "Name is empty.";
-
-        if (!nameShort || nameShort.length < 1)
-            err = "Short name is empty.";
-
-        return [cat, false, err]
-    }
 
     // We must insert/update our category first.
     try {
@@ -77,13 +64,23 @@ export async function InsertOrUpdateCategory ({
                 }
             });
         } else {
+            // Check to make sure certain fields are defined.
+            if (!url)
+                return [null, false, "URL is empty."];
+
+            if (!name)
+                return [null, false, "Name is empty."];
+
+            if (!nameShort)
+                return [null, false, "Short name is empty."];
+
             cat = await prisma.category.create({
                 data: {
                     parentId: parentId || null,
-                    description: description || null,
-                    name: name ?? "",
-                    nameShort: nameShort ?? "",
-                    url: url ?? "",
+                    description: description,
+                    name: name,
+                    nameShort: nameShort,
+                    url: url,
                     classes: classes,
                     hasBg: hasBg
                 }

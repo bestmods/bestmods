@@ -10,11 +10,11 @@ export const sourceRouter = router({
         .input(z.object({
             update: z.boolean().default(false),
             name: z.string(),
-            description: z.string().optional(),
+            description: z.string().optional().nullable(),
             url: z.string(),
             icon: z.string().optional(),
             banner: z.string().optional(),
-            classes: z.string().optional(),
+            classes: z.string().optional().nullable(),
             iremove: z.boolean().default(false),
             bremove: z.boolean().default(false)
         }))

@@ -503,8 +503,8 @@ export async function InsertOrUpdateMod ({
     name?: string
     url?: string
     description?: string
-    descriptionShort?: string
-    install?: string
+    descriptionShort?: string | null
+    install?: string | null
     visible?: boolean
 
     banner?: string
@@ -616,17 +616,14 @@ export async function InsertOrUpdateMod ({
             });
         } else {
             // Make sure certain values are filled before creating.
-            if(!url || url.length < 1 || !name || name.length < 1 || !description || description.length < 1) {
-                let err = "URL is empty.";
+            if (!url)
+                return [null, false, "URL is empty."]
 
-                if (!name || name.length < 1)
-                    err = "Name is empty.";
-        
-                if (!description || description.length < 1)
-                    err = "Description is empty.";
-        
-                return [mod, false, err]
-            }
+            if (!name)
+                return [null, false, "Name is empty."]
+
+            if (!description)
+                return [null, false, "Description is empty."]
 
             mod = await prisma.mod.create({
                 data: {

@@ -11,11 +11,11 @@ export const categoryRouter = router({
             id: z.number().optional(),
             parentId: z.number().nullable().default(null),
 
-            description: z.string().optional(),
+            description: z.string().optional().nullable(),
             name: z.string(),
             nameShort: z.string(),
             url: z.string(),
-            classes: z.string().optional(),
+            classes: z.string().optional().nullable(),
 
             banner: z.string().optional(),
             icon: z.string().optional(),

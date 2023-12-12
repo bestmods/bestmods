@@ -31,7 +31,7 @@ export async function InsertOrUpdateSource ({
     bremove?: boolean,
     
     name?: string,
-    description?: string,
+    description?: string | null,
     classes?: string | null
 }): Promise<[Source | null, boolean, string | null | unknown]> {
     // Returns.
@@ -50,7 +50,7 @@ export async function InsertOrUpdateSource ({
     if (bremove)
         banner_path = null;
 
-    if (!iremove && (icon && icon.length > 0)) {
+    if (!iremove && icon) {
         const path = `/images/source/${url}`;
 
         const [success, err, fullPath] = UploadFile(path, icon);
@@ -61,7 +61,7 @@ export async function InsertOrUpdateSource ({
         icon_path = fullPath;
     }
 
-    if (!bremove && (banner && banner.length > 0)) {
+    if (!bremove && banner) {
         const path = `/images/source/${url}_banner`;
 
         const [success, err, fullPath] = UploadFile(path, banner);
@@ -79,16 +79,10 @@ export async function InsertOrUpdateSource ({
                     url: url
                 },
                 data: {
-                    ...(name && {
-                        name: name
-                    }),
-                    ...(description != undefined && {
-                        description: description
-                    }),
+                    name: name,
+                    description: description,
                     url: url,
-                    ...(classes != undefined && {
-                        classes: classes
-                    }),
+                    classes: classes,
                     ...(icon_path !== false && {
                         icon: icon_path
                     }),
@@ -99,15 +93,14 @@ export async function InsertOrUpdateSource ({
             });
         } else {
             if (!name)
-                return [null, false, "Name is empty on creation."];
+                return [null, false, "Name is empty."];
             
             src = await prisma.source.create({
                 data: {
                     name: name,
-                    description: description ?? null,
+                    description: description,
                     url: url,
-                    classes: classes ?? null,
-    
+                    classes: classes,
                     ...(icon_path !== false && {
                         icon: icon_path
                     }),
