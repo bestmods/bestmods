@@ -267,3 +267,26 @@ model Tag {
   description String?  @db.Text
   ModTag      ModTag[]
 }
+
+// API keys
+model ApiKey {
+  id Int @id @default(autoincrement())
+
+  ipAddr   String?
+  agent    String?
+  endPoint String?
+
+  key    String
+  rateLimit Int? @default(100)
+
+  log ApiLog[]
+}
+
+model ApiLog {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+
+  apiKeyId Int
+  apiKey   ApiKey @relation(fields: [apiKeyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
