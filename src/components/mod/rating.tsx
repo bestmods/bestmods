@@ -16,11 +16,8 @@ export default function ModRating ({
     rating?: number
     className?: string
 }) {
-    // Convert to number instead of BigInt.
-    rating = Number(mod.rating ?? rating ?? 1);
-
     // This stores a temporary rating value for when the user submits a rating.
-    const [tempRatingVal, setTempRatingVal] = useState<number | undefined>(undefined);
+    const [displayRating, setDisplayRating] = useState(Number(mod.rating ?? rating ?? 1));
 
     // Retrieve session.
     const { data: session } = useSession();
@@ -59,7 +56,7 @@ export default function ModRating ({
                         });
 
                         // Set temporary rating value.
-                        setTempRatingVal((rating ?? 1) - 1);
+                        setDisplayRating(prev => prev - 1);
 
                         setDidRate(true);
                         setRateIsPositive(false);
@@ -72,7 +69,7 @@ export default function ModRating ({
                 </button>
             </div>
             <div>
-                <span className="text-white font-bold text-4xl text-center">{tempRatingVal?.toString() ?? rating?.toString() ?? 1}</span>
+                <span className="text-white font-bold text-4xl text-center">{displayRating?.toString() ?? rating?.toString() ?? 1}</span>
             </div>
             <div>
                 <button onClick={(e) => {
@@ -90,10 +87,7 @@ export default function ModRating ({
                         });
 
                         // Set temporary rating value.
-                        setTempRatingVal((rating ?? 1) + 1);
-
-                        // Require updating.
-                        modRequiresUpdateMut.mutate({ id: mod.id });
+                        setDisplayRating(prev => prev + 1);
 
                         setDidRate(true);
                         setRateIsPositive(true);
