@@ -485,6 +485,8 @@ export async function InsertOrUpdateMod ({
     banner,
     bremove,
 
+    lastScanned,
+
     downloads = [],
     screenshots = [],
     sources = [],
@@ -509,6 +511,8 @@ export async function InsertOrUpdateMod ({
 
     banner?: string
     bremove?: boolean
+
+    lastScanned?: Date | null
 
     downloads?: ModDownload[]
     screenshots?: ModScreenshot[]
@@ -553,6 +557,7 @@ export async function InsertOrUpdateMod ({
                     description: description,
                     descriptionShort: descriptionShort,
                     install: install,
+                    lastScanned: lastScanned,
                     ...(bannerPath !== false && {
                         banner: bannerPath
                     }),
@@ -636,6 +641,7 @@ export async function InsertOrUpdateMod ({
                     description: description,
                     descriptionShort: descriptionShort,
                     install: install,
+                    lastScanned: lastScanned,
                     ...(bannerPath !== false && {
                         banner: bannerPath
                     }),
