@@ -60,12 +60,10 @@ model Mod {
   descriptionShort String?
   install          String? @db.Text
 
-  createAt DateTime  @default(now())
-  updateAt DateTime? @updatedAt
-  editAt   DateTime  @default(now())
-
-  needsRecounting Boolean  @default(false)
-  recountedAt     DateTime @default(now())
+  createAt    DateTime  @default(now())
+  updateAt    DateTime? @updatedAt
+  editAt      DateTime  @default(now())
+  lastScanned DateTime?
 
   // For caching and whatnot.
   totalDownloads BigInt @default(0)
@@ -276,8 +274,8 @@ model ApiKey {
   agent    String?
   endPoint String?
 
-  key    String
-  rateLimit Int? @default(100)
+  key       String
+  rateLimit Int?   @default(100)
 
   log ApiLog[]
 }
