@@ -112,7 +112,7 @@ export default function ModForm ({
             onSubmit={(values) => {
                 mut.mutate({
                     ...values,
-                    categoryId: typeof values.categoryId !== "undefined" ? Number(values.categoryId) : undefined,
+                    categoryId: values.categoryId > 0 ? Number(values.categoryId) : null,
                     banner: banner?.toString(),
                     id: mod?.id,
                 })
