@@ -260,71 +260,6 @@ export default function ModForm ({
                         )}
                         
                     </div>
-                    <h2>Downloads</h2>
-                    <div className="p-2 flex flex-col gap-2">
-                        {form.values.downloads.map((_download, index) => {
-                            return (
-                                <div
-                                    key={`download-${index.toString()}`}
-                                    className="flex flex-col gap-1 bg-bestmods-3/80 rounded p-2"
-                                >
-                                    <h3>Download #{(index + 1).toString()}</h3>
-                                    <div>
-                                        <div className="p-2">
-                                            <label htmlFor={`downloads[${index.toString()}].name`}>Name</label>
-
-                                            {previewMode ? (
-                                                <p>{form.values.downloads?.[index]?.name ?? "N/A"}</p>
-                                            ) : (
-                                                <Field name={`downloads[${index.toString()}].name`} />
-                                            )}
-                                        </div>
-                                        <div className="p-2">
-                                            <label htmlFor={`downloads[${index.toString()}].url`}>URL</label>
-
-                                            {previewMode ? (
-                                                <p>{form.values.downloads?.[index]?.url ?? "N/A"}</p>
-                                            ) : (
-                                                <Field
-                                                    name={`downloads[${index.toString()}].url`}
-                                                />
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <button
-                                            className="btn btn-danger"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-
-                                                const downloads = form.values.downloads;
-
-                                                downloads.splice(index, 1);
-
-                                                form.setValues({
-                                                    ...form.values,
-                                                    downloads: downloads
-                                                });
-                                            }}
-                                        >Remove</button>
-                                    </div>
-                                </div>
-                            )
-                        })}
-                        <div>
-                            <button
-                                className="btn btn-primary"
-                                onClick={(e) => {
-                                    e.preventDefault();
-
-                                    form.setValues({
-                                        ...form.values,
-                                        downloads: [...form.values.downloads, EMPTY_DOWNLOAD]
-                                    });
-                                }}
-                            >Add Download</button>
-                        </div>
-                    </div>
                     <h2>Sources</h2>
                     <div className="p-2 flex flex-col gap-2">
                         {form.values.sources.map((_source, index) => {
@@ -545,6 +480,71 @@ export default function ModForm ({
                                     });
                                 }}
                             >Add Screenshot</button>
+                        </div>
+                    </div>
+                    <h2>Downloads</h2>
+                    <div className="p-2 flex flex-col gap-2">
+                        {form.values.downloads.map((_download, index) => {
+                            return (
+                                <div
+                                    key={`download-${index.toString()}`}
+                                    className="flex flex-col gap-1 bg-bestmods-3/80 rounded p-2"
+                                >
+                                    <h3>Download #{(index + 1).toString()}</h3>
+                                    <div>
+                                        <div className="p-2">
+                                            <label htmlFor={`downloads[${index.toString()}].name`}>Name</label>
+
+                                            {previewMode ? (
+                                                <p>{form.values.downloads?.[index]?.name ?? "N/A"}</p>
+                                            ) : (
+                                                <Field name={`downloads[${index.toString()}].name`} />
+                                            )}
+                                        </div>
+                                        <div className="p-2">
+                                            <label htmlFor={`downloads[${index.toString()}].url`}>URL</label>
+
+                                            {previewMode ? (
+                                                <p>{form.values.downloads?.[index]?.url ?? "N/A"}</p>
+                                            ) : (
+                                                <Field
+                                                    name={`downloads[${index.toString()}].url`}
+                                                />
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button
+                                            className="btn btn-danger"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+
+                                                const downloads = form.values.downloads;
+
+                                                downloads.splice(index, 1);
+
+                                                form.setValues({
+                                                    ...form.values,
+                                                    downloads: downloads
+                                                });
+                                            }}
+                                        >Remove</button>
+                                    </div>
+                                </div>
+                            )
+                        })}
+                        <div>
+                            <button
+                                className="btn btn-primary"
+                                onClick={(e) => {
+                                    e.preventDefault();
+
+                                    form.setValues({
+                                        ...form.values,
+                                        downloads: [...form.values.downloads, EMPTY_DOWNLOAD]
+                                    });
+                                }}
+                            >Add Download</button>
                         </div>
                     </div>
                     <h2>Credits</h2>
