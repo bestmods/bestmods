@@ -273,6 +273,7 @@ model ApiKey {
   ipAddr   String?
   agent    String?
   endPoint String?
+  method   String?
 
   key       String @unique
   rateLimit Int?   @default(100)
@@ -288,6 +289,7 @@ model ApiLog {
   ipAddr   String?
   agent    String?
   endPoint String?
+  method   String?
   data     String?
 
   apiKeyId Int
