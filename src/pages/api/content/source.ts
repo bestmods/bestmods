@@ -5,7 +5,7 @@ import { prisma } from "@server/db/client";
 import { DeleteSource, InsertOrUpdateSource } from "@utils/content/source";
 import { CheckApiAccess } from "@utils/content/api";
 
-const source = async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function Source (req: NextApiRequest, res: NextApiResponse) {
     // Retrieve method and check.
     const method = req.method;
 
@@ -20,8 +20,7 @@ const source = async (req: NextApiRequest, res: NextApiResponse) => {
     
     // Perform API access check.
     const [suc, err] = await CheckApiAccess({
-        req: req,
-        token: token
+        req: req
     });
 
     if (!suc) {
@@ -186,5 +185,3 @@ const source = async (req: NextApiRequest, res: NextApiResponse) => {
         message: "Method not allowed."
     });
 };
-
-export default source;

@@ -4,16 +4,23 @@ import { prisma } from "@server/db/client";
 
 export async function CheckApiAccess({
     req,
-    token,
     addLog = true
 } : {
     req: NextApiRequest
-    token?: string
     addLog?: boolean
 }): Promise<[boolean, string | null]> {
+    // Retrieve authorization header token and check.
+    const fullToken = req.headers.authorization;
+
     // Token check.
-    if (!token)
+    if (!fullToken)
         return [false, "No authorization token specified."];
+
+    // Retrieve only the key.
+    const token = fullToken.split(" ")?.[1];
+
+    if (!token) 
+        return [false, "Authorization token malformed."];
 
     // Attempt to retrieve key from database and check.
     const apiKey = await prisma.apiKey.findFirst({

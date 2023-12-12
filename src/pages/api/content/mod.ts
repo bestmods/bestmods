@@ -22,8 +22,7 @@ export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
     
     // Perform API access check.
     const [suc, err] = await CheckApiAccess({
-        req: req,
-        token: token
+        req: req
     });
 
     if (!suc) {
