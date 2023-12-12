@@ -10,43 +10,6 @@ import { type ModWithRelations } from "~/types/mod";
 import FormCheckbox from "../checkbox";
 import ScrollToTop from "@utils/scroll";
 
-const EMPTY_DOWNLOAD = {
-    name: "",
-    url: "",
-
-    modId: 0
-}
-
-const EMPTY_SOURCE = {
-    sourceUrl: "",
-    query: "",
-
-    modId: 0,
-    primary: false
-}
-
-const EMPTY_SCREENSHOT = {
-    url: "",
-
-    modId: 0
-}
-
-const EMPTY_INSTALLER = {
-    sourceUrl: "",
-    url: "",
-
-    modId: 0
-}
-
-const EMPTY_CREDIT = {
-    name: "",
-    credit: "",
-
-    id: 0,
-    modId: 0,
-    userId: null
-}
-
 export default function ModForm ({
     mod,
     sources,
@@ -58,6 +21,43 @@ export default function ModForm ({
 }) {
     const errorCtx = useContext(ErrorCtx);
     const successCtx = useContext(SuccessCtx);
+
+    const EMPTY_DOWNLOAD = {
+        name: "",
+        url: "",
+    
+        modId: 0
+    }
+    
+    const EMPTY_SOURCE = {
+        sourceUrl: sources?.[0]?.url ?? "",
+        query: "",
+    
+        modId: 0,
+        primary: false
+    }
+    
+    const EMPTY_SCREENSHOT = {
+        url: "",
+    
+        modId: 0
+    }
+    
+    const EMPTY_INSTALLER = {
+        sourceUrl: sources?.[0]?.url ?? "",
+        url: "",
+    
+        modId: 0
+    }
+    
+    const EMPTY_CREDIT = {
+        name: "",
+        credit: "",
+    
+        id: 0,
+        modId: 0,
+        userId: null
+    }
 
     // Mutations.
     const mut = trpc.mod.add.useMutation({
