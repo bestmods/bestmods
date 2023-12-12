@@ -7,8 +7,12 @@ export async function CheckApiAccess({
     token
 } : {
     req: NextApiRequest
-    token: string
+    token?: string
 }): Promise<[boolean, string | null]> {
+    // Token check.
+    if (!token)
+        return [false, "No authorization token specified."];
+
     // Attempt to retrieve key from database and check.
     const apiKey = await prisma.apiKey.findFirst({
         where: {
