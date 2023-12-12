@@ -14,9 +14,6 @@ export default async function Source (req: NextApiRequest, res: NextApiResponse)
             message: "No method specified."
         });
     }
-
-    // Check API key.
-    const token = req.headers.authorization;
     
     // Perform API access check.
     const [suc, err] = await CheckApiAccess({
