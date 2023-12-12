@@ -519,24 +519,11 @@ export async function InsertOrUpdateMod ({
     // Returns.
     let mod: Mod | null = null;
 
-    // Make sure we have text in required fields.
-    if (!lookupId && (!url || url.length < 1 || !name || name.length < 1 || !description || description.length < 1)) {
-        let err = "URL is empty.";
-
-        if (!name || name.length < 1)
-            err = "Name is empty.";
-
-        if (!description || description.length < 1)
-            err = "Description is empty.";
-
-        return [mod, false, err]
-    }
-
     // Let's now handle file uploads.
     let bannerPath: string | boolean | null = false;
 
     if (bremove)
-    bannerPath = null;
+        bannerPath = null;
 
     if (!bremove && (banner && banner.length > 0)) {
         const path = `/images/mod/${url}`
@@ -557,133 +544,145 @@ export async function InsertOrUpdateMod ({
                 },
                 data: {
                     editAt: new Date(Date.now()),
-                    ...(visible !== undefined && {
-                        visible: visible
-                    }),
-                    ...(ownerName && ownerName.length > 0 && {
-                        ownerName: ownerName
-                    }),
-                    ...(ownerId && {
-                        ownerId: ownerId
-                    }),
-                    ...(name && {
-                        name: name
-                    }),
-                    ...(url && {
-                        url: url
-                    }),
-                    ...(categoryId !== undefined && {
-                        categoryId: categoryId
-                    }),
-                    ...(description && {
-                        description: description
-                    }),
-                    ...(descriptionShort && {
-                        descriptionShort: descriptionShort
-                    }),
-                    ...(install && {
-                        install: install
-                    }),
+                    visible: visible,
+                    ownerName: ownerName,
+                    ownerId: ownerId,
+                    name: name,
+                    url: url,
+                    categoryId: categoryId,
+                    description: description,
+                    descriptionShort: descriptionShort,
+                    install: install,
                     ...(bannerPath !== false && {
                         banner: bannerPath
                     }),
-                    ModDownload: {
-                        deleteMany: {
-                            modId: lookupId
+                    ...(typeof downloads !== "undefined" && {
+                        ModDownload: {
+                            deleteMany: {
+                                modId: lookupId
+                            },
+                            create: downloads.map((download) => ({
+                                name: download.name,
+                                url: download.url
+                            }))
+                        }
+                    }),
+                    ...(typeof sources !== "undefined" && {
+                        ModSource: {
+                            deleteMany: {
+                                modId: lookupId
+                            },
+                            create: sources.map((source) => ({
+                                sourceUrl: source.sourceUrl,
+                                query: source.query,
+                                primary: source.primary
+                            }))
                         },
-                        create: downloads.map((download) => ({
-                            name: download.name,
-                            url: download.url
-                        }))
-                    },
-                    ModSource: {
-                        deleteMany: {
-                            modId: lookupId
+                    }),
+                    ...(typeof installers !== "undefined" && {
+                        ModInstaller: {
+                            deleteMany: {
+                                modId: lookupId
+                            },
+                            create: installers.map((installer) => ({
+                                sourceUrl: installer.sourceUrl,
+                                url: installer.url
+                            }))
                         },
-                        create: sources.map((source) => ({
-                            sourceUrl: source.sourceUrl,
-                            query: source.query,
-                            primary: source.primary
-                        }))
-                    },
-                    ModInstaller: {
-                        deleteMany: {
-                            modId: lookupId
+                    }),
+                    ...(typeof screenshots !== "undefined" && {
+                        ModScreenshot: {
+                            deleteMany: {
+                                modId: lookupId
+                            },
+                            create: screenshots.map((screenshot) => ({
+                                url: screenshot.url
+                            }))
                         },
-                        create: installers.map((installer) => ({
-                            sourceUrl: installer.sourceUrl,
-                            url: installer.url
-                        }))
-                    },
-                    ModScreenshot: {
-                        deleteMany: {
-                            modId: lookupId
-                        },
-                        create: screenshots.map((screenshot) => ({
-                            url: screenshot.url
-                        }))
-                    },
-                    ModCredit: {
-                        deleteMany: {
-                            modId: lookupId
-                        },
-                        create: credits.map((credit) => ({
-                            name: credit.name,
-                            credit: credit.credit,
-                            userId: credit.userId
-                        }))
-                    }
+                    }),
+                    ...(typeof credits !== "undefined" && {
+                        ModCredit: {
+                            deleteMany: {
+                                modId: lookupId
+                            },
+                            create: credits.map((credit) => ({
+                                name: credit.name,
+                                credit: credit.credit,
+                                userId: credit.userId
+                            }))
+                        }
+                    })
                 }
             });
         } else {
+            // Make sure certain values are filled before creating.
+            if(!url || url.length < 1 || !name || name.length < 1 || !description || description.length < 1) {
+                let err = "URL is empty.";
+
+                if (!name || name.length < 1)
+                    err = "Name is empty.";
+        
+                if (!description || description.length < 1)
+                    err = "Description is empty.";
+        
+                return [mod, false, err]
+            }
+
             mod = await prisma.mod.create({
                 data: {
                     visible: visible,
                     ownerName: ownerName,
                     ownerId: ownerId,
-
-                    name: name ?? "",
-                    url: url ?? "",
+                    name: name,
+                    url: url,
                     categoryId: categoryId,
-
-                    description: description ?? "",
+                    description: description,
                     descriptionShort: descriptionShort,
                     install: install,
-
                     ...(bannerPath !== false && {
                         banner: bannerPath
                     }),
-                    ModDownload: {
-                        create: downloads.map((download) => ({
-                            name: download.name,
-                            url: download.url
-                        }))
-                    },
-                    ModSource: {
-                        create: sources.map((source) => ({
-                            sourceUrl: source.sourceUrl,
-                            query: source.query,
-                            primary: source.primary
-                        }))
-                    },
-                    ModInstaller: {
-                        create: installers?.map((installer) => ({
-                            sourceUrl: installer.sourceUrl,
-                            url: installer.url
-                        }))
-                    },
-                    ModScreenshot: {
-                        create: screenshots.map((screenshot) => ({
-                            url: screenshot.url
-                        }))
-                    },
-                    ModCredit: {
-                        create: credits.map((credit) => ({
-                            name: credit.name,
-                            credit: credit.credit,
-                            userId: credit.userId
-                        }))
-                    }
+                    ...(typeof downloads !== "undefined" && {
+                        ModDownload: {
+                            create: downloads.map((download) => ({
+                                name: download.name,
+                                url: download.url
+                            }))
+                        }
+                    }),
+                    ...(typeof sources !== "undefined" && {
+                        ModSource: {
+                            create: sources.map((source) => ({
+                                sourceUrl: source.sourceUrl,
+                                query: source.query,
+                                primary: source.primary
+                            }))
+                        }
+                    }),
+                    ...(typeof installers !== "undefined" && {
+                        ModInstaller: {
+                            create: installers?.map((installer) => ({
+                                sourceUrl: installer.sourceUrl,
+                                url: installer.url
+                            }))
+                        }
+                    }),
+                    ...(typeof screenshots !== "undefined" && {
+                        ModScreenshot: {
+                            create: screenshots.map((screenshot) => ({
+                                url: screenshot.url
+                            }))
+                        }
+                    }),
+                    ...(typeof credits !== "undefined" && {
+                        ModCredit: {
+                            create: credits.map((credit) => ({
+                                name: credit.name,
+                                credit: credit.credit,
+                                userId: credit.userId
+                            }))
+                        }
+                    })
                 }
             });
         }
