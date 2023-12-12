@@ -217,19 +217,5 @@ export const modRouter = router({
                 mods,
                 nextMod
             }
-        }),
-    requireUpdate: protectedProcedure
-        .input(z.object({
-            id: z.number()
-        }))
-        .mutation(async ({ ctx, input }) => {
-            await ctx.prisma.mod.update({
-                where: {
-                    id: input.id
-                },
-                data: {
-                    needsRecounting: true
-                }
-            })
         })
 });

@@ -28,8 +28,6 @@ export default function ModRating ({
     // Retrieve rating.
     const cur_rating = mod.ModRating[0] ?? null;
 
-    const modRequiresUpdateMut = trpc.mod.requireUpdate.useMutation();
-
     // Controls whether user rated this mod or not.
     const [didRate, setDidRate] = useState(false);
     const [rateIsPositive, setRateIsPositive] = useState(false);
@@ -62,9 +60,6 @@ export default function ModRating ({
 
                         // Set temporary rating value.
                         setTempRatingVal((rating ?? 1) - 1);
-
-                        // Require updating.
-                        modRequiresUpdateMut.mutate({ id: mod.id });
 
                         setDidRate(true);
                         setRateIsPositive(false);
