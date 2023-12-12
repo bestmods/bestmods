@@ -285,6 +285,11 @@ model ApiLog {
 
   createdAt DateTime @default(now())
 
+  ipAddr   String?
+  agent    String?
+  endPoint String?
+  data     String?
+
   apiKeyId Int
   apiKey   ApiKey @relation(fields: [apiKeyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
