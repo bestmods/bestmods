@@ -4,10 +4,12 @@ import { prisma } from "@server/db/client";
 
 export async function CheckApiAccess({
     req,
-    token
+    token,
+    addLog = true
 } : {
     req: NextApiRequest
     token?: string
+    addLog?: boolean
 }): Promise<[boolean, string | null]> {
     // Token check.
     if (!token)
@@ -58,6 +60,18 @@ export async function CheckApiAccess({
 
         if (hits > rateLimit)
             return [false, `Rate limit exceeded (${hits.toString()} > ${rateLimit.toString()}).`]
+    }
+
+    // Check if we should insert into log since we're successful.
+    if (addLog) {
+        await prisma.apiLog.create({
+            data: {
+                apiKeyId: apiKey.id,
+                ipAddr: ipAddr,
+                agent: agent,
+                endPoint: endPoint
+            }
+        });
     }
 
     return [true, null];
