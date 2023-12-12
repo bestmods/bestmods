@@ -31,6 +31,12 @@ export async function CheckApiAccess({
     if (apiKey.ipAddr && ipAddr !== apiKey.ipAddr)
         return [false, "IP address not allowed."];
 
+    // Method check.
+    const method = req.method;
+
+    if (apiKey.method && method !== apiKey.method)
+        return [false, "Method not allowed."];
+
     // User agent check.
     const agent = req.headers?.["user-agent"];
 
@@ -67,9 +73,11 @@ export async function CheckApiAccess({
         await prisma.apiLog.create({
             data: {
                 apiKeyId: apiKey.id,
+                
                 ipAddr: ipAddr,
                 agent: agent,
-                endPoint: endPoint
+                endPoint: endPoint,
+                method: method
             }
         });
     }
