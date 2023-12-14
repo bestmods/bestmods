@@ -5,6 +5,7 @@ import "react-multi-carousel/lib/styles.css";
 import Carousel from "react-multi-carousel";
 import { useContext } from "react";
 import { ViewPortCtx } from "@components/main";
+import { ArrowFix } from "@components/carousel";
 
 export default function ModSlideshow ({
     mods,
@@ -20,7 +21,7 @@ export default function ModSlideshow ({
     const viewPort = useContext(ViewPortCtx);
 
     // We need to manually specify our resposiveness due to the way `react-multi-carousel` works.
-    const resposive = {
+    const responsive = {
         xl3: {
             breakpoint: { max: 4000, min: 2496 },
             items: 7
@@ -53,12 +54,21 @@ export default function ModSlideshow ({
 
     return (
         <Carousel
-            responsive={resposive}
+            responsive={responsive}
             itemClass="p-2 min-h-[30rem]"
             infinite={infinite}
             autoPlay={!viewPort.isMobile ? autoPlay : false}
             autoPlaySpeed={autoPlaySpeed}
-
+            customLeftArrow={
+                <ArrowFix>
+                    <button aria-label="Go to previous slide" className="react-multiple-carousel__arrow react-multiple-carousel__arrow--left !z-10" type="button"></button>
+                </ArrowFix>
+            }
+            customRightArrow={
+                <ArrowFix>
+                    <button aria-label="Go to next slide" className="react-multiple-carousel__arrow react-multiple-carousel__arrow--right !z-10" type="button"></button>
+                </ArrowFix>
+            }
         >
             {mods.map((mod, index) => {
                 return (
