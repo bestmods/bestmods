@@ -17,6 +17,7 @@ import ModViewCategory from "./view/category";
 import { ErrorCtx, SuccessCtx } from "@pages/_app";
 import ScrollToTop from "@utils/scroll";
 import IconAndText from "@components/icon_and_text";
+import ModGallery from "./view/gallery";
 
 export default function ModView ({
     mod,
@@ -123,19 +124,12 @@ export default function ModView ({
 
     return (
         <div className="flex flex-col gap-2">
-            <div className="flex justify-center">
-                <Image
-                    src={banner}
-                    width={720}
-                    height={360}
-                    alt="Mod Banner"
-                />
+            <div>
+                <ModGallery mod={mod} />
             </div>
-
             <div className="flex justify-center">
                 <h1>{mod.name}</h1>
             </div>
-
             <ModTabs
                 mod={mod}
                 view={view}
