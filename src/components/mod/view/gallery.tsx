@@ -121,22 +121,37 @@ export default function ModGallery ({
                     if (!url.startsWith("https"))
                         return;
 
+                    let video = false;
+
+                    if (url.includes("youtube.com/embed"))
+                        video = true;
+
                     return (
                         <div
                             key={`ss-${index.toString()}`}
                             className="w-full h-full max-w-full"
                         >
-                            <Image
-                                src={url}
-                                width={1000}
-                                height={333}
-                                alt={`Screenshot #${index.toString()}`}
-                                className="rounded brightness-75 hover:brightness-100 duration-300 cursor-pointer"
-                                onClick={() => {
-                                    setBigPicture(url);
-                                }}
-                                priority={true}
-                            />
+                            {video ? (
+                                <iframe
+                                    src={url}
+                                    width="100%"
+                                    height="100%"
+                                    allowFullScreen={true}
+                                ></iframe>
+                            ) : (
+                                <Image
+                                    src={url}
+                                    width={1000}
+                                    height={333}
+                                    alt={`Screenshot #${index.toString()}`}
+                                    className="rounded brightness-75 hover:brightness-100 duration-300 cursor-pointer"
+                                    onClick={() => {
+                                        setBigPicture(url);
+                                    }}
+                                    priority={true}
+                                />
+                            )}
+                            
                         </div>
                     )
                 })}
