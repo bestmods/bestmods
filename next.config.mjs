@@ -13,5 +13,15 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  images: {
+    remotePatterns: [
+        {
+            protocol: 'https',
+            hostname: '**',
+            port: '',
+            pathname: '**',
+        }
+    ]
+  }
 };
 export default config;
