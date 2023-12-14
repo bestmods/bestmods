@@ -79,7 +79,8 @@ export const ModViewItemInc = {
         }
     },
     ModRating: true,
-    ModCredit: true
+    ModCredit: true,
+    ModScreenshot: true
 }
 
 export type ModViewItem = Prisma.ModGetPayload<{
