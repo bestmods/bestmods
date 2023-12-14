@@ -20,6 +20,15 @@
     }
 }
 
+@keyframes fade-out-in {
+    0% {
+        opacity: 0%;
+    }
+    100% {
+        opacity: 100%;
+    }
+}
+
 @layer base {
     /* Main */
     main {

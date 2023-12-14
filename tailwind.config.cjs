@@ -14,7 +14,8 @@ module.exports = {
         },
         animation: {
           "menu-left-to-right": "menu-left-to-right 0.5s",
-          "menu-right-to-left": "menu-right-to-left 0.5s"
+          "menu-right-to-left": "menu-right-to-left 0.5s",
+          "fade-out-in": "fade-out-in 1.0s"
         }
     },
   },
