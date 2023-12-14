@@ -1,6 +1,6 @@
 import Link from "next/link";
 import IconAndText from "./icon_and_text";
-import Squares2x2Icon from "./icons/ squares2x2";
+import Squares2x2Icon from "./icons/squares2x2";
 import NavItem from "./header/nav_item";
 import ChatBubbleIcon from "./icons/chat_bubble";
 import MapIcon from "./icons/map";
@@ -19,6 +19,7 @@ import LeftArrowIcon from "./icons/left_arrow";
 import HomeIcon from "./icons/home";
 import SteamIcon from "./icons/steam";
 import InfoIcon from "./icons/info";
+import CubesIcon from "./icons/cubes";
 
 export default function Header () {
     const router = useRouter();
@@ -104,7 +105,7 @@ export default function Header () {
                             href="/"
                         >
                             <IconAndText
-                                icon={<HomeIcon className="w-6 h-6 stroke-white" />}
+                                icon={<HomeIcon className="w-6 h-6 fill-white" />}
                                 text={<>Home</>}
                             />
                         </Link>
@@ -112,7 +113,7 @@ export default function Header () {
                             href="/browse"
                         >
                             <IconAndText
-                                icon={<MagnifyingGlassIcon className="w-6 h-6 stroke-white" />}
+                                icon={<MagnifyingGlassIcon className="w-6 h-6 fill-white" />}
                                 text={<>Browse</>}
                             />
                         </Link>
@@ -120,7 +121,7 @@ export default function Header () {
                             href="/category"
                         >
                             <IconAndText
-                                icon={<Squares2x2Icon className="w-6 h-6 stroke-white" />}
+                                icon={<CubesIcon className="w-6 h-6 fill-white" />}
                                 text={<>Categories</>}
                             />
                         </Link>
@@ -128,7 +129,7 @@ export default function Header () {
                             href="/about"
                         >
                             <IconAndText
-                                icon={<InfoIcon className="w-6 h-6 stroke-white fill-none" />}
+                                icon={<InfoIcon className="w-6 h-6 fill-white" />}
                                 text={<>About</>}
                             />
                         </Link>
@@ -147,7 +148,7 @@ export default function Header () {
                             target="_blank"
                         >
                             <IconAndText
-                                icon={<TwitterIcon className="w-6 h-6 fill-white" />}
+                                icon={<TwitterIcon className="w-6 h-6 fill-white " />}
                                 text={<>Twitter/X</>}
                             />
                         </Link>
@@ -175,7 +176,7 @@ export default function Header () {
                             target="_blank"
                         >
                             <IconAndText
-                                icon={<ChatBubbleIcon className="w-6 h-6 stroke-white" />}
+                                icon={<ChatBubbleIcon className="w-6 h-6 fill-white" />}
                                 text={<>Feedback</>}
                             />
                         </Link>
@@ -184,7 +185,7 @@ export default function Header () {
                             target="_blank"
                         >
                             <IconAndText
-                                icon={<MapIcon className="w-6 h-6 stroke-white" />}
+                                icon={<MapIcon className="w-6 h-6 fill-white" />}
                                 text={<>Roadmap</>}
                             />
                         </Link>
@@ -193,7 +194,7 @@ export default function Header () {
                             target="_blank"
                         >
                             <IconAndText
-                                icon={<CodeIcon className="w-6 h-6 stroke-white" />}
+                                icon={<CodeIcon className="w-6 h-6 fill-white" />}
                                 text={<>Source Code</>}
                             />
                         </Link>
@@ -202,7 +203,7 @@ export default function Header () {
                             target="_blank"
                         >
                             <IconAndText
-                                icon={<TrashIcon className="w-6 h-6 stroke-white" />}
+                                icon={<TrashIcon className="w-6 h-6 fill-white" />}
                                 text={<>Removals</>}
                             />
                         </Link>
@@ -211,7 +212,7 @@ export default function Header () {
                             target="_blank"
                         >
                             <IconAndText
-                                icon={<UsersIcon className="w-6 h-6 stroke-white" />}
+                                icon={<UsersIcon className="w-6 h-6 fill-white" />}
                                 text={<>Community</>}
                             />
                         </Link>
@@ -242,7 +243,7 @@ export default function Header () {
                     url={"/browse"}
                     content={
                         <IconAndText
-                            icon={<MagnifyingGlassIcon className="w-6 h-6 stroke-white" />}
+                            icon={<MagnifyingGlassIcon className="w-6 h-6 fill-white" />}
                             text={<>Browse</>}
                         />
                     }
@@ -252,7 +253,7 @@ export default function Header () {
                     url={"/category"}
                     content={
                         <IconAndText
-                            icon={<Squares2x2Icon className="w-6 h-6 stroke-white" />}
+                            icon={<CubesIcon className="w-6 h-6 fill-white" />}
                             text={<>Categories</>}
                         />
                     }
@@ -262,7 +263,7 @@ export default function Header () {
                     url={"/about"}
                     content={
                         <IconAndText
-                            icon={<InfoIcon className="w-6 h-6 stroke-white fill-none" />}
+                            icon={<InfoIcon className="w-6 h-6 fill-white" />}
                             text={<>About</>}
                         />
                     }
@@ -320,7 +321,7 @@ export default function Header () {
                             link: "https://github.com/orgs/bestmods/discussions/categories/feedback-idea",
                             html:
                                 <IconAndText
-                                    icon={<ChatBubbleIcon className="w-6 h-6 stroke-white" />}
+                                    icon={<ChatBubbleIcon className="w-6 h-6 fill-white" />}
                                     text={<>Feedback</>}
                                 />
                             ,
@@ -330,7 +331,7 @@ export default function Header () {
                             link: "https://github.com/bestmods/bestmods/milestones",
                             html:
                                 <IconAndText
-                                    icon={<MapIcon className="w-6 h-6 stroke-white" />}
+                                    icon={<MapIcon className="w-6 h-6 fill-white" />}
                                     text={<>Roadmap</>}
                                 />
                             ,
@@ -340,7 +341,7 @@ export default function Header () {
                             link: "https://github.com/BestMods/bestmods",
                             html:
                                 <IconAndText
-                                    icon={<CodeIcon className="w-6 h-6 stroke-white" />}
+                                    icon={<CodeIcon className="w-6 h-6 fill-white" />}
                                     text={<>Source Code</>}
                                 />
                             ,
@@ -350,7 +351,7 @@ export default function Header () {
                             link: "https://github.com/orgs/bestmods/discussions/35",
                             html:
                                 <IconAndText
-                                    icon={<TrashIcon className="w-6 h-6 stroke-white" />}
+                                    icon={<TrashIcon className="w-6 h-6 fill-white" />}
                                     text={<>Removals</>}
                                 />
                             ,
@@ -360,7 +361,7 @@ export default function Header () {
                             link: "https://moddingcommunity.com/",
                             html:
                                 <IconAndText
-                                    icon={<UsersIcon className="w-6 h-6 stroke-white" />}
+                                    icon={<UsersIcon className="w-6 h-6 fill-white" />}
                                     text={<>Community</>}
                                 />
                             ,
