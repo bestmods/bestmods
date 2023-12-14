@@ -194,4 +194,4 @@ export default async function Category (req: NextApiRequest, res: NextApiRespons
     return res.status(405).json({
         message: "Method not allowed."
     });
-};
+}
