@@ -13,8 +13,8 @@ module.exports = {
             "bestmods-7": "#46494C"
         },
         animation: {
-          "menu-left-to-right": "menu-left-to-right 1s",
-          "menu-right-to-left": "menu-right-to-left 1s"
+          "menu-left-to-right": "menu-left-to-right 0.5s",
+          "menu-right-to-left": "menu-right-to-left 0.5s"
         }
     },
   },
