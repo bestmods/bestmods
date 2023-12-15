@@ -148,11 +148,13 @@ export default function ModView ({
                             </div>
                         )}
                         {installer_items.length > 0 && (
+                            <div>
                                 <DropDown
                                     html={<>Install</>}
                                     drop_down_items={installer_items}
-                                    className="btn btn-secondary"
+                                    btnClassName="btn btn-secondary h-full"
                                 />
+                            </div>
                         )}
                         <div className="relative flex justify-center">
                             <ModRating

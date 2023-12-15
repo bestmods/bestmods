@@ -1,12 +1,17 @@
 .mod-grid-button {
     @apply text-white;
     @apply font-bold;
+
     @apply p-2;
     @apply h-full;
-    @apply w-1/3;
+    @apply w-full;
+
+    @apply justify-center;
+
     @apply align-middle;
     @apply hover:bg-bestmods-3/80;
     @apply rounded;
+    @apply block;
 
     &:visited, &:active, &:link {
         @apply text-inherit;

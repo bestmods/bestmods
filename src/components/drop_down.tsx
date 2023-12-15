@@ -17,19 +17,23 @@ export type Drop_Down_Menu_Type = {
 export default function DropDown ({
     html,
     drop_down_items,
-    className
+    className,
+    btnClassName,
+    menuClassName
 } : {
     html: JSX.Element,
-    drop_down_items: Drop_Down_Menu_Type[],
+    drop_down_items: Drop_Down_Menu_Type[]
     className?: string
+    btnClassName?: string
+    menuClassName?: string
 }) {
     // State for menu open or not.
     const [menuOpen, setMenuOpen] = useState(false);
 
     return (
-        <div className="relative inline-block">
+        <div className={`${className ? `${className} ` : ``}relative`}>
             <button
-                className={`${className ? `${className} `: ``}inline-flex gap-1 items-center`}
+                className={`${btnClassName ? `${btnClassName} `: ``}inline-flex gap-1 items-center`}
                 onClick={() => {
                     setMenuOpen(!menuOpen);
                 }}
@@ -43,7 +47,7 @@ export default function DropDown ({
                 )}
             </button>
             {menuOpen && (
-                <div className={`origin-top-right break-all absolute right-0 mt-2 w-44 min-w-full top-[100%] z-30 rounded-b p-2 bg-bestmods-3`}>
+                <div className={`${menuClassName ? `${menuClassName} ` : ``}origin-top-right break-all absolute right-0 mt-2 w-44 min-w-full top-[100%] z-30 rounded-b p-2 bg-bestmods-3`}>
                     <ul role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                         {drop_down_items.map((item, index) => {
                             return (

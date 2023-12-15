@@ -162,7 +162,6 @@ export default function ModGallery ({
                                     priority={true}
                                 />
                             )}
-                            
                         </div>
                     )
                 })}

@@ -70,7 +70,7 @@ export default function ModRowGrid ({
                             height={20}
                             text={<span>{name}</span>}
                         />,
-                    className: "font-normal hover:text-white",
+                    className: "font-normal",
                     new_tab: true
                 });
             });
@@ -185,27 +185,27 @@ export default function ModRowGrid ({
                 />
             </div>
             <div className={`flex ${(sourceItems.length < 1 && installerItems.length < 1) ? "justify-center" : "justify-between"}  items-center text-center bg-bestmods-3/80 rounded-b`}>
-                <div className="mod-grid-button">
+                <div className="w-1/3">
                     <Link
                         href={viewLink}
-                        className="w-full hover:text-inherit"
+                        className="mod-grid-button"
                     >View</Link>
                 </div>
                 {installerItems.length > 0 && (
-                    <div className="mod-grid-button">
-                        <DropDown
-                            html={<>Install</>}
-                            drop_down_items={installerItems}
-                        />
-                    </div>
+                    <DropDown
+                        html={<>Install</>}
+                        drop_down_items={installerItems}
+                        className="w-1/3"
+                        btnClassName="mod-grid-button"
+                    />
                 )}
                 {sourceItems.length > 0 && (
-                    <div className="mod-grid-button">
-                        <DropDown
-                            html={<>Sources</>}
-                            drop_down_items={sourceItems}
-                        />
-                    </div>
+                    <DropDown
+                        html={<>Sources</>}
+                        drop_down_items={sourceItems}
+                        className="w-1/3"
+                        btnClassName="mod-grid-button"
+                    />
                 )}
             </div>
         </div>
