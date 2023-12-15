@@ -23,14 +23,12 @@ export default function Main ({
     children,
     className,
     image = "/images/backgrounds/default.jpg",
-    overlay = true,
-    excludeCdn = false
+    overlay = true
 } : {
     children: ReactNode
     className?: string
     image?: string
     overlay?: boolean
-    excludeCdn?: boolean
 }) {
     const { data: session } = useSession();
     const [cookies, setCookie] = useCookies(["bm_display", "bm_showbg"]);
@@ -94,14 +92,11 @@ export default function Main ({
         if (cookies["bm_showbg"] !== undefined && Boolean(cookies["bm_showbg"]))
             setShowBg(true);
 
-        if (showBg && image) {
-            if (excludeCdn)
-                setBgImage(image);
-            else
-                setBgImage(cdn + image);
-        } else if (bgImage)
+        if (showBg && image)
+            setBgImage(image);
+        else if (bgImage)
             setBgImage(undefined);
-    }, [cdn, image, showBg, bgImage, excludeCdn, cookies])
+    }, [cdn, image, showBg, bgImage, cookies])
 
     // Google Analytics ID.
     const gId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;

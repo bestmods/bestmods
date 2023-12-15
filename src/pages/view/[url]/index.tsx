@@ -12,6 +12,7 @@ import NotFound from "@components/errors/notfound";
 
 import { GetModRating } from "@utils/content/mod";
 import { GetBgImage } from "@utils/images";
+import { GetModDescription } from "@utils/description";
 
 export default function Page ({
     mod,
@@ -23,12 +24,23 @@ export default function Page ({
     // Retrieve background image if any.
     const bgPath = GetBgImage(mod?.category);
 
+    // Retrieve mod description.
+    const desc = GetModDescription({ mod });
+
+    // Retrieve mod banner.
+    const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
+    
+    let banner: string | undefined = undefined;
+
+    if (mod?.banner)
+        banner = cdn + mod.banner;
+
     return (
         <>
             <MetaInfo
                 title={`${mod?.name ?? `Not Found`} - Best Mods`}
-                description={mod?.descriptionShort ?? undefined}
-                image={bgPath}
+                description={desc}
+                image={banner}
             />
             <Main image={bgPath}>
                 {mod ? (

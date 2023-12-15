@@ -12,7 +12,6 @@ type HeadArgs = {
     author?: string
     section?: string
     tags?: string
-    excludeCdn?: boolean
 }
 
 export default function MetaInfo ({
@@ -26,51 +25,20 @@ export default function MetaInfo ({
     etime = "",
     author = "Best Mods",
     section = "Technology",
-    tags = "mod",
-    excludeCdn = false
+    tags = "mod"
 } : HeadArgs) {
-    // Check if we must prepend CDN URL.
-    if (process.env.NEXT_PUBLIC_CDN_URL && !excludeCdn)
-        image = process.env.NEXT_PUBLIC_CDN_URL + image;
-
     // Retrieve URLs.
-    let base_url;
-    let full_url;
+    let base_url = "";
+    let full_url = "";
 
     if (typeof window !== "undefined") {
         base_url = window.location.protocol + "//" + window.location.host;
         full_url = base_url + window.location.pathname;
     }
 
-    let article_info;
-
-    if (webtype == "article") {
-        article_info = <>
-            {ptime && (
-                <meta key="meta_apt" property="article:published_time" content={ptime} />
-            )}
-
-            {mtime && (
-                <meta key="meta_amt" property="article:modified_time" content={mtime} />
-            )}
-
-            {etime && (
-                <meta key="meta_aet" property="article:expiration_time" content={etime} />
-            )}
-
-            {author && (
-                <meta key="meta_aa" property="article:author" content={author} />
-            )}
-
-            {section && (
-                <meta key="meta_as" property="article:section" content={section} />
-            )}
-
-            {tags && (
-                <meta key="meta_t" property="article:tag" content={tags} />
-            )}
-        </>;
-    }
+    // If the image doesn't start with https/http, add it + the full URL.
+    if (!image.startsWith("https://") || !image.startsWith("http://"))
+        image = `${base_url}${image}`;
 
     return (
         <Head>
@@ -124,7 +92,33 @@ export default function MetaInfo ({
             <meta property="og:site_name" content="Best Mods" />
             <meta property="og:url" content={full_url} key="meta_ogUrl" />
 
-            {article_info}
+            {webtype == "article" && (
+                <>
+                    {ptime && (
+                        <meta key="meta_apt" property="article:published_time" content={ptime} />
+                    )}
+
+                    {mtime && (
+                        <meta key="meta_amt" property="article:modified_time" content={mtime} />
+                    )}
+
+                    {etime && (
+                        <meta key="meta_aet" property="article:expiration_time" content={etime} />
+                    )}
+
+                    {author && (
+                        <meta key="meta_aa" property="article:author" content={author} />
+                    )}
+
+                    {section && (
+                        <meta key="meta_as" property="article:section" content={section} />
+                    )}
+
+                    {tags && (
+                        <meta key="meta_t" property="article:tag" content={tags} />
+                    )}
+                </>
+            )}
 
             <meta name="msapplication-starturl" content={base_url} key="meta_msappUrl" />
             <meta name="application-name" content="Best Mods" />

@@ -27,7 +27,6 @@ export default function Page ({
         <>
             <MetaInfo
                 title="About - Best Mods"
-                description="About Best Mods!"
             />
             <Main>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

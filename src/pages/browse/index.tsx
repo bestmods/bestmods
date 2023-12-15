@@ -9,7 +9,8 @@ export default function Page () {
     return (
         <>
             <MetaInfo 
-                title={"Browse - Best Mods"}
+                title="Browse - Best Mods"
+                description="Browse the best mods on the Internet with in-depth filtering!"
             />
             <Main>
                 <ModBrowser visible={true} />
