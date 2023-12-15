@@ -1,20 +1,6 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-type HeadArgs = {
-    title?: string
-    description?: string
-    robots?: string
-    image?: string
-    webtype?: string
-    ptime?: string
-    mtime?: string
-    etime?: string
-    author?: string
-    section?: string
-    tags?: string
-}
-
 export default function MetaInfo ({
     title = "Best Mods - Discover The Top Mods On The Internet!",
     description = "Browse the best mods in gaming from many sources on the Internet! Project ran by The Modding Community!",
@@ -26,8 +12,22 @@ export default function MetaInfo ({
     etime = "",
     author = "Best Mods",
     section = "Technology",
-    tags = "mod"
-} : HeadArgs) {
+    tags = "mod",
+    pathOverride
+} : {
+    title?: string
+    description?: string
+    robots?: string
+    image?: string
+    webtype?: string
+    ptime?: string
+    mtime?: string
+    etime?: string
+    author?: string
+    section?: string
+    tags?: string
+    pathOverride?: string
+}) {
     const router = useRouter();
     // Retrieve URLs.
     let base_url: string | undefined = undefined;
@@ -35,10 +35,10 @@ export default function MetaInfo ({
 
     if (typeof window !== "undefined") {
         base_url = window.location.protocol + "//" + window.location.host;
-        full_url = base_url + window.location.pathname;
+        full_url = base_url + (pathOverride ?? window.location.pathname);
     } else {
         base_url = process.env.NEXT_PUBLIC_PUBLIC_URL;
-        full_url = `${base_url ?? ""}${router.asPath}`
+        full_url = `${base_url ?? ""}${pathOverride ?? router.asPath}`
     }
 
     // If the image doesn't start with https/http, add it + the full URL.
