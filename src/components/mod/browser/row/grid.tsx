@@ -71,7 +71,7 @@ export default function ModRowGrid ({
                             text={<span>{name}</span>}
                         />,
                     className: "font-normal hover:text-white",
-                    new_tab: false
+                    new_tab: true
                 });
             });
 
