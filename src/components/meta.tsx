@@ -37,7 +37,7 @@ export default function MetaInfo ({
     }
 
     // If the image doesn't start with https/http, add it + the full URL.
-    if (!image.startsWith("https://") || !image.startsWith("http://"))
+    if (!image.startsWith("https://") && !image.startsWith("http://"))
         image = `${base_url}${image}`;
 
     return (
