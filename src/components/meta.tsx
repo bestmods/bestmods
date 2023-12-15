@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 type HeadArgs = {
     title?: string
@@ -27,6 +28,7 @@ export default function MetaInfo ({
     section = "Technology",
     tags = "mod"
 } : HeadArgs) {
+    const router = useRouter();
     // Retrieve URLs.
     let base_url: string | undefined = undefined;
     let full_url: string | undefined = undefined;
@@ -34,6 +36,9 @@ export default function MetaInfo ({
     if (typeof window !== "undefined") {
         base_url = window.location.protocol + "//" + window.location.host;
         full_url = base_url + window.location.pathname;
+    } else {
+        base_url = process.env.NEXT_PUBLIC_PUBLIC_URL;
+        full_url = `${base_url ?? ""}${router.asPath}`
     }
 
     // If the image doesn't start with https/http, add it + the full URL.
