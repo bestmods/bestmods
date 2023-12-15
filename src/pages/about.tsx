@@ -48,7 +48,7 @@ export default function Page ({
                                     answer={
                                         <>
                                             <p className="leading-8">Mods are currently added manually or through our web scraper. All details including download links are directed back to the website(s) where the mod originated from.</p>
-                                            <p className="leading-8">The decision to use a web scraper is something we&apos;ve thought about for a long time given web scraping is generally frowned upon. However, after receiving feedback from multiple mod creators and the fact that we direct all download links back to the original source, we've decided to utilize a web scraper to give our users more mods to choose from. With that said, you may request a removal of your content. To do so, please read the <span className="font-bold">Can I remove my mods from this website</span> question below.</p>
+                                            <p className="leading-8">The decision to use a web scraper is something we&apos;ve thought about for a long time given web scraping is generally frowned upon. However, after receiving feedback from multiple mod creators and the fact that we direct all download links back to the original source, we&apos;ve decided to utilize a web scraper to give our users more mods to choose from. With that said, you may request a removal of your content. To do so, please read the <span className="font-bold">Can I remove my mods from this website</span> question below.</p>
                                         </>
                                     }
                                 />
@@ -57,7 +57,7 @@ export default function Page ({
                                     answer={
                                         <>
                                             <p className="leading-8">Of course! If you want your mods and content removed from Best Mods, you may file a request through our GitHub repository <Link href="https://github.com/orgs/bestmods/discussions/35" target="_blank">here</Link>. Alternatively, you may email us @ <Link href="mailto:bestmods.business@gmail.com" className="italic">bestmods.business@gmail.com</Link></p>
-                                            <p className="leading-8">After verifying ownership of your content, we will remove your content from our website and ensure it isn't added again by our web scraper.</p>
+                                            <p className="leading-8">After verifying ownership of your content, we will remove your content from our website and ensure it isn&apos;t added again by our web scraper.</p>
                                         </>
                                     }
                                 />
@@ -65,7 +65,7 @@ export default function Page ({
                                     question="My mod's information is outdated on this website, how can I get it updated?"
                                     answer={
                                         <>
-                                            <p className="leading-8">Users who have the Contributor role or higher can edit each mod's details including images, description, installation, sources, download links, and more. We would recommend reaching out to a contributor or emailing us @  <Link href="mailto:bestmods.business@gmail.com" className="italic">bestmods.business@gmail.com</Link> to request an update.</p>
+                                            <p className="leading-8">Users who have the Contributor role or higher can edit each mod&apos;s details including images, description, installation, sources, download links, and more. We would recommend reaching out to a contributor or emailing us @  <Link href="mailto:bestmods.business@gmail.com" className="italic">bestmods.business@gmail.com</Link> to request an update.</p>
                                             <p className="leading-8">In the future, we plan to implement a change request form users may use to request an information update on specific mods.</p>
                                         </>
                                     }

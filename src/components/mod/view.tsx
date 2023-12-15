@@ -12,7 +12,6 @@ import ModViewCredits from "./view/credits";
 import { HasPerm } from "@utils/permissions";
 import Link from "next/link";
 import { useContext, useState } from "react";
-import Image from "next/image";
 import ModViewCategory from "./view/category";
 import { ErrorCtx, SuccessCtx } from "@pages/_app";
 import ScrollToTop from "@utils/scroll";
@@ -37,12 +36,6 @@ export default function ModView ({
 
     const errorCtx = useContext(ErrorCtx);
     const successCtx = useContext(SuccessCtx);
-
-    // Banner.
-    let banner = cdn + "/images/default_mod_banner.png"
-
-    if (mod.banner)
-        banner = cdn + mod.banner;
 
     const [modVisibility, setModVisibility] = useState<boolean>(mod.visible);
 

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import IconAndText from "./icon_and_text";
-import Squares2x2Icon from "./icons/squares2x2";
 import NavItem from "./header/nav_item";
 import ChatBubbleIcon from "./icons/chat_bubble";
 import MapIcon from "./icons/map";
