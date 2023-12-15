@@ -47,6 +47,19 @@ export default function ModGallery ({
     if (mod.banner)
         banner = cdn + mod.banner;
 
+    // Compile screenshots.
+    const screenshots: string[] = [];
+
+    mod.ModScreenshot.map((ss) => {
+        const url = ss.url;
+
+        // Make sure we have a valid screenshot URL.
+        if (!url.startsWith("https"))
+            return;
+
+        screenshots.push(url);
+    })
+
     return (
         <>
             {bigPicture && !viewPort.isMobile && (
@@ -89,6 +102,7 @@ export default function ModGallery ({
                 infinite={infinite}
                 autoPlay={!viewPort.isMobile ? autoPlay : false}
                 autoPlaySpeed={autoPlaySpeed}
+                containerClass={`react-multi-carousel-list ${screenshots.length < 1 ? "justify-center" : ""}`}
                 customLeftArrow={
                     <ArrowFix>
                         <button aria-label="Go to previous slide" className="react-multiple-carousel__arrow react-multiple-carousel__arrow--left !z-10" type="button"></button>
@@ -114,8 +128,7 @@ export default function ModGallery ({
                     />
                 </div>
 
-                {mod.ModScreenshot.map((ss, index) => {
-                    const url = ss.url;
+                {screenshots.map((url, index) => {
 
                     // Make sure we have a valid screenshot URL.
                     if (!url.startsWith("https"))
