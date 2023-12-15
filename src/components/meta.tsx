@@ -28,8 +28,8 @@ export default function MetaInfo ({
     tags = "mod"
 } : HeadArgs) {
     // Retrieve URLs.
-    let base_url = "";
-    let full_url = "";
+    let base_url: string | undefined = undefined;
+    let full_url: string | undefined = undefined;
 
     if (typeof window !== "undefined") {
         base_url = window.location.protocol + "//" + window.location.host;
@@ -38,7 +38,7 @@ export default function MetaInfo ({
 
     // If the image doesn't start with https/http, add it + the full URL.
     if (!image.startsWith("https://") && !image.startsWith("http://"))
-        image = `${base_url}${image}`;
+        image = `${base_url ?? ""}${image}`;
 
     return (
         <Head>
@@ -82,7 +82,7 @@ export default function MetaInfo ({
 
             <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
-            <meta name="keywords" content="mods, modding, games, gaming, communities, best, servers, directory, discovery" key="meta_keywords" />
+            <meta name="keywords" content="mods, modding, games, gaming, communities, best, directory, discovery" key="meta_keywords" />
 
             <meta property="twitter:card" content="summary_large_image" />
             <meta property="twitter:site" content="@bestmodsio" />
