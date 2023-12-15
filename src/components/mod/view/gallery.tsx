@@ -7,6 +7,7 @@ import Carousel from "react-multi-carousel";
 import { type ModViewItem } from "~/types/mod";
 import Image from "next/image";
 import { ArrowFix } from "@components/carousel";
+import ImageWithFallback from "@components/image";
 
 export default function ModGallery ({
     mod,
@@ -129,11 +130,7 @@ export default function ModGallery ({
                 </div>
 
                 {screenshots.map((url, index) => {
-
-                    // Make sure we have a valid screenshot URL.
-                    if (!url.startsWith("https"))
-                        return;
-
+                    // Check for YouTube embed.
                     let video = false;
 
                     if (url.includes("youtube.com/embed"))
@@ -152,7 +149,7 @@ export default function ModGallery ({
                                     allowFullScreen={true}
                                 ></iframe>
                             ) : (
-                                <Image
+                                <ImageWithFallback
                                     src={url}
                                     width={1000}
                                     height={333}
@@ -161,6 +158,7 @@ export default function ModGallery ({
                                     onClick={() => {
                                         setBigPicture(url);
                                     }}
+                                    fallback="/images/default_mod_banner.png"
                                     priority={true}
                                 />
                             )}
