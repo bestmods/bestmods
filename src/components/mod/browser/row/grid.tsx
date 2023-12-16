@@ -188,7 +188,7 @@ export default function ModRowGrid ({
                 <div className="w-1/3">
                     <Link
                         href={viewLink}
-                        className="mod-grid-button"
+                        className="btn btn-mod-grid"
                     >View</Link>
                 </div>
                 {installerItems.length > 0 && (
@@ -196,7 +196,7 @@ export default function ModRowGrid ({
                         html={<>Install</>}
                         drop_down_items={installerItems}
                         className="w-1/3"
-                        btnClassName="mod-grid-button"
+                        btnClassName="btn btn-mod-grid"
                     />
                 )}
                 {sourceItems.length > 0 && (
@@ -204,7 +204,7 @@ export default function ModRowGrid ({
                         html={<>Sources</>}
                         drop_down_items={sourceItems}
                         className="w-1/3"
-                        btnClassName="mod-grid-button"
+                        btnClassName="btn btn-mod-grid"
                     />
                 )}
             </div>

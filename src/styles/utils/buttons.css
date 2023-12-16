@@ -43,3 +43,19 @@
     @apply focus:ring-4;
     @apply focus:ring-orange-300/80;
 }
+
+.btn-mod-grid {
+
+    @apply h-full;
+    @apply w-full;
+
+    @apply align-middle;
+    @apply justify-center;
+
+    @apply hover:bg-bestmods-3/80;
+    @apply block;
+
+    &:visited, &:active, &:link {
+        @apply text-inherit;
+    }
+}
