@@ -5,7 +5,6 @@ import "react-multi-carousel/lib/styles.css";
 import Carousel from "react-multi-carousel";
 
 import { type ModViewItem } from "~/types/mod";
-import Image from "next/image";
 import { ArrowFix } from "@components/carousel";
 import ImageWithFallback from "@components/image";
 

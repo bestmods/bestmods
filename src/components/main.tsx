@@ -7,10 +7,6 @@ import Background from "./background";
 import { ErrorCtx, SuccessCtx } from "@pages/_app";
 import Error from "./responses/error";
 import Success from "./responses/success";
-import PhotoIcon from "./icons/photo";
-import GearIcon from "./icons/gear";
-import { signIn, signOut, useSession } from "next-auth/react";
-import UserIcon from "./icons/user";
 import { useCookies } from "react-cookie";
 import Settings from "./settings";
 
@@ -31,8 +27,7 @@ export default function Main ({
     image?: string
     overlay?: boolean
 }) {
-    const { data: session } = useSession();
-    const [cookies, setCookie] = useCookies(["bm_display", "bm_showbg"]);
+    const [cookies] = useCookies(["bm_display", "bm_showbg"]);
 
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
 
