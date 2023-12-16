@@ -12,6 +12,7 @@ import GearIcon from "./icons/gear";
 import { signIn, signOut, useSession } from "next-auth/react";
 import UserIcon from "./icons/user";
 import { useCookies } from "react-cookie";
+import Settings from "./settings";
 
 export const ViewPortCtx = createContext({
     isMobile: false,
@@ -101,9 +102,6 @@ export default function Main ({
     // Google Analytics ID.
     const gId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
-    // Settings menu.
-    const [showSettings, setShowSettings] = useState(false);
-
     return (
         <ViewPortCtx.Provider value={{
             isMobile: isMobile,
@@ -124,36 +122,10 @@ export default function Main ({
 
                 <Header />
 
-                <div className="fixed z-20 bottom-0 left-0 p-4 duration-300 bg-bestmods-3 flex flex-col justify-center items-center gap-8 group rounded-tr">
-                    <button
-                        className={showSettings ? "block cursor-pointer" : "hidden"}
-                        onClick={() => {
-                            setShowBg(!showBg);
-                            setCookie("bm_showbg", !showBg ? "1" : "0");
-                        }}
-                    >
-                        <PhotoIcon className={`w-8 h-8 rounded-full stroke-white fill-none ${showBg ? "brightness-100" : "brightness-50"}`} />
-                    </button>
-                    <button
-                        className={showSettings ? "block cursor-pointer" : "hidden"}
-                        onClick={async () => {
-                            if (session?.user)
-                                await signOut();
-                            else
-                                await signIn("discord");
-                        }}
-                    >
-                        <UserIcon className="w-8 h-8 stroke-white fill-none" />
-                    </button>
-                    <div
-                        className="cursor-pointer"
-                        onClick={() => {
-                            setShowSettings(!showSettings);
-                        }}
-                    >
-                        <GearIcon className="w-8 h-8 stroke-white fill-none" />
-                    </div>
-                </div>
+                <Settings
+                    showBg={showBg}
+                    setShowBg={setShowBg}
+                />
 
                 <div className="w-full px-2 sm:px-20 mx-auto py-2">
                     {errorCtx?.title && errorCtx?.msg && (
