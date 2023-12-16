@@ -2,7 +2,6 @@ import { signIn, signOut, useSession } from "next-auth/react"
 import { type Dispatch, type SetStateAction, useState } from "react";
 import { useCookies } from "react-cookie";
 import PhotoIcon from "./icons/photo";
-import UserIcon from "./icons/user";
 import GearIcon from "./icons/gear";
 import RightToBracketIcon from "./icons/right_to_bracket";
 import ExitIcon from "./icons/exit";
