@@ -43,12 +43,35 @@ export default async function Key (req: NextApiRequest, res: NextApiResponse) {
     // Check if we have access to generate keys.
     if (apiKey !== token) {
         return res.status(401).json({
-            message: `Unauthorized. Tokens do not match.)`
+            message: "Unauthorized. Tokens do not match."
         })
     }
 
+    // Check if we should retrieve.
+    if (method === "GET") {
+
+        const limit = Number(req.query.limit?.toString() ?? 10);
+        const sort = Number(req.query?.sort?.toString() ?? 0);
+
+        const keys = await prisma.apiKey.findMany({
+            take: limit,
+            orderBy: {
+                ...(sort == 0 && {
+                    id: "desc"
+                }),
+                ...(sort == 1 && {
+                    id: "asc"
+                })
+            }
+        })
+
+        return res.status(200).json({
+            keys: keys,
+            message: `Received ${keys.length.toString()} keys!`
+        });
+    }
     // Check if we should generate.
-    if (method === "POST") {
+    else if (method === "POST") {
         // Retrieve body data if any.
         const {
             ipAddr,
@@ -95,7 +118,9 @@ export default async function Key (req: NextApiRequest, res: NextApiResponse) {
 
             message: "New API key generated!"
         })
-    } else if (method === "DELETE") {
+    }
+    // Check if we should delete.
+    else if (method === "DELETE") {
         const { key } = req.query;
 
         if (!key) {
