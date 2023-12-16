@@ -10,7 +10,7 @@ export default async function Auth (req: NextApiRequest, res: NextApiResponse) {
     const [ret, err, method] = await CheckApiAccess({
         req: req,
         key: key,
-        methods: ["POST"]
+        methods: ["POST", "DELETE"]
     })
 
     if (ret !== 200) {
