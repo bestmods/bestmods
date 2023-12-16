@@ -72,7 +72,7 @@ export async function CheckApiAccess({
         })
 
         if (hits > rateLimit)
-            return [false, `Rate limit exceeded (${hits.toString()} > ${rateLimit.toString()}).`]
+            return [false, `Rate limit exceeded.`]
     }
 
     // Check if we should insert into log since we're successful.
