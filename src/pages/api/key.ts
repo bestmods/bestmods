@@ -43,7 +43,7 @@ export default async function Key (req: NextApiRequest, res: NextApiResponse) {
     // Check if we have access to generate keys.
     if (apiKey !== token) {
         return res.status(401).json({
-            message: `Unauthorized. Tokens do not match. (${apiKey} != ${token})`
+            message: `Unauthorized. Tokens do not match.)`
         })
     }
 
