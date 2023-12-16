@@ -29,6 +29,7 @@ export default function MetaInfo ({
     pathOverride?: string
 }) {
     const router = useRouter();
+    
     // Retrieve URLs.
     let base_url: string | undefined = undefined;
     let full_url: string | undefined = undefined;

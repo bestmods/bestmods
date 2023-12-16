@@ -43,14 +43,19 @@ export default function ModGallery ({
     // Banner.
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
 
-    let banner = cdn + "/images/default_mod_banner.png"
+    let banner = "/images/default_mod_banner.png"
 
     if (mod.banner)
         banner = cdn + mod.banner;
 
     // Compile screenshots.
     const screenshots: string[] = [];
+    let screenshotsCtn = 0;
 
+    // Add banner to screenshots so we don't have to add separately.
+    screenshots.push(banner);
+
+    // Loop through each screenshot relation, check, and then add if check is successful.
     mod.ModScreenshot.map((ss) => {
         const url = ss.url;
 
@@ -58,6 +63,8 @@ export default function ModGallery ({
         if (!url.startsWith("https"))
             return;
 
+        // Increment screenshot count and add to screenshots array.
+        screenshotsCtn++;
         screenshots.push(url);
     })
 
@@ -84,12 +91,13 @@ export default function ModGallery ({
                                     setBigPicture(undefined);
                                 }}
                             >X</button>
-                            <Image
+                            <ImageWithFallback
                                 src={bigPicture}
                                 width={1920}
                                 height={1080}
                                 alt="Big Picture"
                                 priority={true}
+                                fallback="/images/default_mod_banner.png"
                                 className="w-full h-full object-cover"
                             />
                         </div>
@@ -99,11 +107,12 @@ export default function ModGallery ({
             
             <Carousel
                 responsive={responsive}
-                itemClass="p-4"
+                itemClass="p-2 h-96"
+                centerMode={false}
                 infinite={infinite}
                 autoPlay={!viewPort.isMobile ? autoPlay : false}
                 autoPlaySpeed={autoPlaySpeed}
-                containerClass={`react-multi-carousel-list ${screenshots.length < 1 ? "justify-center" : ""}`}
+                containerClass={`react-multi-carousel-list ${screenshotsCtn < 1 ? "justify-center" : ""}`}
                 customLeftArrow={
                     <ArrowFix>
                         <button aria-label="Go to previous slide" className="react-multiple-carousel__arrow react-multiple-carousel__arrow--left !z-10" type="button"></button>
@@ -115,20 +124,6 @@ export default function ModGallery ({
                     </ArrowFix>
                 }
             >
-                <div className="w-full h-full max-w-full">
-                    <Image
-                        src={banner}
-                        width={1000}
-                        height={333}
-                        alt={`Banner`}
-                        className="rounded brightness-75 hover:brightness-100 duration-300 cursor-pointer"
-                        onClick={() => {
-                            setBigPicture(banner);
-                        }}
-                        priority={true}
-                    />
-                </div>
-
                 {screenshots.map((url, index) => {
                     // Check for YouTube embed.
                     let video = false;
@@ -139,7 +134,7 @@ export default function ModGallery ({
                     return (
                         <div
                             key={`ss-${index.toString()}`}
-                            className="w-full h-full max-w-full"
+                            className="w-full h-full"
                         >
                             {video ? (
                                 <iframe
@@ -154,7 +149,7 @@ export default function ModGallery ({
                                     width={1000}
                                     height={333}
                                     alt={`Screenshot #${index.toString()}`}
-                                    className="rounded brightness-75 hover:brightness-100 duration-300 cursor-pointer"
+                                    className="rounded brightness-75 hover:brightness-100 duration-300 cursor-pointer w-full h-full max-h-full object-cover"
                                     onClick={() => {
                                         setBigPicture(url);
                                     }}
