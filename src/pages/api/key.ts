@@ -3,47 +3,21 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 import { randomBytes } from "crypto";
 
 import { prisma } from "@server/db/client";
+import { CheckApiAccess } from "@utils/api";
 
 export default async function Key (req: NextApiRequest, res: NextApiResponse) {
-    // Retrieve method and check.
-    const method = req.method;
+    // Retrieve our full API key and check for access.
+    const key = process.env.API_AUTH_KEY ?? "";
 
-    if (!method) {
-        return res.status(405).json({
-            message: "No method specified."
-        })
-    }
+    const [ret, err, method] = await CheckApiAccess({
+        req: req,
+        key: key,
+        methods: ["GET", "POST", "DELETE"]
+    });
 
-    // Retrieve full token and check.
-    const fullToken = req.headers.authorization;
-
-    if (!fullToken) {
-        return res.status(401).json({
-            message: "No authorization token specified."
-        })
-    }
-
-    const token = fullToken.split(" ")?.[1];
-
-    if (!token) {
-        return res.status(401).json({
-            message: "Authorization token malformed."
-        })
-    }
-
-    // Retrieve our full API key and check.
-    const apiKey = process.env.API_AUTH_KEY;
-
-    if (!apiKey) {
-        return res.status(404).json({
-            message: "Root API key not specified on server-side."
-        })
-    }
-
-    // Check if we have access to generate keys.
-    if (apiKey !== token) {
-        return res.status(401).json({
-            message: "Unauthorized. Tokens do not match."
+    if (ret !== 200) {
+        return res.status(ret).json({
+            message: err
         })
     }
 

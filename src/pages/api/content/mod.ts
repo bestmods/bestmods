@@ -5,25 +5,17 @@ import { prisma } from "@server/db/client";
 import { DeleteMod, InsertOrUpdateMod } from "@utils/content/mod";
 
 import { type ModCredit, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource } from "@prisma/client";
-import { CheckApiAccess } from "@utils/content/api";
+import { CheckApiAccess } from "@utils/api";
 
-export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
-    // Retrieve method and check.
-    const method = req.method;
-
-    if (!method) {
-        return res.status(405).json({
-            message: "No method specified."
-        });
-    }
-    
+export default async function Mod (req: NextApiRequest, res: NextApiResponse) {    
     // Perform API access check.
-    const [suc, err] = await CheckApiAccess({
-        req: req
+    const [ret, err, method] = await CheckApiAccess({
+        req: req,
+        methods: ["GET", "POST", "PATCH", "PUT", "DELETE"]
     });
 
-    if (!suc) {
-        return res.status(400).json({
+    if (ret !== 200) {
+        return res.status(ret).json({
             message: err
         });
     }
