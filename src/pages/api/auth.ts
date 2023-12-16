@@ -77,6 +77,11 @@ export default async function Auth (req: NextApiRequest, res: NextApiResponse) {
 
             if (idx !== -1)
                 newRoles.splice(idx, 1);
+            else {
+                return res.status(404).json({
+                    message: `Role '${role}' not found for user '${userId}'. Aborting...`
+                })
+            }
 
             // Update user with new roles.
             await prisma.user.update({
