@@ -41,22 +41,17 @@ const isAuthed = t.middleware(({ ctx, next }) => {
 export const protectedProcedure = t.procedure.use(isAuthed);
 
 const isContributor = t.middleware(async ({ ctx, next }) => {
-    if (!ctx.session?.user)
+    const user = ctx.session?.user;
+
+    if (!user)
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
-    const lookUp = await ctx.prisma.permissions.findFirst({
-        where: {
-            userId: ctx.session.user.id,
-            perm: "contributor"
-        }
-    });
-
-    if (!lookUp)
+    if (!user.roles.includes("ADMIN") && !user.roles.includes("CONTRIBUTOR"))
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
     return next({
         ctx: {
-            session: { ...ctx.session, user: ctx.session.user }
+            session: { ...ctx.session, user: user }
         }
     })
 })
@@ -64,22 +59,17 @@ const isContributor = t.middleware(async ({ ctx, next }) => {
 export const contributorProcedure = t.procedure.use(isContributor);
 
 const isAdmin = t.middleware(async ({ ctx, next }) => {
-    if (!ctx.session?.user)
+    const user = ctx.session?.user;
+
+    if (!user)
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
-    const lookUp = await ctx.prisma.permissions.findFirst({
-        where: {
-            userId: ctx.session.user.id,
-            perm: "admin"
-        }
-    });
-
-    if (!lookUp)
+    if (!user.roles.includes("ADMIN"))
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
     return next({
         ctx: {
-            session: { ...ctx.session, user: ctx.session.user }
+            session: { ...ctx.session, user: user }
         }
     })
 })

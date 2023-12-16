@@ -9,7 +9,7 @@ import ModViewSources from "./view/sources";
 import ModViewDownloads from "./view/downloads";
 import ModViewInstall from "./view/install";
 import ModViewCredits from "./view/credits";
-import { HasPerm } from "@utils/permissions";
+import { HasRole } from "@utils/roles";
 import Link from "next/link";
 import { useContext, useState } from "react";
 import ModViewCategory from "./view/category";
@@ -173,7 +173,7 @@ export default function ModView ({
                             <ModViewCredits mod={mod} />
                         )}
                     </div>
-                    {session && HasPerm(session, "contributor") && (
+                    {session && HasRole(session, "CONTRIBUTOR") && (
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link
                                 className="btn btn-primary" 

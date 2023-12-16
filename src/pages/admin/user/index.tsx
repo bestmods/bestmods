@@ -10,7 +10,7 @@ import { prisma } from "@server/db/client";
 import { useSession } from "next-auth/react";
 
 import { trpc } from "@utils/trpc";
-import { HasPerm } from "@utils/permissions";
+import { HasRole } from "@utils/roles";
 import NoAccess from "@components/errors/noaccess";
 import { getServerAuthSession } from "@server/common/get-server-auth-session";
 import Image from "next/image";
@@ -36,7 +36,7 @@ export default function Page ({
             />
 
             <Main>
-                {HasPerm(session, "admin") ? (
+                {HasRole(session, "ADMIN") ? (
                     <div className="flex flex-col gap-2">
                         <h1>User Management</h1>
                         <div>
@@ -199,7 +199,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const session = await getServerAuthSession(ctx);
 
     // Permission check.
-    const perm_check = session && HasPerm(session, "admin");
+    const perm_check = session && HasRole(session, "ADMIN");
 
     if (perm_check) {        
         const offset = Number(users_per_page) * (page_number - 1);

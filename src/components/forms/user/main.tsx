@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { trpc } from "../../../utils/trpc";
 import { Field, Form, Formik } from "formik";
 
-import { type Permissions, type User } from "@prisma/client";
+import { type UserRole, type User } from "@prisma/client";
 
 import ScrollToTop from "@utils/scroll";
 import { GetContents } from "@utils/file";
@@ -106,8 +106,8 @@ export default function UserForm ({
                             placeholder="User's email"
                         />
                     </div>
-                    <h2>Permissions</h2>
-                    <Permissions user={user} />
+                    <h2>Roles</h2>
+                    <Roles user={user} />
                     <div className="text-center">
                         <button 
                             type="submit"
@@ -120,7 +120,7 @@ export default function UserForm ({
     );
 }
 
-const Permissions: React.FC<{
+const Roles: React.FC<{
     user: User | null
 }> = ({
     user
@@ -128,110 +128,100 @@ const Permissions: React.FC<{
     const errorCtx = useContext(ErrorCtx);
     const successCtx = useContext(SuccessCtx);
 
-    // Queries. We're using a query so we can keep our permission list update to date without reloading our page.
-    const perm_list_query = trpc.permission.retrieveUserPerms.useQuery({
-        id: user?.id ?? ""
-    });
-    const permissions = perm_list_query.data;
-
     // Mutations.
-    const perm_add_mut = trpc.permission.addUserPerm.useMutation({
+    const addRole = trpc.user.addRole.useMutation({
         onError: (opts) => {
             const { message } = opts;
 
             console.error(message);
 
             if (errorCtx) {
-                errorCtx.setTitle("Error Adding Permission!");
-                errorCtx.setMsg("There was an error adding this permission. Please check the console!");
+                errorCtx.setTitle("Error Adding Role!");
+                errorCtx.setMsg("There was an error adding this role. Please check the console!");
 
                 ScrollToTop();
             }
         },
         onSuccess: () => {
             if (successCtx) {
-                successCtx.setTitle("Added Permission!");
-                successCtx.setMsg("The permission was added successfully!");
+                successCtx.setTitle("Added Role!");
+                successCtx.setMsg("The role was added successfully!");
 
                 ScrollToTop();
             }
         }
     });
 
-    const perm_del_mut = trpc.permission.delUserPerm.useMutation({
+    const delRole = trpc.user.delRole.useMutation({
         onError: (opts) => {
             const { message } = opts;
 
             console.error(message);
 
             if (errorCtx) {
-                errorCtx.setTitle("Error Removing Permission!");
-                errorCtx.setMsg("There was an error removing this permission. Please check the console!");
+                errorCtx.setTitle("Error Removing Role!");
+                errorCtx.setMsg("There was an error removing this role. Please check the console!");
 
                 ScrollToTop();
             }
         },
         onSuccess: () => {
             if (successCtx) {
-                successCtx.setTitle("Removed Permission!");
-                successCtx.setMsg("The permission was removed successfully!");
+                successCtx.setTitle("Removed Role!");
+                successCtx.setMsg("The role was removed successfully!");
 
                 ScrollToTop();
             }
         }
     });
 
-    const [perm, setPerm] = useState<string | undefined>(undefined);
+    const [role, setRole] = useState<UserRole>("CONTRIBUTOR");
 
     return (
         <div className="p-2 flex flex-col gap-2">
             <div className="flex flex-wrap gap-2">
-                {permissions?.map((permission, index) => {
+                {user?.roles?.map((role, index) => {
                     return (
                         <button 
-                            key={`permissions-${index.toString()}`}
+                            key={`role-${index.toString()}`}
                             onClick={(e) => {
                                 e.preventDefault();
                                 
-                                perm_del_mut.mutate({
-                                    id: permission.userId,
-                                    perm: permission.perm
+                                delRole.mutate({
+                                    id: user.id,
+                                    role: role
                                 });
                             }}
                             className="btn btn-secondary"
-                        >{permission.perm}</button>
+                        >{role}</button>
                     );
                 })}
             </div>
             <div className="bg-bestmods-3/80 rounded p-2 flex flex-wrap gap-2">
                 <label>Permission</label>
-                <input 
-                    type="text"
-                    className="!w-auto grow"
+                <select
                     onChange={(e) => {
                         const val = e.target.value;
 
-                        setPerm(val);
+                        if (val == "0")
+                            setRole("CONTRIBUTOR");
+                        else if (val == "1")
+                            setRole("ADMIN")
                     }}
-                />
+                >
+                    <option value="0">Contributor</option>
+                    <option value="1">Admin</option>
+                </select>
                 <button
                     className="btn btn-primary"
                     onClick={(e) => {
                         e.preventDefault();
 
-                        if (!perm) {
-                            if (errorCtx) {
-                                errorCtx.setTitle("Missing Permission!");
-                                errorCtx.setMsg("The permission is missing. Please make sure there is a permission specified to add!");
-                            }
-
-                            return;
-                        }
 
                         if (user) {
-                            perm_add_mut.mutate({
+                            addRole.mutate({
                                 id: user.id,
-                                perm: perm
+                                role: role
                             });
                         }
                     }}

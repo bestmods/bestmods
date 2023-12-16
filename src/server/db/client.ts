@@ -14,15 +14,6 @@ export const prisma =
             env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
     });
 
-// Enable the following for debugging Prisma queries.
-/*
-prisma.$on("query", (e) => {
-    console.log("Query: " + e.query)
-    console.log("Params: " + e.params)
-    console.log("Duration: " + e.duration + "ms")
-});
-*/
-
 if (env.NODE_ENV !== "production") {
     global.prisma = prisma;
 }

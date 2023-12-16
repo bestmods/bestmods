@@ -18,6 +18,16 @@ export default async function Auth (req: NextApiRequest, res: NextApiResponse) {
     }
 
     // Check if we should update auth.
+    if (method === "POST") {
+        const {
+            userId,
+            role
+        } : {
+            userId?: string
+            role?: number
+        } = req.body;
 
+        
+    }
 
 }
