@@ -27,7 +27,7 @@ export default function Page ({
             />
             <Main>
                 <div className="flex flex-col gap-2">
-                    {HasRole(session, "ADMIN") ? (
+                    {(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) ? (
                         <>
                             <h1>Add Mod</h1>
                             <ModForm
@@ -50,7 +50,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     const session = await getServerAuthSession(ctx);
 
-    if (HasRole(session, "ADMIN")) {
+    if (HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) {
         categories = await prisma.category.findMany({
             include: {
                 children: true

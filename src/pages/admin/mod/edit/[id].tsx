@@ -31,7 +31,7 @@ export default function Page ({
             />
             <Main>
                 <div className="flex flex-col gap-2">
-                    {HasRole(session, "ADMIN") ? (
+                    {(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) ? (
                         <>
                             {mod ? (
                                 <>
@@ -66,7 +66,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     const session = await getServerAuthSession(ctx);
 
-    if (HasRole(session, "ADMIN") && id) {
+    if ((HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) && id) {
         mod = await prisma.mod.findFirst({
             include: {
                 category: true,
