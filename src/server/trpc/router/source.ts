@@ -1,4 +1,4 @@
-import { router, contributorProcedure } from "@server/trpc/trpc";
+import { router, adminProcedure } from "@server/trpc/trpc";
 import { TRPCError } from "@trpc/server"
 
 import { z } from "zod";
@@ -6,7 +6,7 @@ import { z } from "zod";
 import { DeleteSource, InsertOrUpdateSource } from "@utils/content/source";
 
 export const sourceRouter = router({
-    add: contributorProcedure
+    add: adminProcedure
         .input(z.object({
             update: z.boolean().default(false),
             name: z.string(),
@@ -44,7 +44,7 @@ export const sourceRouter = router({
                 });
             }
         }),
-    del: contributorProcedure
+    del: adminProcedure
         .input(z.object({
             url: z.string()
         }))

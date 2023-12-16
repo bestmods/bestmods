@@ -1,4 +1,4 @@
-import { router, contributorProcedure, publicProcedure } from "@server/trpc/trpc";
+import { router, publicProcedure, adminProcedure } from "@server/trpc/trpc";
 import { TRPCError } from "@trpc/server"
 
 import { z } from "zod";
@@ -6,7 +6,7 @@ import { z } from "zod";
 import { DeleteCategory, InsertOrUpdateCategory } from "@utils/content/category";
 
 export const categoryRouter = router({
-    add: contributorProcedure
+    add: adminProcedure
         .input(z.object({
             id: z.number().optional(),
             parentId: z.number().nullable().default(null),
@@ -55,7 +55,7 @@ export const categoryRouter = router({
                 });
             }
         }),
-    del: contributorProcedure
+    del: adminProcedure
         .input(z.object({
             id: z.number()
         }))
