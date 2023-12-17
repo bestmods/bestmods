@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { trpc } from "../../../utils/trpc";
 import { Field, Form, Formik } from "formik";
 
-import { type UserRole, type User } from "@prisma/client";
+import { UserRole, type User } from "@prisma/client";
 
 import ScrollToTop from "@utils/scroll";
 import { GetContents } from "@utils/file";
@@ -198,7 +198,7 @@ const Roles: React.FC<{
                 })}
             </div>
             <div className="bg-bestmods-3/80 rounded p-2 flex flex-wrap gap-2">
-                <label>Permission</label>
+                <label>Role</label>
                 <select
                     onChange={(e) => {
                         const val = e.target.value;
@@ -206,7 +206,7 @@ const Roles: React.FC<{
                         if (val == "0")
                             setRole("CONTRIBUTOR");
                         else if (val == "1")
-                            setRole("ADMIN")
+                            setRole("ADMIN");
                     }}
                 >
                     <option value="0">Contributor</option>
