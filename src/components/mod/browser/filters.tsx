@@ -84,7 +84,7 @@ export default function ModBrowserFilters ({
 
     return (
         <div className="flex flex-wrap justify-end gap-2">
-            <div ref={filtersMenu} className={`hidden z-50 fixed top-0 left-0 w-1/2 p-6 h-full bg-bestmods-2 overflow-scroll justify-between`}>
+            <div ref={filtersMenu} className={`hidden z-50 fixed top-0 left-0 w-1/2 p-6 h-full bg-bestmods-2 overflow-auto justify-between`}>
                 <div className="grow flex flex-col gap-2">
                     <div className="flex flex-col gap-2">
                         <h2>Filters</h2>
