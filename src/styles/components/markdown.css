@@ -2,18 +2,32 @@
     & pre {
         @apply bg-gray-900;
         @apply rounded-sm;
-        @apply text-white;
+        @apply text-gray-200;
         @apply p-4;
-        @apply overflow-y-scroll;
+        @apply overflow-auto;
         @apply max-h-80;
-        @apply whitespace-pre-line;
+        @apply whitespace-pre-wrap;
+        @apply leading-6;
+        @apply text-sm;
+        @apply text-left;
+        @apply mt-2;
+
+        tab-size: 4;
+        -o-tab-size: 4;
+        -moz-tab-size: 4;
+        
+        hyphens: none;
+        -webkit-hyphens: none;
+        -moz-hyphens: none;
+        -ms-hyphens: none;
     }
 
     & code:not(pre code) {
         @apply bg-gray-950;
+        @apply rounded;
         @apply px-1;
         @apply rounded-sm;
-        @apply text-cyan-300;
+        @apply text-cyan-200;
     }
 
     & p {

@@ -1,41 +1,9 @@
 const DefaultTheme: { [key: string]: React.CSSProperties } = {
     "code[class*=\"language-\"]": {
-        "color": "#d6deeb",
-        "fontFamily": "Consolas, Monaco, \"Andale Mono\", \"Ubuntu Mono\", monospace",
-        "textAlign": "left",
-        "whiteSpace": "pre-wrap",
-        "wordSpacing": "normal",
-        "wordBreak": "normal",
-        "wordWrap": "normal",
-        "lineHeight": "1.5",
-        "fontSize": "1em",
-        "MozTabSize": "4",
-        "OTabSize": "4",
-        "tabSize": "4",
-        "WebkitHyphens": "none",
-        "MozHyphens": "none",
-        "msHyphens": "none",
-        "hyphens": "none"
+        "fontFamily": "Consolas, Monaco, \"Andale Mono\", \"Ubuntu Mono\", monospace"
     },
     "pre[class*=\"language-\"]": {
-        "color": "white",
-        "fontFamily": "Consolas, Monaco, \"Andale Mono\", \"Ubuntu Mono\", monospace",
-        "textAlign": "left",
-        "whiteSpace": "pre-wrap",
-        "wordSpacing": "normal",
-        "wordBreak": "normal",
-        "wordWrap": "normal",
-        "lineHeight": "1.5",
-        "fontSize": "1em",
-        "MozTabSize": "4",
-        "OTabSize": "4",
-        "tabSize": "4",
-        "WebkitHyphens": "none",
-        "MozHyphens": "none",
-        "msHyphens": "none",
-        "hyphens": "none",
-        "margin": "0.5em 0",
-        "overflow": "auto",
+        "fontFamily": "Consolas, Monaco, \"Andale Mono\", \"Ubuntu Mono\", monospace"
     },
     "pre[class*=\"language-\"]::-moz-selection": {
         "textShadow": "none",
