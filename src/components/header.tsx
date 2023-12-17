@@ -98,7 +98,7 @@ export default function Header () {
                 >
                     <HamburgerIcon className="w-6 h-6 stroke-white" />
                 </button>
-                <div ref={mobileMenu} className={`hidden fixed z-50 top-0 left-0 w-1/2 h-full bg-bestmods-2 justify-between overflow-scroll p-6`}>
+                <div ref={mobileMenu} className={`hidden fixed z-50 top-0 left-0 w-1/2 h-full bg-bestmods-2 justify-between overflow-auto p-2`}>
                     <div className="grow flex flex-col gap-4">
                         <Link
                             href="/"
