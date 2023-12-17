@@ -25,8 +25,6 @@ export default function ModRowTable ({
     catLink: string | null,
     viewLink: string
 }) {
-    const cdn: string | undefined = process.env.NEXT_PUBLIC_CDN_URL;
-
     return (
         <tr
             className="bg-bestmods-2/80 hover:bg-bestmods-3/80 hover:duration-300 cursor-pointer"
@@ -37,7 +35,7 @@ export default function ModRowTable ({
         >
             <td className="w-8 h-8">
                 <Image
-                    src={cdn + catIcon}
+                    src={catIcon}
                     width={32}
                     height={32}
                     alt="Category Icon"
