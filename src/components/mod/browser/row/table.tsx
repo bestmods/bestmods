@@ -47,7 +47,7 @@ export default function ModRowTable ({
             <td className="pl-3">
                 {mod.name}
             </td>
-            <td>
+            <td className="hidden sm:table-cell">
                 <p className="text-sm">{descShort}</p>
             </td>
             <td>
@@ -72,6 +72,8 @@ export default function ModRowTable ({
                     <Rating
                         mod={mod}
                         rating={mod.rating}
+                        className="relative flex flex-col gap-1 text-center justify-center items-center"
+                        invert={true}
                     />
                 </div>
             </td>
