@@ -43,9 +43,7 @@ export default async function Category (req: NextApiRequest, res: NextApiRespons
         // Return category.
         return res.status(200).json({
             "message": `${cats.length.toString()} categories fetched!`,
-            data: {
-                categories: cats
-            }
+            data: cats
         });
     } else if (["POST", "PATCH", "PUT"].includes(method)) {
         // Check if this should be an update.
@@ -141,9 +139,7 @@ export default async function Category (req: NextApiRequest, res: NextApiRespons
 
         return res.status(200).json({
             message: `${update ? "Updated" : "Inserted"} category successfully!`,
-            data: {
-                category: cat
-            }
+            data: cat
         })
     } else if (method == "DELETE") {
         const { id } = req.query;

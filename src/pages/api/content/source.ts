@@ -38,10 +38,8 @@ export default async function Source (req: NextApiRequest, res: NextApiResponse)
 
         // Return source.
         return res.status(200).json({
-            "message": `${srcs.length.toString()} sources fetched!`,
-            data: {
-                sources: srcs
-            }
+            message: `${srcs.length.toString()} sources fetched!`,
+            data: srcs
         });
     } else if (["POST", "PATCH", "PUT"].includes(method)) {
         const update = ["PATCH", "PUT"].includes(method);
@@ -128,9 +126,7 @@ export default async function Source (req: NextApiRequest, res: NextApiResponse)
 
         return res.status(200).json({
             message: `${update ? "Updated" : "Inserted"} source successfully!`,
-            data: {
-                source: src
-            }
+            data: src
         })
     } else if (req.method == "DELETE") {
         const { url } = req.query;

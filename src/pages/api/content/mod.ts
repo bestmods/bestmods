@@ -85,10 +85,8 @@ export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
 
         // Return mod.
         return res.status(200).json({
-            "message": `${mods.length.toString()} mods fetched!`,
-            data: {
-                mods: JSON.parse(JSON.stringify(mods, (_, v) => typeof v === "bigint" ? v.toString() : v))
-            }
+            message: `${mods.length.toString()} mods fetched!`,
+            data: JSON.parse(JSON.stringify(mods, (_, v) => typeof v === "bigint" ? v.toString() : v))
         });
     } else if (["POST", "PATCH", "PUT"].includes(method)) {
         const update = ["PATCH", "PUT"].includes(method);
@@ -202,7 +200,7 @@ export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
             installers: installers,
             credits: credits
         })
-        
+
         // Check for error.
         if (!success || !mod) {
             return res.status(400).json({
@@ -213,9 +211,7 @@ export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
 
         return res.status(200).json({
             message: `${update ? "Inserted" : "Updated"} mod successfully!`,
-            data: {
-                mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === "bigint" ? v.toString() : v))
-            }
+            data: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === "bigint" ? v.toString() : v))
         });
     } else if (method == "DELETE") {
         const { id } = req.query;
