@@ -120,7 +120,7 @@ export default function ModBrowser ({
                     hasMore={needMoreMods}
                 >
                     {modsOrLoading ? (
-                        <table className="table table-auto w-full">
+                        <table className="table table-auto w-full [overflow-wrap:anywhere]">
                             <tbody>
                                 {mods.map((mod) => {
                                     return (
