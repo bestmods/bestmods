@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { trpc } from "../../../utils/trpc";
 import { Field, Form, Formik } from "formik";
 
-import { UserRole, type User } from "@prisma/client";
+import { type UserRole, type User } from "@prisma/client";
 
 import ScrollToTop from "@utils/scroll";
 import { GetContents } from "@utils/file";
