@@ -31,6 +31,7 @@
     "react-multi-carousel": "^2.8.4",
     "react-syntax-highlighter": "^15.5.0",
     "rehype-raw": "^7.0.0",
+    "sharp": "^0.33.0",
     "superjson": "1.9.1",
     "yup": "^0.32.11",
     "zod": "^3.18.0"
