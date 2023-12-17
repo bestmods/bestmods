@@ -173,7 +173,7 @@ export default function ModView ({
                             <ModViewCredits mod={mod} />
                         )}
                     </div>
-                    {session && HasRole(session, "CONTRIBUTOR") && (
+                    {session && (HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) && (
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link
                                 className="btn btn-primary" 
