@@ -189,9 +189,6 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     // Get pagination options.
     const users_per_page = Number(process.env.ADMIN_USERS_PER_PAGE) || 15;
     const page_number = (ctx.query?.p) ? Number(ctx.query.p.toString()) : 1;
-
-    //const admin_only = (ctx.query?.admins_only) ? true : false;
-    //const contributors_only = (ctx.query?.contributors_only) ? true : false;
     
     let users: User[] = [];
 

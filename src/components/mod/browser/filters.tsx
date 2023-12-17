@@ -5,8 +5,9 @@ import LeftArrowIcon from "@components/icons/left_arrow"
 import SearchIcon from "@components/icons/search"
 import TableIcon from "@components/icons/table"
 import Loading from "@components/loading"
+import { ViewPortCtx } from "@components/main"
 import { trpc } from "@utils/trpc"
-import { type Dispatch, type SetStateAction, useState, useEffect, useRef } from "react"
+import { type Dispatch, type SetStateAction, useState, useEffect, useRef, useContext } from "react"
 import { useCookies } from "react-cookie"
 import InfiniteScroll from "react-infinite-scroller"
 import { type CategoryWithChildren } from "~/types/category"
@@ -207,6 +208,8 @@ function Categories ({
 }) {
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
 
+    const viewPort = useContext(ViewPortCtx);
+
     // Retrieve categories.
     const [needMoreCats, setNeedMoreCats] = useState(true);
 
@@ -273,10 +276,14 @@ function Categories ({
                                         setCategories(newCats);
                                     }}
                                 >
-                                    <IconAndText
-                                        icon={icon}
-                                        text={<>{cat.name}</>}
-                                    />
+                                    {viewPort.isMobile ? (
+                                        <span>{cat.name}</span>
+                                    ) : (
+                                        <IconAndText
+                                            icon={icon}
+                                            text={<span>{cat.name}</span>}
+                                        />
+                                    )}
                                 </button>
 
                                 {cat.children.length > 0 && (
@@ -292,7 +299,7 @@ function Categories ({
                                             return (
                                                 <li
                                                     key={`child-${index.toString()}`}
-                                                    className={`${!isSelected ? `opacity-60 ` : ``}ml-10 cursor-pointer`}
+                                                    className={`${!isSelected ? `opacity-60 ` : ``}ml-6 cursor-pointer`}
                                                     onClick={(e) => {
                                                         e.preventDefault();
 
@@ -308,10 +315,14 @@ function Categories ({
                                                         setCategories(newCats);
                                                     }}
                                                 >
-                                                    <IconAndText
-                                                        icon={icon}
-                                                        text={<>{child.name}</>}
-                                                    />
+                                                    {viewPort.isMobile ? (
+                                                        <span>{child.name}</span>
+                                                    ) : (
+                                                        <IconAndText
+                                                            icon={icon}
+                                                            text={<span>{child.name}</span>}
+                                                        />
+                                                    )}
                                                 </li>
                                             )
                                         })}
