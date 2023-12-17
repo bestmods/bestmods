@@ -4,7 +4,7 @@ Browse the best mods in gaming from many sources on the Internet!
 <a href="https://bestmods.io/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview01.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview01.png" /></a>
 
 ## About This Project
-An open source [website](https://bestmods.io) made by [Christian Deacon](https://github.com/gamemann) that helps users find their favorite mods all in one place! The website also includes Discord login authentication and the ability to upvote and downvote mods.
+An open source [website](https://bestmods.io) made by [Christian Deacon](https://github.com/gamemann) that helps users find their favorite mods all in one place! The website also includes Discord login authentication and the ability to upvote and downvote mods. Read more about us [here](https://bestmods.io/about)!
 
 ## Showcase
 ### Desktop
