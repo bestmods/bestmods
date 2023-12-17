@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server"
 import { z } from "zod";
 
 export const modDownloadRouter = router({
-    incModDownloadCnt: publicProcedure
+    incCnt: publicProcedure
         .input(z.object({
             url: z.string()
         }))

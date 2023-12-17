@@ -1,0 +1,10 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "startdev",
+            "type": "shell",
+            "command": "npm run dev -- --hostname 0.0.0.0 --port 3000"
+        }
+    ]
+}

@@ -1,164 +1,144 @@
-import React, { useState, type ReactNode } from "react";
-
-import { setCookie } from "cookies-next";
+import React, { useState, type ReactNode, useContext, useEffect, createContext, useRef } from "react";
 
 import GoogleAnalytics from "@components/scripts/google_analytics";
 
-import Header from "@components/main/header";
-import MobileMenu from "@components/main/mobile_menu";
-import Login from "@components/main/login";
+import Header from "@components/header";
+import Background from "./background";
+import { ErrorCtx, SuccessCtx } from "@pages/_app";
+import Error from "./responses/error";
+import Success from "./responses/success";
+import { useCookies } from "react-cookie";
+import Settings from "./settings";
 
-export type filterArgs = {
-    timeframe: number
-    sort: number
-    search?: string
+export const ViewPortCtx = createContext({
+    isMobile: false,
+    width: 0,
+    height: 0
+})
 
-    timeframeCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void)
-    sortCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void)
-    searchCb: ((e: React.ChangeEvent<HTMLSelectElement>) => void)
-}
-
-export type displayArgs = {
-    display: string
-
-    displayCb: (e: React.MouseEvent) => void
-}
-
-export const FilterCtx = React.createContext<filterArgs | null>(null);
-export const DisplayCtx = React.createContext<displayArgs | null>(null);
-export const CookiesCtx = React.createContext<{ [key: string]: string }>({});
-
-export const BestModsPage: React.FC<{
-    children: ReactNode,
-    classes?: string,
-    background?: string,
-    image?: string,
-    overlay?: string,
-    excludeCdn?: boolean,
-    cookies?: { [key: string]: string },
-    showFilters?: boolean
-}> = ({
+export default function Main ({
     children,
-    classes,
-    background = "bg-gradient-to-b from-[#002736] to-[#00151b]",
+    className,
     image = "/images/backgrounds/default.jpg",
-    overlay = "bg-none md:bg-black/80",
-    excludeCdn = false,
-    cookies,
-    showFilters = false
-}) => {
-    // Handle filtering and display options.
-    const [timeframe, setTimeframe] = useState<number>(0);
-    const [sort, setSort] = useState<number>(0);
-    const [search, setSearch] = useState<string | undefined>(undefined);
-    const [displayStr, setDisplay] = useState((cookies) ? cookies["bm_display"] ?? "grid" : "grid");
+    overlay = true
+} : {
+    children: ReactNode
+    className?: string
+    image?: string
+    overlay?: boolean
+}) {
+    const [cookies] = useCookies(["bm_display", "bm_showbg"]);
 
-    const timeframeCb = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setTimeframe(Number(e.target.value));
-    };
+    const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
 
-    const sortCb = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSort(Number(e.target.value));
-    };
+    const errorCtx = useContext(ErrorCtx);
+    const successCtx = useContext(SuccessCtx);
 
-    const searchCb = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        if (e.target.value.length > 0)
-            setSearch(e.target.value);
-        else
-            setSearch(undefined);
-    };
+    // View ports.
+    const [isMobile, setIsMobile] = useState(false);
+    const [width, setWidth] = useState(0);
+    const [height, setHeight] = useState(0);
 
-    const displayCb = (e: React.MouseEvent) => {
-        e.preventDefault();
+    // Make sure to reset error and success contexts on first render.
+    const firstRender = useRef(true);
 
-        // We treat this as a switch/toggle.
-        if (displayStr == "table") {
-            setDisplay("grid");
-            setCookie("bm_display", "grid");
+    useEffect(() => {
+        if (!firstRender.current)
+            return;
 
-            if (cookies)
-                cookies["bm_display"] = "grid";
+        if (errorCtx) {
+            errorCtx.setTitle(undefined);
+            errorCtx.setMsg(undefined);
         }
-        else {
-            setDisplay("table");
-            setCookie("bm_display", "table");
 
-            if (cookies)
-                cookies["bm_display"] = "table";
+        if (successCtx) {
+            successCtx.setTitle(undefined);
+            successCtx.setMsg(undefined);
         }
-    }
 
-    const filters: filterArgs = {
-        timeframe: timeframe,
-        sort: sort,
-        search: search,
-        timeframeCb: timeframeCb,
-        sortCb: sortCb,
-        searchCb: searchCb
-    };
+        firstRender.current = false;
+    }, [errorCtx, successCtx])
 
-    const display: displayArgs = {
-        display: displayStr,
-        displayCb: displayCb
-    };
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const checkResize = () => {
+                if (window.innerWidth < 640)
+                    setIsMobile(true);
+                else
+                    setIsMobile(false);
 
-    // Check if we must prepend CDN URL.
-    if (process.env.NEXT_PUBLIC_CDN_URL && !excludeCdn)
-        image = process.env.NEXT_PUBLIC_CDN_URL + image;
+                setWidth(window.innerWidth);
+                setHeight(window.innerHeight);
+            }
+
+            // Check for mobile now.
+            checkResize();
+
+            // Add event listener for resize events.
+            window.addEventListener("resize", checkResize);
+        }
+    }, [])
+    
+    // Check if we should be showing a background image.
+    const [bgImage, setBgImage] = useState<string | undefined>(undefined);
+
+    const [showBg, setShowBg] = useState(false);
+
+    useEffect(() => {
+        if (cookies["bm_showbg"] !== undefined && Boolean(cookies["bm_showbg"]))
+            setShowBg(true);
+
+        if (showBg && image)
+            setBgImage(image);
+        else if (bgImage)
+            setBgImage(undefined);
+    }, [cdn, image, showBg, bgImage, cookies])
+
+    // Google Analytics ID.
+    const gId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
     return (
-        <main key="main" className={classes ?? ""}>
-            {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
-                <GoogleAnalytics 
-                    id={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}
+        <ViewPortCtx.Provider value={{
+            isMobile: isMobile,
+            width: width,
+            height: height
+        }}>
+            <main key="main" className={className}>
+                {gId && (
+                    <GoogleAnalytics 
+                        id={gId}
+                    />
+                )}
+
+                <Background
+                    image={bgImage}
+                    overlay={overlay}
                 />
-            )}
-            <FilterCtx.Provider value={filters}>
-                <DisplayCtx.Provider value={display}>
-                    <CookiesCtx.Provider value={cookies ?? {}}>
-                        <div id="mobile-and-login">
-                            <MobileMenu />
-                            <Login />
-                        </div>
 
-                        <Background
-                            background={background}
-                            image={image}
-                            overlay={overlay}
+                <Header />
+
+                <Settings
+                    showBg={showBg}
+                    setShowBg={setShowBg}
+                />
+
+                <div className="w-full px-2 sm:px-20 mx-auto py-2">
+                    {errorCtx?.title && errorCtx?.msg && (
+                        <Error
+                            title={errorCtx.title}
+                            msg={errorCtx.msg}
                         />
+                    )}
 
-                        <Header
-                            showFilters={showFilters}
+                    {successCtx?.title && successCtx?.msg && (
+                        <Success
+                            title={successCtx.title}
+                            msg={successCtx.msg}
                         />
-
-                        <div className="relative">
-                            {children}
-                        </div>
-                    </CookiesCtx.Provider>
-                </DisplayCtx.Provider>
-            </FilterCtx.Provider>
-        </main>
-    );
-};
-
-const Background: React.FC<{
-    background?: string,
-    image?: string | null,
-    overlay?: boolean | string
-}> = ({
-    background = "bg-gradient-to-b from-[#002736] to-[#00151b]",
-    image = null,
-    overlay = true 
-}) => {
-    return (<>
-        {overlay && (
-            <div id="bgol" className={typeof (overlay) === "string" ? overlay : "bg-black/80"}></div>
-        )}
-
-        <div id="bg" className={background}>
-            {image && (
-                <img src={image} className="hidden md:block w-full h-full" alt="background" />
-            )}
-        </div>
-    </>);
-};
+                    )}
+                    {children}
+                </div>
+            </main>
+        </ViewPortCtx.Provider>
+    )
+}

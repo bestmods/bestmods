@@ -1,126 +1,165 @@
 import { type GetServerSidePropsContext } from "next";
 import Link from "next/link";
 
-import { BestModsPage } from "@components/main";
-import HeadInfo from "@components/head";
+import Main from "@components/main";
+import MetaInfo from "@components/meta";
 
 import { type User } from "@prisma/client";
 
 import { prisma } from "@server/db/client";
-import { getSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 import { trpc } from "@utils/trpc";
-import { Has_Perm } from "@utils/permissions";
+import { HasRole } from "@utils/roles";
+import NoAccess from "@components/errors/noaccess";
+import { getServerAuthSession } from "@server/common/get-server-auth-session";
+import Image from "next/image";
+import { useContext } from "react";
+import { ErrorCtx, SuccessCtx } from "@pages/_app";
 
-const Index: React.FC<{
-    authed: boolean,
-    users: User[],
-    page_number: number
-}> = ({
-    authed,
+export default function Page ({
     users,
     page_number
-}) => {
+} : {
+    users: User[]
+    page_number: number
+}) {
+    const { data: session } = useSession();
+
     // Build list of page numbers (<3 before>, cur_page, <3 after>).
     const pages = Gen_Page_Numbers(page_number, 3);
 
     return (
         <>
-            <HeadInfo 
+            <MetaInfo 
                 title="User Management - Best Mods"
             />
 
-            <BestModsPage>
-                {authed ? (
-                    <div className="container mx-auto">
-                        <h1 className="page-title">User Management</h1>
-                        {users.length > 0 ? (
-                            <table className="user-table">
-                                <thead>
-                                    <tr>
-                                        <th>Avatar</th>
-                                        <th>ID</th>
-                                        <th>Username</th>
-                                        <th>Email</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {users.map((user: any) => {
-                                        return (
-                                            <UserRow key={"user-" + user.id} user={user} />
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
+            <Main>
+                {HasRole(session, "ADMIN") ? (
+                    <div className="flex flex-col gap-2">
+                        <h1>User Management</h1>
+                        <div>
+                            {users.length > 0 ? (
+                                <table className="table table-auto w-full">
+                                    <thead>
+                                        <tr className="bg-bestmods-2/80 font-bold">
+                                            <th>Avatar</th>
+                                            <th>ID</th>
+                                            <th>Username</th>
+                                            <th>Email</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {users.map((user, index) => {
+                                            return (
+                                                <UserRow
+                                                    key={`user-${index.toString()}`}
+                                                    user={user}
+                                                />
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
 
-                        ): (
-                            <div className="unauthorized-div">
+                            ): (
                                 <p>No users found.</p>
-                            </div>
-                            
-                        )}
-                        <div className="user-page-numbers">
-                            {pages.map((i: number) => {
+                            )}
+                        </div>
+                        <div>
+                            {pages.map((i) => {
                                 return (
-                                    <Link key={"page-num-" + i} href={"/admin/user/?p=" + i}>{i.toString()}</Link>
+                                    <Link
+                                        key={`page-${i.toString()}`}
+                                        href={`/admin/user/?p=${i.toString()}`}
+                                    >{i.toString()}</Link>
                                 );
                             })}
                         </div>
                     </div>
                 ) : (
-                    <div className="unauthorized-div">
-                        <p>You are not authorized to view this page!</p>
-                    </div>                    
+                    <NoAccess />                
                 )}
-            </BestModsPage>
+            </Main>
         </>
-    );
+    )
 }
 
 const UserRow: React.FC<{
-    user: any
+    user: User
 }> = ({
     user
 }) => {
+    const errorCtx = useContext(ErrorCtx);
+    const successCtx = useContext(SuccessCtx);
+
     // User image/avatar.
     const avatar = user.image || null;
 
     // Actions.
-    const edit_link = "/admin/user/edit/" + user.id;
+    const edit_link = `/admin/user/edit/${user.id.toString()}`;
 
-    const user_del_mut = trpc.user.delUser.useMutation();
+    const user_del_mut = trpc.user.del.useMutation({
+        onError: (opts) => {
+            const { message } = opts;
+
+            console.error(message);
+
+            if (errorCtx) {
+                errorCtx.setTitle("Unable To Delete User!");
+                errorCtx.setMsg("Unable to delete this user. Check the console!");
+            }
+        },
+        onSuccess: () => {
+            if (successCtx) {
+                successCtx.setTitle("Deleted User!");
+                successCtx.setMsg("Deleted the user successfully!");
+            }
+        }
+    });
 
     return (
-        <tr>
-            <td className="user-table-avatar">
+        <tr className="odd:bg-bestmods-3/80 even:bg-bestmods-4/30">
+            <td>
                 {avatar && (
-                    <img src={avatar} alt="User Avatar" />
+                    <Image
+                        src={`/${avatar}`}
+                        width={32}
+                        height={32}
+                        alt="User Avatar"
+                    />
                 )}
             </td>
-            <td className="user-table-id">
+            <td>
                 {user.id.toString()}
             </td>
-            <td className="user-table-username">
+            <td>
                 {user.name}
             </td>
-            <td className="user-table-email">
+            <td>
                 {user.email}
             </td>
-            <td className="user-table-actions">
-                <Link href={edit_link} className="user-table-action-edit">Edit</Link>
-                <Link href="#" className="user-table-action-delete" onClick={(e) => {
-                    e.preventDefault();
+            <td className="flex gap-5 justify-center">
+                <Link
+                    href={edit_link}
+                    className="btn btn-primary"
+                >Edit</Link>
+                <button
+                    className="btn btn-danger"
+                    onClick={(e) => {
+                        e.preventDefault();
 
-                    if (confirm("Are you sure?")) {
-                        user_del_mut.mutate({
-                            id: user.id
-                        });
-                    }
-                }}>Delete</Link>
+                        if (confirm("Are you sure?")) {
+                            user_del_mut.mutate({
+                                id: user.id
+                            });
+                        }
+                    }}
+                >Delete</button>
             </td>
         </tr>
-    );
+    )
 }
 
 function Gen_Page_Numbers(page_num: number, count: number): number[] {
@@ -150,22 +189,16 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     // Get pagination options.
     const users_per_page = Number(process.env.ADMIN_USERS_PER_PAGE) || 15;
     const page_number = (ctx.query?.p) ? Number(ctx.query.p.toString()) : 1;
-
-    //const admin_only = (ctx.query?.admins_only) ? true : false;
-    //const contributors_only = (ctx.query?.contributors_only) ? true : false;
     
     let users: User[] = [];
-    let authed = false;
 
     // Retrieve session.
-    const session = await getSession(ctx);
+    const session = await getServerAuthSession(ctx);
 
     // Permission check.
-    const perm_check = session && Has_Perm(session, "admin");
+    const perm_check = session && HasRole(session, "ADMIN");
 
-    if (perm_check) {
-        authed = true;
-        
+    if (perm_check) {        
         const offset = Number(users_per_page) * (page_number - 1);
 
         users = await prisma.user.findMany({
@@ -177,10 +210,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     return {
         props: {
             users: users,
-            authed: authed,
             page_number: page_number
         }
     }
 }
-
-export default Index;

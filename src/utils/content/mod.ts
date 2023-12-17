@@ -1,151 +1,704 @@
-import fs from "fs";
-
 import { type ModCredit, type Mod, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource, type PrismaClient } from "@prisma/client";
 
-import FileType from "@utils/base64";
+import { UploadFile } from "@utils/file_upload";
+import { type ModRowBrowser } from "~/types/mod";
 
-export const Insert_Or_Update_Mod = async (
-    prisma: PrismaClient,
+import { prisma } from "@server/db/client";
+import { Prisma } from "@prisma/client";
 
-    name?: string,
-    url?: string,
-    description?: string,
-    visible?: boolean,
-    
-    lookup_id?: number,
-    lookup_url?: string,
+export async function GetMods ({
+    isStatic = true,
+    limit = 10,
+    cursor,
+    ratingTimeRange,
+    userId,
+    categories = [],
+    search,
+    visible,
+    sort = 0
+} : {
+    isStatic?: boolean
+    limit?: number
+    cursor?: number | null
+    ratingTimeRange?: Date
+    userId?: string
+    categories?: number[]
+    search?: string
+    visible?: boolean
+    sort?: number
+}): Promise<[ModRowBrowser[], number | undefined]> {
+    // Retrieve cursor item.
+    let cursorItem: ModRowBrowser | undefined = undefined;
+    let cursorItemEditAt: Date | undefined = undefined;
+    let cursorItemCreatedAt: Date | undefined = undefined;
 
-    owner_id?: string,
-    owner_name?: string,
+    if (!isStatic && cursor) {
+        const cursorItems = await prisma.$queryRaw<ModRowBrowser[]>`
+            SELECT
+                "Mod"."id",
+                "Mod"."totalViews",
+                "Mod"."totalDownloads",
+                "Mod"."editAt",
+                "Mod"."createAt",
+                (
+                    (
+                        SELECT
+                            COUNT(*) 
+                        FROM
+                            "ModRating" 
+                        WHERE 
+                                "ModRating"."modId"="Mod"."id" 
+                            AND 
+                                "ModRating"."positive" = true
+                            ${ratingTimeRange ?
+                                    Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
+                                :
+                                    Prisma.empty
+                            }
+                    )
+                        -
+                    (
+                        SELECT
+                            COUNT(*)
+                        FROM
+                            "ModRating"
+                        WHERE 
+                                "ModRating"."modId"="Mod"."id"
+                            AND
+                                "ModRating"."positive" = false
+                            ${ratingTimeRange ?
+                                    Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
+                                :
+                                    Prisma.empty
+                            }
+                    )
+                ) + 1 AS "rating"
+            FROM
+                "Mod"
+            WHERE
+                "Mod"."id" = ${cursor}
+        `;
 
-    banner?: string,
-    bremove?: boolean,
-    
-    category_id?: number | null,
+        cursorItem = cursorItems?.[0];
 
-    description_short?: string,
-    install?: string,
+        if (cursorItem) {
+            cursorItemEditAt = new Date(
+                cursorItem.editAt.getUTCFullYear(),
+                cursorItem.editAt.getUTCMonth(),
+                cursorItem.editAt.getUTCDate(),
+                cursorItem.editAt.getUTCHours(),
+                cursorItem.editAt.getUTCMinutes(),
+                cursorItem.editAt.getUTCSeconds(),
+                cursorItem.editAt.getUTCMilliseconds()
+            );
 
-    downloads?: ModDownload[],
-    screenshots?: ModScreenshot[],
-    sources?: ModSource[],
-    installers?: ModInstaller[],
+            cursorItemCreatedAt = new Date(
+                cursorItem.createAt.getUTCFullYear(),
+                cursorItem.createAt.getUTCMonth(),
+                cursorItem.createAt.getUTCDate(),
+                cursorItem.createAt.getUTCHours(),
+                cursorItem.createAt.getUTCMinutes(),
+                cursorItem.createAt.getUTCSeconds(),
+                cursorItem.createAt.getUTCMilliseconds()
+            );
+        }
+    }
+
+    let count = limit;
+
+    if (!isStatic)
+        count++;
+
+    const hasWhere = categories.length > 0 || visible !== undefined || search || cursorItem;
+
+    const mods = await prisma.$queryRaw<ModRowBrowser[]>` 
+        SELECT 
+            "Mod".*,
+            (
+                (
+                    SELECT
+                        COUNT(*) 
+                    FROM
+                        "ModRating" 
+                    WHERE 
+                            "ModRating"."modId"="Mod"."id" 
+                        AND 
+                            "ModRating"."positive" = true
+                        ${ratingTimeRange ?
+                                Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
+                            :
+                                Prisma.empty
+                        }
+                )
+                    -
+                (
+                    SELECT
+                        COUNT(*)
+                    FROM
+                        "ModRating"
+                    WHERE 
+                            "ModRating"."modId"="Mod"."id"
+                        AND
+                            "ModRating"."positive" = false
+                        ${ratingTimeRange ?
+                                Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
+                            :
+                                Prisma.empty
+                        }
+                )
+            ) + 1 AS "rating",
+            json_build_object(
+                'id', "category"."id",
+                'parentId', "category"."parentId",
+                'parent', 
+                CASE 
+                    WHEN "categoryparent"."id" IS NOT NULL THEN 
+                        json_build_object(
+                            'id', "categoryparent"."id",
+                            'name', "categoryparent"."name",
+                            'url', "categoryparent"."url",
+                            'icon', "categoryparent"."icon"
+                        )
+                    ELSE
+                        NULL
+                END,
+                'name', "category"."name",
+                'url', "category"."url",
+                'icon', "category"."icon"
+            ) AS "category",
+            json_agg(DISTINCT "ModDownload".*) AS "ModDownload",
+            (
+                SELECT json_agg(jsonb_build_object(
+                    'sourceUrl', "subquery"."sourceUrl",
+                    'query', "subquery"."query",
+                    'source', CASE 
+                        WHEN "subquery"."sourceUrl" IS NOT NULL THEN
+                            jsonb_build_object(
+                                'name', "subquery"."sourceName",
+                                'url', "subquery"."sourceUrl",
+                                'icon', "subquery"."sourceIcon"
+                            )
+                        ELSE
+                            NULL
+                    END
+                )) AS "ModSource"
+                FROM (
+                    SELECT DISTINCT ON ("ModSource"."sourceUrl")
+                        "ModSource"."sourceUrl",
+                        "ModSource"."query",
+                        "modsourcesource"."name" AS "sourceName",
+                        "modsourcesource"."icon" AS "sourceIcon"
+                    FROM "ModSource"
+                    LEFT JOIN
+                        "Source" 
+                        AS 
+                            "modsourcesource"
+                        ON
+                            "ModSource"."sourceUrl" = "modsourcesource"."url"
+                    WHERE
+                        "Mod"."id" = "ModSource"."modId"
+                ) AS "subquery"
+            ) AS "ModSource",
+            (
+                SELECT json_agg(jsonb_build_object(
+                    'sourceUrl', "subquery"."sourceUrl",
+                    'url', "subquery"."url",
+                    'source', CASE 
+                        WHEN "subquery"."sourceUrl" IS NOT NULL THEN
+                            jsonb_build_object(
+                                'name', "subquery"."sourceName",
+                                'url', "subquery"."sourceUrl",
+                                'icon', "subquery"."sourceIcon"
+                            )
+                        ELSE
+                            NULL
+                    END
+                )) AS "ModInstaller"
+                FROM (
+                    SELECT DISTINCT ON ("ModInstaller"."sourceUrl")
+                        "ModInstaller"."sourceUrl",
+                        "ModInstaller"."url",
+                        "modinstallersource"."name" AS "sourceName",
+                        "modinstallersource"."icon" AS "sourceIcon"
+                    FROM
+                        "ModInstaller"
+                    LEFT JOIN
+                        "Source"
+                        AS
+                            "modinstallersource"
+                        ON
+                            "ModInstaller"."sourceUrl" = "modinstallersource"."url"
+                    WHERE
+                        "Mod"."id" = "ModInstaller"."modId"
+                ) AS "subquery"
+            ) AS "ModInstaller",
+            json_agg(DISTINCT "ModRating".*) AS "ModRating"
+        FROM 
+            "Mod"
+        LEFT JOIN 
+            "Category"
+            AS
+                "category"
+            ON
+                "Mod"."categoryId" = "category"."id"
+        LEFT JOIN
+            "Category"
+            AS
+                "categoryparent"
+            ON
+                "category"."parentId" = "categoryparent"."id"
+        LEFT JOIN
+            "ModDownload"
+            ON
+                "Mod"."id" = "ModDownload"."modId"
+        LEFT JOIN
+            "ModSource"
+            ON
+                "Mod"."id" = "ModSource"."modId"
+        LEFT JOIN
+            "ModInstaller"
+            ON 
+                "Mod"."id" = "ModInstaller"."modId"
+        LEFT JOIN
+            "ModRating"
+            ON
+                    "Mod"."id" = "ModRating"."modId"
+                AND
+                    "ModRating"."userId" = ${userId ?? ""}
+        ${hasWhere ? 
+            Prisma.sql`WHERE
+                ${categories.length > 0 ?
+                        Prisma.sql`"Mod"."categoryId" IN (${Prisma.join(categories)}) ${(visible != undefined || search || cursor) ? Prisma.sql`AND` : Prisma.empty}`
+                    :
+                        Prisma.empty
+                }
+                ${visible !== undefined ?
+                        Prisma.sql`"Mod"."visible" = ${visible} ${(search || cursor) ? Prisma.sql`AND` : Prisma.empty}`
+                    :
+                        Prisma.empty
+                }
+                ${search ?
+                        Prisma.sql`(
+                            "Mod"."name" ILIKE ${"%" + search + "%"} OR
+                            "Mod"."descriptionShort" ILIKE ${"%" + search + "%"} OR
+                            "Mod"."ownerName" ILIKE ${"%" + search + "%"} OR
+                            "category"."name" ILIKE ${"%" + search + "%"} OR
+                            "category"."nameShort" ILIKE ${"%" + search + "%"}
+                        ) ${cursor ? Prisma.sql`AND` : Prisma.empty}`
+                    :
+                        Prisma.empty
+                }
+                ${cursorItem ?
+                        Prisma.sql`
+                            (
+                                (
+                                    ${sort == 0 ?
+                                        Prisma.sql`
+                                            (
+                                                SELECT
+                                                    COUNT(*) 
+                                                FROM
+                                                    "ModRating" 
+                                                WHERE 
+                                                        "ModRating"."modId"="Mod"."id" 
+                                                    AND 
+                                                        "ModRating"."positive" = true
+                                                    ${ratingTimeRange ?
+                                                            Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
+                                                        :
+                                                            Prisma.empty
+                                                    }
+                                            )
+                                                -
+                                            (
+                                                SELECT
+                                                    COUNT(*)
+                                                FROM
+                                                    "ModRating"
+                                                WHERE 
+                                                        "ModRating"."modId"="Mod"."id"
+                                                    AND
+                                                        "ModRating"."positive" = false
+                                                    ${ratingTimeRange ?
+                                                            Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
+                                                        :
+                                                            Prisma.empty
+                                                    }
+                                            ) + 1 = ${cursorItem.rating}`
+                                        :
+                                            Prisma.empty
+                                    }
+                                    ${sort == 1 ?
+                                            Prisma.sql`"Mod"."totalViews" = ${cursorItem.totalViews}`
+                                        :
+                                            Prisma.empty
+                                    }
+                                    ${sort == 2 ?
+                                            Prisma.sql`"Mod"."totalDownloads" = ${cursorItem.totalDownloads}`
+                                        :
+                                            Prisma.empty
+                                    }
+                                    ${sort == 3 && cursorItemEditAt ?
+                                            Prisma.sql`"Mod"."editAt" = ${cursorItemEditAt}`
+                                        :
+                                            Prisma.empty
+                                    }
+                                    ${sort == 4 && cursorItemCreatedAt ?
+                                            Prisma.sql`"Mod"."createAt" = ${cursorItemCreatedAt}`
+                                        :
+                                            Prisma.empty
+                                    }
+                                    AND
+                                        "Mod"."id" <= ${cursorItem.id}
+                                )
+                                OR
+                                (
+                                    ${sort == 0 ?
+                                            Prisma.sql`
+                                                (
+                                                    SELECT
+                                                        COUNT(*) 
+                                                    FROM
+                                                        "ModRating" 
+                                                    WHERE 
+                                                            "ModRating"."modId"="Mod"."id" 
+                                                        AND 
+                                                            "ModRating"."positive" = true
+                                                        ${ratingTimeRange ?
+                                                                Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
+                                                            :
+                                                                Prisma.empty
+                                                        }
+                                                )
+                                                    -
+                                                (
+                                                    SELECT
+                                                        COUNT(*)
+                                                    FROM
+                                                        "ModRating"
+                                                    WHERE 
+                                                            "ModRating"."modId"="Mod"."id"
+                                                        AND
+                                                            "ModRating"."positive" = false
+                                                        ${ratingTimeRange ?
+                                                                Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
+                                                            :
+                                                                Prisma.empty
+                                                        }
+                                                ) + 1 < ${cursorItem.rating}`
+                                        :
+                                            Prisma.empty
+                                    }
+                                    ${sort == 1 ?
+                                            Prisma.sql`"Mod"."totalViews" < ${cursorItem.totalViews}`
+                                        :
+                                            Prisma.empty
+                                    }
+                                    ${sort == 2 ?
+                                            Prisma.sql`"Mod"."totalDownloads" < ${cursorItem.totalDownloads}`
+                                        :
+                                            Prisma.empty
+                                    }
+                                    ${sort == 3 && cursorItemEditAt ?
+                                            Prisma.sql`"Mod"."editAt" < ${cursorItemEditAt}`
+                                        :
+                                            Prisma.empty
+                                    }
+                                    ${sort == 4 && cursorItemCreatedAt ?
+                                            Prisma.sql`"Mod"."createAt" < ${cursorItemCreatedAt}`
+                                        :
+                                            Prisma.empty
+                                    }
+                                )
+                            )
+                        `
+                    :
+                        Prisma.empty
+                }
+            `
+        :
+            Prisma.empty
+        }
+        GROUP BY
+            "Mod"."id",
+            "category"."id",
+            "categoryparent"."id"
+        ORDER BY
+            ${sort == 0 ?
+                    Prisma.sql`"rating" DESC,`
+                :
+                    Prisma.empty
+            }
+            ${sort == 1 ? 
+                    Prisma.sql`"Mod"."totalViews" DESC,`
+                :
+                    Prisma.empty
+            }
+            ${sort == 2 ?
+                    Prisma.sql`"Mod"."totalDownloads" DESC,`
+                :
+                    Prisma.empty
+            }
+            ${sort == 3 ?
+                    Prisma.sql`"Mod"."editAt" DESC,`
+                :
+                    Prisma.empty
+            }
+            ${sort == 4 ?
+                    Prisma.sql`"Mod"."createAt" DESC,`
+                :
+                    Prisma.empty
+            }
+            "Mod"."id" DESC
+        LIMIT ${count}
+    `;
+
+
+    // Retrieve next mod if any.
+    let nextMod: number | undefined = undefined;
+
+    if (!isStatic && mods.length > limit) {
+        const next = mods.pop();
+        nextMod = next?.id;
+    }
+
+    return [mods, nextMod];
+}
+
+export async function InsertOrUpdateMod ({
+    prisma,
+
+    lookupId,
+    srcUrl,
+    srcQuery,
+
+    ownerId,
+    ownerName,
+
+    categoryId,
+
+    name,
+    url,
+    description,
+    descriptionShort,
+    install,
+    visible,
+
+    banner,
+    bremove,
+
+    lastScanned,
+
+    downloads,
+    screenshots,
+    sources,
+    installers,
+    credits
+} : {
+    prisma: PrismaClient
+
+    lookupId?: number
+    srcUrl?: string
+    srcQuery?: string
+
+    ownerId?: string,
+    ownerName?: string
+
+    categoryId?: number | null
+
+    name?: string
+    url?: string
+    description?: string
+    descriptionShort?: string | null
+    install?: string | null
+    visible?: boolean
+
+    banner?: string
+    bremove?: boolean
+
+    lastScanned?: Date | null
+
+    downloads?: ModDownload[]
+    screenshots?: ModScreenshot[]
+    sources?: ModSource[]
+    installers?: ModInstaller[]
     credits?: ModCredit[]
-): Promise<[Mod | null, boolean, string | null | any]> => {
+}): Promise<[Mod | null, boolean, string | null | unknown]> {
     // Returns.
     let mod: Mod | null = null;
 
-    // Make sure we have text in required fields.
-    if (!lookup_id && !lookup_url && (!url || url.length < 1 || !name || name.length < 1 || !description || description.length < 1)) {
-        let err = "URL is empty.";
-
-        if (!name || name.length < 1)
-            err = "Name is empty.";
-
-        if (!description || description.length < 1)
-            err = "Description is empty.";
-
-        return [null, false, err]
-    }
-
     // Let's now handle file uploads.
-    let banner_path: string | boolean | null = false;
+    let bannerPath: string | boolean | null = false;
 
     if (bremove)
-        banner_path = null;
+        bannerPath = null;
 
-    if (banner && banner.length > 0 && !bremove) {
-        const base64Data = banner.split(",")[1];
+    if (!bremove && (banner && banner.length > 0)) {
+        const path = `/images/mod/${url}`
 
-        if (base64Data) {
-            // Retrieve file type.
-            const fileExt = FileType(base64Data);
+        const [success, err, fullPath] = UploadFile(path, banner);
 
-            // Make sure we don't have an-++ unknown file type.
-            if (fileExt != "unknown") {
-                // Now let's compile our file name.
-                const fileName = url + "." + fileExt;
-
-                // Set icon path.
-                banner_path = "/images/mod/" + fileName;
-
-                // Convert to binary from base64.
-                const buffer = Buffer.from(base64Data, "base64");
-
-                // Write file to disk.
-                try {
-                    fs.writeFileSync(process.env.UPLOADS_DIR + "/" + banner_path, buffer);
-                } catch (error) {
-                    return [null, false, error];
-                }
-            } else
-                return [null, false, "Banner's file extension is unknown."];
-        } else
-            return [null, false, "Parsing base64 data is null."];
+        if (!success || !fullPath)
+            return [null, false, err];
+        
+        bannerPath = fullPath;
     }
 
     try {
-        if (lookup_id || lookup_url) {
+        if (lookupId) {
+            console.log(`Type for downloads is ${typeof downloads}`);
+            console.log(downloads);
             mod = await prisma.mod.update({
                 where: {
-                    ...(lookup_id && {
-                        id: lookup_id
-                    }),
-                    ...(lookup_url && {
-                        url: lookup_url
+                    id: lookupId,
+                    ...((srcUrl || srcQuery) && {
+                        ModSource: {
+                            some: {
+                                sourceUrl: srcUrl,
+                                query: srcQuery
+                            }
+                        }
                     })
                 },
                 data: {
                     editAt: new Date(Date.now()),
-                    ...(visible !== undefined && {
-                        visible: visible
+                    visible: visible,
+                    ownerName: ownerName,
+                    ownerId: ownerId,
+                    name: name,
+                    url: url,
+                    categoryId: categoryId,
+                    description: description,
+                    descriptionShort: descriptionShort,
+                    install: install,
+                    lastScanned: lastScanned,
+                    ...(bannerPath !== false && {
+                        banner: bannerPath
                     }),
-                    ...(owner_name && owner_name.length > 0 && {
-                        ownerName: owner_name
+                    ...(typeof downloads !== "undefined" && {
+                        ModDownload: {
+                            deleteMany: {
+                                modId: lookupId
+                            },
+                            create: downloads.map((download) => ({
+                                name: download.name,
+                                url: download.url
+                            }))
+                        }
                     }),
-                    ...(owner_id && {
-                        ownerId: owner_id
+                    ...(typeof sources !== "undefined" && {
+                        ModSource: {
+                            deleteMany: {
+                                modId: lookupId
+                            },
+                            create: sources.map((source) => ({
+                                sourceUrl: source.sourceUrl,
+                                query: source.query,
+                                primary: source.primary
+                            }))
+                        },
                     }),
-                    ...(name && {
-                        name: name
+                    ...(typeof installers !== "undefined" && {
+                        ModInstaller: {
+                            deleteMany: {
+                                modId: lookupId
+                            },
+                            create: installers.map((installer) => ({
+                                sourceUrl: installer.sourceUrl,
+                                url: installer.url
+                            }))
+                        },
                     }),
-                    ...(url && {
-                        url: url
+                    ...(typeof screenshots !== "undefined" && {
+                        ModScreenshot: {
+                            deleteMany: {
+                                modId: lookupId
+                            },
+                            create: screenshots.map((screenshot) => ({
+                                url: screenshot.url
+                            }))
+                        },
                     }),
-                    ...(category_id !== undefined && {
-                        categoryId: category_id
-                    }),
-                    ...(description && {
-                        description: description
-                    }),
-                    ...(description && {
-                        descriptionShort: description_short
-                    }),
-                    ...(install && {
-                        install: install
-                    }),
-                    ...(banner_path !== false && {
-                        banner: banner_path
+                    ...(typeof credits !== "undefined" && {
+                        ModCredit: {
+                            deleteMany: {
+                                modId: lookupId
+                            },
+                            create: credits.map((credit) => ({
+                                name: credit.name,
+                                credit: credit.credit,
+                                userId: credit.userId
+                            }))
+                        }
                     })
                 }
             });
         } else {
+            // Make sure certain values are filled before creating.
+            if (!url)
+                return [null, false, "URL is empty."]
+
+            if (!name)
+                return [null, false, "Name is empty."]
+
+            if (!description)
+                return [null, false, "Description is empty."]
+
             mod = await prisma.mod.create({
                 data: {
                     visible: visible,
-                    ownerName: owner_name,
-                    ownerId: owner_id,
-
-                    name: name ?? "",
-                    url: url ?? "",
-                    categoryId: category_id ?? null,
-
-                    description: description ?? "",
-                    descriptionShort: description_short,
+                    ownerName: ownerName,
+                    ownerId: ownerId,
+                    name: name,
+                    url: url,
+                    categoryId: categoryId,
+                    description: description,
+                    descriptionShort: descriptionShort,
                     install: install,
-
-                    ...(banner_path !== false && {
-                        banner: banner_path
+                    lastScanned: lastScanned,
+                    ...(bannerPath !== false && {
+                        banner: bannerPath
+                    }),
+                    ...(typeof downloads !== "undefined" && {
+                        ModDownload: {
+                            create: downloads.map((download) => ({
+                                name: download.name,
+                                url: download.url
+                            }))
+                        }
+                    }),
+                    ...(typeof sources !== "undefined" && {
+                        ModSource: {
+                            create: sources.map((source) => ({
+                                sourceUrl: source.sourceUrl,
+                                query: source.query,
+                                primary: source.primary
+                            }))
+                        }
+                    }),
+                    ...(typeof installers !== "undefined" && {
+                        ModInstaller: {
+                            create: installers?.map((installer) => ({
+                                sourceUrl: installer.sourceUrl,
+                                url: installer.url
+                            }))
+                        }
+                    }),
+                    ...(typeof screenshots !== "undefined" && {
+                        ModScreenshot: {
+                            create: screenshots.map((screenshot) => ({
+                                url: screenshot.url
+                            }))
+                        }
+                    }),
+                    ...(typeof credits !== "undefined" && {
+                        ModCredit: {
+                            create: credits.map((credit) => ({
+                                name: credit.name,
+                                credit: credit.credit,
+                                userId: credit.userId
+                            }))
+                        }
                     })
                 }
             });
@@ -157,214 +710,20 @@ export const Insert_Or_Update_Mod = async (
     if (mod == null)
         return [null, false, "Mod is null."];
 
-    // For now, we want to clear out all relation data to our mod before re-updating with how our form and React setup works.
-    try {
-        if (downloads){
-            await prisma.modDownload.deleteMany({
-                where: {
-                    modId: mod.id
-                }
-            });
-        }
-
-        if (screenshots) {
-            await prisma.modScreenshot.deleteMany({
-                where: {
-                    modId: mod.id
-                }
-            });
-        }
-
-        if (sources) {
-            await prisma.modSource.deleteMany({
-                where: {
-                    modId: mod.id
-                }
-            });
-        }
-
-        if (installers) {
-            await prisma.modInstaller.deleteMany({
-                where: {
-                    modId: mod.id
-                }
-            });
-        }
-
-        if (credits) {
-            await prisma.modCredit.deleteMany({
-                where: {
-                    modId: mod.id
-                }
-            });
-        }
-    } catch (error) {
-        // Log, but continue.
-        console.error("Error deleting relations for Mod ID #" + mod.id)
-        console.error(error)
-    }
-
-    // Loop through downloads.
-    if (downloads) {
-        downloads.forEach(async ({ name, url }) => {
-            if (!url || url.length < 1 || !name || !mod)
-                return;
-
-            try {
-                await prisma.modDownload.upsert({
-                    where: {
-                        modId_url: {
-                            modId: mod.id,
-                            url: url
-                        }
-                    },
-                    create: {
-                        modId: mod.id,
-                        name: name,
-                        url: url
-                    },
-                    update: {
-                        name: name,
-                        url: url
-                    }
-                });
-            } catch (error) {
-                console.error("Error inserting download for mod ID #" + mod.id + " (name => " + name + ". URL => " + url);
-                console.error(error);
-            }
-        });
-    }
-
-    // Loop through screenshots.
-    if (screenshots) {
-        screenshots.forEach(async ({ url }) => {
-            if (!url || url.length < 1 || !mod)
-                return
-
-            try {
-                await prisma.modScreenshot.upsert({
-                    where: {
-                        modId_url: {
-                            modId: mod.id,
-                            url: url
-                        }
-                    },
-                    create: {
-                        modId: mod.id,
-                        url: url
-                    },
-                    update: {
-                        url: url
-                    }
-                });
-            } catch (error) {
-                console.error("Error inserting screenshot for mod ID #" + mod.id + " (URL => " + url);
-                console.error(error);
-            }
-        });
-    }
-
-    // Loop through sources.
-    if (sources) {
-        sources.forEach(async ({ sourceUrl, query }) => {
-            if (!sourceUrl || sourceUrl.length < 1 || !query || query.length < 1 || !mod)
-                return;
-
-            try {
-                await prisma.modSource.upsert({
-                    where: {
-                        modId_sourceUrl: {
-                            modId: mod.id,
-                            sourceUrl: sourceUrl
-                        }
-                    },
-                    create: {
-                        modId: mod.id,
-                        sourceUrl: sourceUrl,
-                        query: query,
-                    },
-                    update: {
-                        query: query
-                    }
-                });
-            } catch (error) {
-                console.error("Error inserting source for mod ID #" + mod.id + " (URL => " + sourceUrl + ". Query => " + query);
-                console.error(error);
-            }
-        });
-    }
-
-    // Loop through installers.
-    if (installers) {
-        installers.forEach(async ({ sourceUrl, url }) => {
-            if (!sourceUrl || sourceUrl.length < 1 || !url || url.length < 1 || !mod)
-                return;
-
-            try {
-                await prisma.modInstaller.upsert({
-                    where: {
-                        modId_sourceUrl: {
-                            modId: mod.id,
-                            sourceUrl: sourceUrl
-                        }
-                    },
-                    create: {
-                        modId: mod.id,
-                        sourceUrl: sourceUrl,
-                        url: url
-                    },
-                    update: {
-                        url: url
-                    }
-                });
-            } catch (error) {
-                console.error("Error inserting installer for mod ID #" + mod.id + " (source URL => " + sourceUrl + ". URL => " + url);
-                console.error(error);
-            }
-        });
-    }
-
-    // Loop through credits.
-    if (credits) {
-        credits.forEach(async ({ name, credit }) => {
-            if (!mod || !name || name.length < 1 || !credit || credit.length < 1)
-                return;
-
-            try {
-                await prisma.modCredit.create({
-                    data: {
-                        modId: mod.id,
-                        name: name,
-                        credit: credit
-                    }
-                });
-            } catch (error) {
-                console.error("Error inserting credit for mod ID #" + mod.id + " (name => " + name + ". Credit => " + credit);
-                console.error(error);     
-            }
-        })
-    }
-
     return [mod, true, null];
 }
 
-export const Delete_Mod = async (
-    prisma: PrismaClient,
-    id?: number,
-    url?: string
-): Promise<[boolean, string | any | null]> => {
-    if (!id && !url)
-        return [false, "ID and URL both not specified!"];
-
+export async function DeleteMod ({
+    prisma,
+    id,
+} : {
+    prisma: PrismaClient
+    id: number
+}): Promise<[boolean, string | unknown | null]> {
     try {
         await prisma.mod.delete({
             where: {
-                ...(id && {
-                    id: id
-                }),
-                ...(url && {
-                    url: url
-                })
+                id: id
             }
         });
     } catch (error) {
@@ -374,11 +733,15 @@ export const Delete_Mod = async (
     return [true, null];
 }
 
-export const Get_Mod_Rating = async (
+export async function GetModRating ({
+    prisma,
+    id,
+    date
+} : {
     prisma: PrismaClient,
     id: number,
     date?: Date
-): Promise<number> => {
+}): Promise<number> {
     const rating_pos = await prisma.modRating.count({
         where: {
             modId: id,
@@ -405,3 +768,4 @@ export const Get_Mod_Rating = async (
 
     return (rating_pos - rating_neg) + 1;
 }
+

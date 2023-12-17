@@ -4,10 +4,11 @@ import { TRPCError } from "@trpc/server";
 
 import { z } from "zod";
 
-import { Delete_User, Insert_Or_Update_User } from "@utils/user";
+import { DeleteUser, InsertOrUpdateUser } from "@utils/user";
+import { UserRole } from "@prisma/client";
 
 export const userRouter = router({
-    updateUser: adminProcedure
+    update: adminProcedure
         .input(z.object({
             id: z.string(),
 
@@ -18,7 +19,17 @@ export const userRouter = router({
             aremove: z.boolean().default(false)
         }))
         .mutation(async ({ ctx, input }) => {
-            const [user, success, err] = await Insert_Or_Update_User(ctx.prisma, input.id, input.name, input.email, input.avatar, input.aremove);
+            const [user, success, err] = await InsertOrUpdateUser ({
+                prisma: ctx.prisma,
+                
+                lookupId: input.id,
+
+                name: input.name,
+                email: input.email,
+
+                avatar: input.avatar,
+                aremove: input.aremove
+            });
 
             if (!success || !user) {
                 console.error(err);
@@ -29,12 +40,15 @@ export const userRouter = router({
                 })
             }
         }),
-    delUser: adminProcedure
+    del: adminProcedure
         .input(z.object({
             id: z.string()
         }))
         .mutation(async ({ ctx, input }) => {
-            const [success, err] = await Delete_User(ctx.prisma, input.id);
+            const [success, err] = await DeleteUser ({
+                prisma: ctx.prisma,
+                id: input.id
+            });
 
             if (!success) {
                 console.error(err);
@@ -42,6 +56,71 @@ export const userRouter = router({
                 throw new TRPCError({
                     code: "BAD_REQUEST",
                     message: (typeof err == "string") ? err : "Unable to edit user."
+                });
+            }
+        }),
+    addRole: adminProcedure
+        .input(z.object({
+            id: z.string(),
+            role: z.nativeEnum(UserRole)
+        }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                await ctx.prisma.user.update({
+                    data: {
+                        roles: {
+                            push: input.role 
+                        }
+                    },
+                    where: {
+                        id: input.id
+                    }
+                })
+            } catch (error: unknown) {
+                throw new TRPCError({
+                    message: `Error adding role '${input.role}' to user '${input.id}'. Error => ${error}`,
+                    code: "BAD_REQUEST"
+                });
+            }
+        }),
+    delRole: adminProcedure
+        .input(z.object({
+            id: z.string(),
+            role: z.nativeEnum(UserRole)
+        }))
+        .mutation(async ({ ctx, input}) => {
+            try {
+                // Retrieve current user.
+                const user = await ctx.prisma.user.findFirstOrThrow({
+                    where: {
+                        id: input.id
+                    }
+                })
+
+                // Copy new roles.
+                const newRoles = user.roles;
+
+                // Find existing role and remove.
+                const idx = user.roles.findIndex(tmp => tmp == input.role);
+
+                if (idx !== -1)
+                    newRoles.splice(idx, 1);
+
+                // Update user with new roles.
+                await ctx.prisma.user.update({
+                    data: {
+                        roles: {
+                            set: newRoles
+                        }
+                    },
+                    where: {
+                        id: input.id
+                    }
+                })
+            } catch (error: unknown) {
+                throw new TRPCError({
+                    message: `Error deleting role '${input.role}' for user '${input.id}'. Error => ${error}`,
+                    code: "BAD_REQUEST"
                 });
             }
         })

@@ -1,10 +1,23 @@
-import fs from "fs";
-
 import { type PrismaClient, type Source } from "@prisma/client";
+import { UploadFile } from "@utils/file_upload";
 
-import FileType from "@utils/base64";
+export async function InsertOrUpdateSource ({
+    prisma,
 
-export const Insert_Or_Update_Source = async (
+    url,
+
+    update,
+
+    name,
+    description,
+    classes,
+
+    icon,
+    banner,
+
+    iremove,
+    bremove,
+} : {
     prisma: PrismaClient,
 
     url: string,
@@ -18,9 +31,9 @@ export const Insert_Or_Update_Source = async (
     bremove?: boolean,
     
     name?: string,
-    description?: string,
+    description?: string | null,
     classes?: string | null
-): Promise<[Source | null, boolean, string | null | any]> => {
+}): Promise<[Source | null, boolean, string | null | unknown]> {
     // Returns.
     let src: Source | null = null;
 
@@ -37,64 +50,26 @@ export const Insert_Or_Update_Source = async (
     if (bremove)
         banner_path = null;
 
-    if (icon != null && icon.length > 0 && !iremove) {
-        const base64Data = icon.split(",")[1];
+    if (!iremove && icon) {
+        const path = `/images/source/${url}`;
 
-        if (base64Data != null) {
-            // Retrieve file type.
-            const fileExt = FileType(base64Data);
+        const [success, err, fullPath] = UploadFile(path, icon);
 
-            // Make sure we don't have an unknown file type.
-            if (fileExt != "unknown") {
-                // Now let's compile our file name.
-                const fileName = url + "." + fileExt;
+        if (!success || !fullPath)
+            return [null, false, err];
 
-                // Set icon path.
-                icon_path = "/images/source/" + fileName;
-
-                // Convert to binary from base64.
-                const buffer = Buffer.from(base64Data, "base64");
-
-                // Write file to disk.
-                try {
-                    fs.writeFileSync(process.env.UPLOADS_DIR + "/" + icon_path, buffer);
-                } catch (error) {
-                    return [null, false, error];
-                }
-            } else
-                return [null, false, "Icon's file extension is unknown."];
-        } else
-            return [null, false, "Parsing base64 data is null."];
+        icon_path = fullPath;
     }
 
-    if (banner && banner.length > 0 && !bremove) {
-        const base64Data = banner.split(",")[1];
+    if (!bremove && banner) {
+        const path = `/images/source/${url}_banner`;
 
-        if (base64Data) {
-            // Retrieve file type.
-            const fileExt = FileType(base64Data);
+        const [success, err, fullPath] = UploadFile(path, banner);
 
-            // Make sure we don't have an unknown file type.
-            if (fileExt != "unknown") {
-                // Now let's compile our file name.
-                const fileName = url + "_banner." + fileExt;
+        if (!success || !fullPath)
+            return [null, false, err];
 
-                // Set banner path.
-                banner_path = "/images/source/" + fileName;
-
-                // Convert to binary from base64.
-                const buffer = Buffer.from(base64Data, "base64");
-
-                // Write file to disk.
-                try {
-                    fs.writeFileSync(process.env.UPLOADS_DIR + "/" + banner_path, buffer);
-                } catch (error) {
-                    return [null, false, error];
-                }
-            } else
-                return [null, false, "Banner's file extension is unknown."];
-        } else
-            return [src, false, "Parsing base64 data is null."];
+        banner_path = fullPath;
     }
 
     try {
@@ -104,16 +79,10 @@ export const Insert_Or_Update_Source = async (
                     url: url
                 },
                 data: {
-                    ...(name && {
-                        name: name
-                    }),
-                    ...(description != undefined && {
-                        description: description
-                    }),
+                    name: name,
+                    description: description,
                     url: url,
-                    ...(classes != undefined && {
-                        classes: classes
-                    }),
+                    classes: classes,
                     ...(icon_path !== false && {
                         icon: icon_path
                     }),
@@ -124,15 +93,14 @@ export const Insert_Or_Update_Source = async (
             });
         } else {
             if (!name)
-                return [null, false, "Name is empty on creation."];
+                return [null, false, "Name is empty."];
             
             src = await prisma.source.create({
                 data: {
                     name: name,
-                    description: description ?? null,
+                    description: description,
                     url: url,
-                    classes: classes ?? null,
-    
+                    classes: classes,
                     ...(icon_path !== false && {
                         icon: icon_path
                     }),
@@ -149,10 +117,13 @@ export const Insert_Or_Update_Source = async (
     return [src, true, null];
 }
 
-export const Delete_Source = async (
-    prisma: PrismaClient,
+export async function DeleteSource ({
+    prisma,
+    url
+} : {
+    prisma: PrismaClient
     url: string
-): Promise<[boolean, string | any | null]> => {
+}): Promise<[boolean, string | unknown | null]> {
     try {
         await prisma.source.delete({
             where: {

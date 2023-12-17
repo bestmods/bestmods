@@ -2,143 +2,204 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 
 import { prisma } from "@server/db/client";
 
-import { Delete_Mod, Insert_Or_Update_Mod } from "@utils/content/mod";
+import { DeleteMod, InsertOrUpdateMod } from "@utils/content/mod";
 
 import { type ModCredit, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource } from "@prisma/client";
+import { CheckApiAccess } from "@utils/api";
 
-const mod = async (req: NextApiRequest, res: NextApiResponse) => {
-    // Check API key.
-    const authHeaderVal = req.headers.authorization ?? "";
-    const authKey = "Bearer " + process.env.API_AUTH_KEY;
+export default async function Mod (req: NextApiRequest, res: NextApiResponse) {    
+    // Perform API access check.
+    const [ret, err, method] = await CheckApiAccess({
+        req: req,
+        methods: ["GET", "POST", "PATCH", "PUT", "DELETE"]
+    });
 
-    if (authHeaderVal != authKey) {
-        return res.status(401).json({ 
-            message: "Unauthorized.",
-            data: null
+    if (ret !== 200) {
+        return res.status(ret).json({
+            message: err
         });
     }
 
     // If this is a GET request, we are retrieving an item.
-    if (req.method == "GET") {
-        // Retrieve ID and check.
-        const { id } = req.query;
+    if (method == "GET") {
+        // Retrieve where clauses.
+        const { id, visible, srcUrl, srcQuery } = req.query;
 
-        if (!id) {
-            return res.status(400).json({
-                message: "No ID present.",
-                data: null
-            });
-        }
+        // Limit.
+        const limit = Number(req.query?.limit?.toString() ?? 10);
+
+        // Sorting.
+        const sort = Number(req.query?.sort?.toString() ?? 0);
+        const sortInvert = Boolean(req.query?.sortInvert?.toString() ?? false);
+
+        const sortDir = sortInvert ? "asc" : "desc";
 
         // Retrieve category and check.
-        const mod = await prisma.mod.findFirst({
+        const mods = await prisma.mod.findMany({
             include: {
                 owner: true,
-                category: true
+                category: true,
+
+                ModSource: true,
+                ModInstaller: true,
+                ModDownload: true,
+                ModScreenshot: true,
+                ModCredit: true,
+                ModCollections: true
             },
             where: {
-                id: Number(id)
+                ...(id && {
+                    id: Number(id.toString())
+                }),
+                ...(visible && {
+                    visible: Boolean(visible?.toString())
+                }),
+                ...((srcUrl || srcQuery) && {
+                    ModSource: {
+                        some: {
+                            sourceUrl: srcUrl?.toString(),
+                            query: srcQuery?.toString()
+                        }
+                    }
+                })
+            },
+            take: limit,
+            orderBy: {
+                ...(sort == 0 && {
+                    createAt: sortDir
+                }),
+                ...(sort == 1 && {
+                    updateAt: sortDir
+                }),
+                ...(sort == 2 && {
+                    editAt: sortDir
+                }),
+                ...(sort == 3 && {
+                    recountedAt: sortDir
+                }),
+                ...(sort == 4 && {
+                    lastScanned: sortDir
+                })
             }
         });
-
-        if (!mod) {
-            return res.status(404).json({
-                message: "Mod ID " + id + " not found.",
-                data: null
-            });
-        }
 
         // Return mod.
         return res.status(200).json({
-            "message": "Mod fetched!",
-            data: {
-                mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === "bigint" ? v.toString() : v))
-            }
+            message: `${mods.length.toString()} mods fetched!`,
+            data: JSON.parse(JSON.stringify(mods, (_, v) => typeof v === "bigint" ? v.toString() : v))
         });
-    } else if (["POST", "PATCH", "PUT"].includes(req.method ?? "")) {
-        const update = ["PATCH", "PUT"].includes(req.method ?? "");
+    } else if (["POST", "PATCH", "PUT"].includes(method)) {
+        const update = ["PATCH", "PUT"].includes(method);
 
         // Retrieve POST data.
         const { 
             url,
             visible,
-            owner_id,
-            owner_name,
+            ownerId,
+            ownerName,
             name,
             banner,
             bremove,
             description,
-            description_short,
+            descriptionShort,
             install,
-            category_id,
+            categoryId,
             downloads,
             screenshots,
             sources,
             installers,
-            credits
+            credits,
+            lastScanned
         } : {
             url?: string,
             visible?: boolean,
-            owner_id?: string,
-            owner_name?: string,
+            ownerId?: string,
+            ownerName?: string,
             name?: string,
             banner?: string,
             bremove?: boolean
             description?: string,
-            description_short?: string,
+            descriptionShort?: string,
             install?: string,
-            category_id?: number | null,
+            categoryId?: number | null,
             downloads?: ModDownload[]
             screenshots?: ModScreenshot[],
             sources?: ModSource[],
             installers?: ModInstaller[],
             credits?: ModCredit[]
+            lastScanned?: Date | string
         } = req.body;
 
         let id: string | undefined = undefined;
-        let pre_url: string | undefined = undefined;
-
-        if (update) {
-            // Retrieve ID and pre URL if any.
-            id = req.query.id?.toString();
-            pre_url = req.query.url?.toString();
-
-            if (!id && !pre_url) {
-                return res.status(400).json({
-                    message: "Cannot update mod. Missing both ID and URL parameters. Please use one."
-                });
-            }
-        }
-
-        if (!update && (!name || !description || !url)) {
-            return res.status(400).json({
-                message: "Name, description, or URL not found in POST data for new entry.",
-                data: null
-            });
-        }
 
         // If we have an ID, try to find it first.
         if (update) {
+            // Retrieve ID and check.
+            id = req.query.id?.toString();
+
+            if (!id) {
+                return res.status(400).json({
+                    message: "Cannot update mod. Missing ID."
+                });
+            }
+
             const mod = await prisma.mod.findFirst({
                 where: {
-                    ...(id && {
-                        id: Number(id)
-                    }),
-                    ...(pre_url && {
-                        url: pre_url
-                    })
+                    id: Number(id)
                 }
             });
 
             if (!mod) {
                 return res.status(404).json({
-                    message:"Mod not found. Mod ID =>" + id ?? "N/A" + ". URL => " + pre_url ?? "N/A"
+                    message: `Mod not found. Mod ID => ${id?.toString() ?? "N/A"}`
+                });
+            }
+        } else {
+            // Make sure specified fields are filled first.
+            if (!name || !description || !url) {
+                return res.status(400).json({
+                    message: "Name, description, or URL not found in POST data for new entry.",
+                    data: null
                 });
             }
         }
 
+        // Retrieve source URL and query if any.
+        const srcUrl = req.query.srcUrl?.toString();
+        const srcQuery = req.query.srcQuery?.toString();
+
         // Update or insert mod.
-        const [mod, success, err] = await Insert_Or_Update_Mod(prisma, name, url, description, visible, (update) ? Number(id) : undefined, (update) ? pre_url : undefined, owner_id, owner_name, banner, bremove, category_id, description_short, install, downloads, screenshots, sources, installers, credits);
+        const [mod, success, err] = await InsertOrUpdateMod ({
+            prisma: prisma,
+
+            lookupId: (update) ? Number(id) : undefined,
+
+            ownerId: ownerId,
+            ownerName: ownerName,
+
+            categoryId: categoryId,
+
+            name: name,
+            url: url,
+            description: description,
+            descriptionShort: descriptionShort,
+            install: install,
+            visible: visible,
+
+            banner: banner,
+            bremove: bremove,
+
+            lastScanned: lastScanned ? new Date(lastScanned) : undefined,
+
+            srcUrl: srcUrl,
+            srcQuery: srcQuery,
+
+            downloads: downloads,
+            screenshots: screenshots,
+            sources: sources,
+            installers: installers,
+            credits: credits
+        })
 
         // Check for error.
         if (!success || !mod) {
@@ -150,38 +211,35 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
 
         return res.status(200).json({
             message: `${update ? "Inserted" : "Updated"} mod successfully!`,
-            data: {
-                mod: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === "bigint" ? v.toString() : v))
-            }
+            data: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === "bigint" ? v.toString() : v))
         });
-    } else if (req.method == "DELETE") {
-        const { id, url } = req.query;
+    } else if (method == "DELETE") {
+        const { id } = req.query;
 
-        if (!id && !url) {
+        if (!id) {
             return res.status(404).json({
-                message: "Mod ID and URL both not present."
+                message: "Mod ID not present."
             });
         }
 
         // Check if exists.
         const mod = await prisma.mod.findFirst({
             where: {
-                ...(id && {
-                    id: Number(id.toString())
-                }),
-                ...(url && {
-                    url: url.toString()
-                })
+                id: Number(id.toString())
             }
         });
 
         if (!mod) {
             return res.status(400).json({
-                message: "Mod not found. ID => " + id?.toString() ?? "N/A" + ". URL => " + url?.toString() ?? "N/A" + "."
+                message: `Mod not found. ID => ${id.toString()}`
             });
         }
 
-        const [success, err] = await Delete_Mod(prisma, (id) ? Number(id.toString()) : undefined, (url) ? url.toString() : undefined);
+        const [success, err] = await DeleteMod ({
+            prisma: prisma,
+            id: mod.id
+
+        });
 
         if (!success) {
             return res.status(400).json({
@@ -197,6 +255,4 @@ const mod = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({
         message: "Method not allowed."
     });
-};
-
-export default mod;
+}

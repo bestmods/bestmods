@@ -1,16 +1,17 @@
+import { type Category } from "@prisma/client";
+import Image from "next/image";
 import Link from "next/link";
+import { type CategoryWithCount, type CategoryWithChildrenAndCounts } from "~/types/category";
 
-const Row: React.FC<{
-    parent?: any,
-    cat: any,
-    classes?: string[],
-    include_mod_count?: boolean
-}> = ({
+export default function CategoryRow ({
     parent,
     cat,
-    classes,
     include_mod_count
-}) => {
+} : {
+    parent?: Category
+    cat: CategoryWithChildrenAndCounts | CategoryWithCount
+    include_mod_count?: boolean
+}) {
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
 
     const name = cat.name;
@@ -20,20 +21,22 @@ const Row: React.FC<{
 
     const mod_count = cat._count?.Mod ?? 0;
 
-    let render_class = "category-row";
-
     if (parent)
         view_url += parent.url + "/";
 
     view_url += cat.url;
 
-    if (classes)
-        render_class = render_class + " " + classes.join(" ");
-
     return (
-        <div className={render_class}>
-            <Link href={view_url}>
-                <img src={icon} alt="Category icon" />
+        <div>
+            <Link
+                href={view_url}
+                className={`${parent ? `ml-10 ` : ``}p-4 flex flex-wrap items-center gap-1`}
+            >
+                <Image
+                    src={icon}
+                    width={32}
+                    height={32}
+                    alt="Category icon" />
                 <span>
                     {name}
 
@@ -45,7 +48,5 @@ const Row: React.FC<{
                 </span>
             </Link>
         </div>
-    );
+    )
 }
-
-export default Row;

@@ -1,87 +1,88 @@
-import fs from "fs";
-
 import { type Category, type PrismaClient } from "@prisma/client";
 
-import FileType from "@utils/base64";
+import { UploadFile } from "@utils/file_upload";
 
-export const Insert_Or_Update_Category = async (
-    prisma: PrismaClient,
+export async function InsertOrUpdateCategory ({
+    prisma,
 
-    name?: string,
-    name_short?: string,
-    description?: string,
-    url?: string,
-    
-    lookup_id?: number,
+    lookupId,
 
-    icon?: string,
-    iremove?: boolean,
-    
-    parent_id?: number | null,
-    classes?: string | null,
-    has_bg?: boolean
-): Promise<[Category | null, boolean, string | null | any]> => {
+    parentId,
+
+    name,
+    nameShort,
+    description,
+    url,
+    classes,
+    hasBg,
+
+    icon,
+    banner,
+
+    iremove,
+    bremove
+} : {
+    prisma: PrismaClient
+
+    lookupId?: number
+
+    parentId?: number | null
+
+    name?: string
+    nameShort?: string
+    description?: string | null
+    url?: string
+    classes?: string | null
+    hasBg?: boolean
+
+    icon?: string
+    banner?: string
+
+    iremove?: boolean
+    bremove?: boolean
+}): Promise<[Category | null, boolean, string | null | unknown]> {
     // Returns.
     let cat: Category | null = null;
 
-    // Make sure we have text in required fields.
-    if (!lookup_id && (!name || name.length < 1 || !name_short || name_short.length < 1 || !url || url.length < 1)) {
-        let err = "URL is empty.";
-
-        if (!name || name.length < 1)
-            err = "Name is empty.";
-
-        if (!name_short || name_short.length < 1)
-            err = "Short name is empty.";
-
-        return [cat, false, err]
-    }
-
     // We must insert/update our category first.
     try {
-        if (lookup_id) {
+        if (lookupId) {
             cat = await prisma.category.update({
                 where: {
-                    id: lookup_id
+                    id: lookupId
                 },
                 data: {
-                    ...(parent_id != undefined && {
-                        parentId: (parent_id > 0) ? parent_id : null
+                    ...(parentId != undefined && {
+                        parentId: parentId || null
                     }),
-                    ...(description != undefined && {
-                        description: description
-                    }),
-                    ...(name && {
-                        name: name
-                    }),
-                    ...(name_short && {
-                        nameShort: name_short
-                    }),
-                    ...(url && {
-                        url: url
-                    }),
-                    ...(classes && {
-                        classes: classes ?? null,
-                    }),
-                    ...(has_bg && {
-                        hasBg: has_bg
-                    })
+                    description: description,
+                    name: name,
+                    nameShort: nameShort,
+                    url: url,
+                    classes: classes,
+                    hasBg: hasBg
                 }
             });
         } else {
+            // Check to make sure certain fields are defined.
+            if (!url)
+                return [null, false, "URL is empty."];
+
+            if (!name)
+                return [null, false, "Name is empty."];
+
+            if (!nameShort)
+                return [null, false, "Short name is empty."];
+
             cat = await prisma.category.create({
                 data: {
-                    parentId: parent_id ?? null,
-                    description: description ?? null,
-                    name: name ?? "",
-                    nameShort: name_short ?? "",
-                    url: url ?? "",
-                    ...(classes && {
-                        classes: classes
-                    }),
-                    ...(has_bg && {
-                        hasBg: has_bg
-                    })
+                    parentId: parentId || null,
+                    description: description,
+                    name: name,
+                    nameShort: nameShort,
+                    url: url,
+                    classes: classes,
+                    hasBg: hasBg
                 }
             });
         }
@@ -92,53 +93,54 @@ export const Insert_Or_Update_Category = async (
     if (!cat) {
         return [cat, false, "Category is null."];
     }
+
     // Let's now handle file uploads.
-    let icon_path = null;
+    let icon_path: string | boolean | null = false;
 
-    if (icon && icon.length > 0) {
-        const base64Data = icon.split(',')[1];
+    if (iremove)
+        icon_path = null;
 
-        if (base64Data) {
-            // Retrieve file type.
-            const file_ext = FileType(base64Data);
+    if (!iremove && (icon && icon.length > 0)) {
+        const path = `/images/category/${cat.id.toString()}`;
 
-            // Make sure we don't have an unknown file type.
-            if (file_ext != "unknown") {
-                // Now let's compile our file name.
-                const fileName = cat.id + "." + file_ext;
+        const [success, err, fullPath] = UploadFile(path, icon);
 
-                // Set icon path.
-                icon_path = "/images/category/" + fileName;
+        if (!success || !fullPath)
+            return [null, false, err];
 
-                // Convert to binary from base64.
-                const buffer = Buffer.from(base64Data, 'base64');
+        icon_path = fullPath;
+    }
 
-                // Write file to disk.
-                try {
-                    fs.writeFileSync(process.env.UPLOADS_DIR + "/" + icon_path, buffer);
-                } catch (error) {                 
-                    return [cat, false, error];
-                }
-            } else {
-                return [cat, false, "Icon's file extension is unknown."];
-            }
-        } else
-            return [cat, false, "Parsing base64 data is null."];
+    let banner_path: string | boolean | null = false;
+
+    if (bremove)
+    banner_path = null;
+
+    if (!bremove && (banner && banner.length > 0)) {
+        const path = `/images/category/${cat.id.toString()}_banner`;
+
+        const [success, err, fullPath] = UploadFile(path, banner);
+
+        if (!success || !fullPath)
+            return [null, false, err];
+
+            banner_path = fullPath;
     }
 
     // If we have a file upload, update database.
-    if (icon_path != null || iremove) {
-        // If we're removing the icon or banner, make sure our data is null before updating again.
-        if (iremove)
-            icon_path = null;
-
+    if (icon_path !== false || banner_path !== false) {
         try {
             await prisma.category.update({
                 where: {
                     id: cat.id
                 },
                 data: {
-                    icon: icon_path
+                    ...(icon_path !== false && {
+                        icon: icon_path
+                    }),
+                    ...(banner_path !== false && {
+                        banner: banner_path
+                    })
                 }
             })
         } catch (error) {
@@ -149,10 +151,13 @@ export const Insert_Or_Update_Category = async (
     return [cat, true, null];
 }
 
-export const Delete_Category = async (
+export async function DeleteCategory ({
+    prisma,
+    id
+} : {
     prisma: PrismaClient,
     id: number
-): Promise<[boolean, string | any | null]> => {
+}): Promise<[boolean, string | unknown | null]> {
     try {
         await prisma.category.delete({
             where: {

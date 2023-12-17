@@ -1,61 +1,58 @@
 import { type User } from "@prisma/client";
 import { type GetServerSidePropsContext } from "next";
-import { getSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
-import { BestModsPage } from "@components/main";
-import HeadInfo from "@components/head";
+import Main from "@components/main";
+import MetaInfo from "@components/meta";
 
-import EditForm from "@components/forms/user/create_user";
+import EditForm from "@components/forms/user/main";
 
 import { prisma } from "@server/db/client";
 
-import { Has_Perm } from "@utils/permissions";
+import { HasRole } from "@utils/roles";
+import { getServerAuthSession } from "@server/common/get-server-auth-session";
+import NoAccess from "@components/errors/noaccess";
 
-const EditUser: React.FC<{
-    authed: boolean,
-    user: User | null
-}> = ({
-    authed,
+export default function Page ({
     user
-}) => {
+} : {
+    user: User | null
+}) {
+    const { data: session } = useSession();
+
     return (
         <>
-            <HeadInfo
+            <MetaInfo
                 title={"Editing User " + user?.name ?? "N/A" + " - Best Mods"}
             />
-            <BestModsPage>
-                <div className="container mx-auto">
-                    {authed ? (
+            <Main>
+                <div className="flex flex-col gap-2">
+                    {HasRole(session, "ADMIN") ? (
                         <>
                             <h1 className="page-title">Editing User</h1>
                             <EditForm user={user} />
                         </>
                     ) : (
-                        <div className="unauthorized-div">
-                            <p>You do not have permissions to edit a user.</p>
-                        </div>
+                        <NoAccess />
                     )}
                 </div>
-            </BestModsPage>
+            </Main>
         </>
-    );
+    )
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    let authed = false;
     let user: User | null = null;
 
     // Our user ID.
     const id = (ctx.params?.id && ctx.params?.id[0]) ? ctx.params.id[0] : "";
 
     // Retrieve session and permission check.
-    const session = await getSession(ctx);
+    const session = await getServerAuthSession(ctx);
 
-    const perm_check = session && Has_Perm(session, "admin");
+    const perm_check = session && HasRole(session, "ADMIN");
 
     if (perm_check) {
-        authed = true;
-
         user = await prisma.user.findFirst({
             where: {
                 id: id
@@ -65,10 +62,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     return {
         props: {
-            authed: authed,
             user: user
         }
     }
 }
-
-export default EditUser;

@@ -16,14 +16,41 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const items: Array<{ loc: string, lastmod: string, priority?: number, changefreq?: Changefreq }> = [];
 
     // Push URLs we are already aware of.
-    items.push({ loc: "https://bestmods.io", lastmod: new Date().toISOString(), priority: 0.7, changefreq: "always" })
-    items.push({ loc: "https://bestmods.io/category", lastmod: new Date().toISOString(), priority: 0.4 });
+    items.push({
+        loc: "https://bestmods.io",
+        lastmod: new Date().toISOString(),
+        priority: 0.7,
+        changefreq: "always"
+    })
+    items.push({
+        loc: "https://bestmods.io/browse",
+        lastmod: new Date().toISOString(),
+        priority: 0.5,
+        changefreq: "weekly"
+    })
+    items.push({
+        loc: "https://bestmods.io/category",
+        lastmod: new Date().toISOString(),
+        priority: 0.5,
+        changefreq: "weekly"
+    });
+    items.push({
+        loc: "https://bestmods.io/about",
+        lastmod: new Date().toISOString(),
+        priority: 0.5,
+        changefreq: "weekly"
+    })
 
     // Handle mods.
     const mods = await prisma.mod.findMany();
 
     mods.map((mod) => {
-        items.push({ loc: "https://bestmods.io/view/" + mod.url, lastmod: new Date().toISOString(), priority: 0.7 });
+        items.push({
+            loc: `https://bestmods.io/view/${mod.url}`,
+            lastmod: mod?.editAt?.toISOString() ?? new Date().toISOString(),
+            priority: 0.7,
+            changefreq: "daily"
+        });
     })
 
     // Handle categories.
@@ -39,7 +66,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         if (cat.parent)
             end = cat.parent.url + "/" + cat.url;
 
-        items.push({ loc: "https://bestmods.io/category/" + end, lastmod: new Date().toISOString(), priority: 0.5 });
+        items.push({
+            loc: `https://bestmods.io/category/${end}`,
+            lastmod: new Date().toISOString(),
+            priority: 0.7,
+            changefreq: "daily"
+        });
     })
 
     return getServerSideSitemap(ctx, items)

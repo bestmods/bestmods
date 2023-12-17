@@ -1,44 +1,63 @@
-import { router, contributorProcedure } from "@server/trpc/trpc";
+import { router, adminProcedure } from "@server/trpc/trpc";
 import { TRPCError } from "@trpc/server"
 
 import { z } from "zod";
 
-import { Delete_Source, Insert_Or_Update_Source } from "@utils/content/source";
+import { DeleteSource, InsertOrUpdateSource } from "@utils/content/source";
 
 export const sourceRouter = router({
-    addSource: contributorProcedure
+    add: adminProcedure
         .input(z.object({
             update: z.boolean().default(false),
             name: z.string(),
-            description: z.string().optional(),
+            description: z.string().optional().nullable(),
             url: z.string(),
             icon: z.string().optional(),
             banner: z.string().optional(),
-            classes: z.string().optional(),
+            classes: z.string().optional().nullable(),
             iremove: z.boolean().default(false),
             bremove: z.boolean().default(false)
         }))
         .mutation(async ({ ctx, input }) => {
-            const [src, success, err] = await Insert_Or_Update_Source(ctx.prisma, input.url, input.update, input.icon, input.iremove, input.banner, input.bremove, input.name, input.description, input.classes);
+            const [src, success, err] = await InsertOrUpdateSource ({
+                prisma: ctx.prisma,
 
+                url: input.url,
+                
+                update: input.update,
+
+                name: input.name,
+                description: input.description,
+                classes: input.classes,
+
+                icon: input.icon,
+                banner: input.banner,
+
+                iremove: input.iremove,
+                bremove: input.bremove
+            });
+        
             if (!success || !src) {
                 throw new TRPCError({
                     code: "PARSE_ERROR",
-                    message: err
+                    message: `Received error when adding source. Error => ${err}`
                 });
             }
         }),
-    delSource: contributorProcedure
+    del: adminProcedure
         .input(z.object({
             url: z.string()
         }))
         .mutation(async ({ ctx, input }) => {
-            const [success, error] = await Delete_Source(ctx.prisma, input.url);
+            const [success, err] = await DeleteSource ({
+                prisma: ctx.prisma,
+                url: input.url
+            });
 
             if (!success) {
                 throw new TRPCError({
                     code: "BAD_REQUEST",
-                    message: error
+                    message: `Received error when deleting source. Error => ${err}`
                 });
             }
         })

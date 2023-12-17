@@ -15,6 +15,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// User roles
+enum UserRole {
+  ADMIN
+  CONTRIBUTOR
+  USER
+}
+
 // Primary Content Models
 model Source {
   name         String
@@ -37,6 +44,7 @@ model Category {
   description String?    @db.Text
   url         String?
   classes     String?
+  banner      String?
   icon        String?
   Mod         Mod[]
   hasBg       Boolean    @default(false)
@@ -59,12 +67,10 @@ model Mod {
   descriptionShort String?
   install          String? @db.Text
 
-  createAt DateTime  @default(now())
-  updateAt DateTime? @updatedAt
-  editAt   DateTime  @default(now())
-
-  needsRecounting Boolean  @default(false)
-  recountedAt     DateTime @default(now())
+  createAt    DateTime  @default(now())
+  updateAt    DateTime? @updatedAt
+  editAt      DateTime  @default(now())
+  lastScanned DateTime?
 
   // For caching and whatnot.
   totalDownloads BigInt @default(0)
@@ -218,14 +224,16 @@ model Account {
 }
 
 model User {
-  id            String          @id @default(cuid())
+  id String @id @default(cuid())
+
+  roles UserRole[] @default([USER])
+
   name          String?
   email         String?         @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
-  Permissions   Permissions[]
   ModRating     ModRating[]
   ModUniqueView ModUniqueView[]
   ModCollection ModCollection?
@@ -251,18 +259,39 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// Permissions
-model Permissions {
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-  perm   String
-
-  @@unique([perm, userId])
-}
-
 // Tag System
 model Tag {
   name        String   @id
   description String?  @db.Text
   ModTag      ModTag[]
+}
+
+// API keys
+model ApiKey {
+  id Int @id @default(autoincrement())
+
+  ipAddr   String?
+  agent    String?
+  endPoint String?
+  method   String?
+
+  key       String @unique
+  rateLimit Int?   @default(100)
+
+  log ApiLog[]
+}
+
+model ApiLog {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+
+  ipAddr   String?
+  agent    String?
+  endPoint String?
+  method   String?
+  data     String?
+
+  apiKeyId Int
+  apiKey   ApiKey @relation(fields: [apiKeyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

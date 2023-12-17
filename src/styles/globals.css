@@ -2,52 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Main */
-@import "main/header.css";
-@import "main/login_mobie.css";
-@import "main/mobile.css";
+@keyframes menu-left-to-right {
+    0% {
+        transform: translateX(-200%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
 
-@import "main/header/filters.css";
+@keyframes menu-right-to-left {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-200%);
+    }
+}
 
-/* Mod Browser */
-@import "modbrowser/cards.css";
-@import "modbrowser/table.css";
-@import "modbrowser/grid.css";
-
-
-/* Components */
-@import "components/background.css";
-@import "components/loading.css";
-@import "components/notfound.css";
-@import "components/unauthorized.css";
-@import "components/buttons.css";
-@import "components/alerts.css";
-@import "components/drop_down.css";
-@import "components/markdown.css";
-
-/* Forms */
-@import "forms/main.css";
-@import "forms/preview.css";
-
-@import "forms/content/mod.css";
-@import "forms/content/category.css";
-@import "forms/content/source.css";
-
-@import "forms/user/permissions.css";
-
-/* Users */
-@import "user/table.css";
-
-/* Categories */
-@import "category/index.css";
-@import "category/row.css";
-
-/* Mods */
-@import "mod/view.css";
-@import "mod/rating.css";
-
-/* Admin Area */
-@import "admin/index.css";
+@keyframes fade-out-in {
+    0% {
+        opacity: 0%;
+    }
+    100% {
+        opacity: 100%;
+    }
+}
 
 @layer base {
     /* Main */
@@ -57,6 +37,85 @@
         @apply flex-col;
         @apply pb-20;
         @apply text-gray-200;
+    }
+
+    p {
+        @apply leading-5;
+
+        & a {
+            @apply text-cyan-300;
+
+            &:link, :active {
+                @apply text-cyan-300;
+            }
+
+            &:hover {
+                @apply text-cyan-200;
+            }
+        }
+    }
+
+    a {
+        @apply text-gray-50;
+    }
+
+    a:hover {
+        @apply text-blue-300;
+    }
+    
+    header {
+        & > nav > * {
+            @apply p-2;
+            @apply h-full;
+        }
+    }
+
+    hr {
+        @apply border-t-2;
+        @apply border-cyan-900;
+    }
+
+    h1, h2, h3, h4, h5 {
+        @apply font-bold;
+        @apply text-white;
+        @apply leading-10;
+    }
+    
+    h1 {
+        @apply text-4xl;
+    }
+    
+    h2 {
+        @apply text-3xl;
+    }
+    
+    h3 {
+        @apply text-2xl;
+    }
+    
+    h4 {
+        @apply text-xl;
+    }
+    
+    h5 {
+        @apply text-lg;
+    }
+
+    label {
+        @apply text-2xl;
+        @apply font-bold;
+        @apply text-white;
+        @apply block;
+    }
+
+    input:not([type="checkbox"]), select, textarea {
+        @apply bg-bestmods-1/80;
+        @apply focus:ring-2;
+        @apply focus:ring-bestmods-2/80;
+        @apply text-gray-50;
+        @apply rounded;
+        @apply p-2;
+        @apply w-full;
     }
 
     /* Scroll Bar */
@@ -80,11 +139,11 @@
     }
 }
 
-@layer utilities {
-    .page-title {
-        @apply text-3xl;
-        @apply font-bold;
-        @apply text-white;
-    }
+@layer components {
+    @import "components/markdown.css";
 }
 
+@layer utilities {
+    @import "utils/buttons.css";
+    @import "utils/inputs.css";
+}

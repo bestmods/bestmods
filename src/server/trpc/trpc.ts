@@ -41,22 +41,17 @@ const isAuthed = t.middleware(({ ctx, next }) => {
 export const protectedProcedure = t.procedure.use(isAuthed);
 
 const isContributor = t.middleware(async ({ ctx, next }) => {
-    if (!ctx.session?.user)
+    const user = ctx.session?.user;
+
+    if (!user)
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
-    const lookUp = await ctx.prisma.permissions.findFirst({
-        where: {
-            userId: ctx.session.user.id,
-            perm: "contributor"
-        }
-    });
-
-    if (!lookUp)
+    if (!user.roles.includes("ADMIN") && !user.roles.includes("CONTRIBUTOR"))
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
     return next({
         ctx: {
-            session: { ...ctx.session, user: ctx.session.user }
+            session: { ...ctx.session, user: user }
         }
     })
 })
@@ -64,22 +59,17 @@ const isContributor = t.middleware(async ({ ctx, next }) => {
 export const contributorProcedure = t.procedure.use(isContributor);
 
 const isAdmin = t.middleware(async ({ ctx, next }) => {
-    if (!ctx.session?.user)
+    const user = ctx.session?.user;
+
+    if (!user)
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
-    const lookUp = await ctx.prisma.permissions.findFirst({
-        where: {
-            userId: ctx.session.user.id,
-            perm: "admin"
-        }
-    });
-
-    if (!lookUp)
+    if (!user.roles.includes("ADMIN"))
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
     return next({
         ctx: {
-            session: { ...ctx.session, user: ctx.session.user }
+            session: { ...ctx.session, user: user }
         }
     })
 })
@@ -90,7 +80,7 @@ export const modInputSchema = z.object({
     modId: z.string().nullable(),
     id: z.string().nullable(),
 
-    userId: z.number()
+    userId: z.string()
 })
 
 const ownsMod = t.middleware(async ({ ctx, rawInput, next }) => {
@@ -111,9 +101,9 @@ const ownsMod = t.middleware(async ({ ctx, rawInput, next }) => {
     const modId = input.modId ?? input.id;
 
     // Now retrieve our mod and compare to user ID.
-    const mod: any = ctx.prisma.mod.findFirst({
+    const mod = await ctx.prisma.mod.findFirst({
         select: {
-            owner: true
+            ownerId: true
         },
         where: {
             ownerId: modId
@@ -124,7 +114,7 @@ const ownsMod = t.middleware(async ({ ctx, rawInput, next }) => {
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
     // Are we valid?
-    if (mod.owner.id != input.userId)
+    if (!mod.ownerId || mod.ownerId != input.userId)
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
     return next({

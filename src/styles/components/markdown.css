@@ -1,96 +1,37 @@
-@tailwind components;
-
-@layer components {
-    .content-markdown {
+.markdown {
+    & pre {
+        @apply bg-gray-900;
+        @apply rounded-sm;
         @apply text-gray-200;
-        @apply break-all;
-    }
-
-    .content-markdown > strong {
-        @apply font-bold;
-    }
-
-    .content-markdown h1,
-    .content-markdown h2,
-    .content-markdown h3,
-    .content-markdown h4,
-    .content-markdown h5,
-    .content-markdown h6 {
-        @apply font-bold;
-        @apply text-white;
-    }
-
-    .content-markdown pre{
-        @apply mt-1;
-        @apply mb-1;
         @apply p-4;
-        @apply m-1;
-        @apply bg-cyan-800/80;
+        @apply overflow-auto;
+        @apply max-h-80;
+        @apply whitespace-pre-wrap;
+        @apply leading-6;
+        @apply text-sm;
+        @apply text-left;
+        @apply mt-2;
+
+        tab-size: 4;
+        -o-tab-size: 4;
+        -moz-tab-size: 4;
+        
+        hyphens: none;
+        -webkit-hyphens: none;
+        -moz-hyphens: none;
+        -ms-hyphens: none;
+    }
+
+    & code:not(pre code) {
+        @apply bg-gray-950;
+        @apply rounded;
+        @apply px-1;
         @apply rounded-sm;
-        @apply inline-block;
-        @apply break-all;
+        @apply text-cyan-200;
     }
 
-    .content-markdown code {
-        @apply p-1;
-        @apply m-1;
-        @apply bg-cyan-800/80;
-        @apply rounded-sm;
-        @apply inline-block;
-        @apply break-all;
-    }
-
-    .content-markdown pre > code {
-        @apply !p-0;
-        @apply !m-0;
-        @apply !bg-none;
-        @apply !bg-transparent;
-        @apply !rounded-none;
-        @apply !whitespace-pre-line;
-    }
-
-    .content-markdown h1 {
-        @apply text-5xl;
-    }
-
-    .content-markdown h2 {
-        @apply text-4xl;
-    }
-
-    .content-markdown h3 {
-        @apply text-3xl;
-    }
-
-    .content-markdown h4 {
-        @apply text-2xl;
-    }
-
-    .content-markdown h4 {
-        @apply text-xl;
-    }
-
-    .content-markdown h5 {
-        @apply text-lg;
-    }
-
-    .content-markdown ul, ol {
-        padding: revert;
-        margin: revert;
-    }
-
-    .content-markdown ul {
-        @apply list-disc;
-    }
-
-    .content-markdown ol {
-        @apply list-decimal;
-    }
-
-    .content-markdown p {
-        @apply mb-5;
-    }
-
-    .content-markdown a:not(.modDownload) {
-        @apply underline;
+    & p {
+        @apply py-1;
+        @apply leading-5;
     }
 }

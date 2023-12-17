@@ -1,79 +1,53 @@
 import React from "react";
-import { type NextPage } from "next";
 
-import { BestModsPage } from "@components/main";
-import HeadInfo from "@components/head";
-
-import CategoryRow from "@components/category/row";
+import Main from "@components/main";
+import MetaInfo from "@components/meta";
 
 import { prisma } from "@server/db/client";
+import { type CategoryWithChildrenAndCounts } from "~/types/category";
+import CategoryRowGrid from "@components/category/row/grid";
 
-const Home: NextPage<{
-    cats: any
-}> = ({
-    cats
-}) => {
+export default function Page ({
+    categories
+} : {
+    categories: CategoryWithChildrenAndCounts[]
+}) {
     return (
         <>
-            <HeadInfo
+            <MetaInfo
                 title="All Games & Categories - Best Mods"
                 description="Choose what games and categories you want to see mods in!"
             />
-            <BestModsPage>
-                <Categories cats={cats} />
-            </BestModsPage>
-        </>
-    );
-};
+            <Main>
+                <h1>All Categories</h1>
 
-const Categories: React.FC<{
-    cats: any
-}> = ({
-    cats
-}) => {
-    return (
-        <div className="category-container">
-            <h1 className="page-title">All Categories</h1>
-
-            {cats ? (
-                <>
-                    {cats.map((cat: any) => {
-                        return (
-                            <React.Fragment key={"category-" + cat.id}>
-                                <CategoryRow
-                                    cat={cat}
-                                    include_mod_count={true}
-                                    classes={["p-4"]}
+                {categories.length > 0 ? (
+                    <div
+                        className="grid gap-x-4 gap-y-6 py-6"
+                        style={{
+                            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr)"
+                        }}
+                    >
+                        {categories.map((category, index) => {
+                            return (
+                                <CategoryRowGrid
+                                    key={`category-${index.toString()}`}
+                                    category={category}
+                                    subs={category.children}
                                 />
-                                {cat.children.length > 0 && (
-                                    <>
-                                        {cat.children.map((cat_child: any) => {
-
-                                            return (
-                                                <CategoryRow
-                                                    key={"category-child-" + cat_child.id}
-                                                    parent={cat}
-                                                    cat={cat_child}
-                                                    include_mod_count={true}
-                                                    classes={["p-4", "ml-10"]}
-                                                />
-                                            );
-                                        })}
-                                    </>
-                                )}
-                            </React.Fragment>
-                        );
-                    })}
-                </>
-            ) : (
-                <p className="text-white">No categories found.</p>
-            )}
-        </div>
-    );
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <p className="text-white">No categories found.</p>
+                )}
+            </Main>
+        </>
+    )
 }
 
 export async function getServerSideProps() {
-    const cats = await prisma.category.findMany({
+    const categories = await prisma.category.findMany({
         where: {
             parentId: null
         },
@@ -101,10 +75,7 @@ export async function getServerSideProps() {
 
     return {
         props: {
-            cats: cats
+            categories: categories
         }
-    };
+    }
 }
-
-
-export default Home;

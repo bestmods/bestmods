@@ -2,55 +2,47 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 
 import { prisma } from "@server/db/client";
 
-import { Delete_Source, Insert_Or_Update_Source } from "@utils/content/source";
+import { DeleteSource, InsertOrUpdateSource } from "@utils/content/source";
+import { CheckApiAccess } from "@utils/api";
 
-const source = async (req: NextApiRequest, res: NextApiResponse) => {
-    // Check API key.
-    const authHeaderVal = req.headers.authorization ?? "";
-    const authKey = "Bearer " + process.env.API_AUTH_KEY;
+export default async function Source (req: NextApiRequest, res: NextApiResponse) {
+    // Perform API access check.
+    const [ret, err, method] = await CheckApiAccess({
+        req: req,
+        methods: ["GET", "POST", "PATCH", "PUT", "DELETE"]
+    });
 
-    if (authHeaderVal != authKey) {
-        return res.status(401).json({ 
-            message: "Unauthorized.",
-            data: null
+    if (ret !== 200) {
+        return res.status(ret).json({
+            message: err
         });
     }
 
     // If this is a GET request, we are retrieving an item.
-    if (req.method == "GET") {
-        // Retrieve ID and check.
+    if (method === "GET") {
+        // Retrieve URL.
         const { url } = req.query;
 
-        if (!url) {
-            return res.status(400).json({
-                message: "No URL present.",
-                data: null
-            });
-        }
+        // Limit.
+        const limit = Number(req.query?.limit?.toString() ?? 10);
 
         // Retrieve source and check.
-        const src = await prisma.source.findFirst({
+        const srcs = await prisma.source.findMany({
             where: {
-                url: url.toString()
-            }
+                ...(url && {
+                    url: url.toString()
+                })
+            },
+            take: limit
         });
-
-        if (!src) {
-            return res.status(404).json({
-                message: "Source URL " + url + " not found.",
-                data: null
-            });
-        }
 
         // Return source.
         return res.status(200).json({
-            "message": "Source fetched!",
-            data: {
-                src: src
-            }
+            message: `${srcs.length.toString()} sources fetched!`,
+            data: srcs
         });
-    } else if (["POST", "PATCH", "PUT"].includes(req.method ?? "")) {
-        const update = ["PATCH", "PUT"].includes(req.method ?? "");
+    } else if (["POST", "PATCH", "PUT"].includes(method)) {
+        const update = ["PATCH", "PUT"].includes(method);
 
         // Retrieve POST data.
         const { 
@@ -73,44 +65,57 @@ const source = async (req: NextApiRequest, res: NextApiResponse) => {
             bremove?: boolean 
         } = req.body;
 
-        let pre_url: string | undefined = undefined;
+        let preUrl: string | undefined = undefined;
 
+        // If update is specified.
         if (update) {
             // Retrieve pre URL if any.
-            pre_url = req.query.url?.toString();
+            preUrl = req.query.url?.toString();
 
-            if (!pre_url) {
+            if (!preUrl) {
                 return res.status(400).json({
                     message: "Cannot update source. URL query parameter missing."
                 });
             }
-        }
 
-        // If we're not updating, check to make sure we have a URL and name.
-        if (!update && (!url || !name)) {
-            return res.status(400).json({
-                message: "Name or URL missing or too short.",
-                data: null
-            });
-        }
-
-        // If update is specified.
-        if (update) {
             const src = await prisma.source.findFirst({
                 where: {
-                    url: pre_url ?? ""
+                    url: preUrl
                 }
             });
 
             if (!src) {
                 return res.status(404).json({
-                    message: "Couldn't retrieve source (URL => " + pre_url + "). Source not found.",
+                    message: `Couldn't retrieve source (URL => ${preUrl}. Source not found.`,
+                    data: null
+                });
+            }
+        } else {
+            if (!url || !name) {
+                return res.status(400).json({
+                    message: "Name or URL missing or too short.",
                     data: null
                 });
             }
         }
 
-        const [src, success, err] = await Insert_Or_Update_Source(prisma, (update) ? pre_url ?? "" : url, update, icon, iremove, banner, bremove, name, description, classes);
+        const [src, success, err] = await InsertOrUpdateSource ({
+            prisma: prisma,
+            
+            url: (update && preUrl) ? preUrl : url,
+            
+            update: update,
+
+            name: name,
+            description: description,
+            classes: classes,
+
+            icon: icon,
+            banner: banner,
+
+            iremove: iremove,
+            bremove: bremove
+        });
 
         if (!success || !src) {
             return res.status(400).json({
@@ -121,9 +126,7 @@ const source = async (req: NextApiRequest, res: NextApiResponse) => {
 
         return res.status(200).json({
             message: `${update ? "Updated" : "Inserted"} source successfully!`,
-            data: {
-                source: src
-            }
+            data: src
         })
     } else if (req.method == "DELETE") {
         const { url } = req.query;
@@ -147,7 +150,10 @@ const source = async (req: NextApiRequest, res: NextApiResponse) => {
             });
         }
 
-        const [success, err] = await Delete_Source(prisma, url.toString());
+        const [success, err] = await DeleteSource ({
+            prisma: prisma,
+            url: url.toString()
+        });
 
         if (!success) {
             return res.status(400).json({
@@ -163,6 +169,4 @@ const source = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({
         message: "Method not allowed."
     });
-};
-
-export default source;
+}

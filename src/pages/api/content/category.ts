@@ -2,104 +2,92 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 
 import { prisma } from "@server/db/client";
 
-import { Delete_Category, Insert_Or_Update_Category } from "@utils/content/category";
+import { DeleteCategory, InsertOrUpdateCategory } from "@utils/content/category";
+import { CheckApiAccess } from "@utils/api";
 
-const category = async (req: NextApiRequest, res: NextApiResponse) => {
-    // Check API key.
-    const authHeaderVal = req.headers.authorization ?? "";
-    const authKey = "Bearer " + process.env.API_AUTH_KEY;
+export default async function Category (req: NextApiRequest, res: NextApiResponse) {
+    // Perform API access check.
+    const [ret, err, method] = await CheckApiAccess({
+        req: req,
+        methods: ["GET", "POST", "PATCH", "PUT", "DELETE"]
+    });
 
-    if (authHeaderVal != authKey) {
-        return res.status(401).json({ 
-            message: "Unauthorized.",
-            data: null
+    if (ret !== 200) {
+        return res.status(ret).json({
+            message: err
         });
     }
 
     // If this is a GET request, we are retrieving an item.
-    if (req.method == "GET") {
+    if (method == "GET") {
         // Retrieve ID and check.
         const { id } = req.query;
 
-        if (!id) {
-            return res.status(400).json({
-                message: "No ID present.",
-                data: null
-            });
-        }
+        // Limit.
+        const limit = Number(req.query?.limit?.toString() ?? 10);
 
         // Retrieve category and check.
-        const cat = await prisma.category.findFirst({
+        const cats = await prisma.category.findMany({
             include: {
-                parent: true
+                parent: true,
+                children: true
             },
             where: {
-                id: Number(id)
-            }
+                ...(id && {
+                    id: Number(id.toString())
+                })
+            },
+            take: limit
         });
-
-        if (!cat) {
-            return res.status(404).json({
-                message: "Category ID " + id + " not found.",
-                data: null
-            });
-        }
 
         // Return category.
         return res.status(200).json({
-            "message": "Category fetched!",
-            data: {
-                category: cat
-            }
+            "message": `${cats.length.toString()} categories fetched!`,
+            data: cats
         });
-    } else if (["POST", "PATCH", "PUT"].includes(req.method ?? "")) {
+    } else if (["POST", "PATCH", "PUT"].includes(method)) {
         // Check if this should be an update.
-        const update = ["PATCH", "PUT"].includes(req.method ?? "");
+        const update = ["PATCH", "PUT"].includes(method);
 
         // Retrieve body data.
         const {
-            parent_id,
+            parentId,
             name,
-            name_short,
+            nameShort,
             description,
             url,
             classes,
             icon,
+            banner,
             iremove,
-            has_bg 
+            bremove,
+            hasBg 
         } : { 
-            parent_id?: number,
-            name?: string,
-            name_short?: string,
-            description?: string,
-            url?: string,
-            classes?: string,
-            icon?: string,
-            iremove?: boolean,
-            has_bg?: boolean
+            parentId?: number
+            name?: string
+            nameShort?: string
+            description?: string
+            url?: string
+            classes?: string
+            icon?: string
+            banner?: string
+            iremove?: boolean
+            bremove?: boolean
+            hasBg?: boolean
         } = req.body;
 
         let id: string | undefined = undefined;
 
-        if (update)
-            id = req.query.id?.toString();
-
-        if (update && !id) {
-            return res.status(400).json({
-                message: "Cannot update category. Missing ID query parameter."
-            })
-        }
-
-        // If we're not updating, make sure we have a name and name short.
-        if (!update && (!name || !name_short)) {
-            return res.status(400).json({
-                message: "Name or short name not found in POST data for new entry.",
-                data: null
-            });
-        }
-
         // If the ID is specified, do a lookup here.
         if (update) {
+            id = req.query.id?.toString();
+
+            if (!id) {
+                return res.status(400).json({
+                    message: "Cannot update category. Missing ID query parameter."
+                });
+            }
+
             const cat = await prisma.category.findFirst({
                 where: {
                     id: Number(id)
@@ -112,10 +100,36 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
                     data: null
                 });
             }
+        } else {
+            if (!name || !nameShort) {
+                return res.status(400).json({
+                    message: "Name or short name not found in POST data for new entry.",
+                    data: null
+                });
+            }
         }
 
-        const [cat, success, err] = await Insert_Or_Update_Category(prisma, name, name_short, description, url, (update && id) ? Number(id) : undefined, icon, iremove, parent_id, classes, has_bg);
+        const [cat, success, err] = await InsertOrUpdateCategory ({
+            prisma: prisma,
 
+            lookupId: (update && id) ? Number (id) : undefined,
+
+            parentId: parentId,
+
+            name: name,
+            nameShort: nameShort,
+            description: description,
+            url: url,
+            classes: classes,
+            hasBg: hasBg,
+
+            icon: icon,
+            banner: banner,
+
+            iremove: iremove,
+            bremove: bremove
+        });
+        
         if (!success || !cat) {
             return res.status(400).json({
                 message: `Unable to ${update ? "update" : "insert"} category. Error => ${err}`,
@@ -125,11 +139,9 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
 
         return res.status(200).json({
             message: `${update ? "Updated" : "Inserted"} category successfully!`,
-            data: {
-                category: cat
-            }
+            data: cat
         })
-    } else if (req.method == "DELETE") {
+    } else if (method == "DELETE") {
         const { id } = req.query;
 
         if (!id) {
@@ -151,7 +163,10 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
             });
         }
 
-        const [success, err] = await Delete_Category(prisma, Number(id.toString()));
+        const [success, err] = await DeleteCategory ({
+            prisma: prisma,
+            id: Number(id.toString())
+        });
 
         if (!success) {
             return res.status(400).json({
@@ -167,6 +182,4 @@ const category = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({
         message: "Method not allowed."
     });
-};
-
-export default category;
+}

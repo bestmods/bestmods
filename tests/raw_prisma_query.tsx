@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 
-import { ModRowBrowser } from "types/mod"
+import { ModRowBrowser } from "~/types/mod"
 
 import { prisma } from "@server/db/client";
 import { Prisma } from "@prisma/client";
