@@ -83,7 +83,7 @@ export default function ModBrowserFilters ({
     const [, setCookie] = useCookies(["bm_display"]);
 
     return (
-        <form className="flex flex-wrap justify-end gap-2">
+        <div className="flex flex-wrap justify-end gap-2">
             <div ref={filtersMenu} className={`hidden z-50 fixed top-0 left-0 w-1/2 p-6 h-full bg-bestmods-2 overflow-scroll justify-between`}>
                 <div className="grow flex flex-col gap-2">
                     <div className="flex flex-col gap-2">
@@ -144,7 +144,7 @@ export default function ModBrowserFilters ({
                     </button>
                 </div>
             </div>
-            <div className="flex flex-wrap gap-2 items-center">
+            <div className="flex w-full md:w-3/5 xl:w-1/3 flex-wrap gap-2 items-center">
                 <div className="relative grow">
                     <input
                         className="w-full pr-10 bg-bestmods-1/80 p-2 rounded-md focus:ring-2 focus:ring-bestmods-2/80 text-gray-50"
@@ -193,7 +193,7 @@ export default function ModBrowserFilters ({
                     )}
                 </button>
             </div>
-        </form>
+        </div>
     )
 }
 
