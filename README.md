@@ -1,12 +1,25 @@
-# <a href="https://bestmods.io/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/bestmods.png" data-canonical-src="https://github.com/bestmods/bestmods/blob/main/gitimages/bestmods.png" /></a>
+# [Best Mods](https://bestmods.io)
 Browse the best mods in gaming from many sources on the Internet!
 
-<a href="https://bestmods.io/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview.jpeg" data-canonical-src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview.jpeg" /></a>
+<a href="https://bestmods.io/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview01.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview01.png" /></a>
 
 ## About This Project
-An open-source [website](https://bestmods.io) made by [Christian Deacon](https://github.com/gamemann) that helps users find their favorite mods. Includes Discord login authentication and the ability to upvote or downvote mods!
+An open source [website](https://bestmods.io) made by [Christian Deacon](https://github.com/gamemann) that helps users find their favorite mods all in one place! The website also includes Discord login authentication and the ability to upvote and downvote mods.
 
-Please also check out the [@modcommunity](https://github.com/modcommunity)! They are doing things that will change the direction of gaming on a large scale by using modding and open source like never seen before!
+## Showcase
+### Desktop
+<a href="https://bestmods.io/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview01.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview01.png" /></a>
+<a href="https://bestmods.io/category" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview02.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview02.png" /></a>
+<a href="https://bestmods.io/category/sims4" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview03.jpg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview03.jpg" /></a>
+<a href="https://bestmods.io/browse" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview04.jpg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview04.jpg" /></a>
+<a href="https://bestmods.io/browse" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview05.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview05.png" /></a>
+<a href="https://bestmods.io/view/cs-zr" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview06.jpg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview06.jpg" /></a>
+<a href="https://bestmods.io/view/cs-zr/install" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview07.jpg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview07.jpg" /></a>
+<a href="https://bestmods.io/view/cs-zr/sources" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview08.jpg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview08.jpg" /></a>
+
+### Mobile
+<a href="https://bestmods.io/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview09.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview09.png" /></a>
+<a href="https://bestmods.io/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview10.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview10.png" /></a>
 
 ## Road Map
 A road map for the website may be found [here](https://github.com/bestmods/bestmods/milestones)!
@@ -74,11 +87,6 @@ npm run dev
 To run in production, you can use the `npx next build` command to build the web application. Make sure to add `output: "standalone"` to the config variable in `next.config.mjs`.
 
 With that said, you may then run `node server.js`.
-
-## Showcase
-<a href="https://bestmods.io/view/mc-jurassicraft" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview2.jpeg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview2.jpeg" /></a>
-<a href="https://bestmods.io/view/mc-jurassicraft/sources" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview3.jpeg" data-canonical-src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview3.jpeg" /></a>
-<a href="https://bestmods.io/view/mc-jurassicraft/downloads" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview4.jpeg" data-canonical-src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview4.jpeg" /></a>
 
 ## Permissions
 While this project is open source, if you use this full project publicly, please add a link back to Best Mods' [website](https://bestmods.io/) that is visible to the public user. You don't need to do this if you're using *<30%* of the project's code. This is to attempt to mitigate people blatantly copying the project for their own use publicly.
