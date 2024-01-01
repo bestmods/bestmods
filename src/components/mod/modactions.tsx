@@ -56,7 +56,7 @@ export default function ModActions ({
 
     return (
         <>
-            {(HasRole(session, "ADMIN") && HasRole(session, "CONTRIBUTOR")) && (
+            {(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) && (
                 <div className="p-2 flex flex-wrap justify-center gap-4">
                     <Link
                         href={editLink}
