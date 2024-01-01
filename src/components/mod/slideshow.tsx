@@ -3,20 +3,23 @@ import ModRow from "./browser/row";
 
 import "react-multi-carousel/lib/styles.css";
 import Carousel from "react-multi-carousel";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ViewPortCtx } from "@components/main";
 import { ArrowFix } from "@components/carousel";
+import { GetRandomInt } from "@utils/Random";
 
 export default function ModSlideshow ({
     mods,
     infinite = true,
     autoPlay = true,
-    autoPlaySpeed
+    autoPlaySpeedMin,
+    autoPlaySpeedMax
 } : {
     mods: ModRowBrowser[]
     infinite?: boolean
     autoPlay?: boolean
-    autoPlaySpeed?: number
+    autoPlaySpeedMin?: number
+    autoPlaySpeedMax?: number
 }) {
     const viewPort = useContext(ViewPortCtx);
 
@@ -52,13 +55,19 @@ export default function ModSlideshow ({
         }
     };
 
+    // Retrieve play speed.
+    const [playSpeed, setPlaySpeed] = useState<number | undefined>(undefined);
+
+    if (typeof autoPlaySpeedMin !== "undefined" && typeof autoPlaySpeedMax !== "undefined" && !playSpeed)
+        setPlaySpeed(GetRandomInt(autoPlaySpeedMin, autoPlaySpeedMax))
+
     return (
         <Carousel
             responsive={responsive}
             itemClass="p-2 min-h-[30rem]"
             infinite={infinite}
             autoPlay={!viewPort.isMobile ? autoPlay : false}
-            autoPlaySpeed={autoPlaySpeed}
+            autoPlaySpeed={playSpeed}
             customLeftArrow={
                 <ArrowFix>
                     <button aria-label="Go to previous slide" className="react-multiple-carousel__arrow react-multiple-carousel__arrow--left !z-10" type="button"></button>
