@@ -151,7 +151,7 @@ export const modRouter = router({
             timeframe: z.number().default(0),
             sort: z.number().default(0),
 
-            visible: z.boolean().default(false),
+            visible: z.boolean().default(true).optional(),
         }))
         .query(async ({ ctx, input }) => {            
             // Check if we want to retrieve mod rating within specific range.
