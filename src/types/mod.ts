@@ -15,6 +15,8 @@ export type ModWithRelations = Prisma.ModGetPayload<typeof modWithRelations>;
 
 export const ModRowBrowserSel = {
     id: true,
+    visible: true,
+    
     url: true,
     ownerName: true,
     name: true,
