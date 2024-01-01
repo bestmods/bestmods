@@ -42,7 +42,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     })
 
     // Handle mods.
-    const mods = await prisma.mod.findMany();
+    const mods = await prisma.mod.findMany({
+        where: {
+            visible: true
+        }
+    });
 
     mods.map((mod) => {
         items.push({
