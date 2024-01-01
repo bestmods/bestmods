@@ -13,10 +13,12 @@ import { ViewPortCtx } from "@components/main";
 
 export default function ModBrowser ({
     preCategories = [],
-    visible
+    visible,
+    showModActions = false
 } : {
     preCategories?: number[]
-    visible?: boolean | null
+    visible?: boolean
+    showModActions?: boolean
 }) {
     const viewPort = useContext(ViewPortCtx);
 
@@ -41,7 +43,7 @@ export default function ModBrowser ({
         timeframe: timeframe,
         sort: sort,
         search: search || undefined,
-        visible: visible ?? true
+        visible: visible
     }, {
         getNextPageParam: (lastPage) => lastPage.nextMod,
     });
@@ -103,6 +105,7 @@ export default function ModBrowser ({
                                     <ModRow
                                         key={mod.id + "-row"}
                                         mod={mod}
+                                        showModActions={showModActions}
                                         display={display}
                                     />
                                 );
