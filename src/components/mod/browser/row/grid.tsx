@@ -12,6 +12,9 @@ import Image from "next/image";
 import IconAndText from "@components/icon_and_text";
 import React, { useContext, useEffect, useState } from "react";
 import { ViewPortCtx } from "@components/main";
+import { trpc } from "@utils/trpc";
+import { ErrorCtx, SuccessCtx } from "@pages/_app";
+import ScrollToTop from "@utils/scroll";
 
 export default function ModRowGrid ({
     mod,
@@ -25,7 +28,8 @@ export default function ModRowGrid ({
     catParLink,
     catIcon,
     catLink,
-    viewLink
+    viewLink,
+    showModActions = false
 } : {
     mod: ModRowBrowser
     showRelations?: boolean
@@ -39,7 +43,11 @@ export default function ModRowGrid ({
     catIcon: string
     catLink: string | null
     viewLink: string
+    showModActions?: boolean
 }) {
+    const errorCtx = useContext(ErrorCtx);
+    const successCtx = useContext(SuccessCtx);
+
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
 
     const viewPort = useContext(ViewPortCtx);
@@ -111,6 +119,31 @@ export default function ModRowGrid ({
         } else if (installerItems.length > 0)
             setInstallerItems([]);
     }, [viewPort, showRelations, mod.ModInstaller, cdn, installerItems.length])
+
+    // Mod actions.
+    const modVisibilityMut = trpc.mod.setVisibility.useMutation();
+    const [modVisible, setModVisible] = useState(mod.visible);
+
+    const modDelMut = trpc.mod.del.useMutation({
+        onError: (opts) => {
+            const { message } = opts;
+
+            console.error(message);
+
+            if (errorCtx) {
+                errorCtx.setTitle("Error Deleting Mod");
+                errorCtx.setMsg("There was an error deleting this mod. Please check the console for more details.");
+            }
+        },
+        onSuccess: () => {
+            if (successCtx) {
+                successCtx.setTitle("Deleted Mod Successfully!");
+                successCtx.setMsg("Successfully deleted mod!");
+
+                ScrollToTop();
+            }
+        }
+    })
 
     return (
         <div
@@ -184,6 +217,36 @@ export default function ModRowGrid ({
                     text={<span className="text-sm">{mod.totalDownloads.toString()}</span>}
                 />
             </div>
+            {showModActions && (
+                <div className="p-2 flex flex-wrap justify-center gap-2">
+                    <button
+                        type="button"
+                        className={`btn ${modVisible ? "btn-danger" : "btn-primary"}`}
+                        onClick={() => {
+                            modVisibilityMut.mutate({
+                                id: mod.id,
+                                visible: !modVisible
+                            })
+                            setModVisible(!modVisible);
+                        }}>
+                        {modVisible ? "Hide" : "Show"}
+                    </button>
+                    <button
+                        type="button"
+                        className="btn btn-danger"
+                        onClick={() => {
+                            const yes = confirm("Are you sure you want to delete this mod?");
+
+                            if (yes) {
+                                modDelMut.mutate({
+                                    id: mod.id
+                                })
+                            }
+                        }}>
+                            Delete
+                        </button>
+                </div>
+            )}
             <div className={`flex ${(sourceItems.length < 1 && installerItems.length < 1) ? "justify-center" : "justify-between"}  items-center text-center bg-bestmods-3/80 rounded-b`}>
                 <div className="w-1/3">
                     <Link
