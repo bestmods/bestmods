@@ -60,7 +60,7 @@ export default function Page ({
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const session = await getSession(ctx);
 
-    const { params } = ctx;
+    const { params, res } = ctx;
 
     const url = params?.url?.toString();
 
@@ -74,6 +74,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             }
         },
         where: {
+            visible: true,
             url: url
         }
     });
@@ -99,7 +100,8 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             prisma: prisma,
             id: mod.id
         });
-    }
+    } else
+        res.statusCode = 404;
 
     return { 
         props: { 
