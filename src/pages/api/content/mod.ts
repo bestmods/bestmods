@@ -109,25 +109,29 @@ export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
             sources,
             installers,
             credits,
-            lastScanned
+            lastScanned,
+            srcUrl,
+            srcQuery
         } : {
-            url?: string,
-            visible?: boolean,
-            ownerId?: string,
-            ownerName?: string,
-            name?: string,
-            banner?: string,
+            url?: string
+            visible?: boolean
+            ownerId?: string
+            ownerName?: string
+            name?: string
+            banner?: string
             bremove?: boolean
-            description?: string,
-            descriptionShort?: string,
-            install?: string,
-            categoryId?: number | null,
+            description?: string
+            descriptionShort?: string
+            install?: string
+            categoryId?: number | null
             downloads?: ModDownload[]
-            screenshots?: ModScreenshot[],
-            sources?: ModSource[],
-            installers?: ModInstaller[],
+            screenshots?: ModScreenshot[]
+            sources?: ModSource[]
+            installers?: ModInstaller[]
             credits?: ModCredit[]
             lastScanned?: Date | string
+            srcUrl?: string
+            srcQuery?: string
         } = req.body;
 
         let id: string | undefined = undefined;
@@ -163,10 +167,6 @@ export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
                 });
             }
         }
-
-        // Retrieve source URL and query if any.
-        const srcUrl = req.query.srcUrl?.toString();
-        const srcQuery = req.query.srcQuery?.toString();
 
         // Update or insert mod.
         const [mod, success, err] = await InsertOrUpdateMod ({
