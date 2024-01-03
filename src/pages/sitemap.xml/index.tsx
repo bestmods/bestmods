@@ -15,27 +15,29 @@ type Changefreq =
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const items: Array<{ loc: string, lastmod: string, priority?: number, changefreq?: Changefreq }> = [];
 
+    const url = process.env.SITEMAP_URL ?? "https://bestmods.io"
+
     // Push URLs we are already aware of.
     items.push({
-        loc: "https://bestmods.io",
+        loc: url,
         lastmod: new Date().toISOString(),
         priority: 0.7,
         changefreq: "always"
     })
     items.push({
-        loc: "https://bestmods.io/browse",
+        loc: `${url}/browse`,
         lastmod: new Date().toISOString(),
         priority: 0.5,
         changefreq: "weekly"
     })
     items.push({
-        loc: "https://bestmods.io/category",
+        loc: `${url}/category`,
         lastmod: new Date().toISOString(),
         priority: 0.5,
         changefreq: "weekly"
     });
     items.push({
-        loc: "https://bestmods.io/about",
+        loc: `${url}/about`,
         lastmod: new Date().toISOString(),
         priority: 0.5,
         changefreq: "weekly"
@@ -50,7 +52,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
     mods.map((mod) => {
         items.push({
-            loc: `https://bestmods.io/view/${mod.url}`,
+            loc: `${url}/view/${mod.url}`,
             lastmod: mod?.editAt?.toISOString() ?? new Date().toISOString(),
             priority: 0.7,
             changefreq: "daily"
@@ -71,7 +73,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
             end = cat.parent.url + "/" + cat.url;
 
         items.push({
-            loc: `https://bestmods.io/category/${end}`,
+            loc: `${url}/category/${end}`,
             lastmod: new Date().toISOString(),
             priority: 0.7,
             changefreq: "daily"
