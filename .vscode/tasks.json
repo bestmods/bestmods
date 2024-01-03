@@ -1,5 +1,10 @@
 {
     "version": "2.0.0",
+    "options": {
+        "env": {
+            "DEBUG": "prisma*"
+        }
+    },
     "tasks": [
         {
             "label": "startdev",
