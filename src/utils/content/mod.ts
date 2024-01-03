@@ -546,8 +546,6 @@ export async function InsertOrUpdateMod ({
 
     try {
         if (lookupId) {
-            console.log(`Type for downloads is ${typeof downloads}`);
-            console.log(downloads);
             mod = await prisma.mod.update({
                 where: {
                     id: lookupId,
