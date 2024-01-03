@@ -46,3 +46,6 @@ public/images/source
 public/images/category
 public/images/mod
 public/images/users
+
+# VS Code.
+.vscode/
