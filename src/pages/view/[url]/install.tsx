@@ -13,6 +13,7 @@ import NotFound from "@components/errors/notfound";
 import { GetModRating } from "@utils/content/mod";
 import { GetBgImage } from "@utils/images";
 import { GetModDescription } from "@utils/description";
+import { HasRole } from "@utils/roles";
 
 export default function Page ({
     mod,
@@ -74,7 +75,10 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             }
         },
         where: {
-            visible: true,
+            // If we're not an admin or contributor, only find visible mods.
+            ...((!HasRole(session, "ADMIN") && !HasRole(session, "CONTRIBUTOR")) && {
+                visible: true
+            }),
             url: url
         }
     });
