@@ -4,6 +4,7 @@ import { TRPCError } from "@trpc/server"
 import { z } from "zod";
 
 import { GetMods, InsertOrUpdateMod } from "@utils/content/mod";
+import { ModWithRelationsInc, type ModWithRelations } from "~/types/mod";
 
 export const modRouter = router({
     add: contributorProcedure
@@ -217,5 +218,140 @@ export const modRouter = router({
                 mods,
                 nextMod
             }
-        })
-});
+        }),
+        mergeMod: contributorProcedure
+            .input(z.object({
+                id: z.number(),
+                dstId: z.number(),
+                delete: z.boolean().default(false),
+                hide: z.boolean().default(true)
+            }))
+            .mutation (async ({ ctx, input }) => {
+                try {
+                    // Retrieve mod source.
+                    let mod: ModWithRelations | null = null;
+
+                    try {
+                        mod = await ctx.prisma.mod.findFirstOrThrow({
+                            include: ModWithRelationsInc,
+                            where: {
+                                id: input.id
+                            }
+                        })
+                    } catch (err: unknown) {
+                        throw new TRPCError({
+                            code: "NOT_FOUND",
+                            message: `Could not find mod source. Error => ${err}.`
+                        })
+                    }
+
+                    // Retrieve mod destination.
+                    let modDst: ModWithRelations | null = null;
+
+                    try {
+                        modDst = await ctx.prisma.mod.findFirstOrThrow({
+                            include: ModWithRelationsInc,
+                            where: {
+                                id: input.dstId
+                            }
+                        })
+                    } catch (err: unknown) {
+                        throw new TRPCError({
+                            code: "NOT_FOUND",
+                            message: `Could not find mod destination. Error => ${err}.`
+                        })
+                    }
+
+                    // Update destination mod with source mod details.
+                    await ctx.prisma.mod.update({
+                        data: {
+                            ...((!modDst.install && mod.install) && {
+                                install: mod.install
+                            }),
+                            ...((!modDst.ownerName && mod.ownerName) && {
+                                ownerName: mod.ownerName
+                            }),
+                            ...((!modDst.descriptionShort && mod.descriptionShort) && {
+                                descriptionShort: mod.descriptionShort
+                            }),
+                            ...(mod.ModSource.length > 0 && {
+                                ModSource: {
+                                    createMany: {
+                                        data: mod.ModSource.map((src) => ({
+                                            sourceUrl: src.sourceUrl,
+                                            query: src.query,
+                                            primary: src.primary
+                                        }))
+                                    }
+                                }
+                            }),
+                            ...(mod.ModDownload.length > 0 && {
+                                ModDownload: {
+                                    createMany: {
+                                        data: mod.ModDownload.map((dl) => ({
+                                            name: dl.name,
+                                            url: dl.url
+                                        }))
+                                    }
+                                }
+                            }),
+                            ...(mod.ModInstaller.length > 0 && {
+                                ModInstaller: {
+                                    createMany: {
+                                        data: mod.ModInstaller.map((ins) => ({
+                                            sourceUrl: ins.sourceUrl,
+                                            url: ins.url
+                                        }))
+                                    }
+                                }
+                            }),
+                            ...(mod.ModScreenshot.length > 0 && {
+                                ModScreenshot: {
+                                    createMany: {
+                                        data: mod.ModScreenshot.map((ss) => ({
+                                            url: ss.url
+                                        }))
+                                    }
+                                }
+                            }),
+                            ...(mod.ModCredit.length > 0 && {
+                                ModCredit: {
+                                    createMany: {
+                                        data: mod.ModCredit.map((cre) => ({
+                                            name: cre.name,
+                                            credit: cre.credit
+                                        }))
+                                    }
+                                }
+                            })
+                        },
+                        where: {
+                            id: input.dstId
+                        }
+                    })
+
+                    // Check if we should delete or hide source mod.
+                    if (input.delete) {
+                        await ctx.prisma.mod.delete({
+                            where: {
+                                id: input.id
+                            }
+                        })
+                    } else if (input.hide) {
+                        await ctx.prisma.mod.update({
+                            data: {
+                                visible: false
+                            },
+                            where: {
+                                id: input.id
+                            }
+                        })
+                    }
+                } catch (err: unknown) {
+                    throw new TRPCError({
+                        code: "BAD_REQUEST",
+                        message: `Failed to merge mods. Error => ${err}.`
+                    })
+                }
+            })
+})

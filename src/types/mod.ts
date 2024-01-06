@@ -1,17 +1,17 @@
-import { Prisma } from "@prisma/client";
+import { type Prisma } from "@prisma/client";
 
-const modWithRelations = Prisma.validator<Prisma.ModArgs>()({
-    include: {
-        category: true,
-        ModDownload: true,
-        ModScreenshot: true,
-        ModSource: true,
-        ModInstaller: true,
-        ModCredit: true
-    }
-});
+export const ModWithRelationsInc = {
+    category: true,
+    ModDownload: true,
+    ModScreenshot: true,
+    ModSource: true,
+    ModInstaller: true,
+    ModCredit: true
+}
 
-export type ModWithRelations = Prisma.ModGetPayload<typeof modWithRelations>;
+export type ModWithRelations = Prisma.ModGetPayload<{
+    include: typeof ModWithRelationsInc
+}>;
 
 export const ModRowBrowserSel = {
     id: true,

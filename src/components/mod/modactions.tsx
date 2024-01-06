@@ -54,6 +54,26 @@ export default function ModActions ({
         }
     })
 
+    // Handle merging mods.
+    const modMergeMut = trpc.mod.mergeMod.useMutation({
+        onError: (opts) => {
+            const { message } = opts;
+
+            console.error(message);
+
+            if (errorCtx) {
+                errorCtx.setTitle("Error Merging Mods");
+                errorCtx.setMsg("There was an error merging this mod with another. Please check the console for more details!");
+            }
+        },
+        onSuccess: () => {
+            if (successCtx) {
+                successCtx.setTitle("Mod Merged Successfully!");
+                successCtx.setMsg("This mod was merged successfully! Please check the destination mod.");
+            }
+        }
+    })
+
     return (
         <>
             {(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) && (
@@ -73,6 +93,23 @@ export default function ModActions ({
                             setModVisible(!modVisible);
                         }}>
                         {modVisible ? "Hide" : "Show"}
+                    </button>
+                    <button
+                        type="button"
+                        className={`btn btn-secondary`}
+                        onClick={() => {
+                            const input = prompt("Destination ID");
+
+                            if (input) {
+                                const dstId = Number(input);
+
+                                modMergeMut.mutate({
+                                    id: mod.id,
+                                    dstId: dstId
+                                })
+                            }
+                        }}>
+                        Merge
                     </button>
                     <button
                         type="button"
