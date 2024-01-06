@@ -119,23 +119,27 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         latestMods = (await GetMods ({
             categories: categories,
             sort: 4,
+            visible: true,
             userId: session?.user?.id
         }))[0]
 
         viewedMods = (await GetMods ({
             categories: categories,
             sort: 1,
+            visible: true,
             userId: session?.user?.id
         }))[0]
 
         downloadedMods = (await GetMods ({
             categories: categories,
             sort: 2,
+            visible: true,
             userId: session?.user?.id
         }))[0]
 
         topMods = (await GetMods ({
             categories: categories,
+            visible: true,
             userId: session?.user?.id
         }))[0]
     
@@ -155,6 +159,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         topModsToday = (await GetMods ({
             categories: categories,
             ratingTimeRange: todayDate,
+            visible: true,
             userId: session?.user?.id
         }))[0]
     }

@@ -45,20 +45,24 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     const [latestMods] = await GetMods ({
         sort: 4,
+        visible: true,
         userId: session?.user?.id
     })
 
     const [viewedMods] = await GetMods ({
         sort: 1,
+        visible: true,
         userId: session?.user?.id
     })
 
     const [downloadedMods] = await GetMods ({
         sort: 2,
+        visible: true,
         userId: session?.user?.id
     })
 
     const [topMods] = await GetMods ({
+        visible: true,
         userId: session?.user?.id
     })
 
@@ -77,6 +81,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     const [topModsToday] = await GetMods ({
         ratingTimeRange: todayDate,
+        visible: true,
         userId: session?.user?.id
     })
 
