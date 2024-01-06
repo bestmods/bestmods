@@ -17,7 +17,10 @@ export default function Page () {
                 <h1>Mods Moderation</h1>
                 {(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) ? (
                     <div>
-                        <ModBrowser showModActions={true} />
+                        <ModBrowser
+                            showActions={true}
+                            showDebug={true}
+                        />
                     </div>
                 ) : (
                     <NoAccess />

@@ -11,6 +11,7 @@ import ModViewCategory from "./view/category";
 import IconAndText from "@components/icon_and_text";
 import ModGallery from "./view/gallery";
 import ModActions from "./modactions";
+import ModDebug from "./mod_debug";
 
 export default function ModView ({
     mod,
@@ -112,6 +113,7 @@ export default function ModView ({
                         )}
                     </div>
                     <ModActions mod={mod} />
+                    <ModDebug mod={mod} />
                 </div>
             </ModTabs>
         </div>

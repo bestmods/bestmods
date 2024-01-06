@@ -14,11 +14,13 @@ import { ViewPortCtx } from "@components/main";
 export default function ModBrowser ({
     preCategories = [],
     visible,
-    showModActions = false
+    showActions = false,
+    showDebug = false
 } : {
     preCategories?: number[]
     visible?: boolean
-    showModActions?: boolean
+    showActions?: boolean
+    showDebug?: boolean
 }) {
     const viewPort = useContext(ViewPortCtx);
 
@@ -105,7 +107,8 @@ export default function ModBrowser ({
                                     <ModRow
                                         key={mod.id + "-row"}
                                         mod={mod}
-                                        showModActions={showModActions}
+                                        showActions={showActions}
+                                        showDebug={showDebug}
                                         display={display}
                                     />
                                 );

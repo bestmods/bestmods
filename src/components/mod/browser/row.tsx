@@ -6,12 +6,14 @@ export default function ModRow ({
     mod,
     display = "grid",
     showRelations = true,
-    showModActions = false
+    showActions = false,
+    showDebug = false
 } : {
     mod: ModRowBrowser
     display?: string
     showRelations?: boolean
-    showModActions?: boolean
+    showActions?: boolean
+    showDebug?: boolean
 }) {
     const cdn = (process.env.NEXT_PUBLIC_CDN_URL) ? process.env.NEXT_PUBLIC_CDN_URL : "";
 
@@ -55,7 +57,8 @@ export default function ModRow ({
                     catParIcon={catParIcon}
                     catParLink={catParLink}
                     viewLink={viewLink}
-                    showModActions={showModActions}
+                    showActions={showActions}
+                    showDebug={showDebug}
                 />
             ) : (
                 <ModRowTable

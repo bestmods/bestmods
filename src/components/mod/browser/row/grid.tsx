@@ -14,6 +14,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { ViewPortCtx } from "@components/main";
 
 import ModActions from "@components/mod/modactions";
+import ModDebug from "@components/mod/mod_debug";
 
 export default function ModRowGrid ({
     mod,
@@ -28,7 +29,8 @@ export default function ModRowGrid ({
     catIcon,
     catLink,
     viewLink,
-    showModActions = false
+    showActions = false,
+    showDebug = false
 } : {
     mod: ModRowBrowser
     showRelations?: boolean
@@ -42,7 +44,8 @@ export default function ModRowGrid ({
     catIcon: string
     catLink: string | null
     viewLink: string
-    showModActions?: boolean
+    showActions?: boolean
+    showDebug?: boolean
 }) {
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
 
@@ -188,8 +191,11 @@ export default function ModRowGrid ({
                     text={<span className="text-sm">{mod.totalDownloads.toString()}</span>}
                 />
             </div>
-            {showModActions && (
+            {showActions && (
                 <ModActions mod={mod} />
+            )}
+            {showDebug && (
+                <ModDebug mod={mod} />
             )}
             <div className={`flex ${(sourceItems.length < 1 && installerItems.length < 1) ? "justify-center" : "justify-between"}  items-center text-center bg-bestmods-3/80 rounded-b`}>
                 <div className="w-1/3">
