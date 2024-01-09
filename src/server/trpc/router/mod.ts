@@ -224,7 +224,16 @@ export const modRouter = router({
                 id: z.number(),
                 dstId: z.number(),
                 delete: z.boolean().default(false),
-                hide: z.boolean().default(true)
+                hide: z.boolean().default(true),
+                mergeInstall: z.boolean().default(true),
+                mergeOwnerName: z.boolean().default(true),
+                mergeDescriptionShort: z.boolean().default(true),
+                mergeSources: z.boolean().default(true),
+                mergeDownloads: z.boolean().default(true),
+                mergeInstallers: z.boolean().default(true),
+                mergeScreenshots: z.boolean().default(true),
+                mergeCredits: z.boolean().default(true)
+
             }))
             .mutation (async ({ ctx, input }) => {
                 try {
@@ -265,16 +274,16 @@ export const modRouter = router({
                     // Update destination mod with source mod details.
                     await ctx.prisma.mod.update({
                         data: {
-                            ...((!modDst.install && mod.install) && {
+                            ...((input.mergeInstall && !modDst.install && mod.install) && {
                                 install: mod.install
                             }),
-                            ...((!modDst.ownerName && mod.ownerName) && {
+                            ...((input.mergeOwnerName && !modDst.ownerName && mod.ownerName) && {
                                 ownerName: mod.ownerName
                             }),
-                            ...((!modDst.descriptionShort && mod.descriptionShort) && {
+                            ...((input.mergeDescriptionShort && !modDst.descriptionShort && mod.descriptionShort) && {
                                 descriptionShort: mod.descriptionShort
                             }),
-                            ...(mod.ModSource.length > 0 && {
+                            ...(input.mergeSources && mod.ModSource.length > 0 && {
                                 ModSource: {
                                     createMany: {
                                         data: mod.ModSource.map((src) => ({
@@ -285,7 +294,7 @@ export const modRouter = router({
                                     }
                                 }
                             }),
-                            ...(mod.ModDownload.length > 0 && {
+                            ...(input.mergeDownloads && mod.ModDownload.length > 0 && {
                                 ModDownload: {
                                     createMany: {
                                         data: mod.ModDownload.map((dl) => ({
@@ -295,7 +304,7 @@ export const modRouter = router({
                                     }
                                 }
                             }),
-                            ...(mod.ModInstaller.length > 0 && {
+                            ...(input.mergeInstallers && mod.ModInstaller.length > 0 && {
                                 ModInstaller: {
                                     createMany: {
                                         data: mod.ModInstaller.map((ins) => ({
@@ -305,7 +314,7 @@ export const modRouter = router({
                                     }
                                 }
                             }),
-                            ...(mod.ModScreenshot.length > 0 && {
+                            ...(input.mergeScreenshots && mod.ModScreenshot.length > 0 && {
                                 ModScreenshot: {
                                     createMany: {
                                         data: mod.ModScreenshot.map((ss) => ({
@@ -314,7 +323,7 @@ export const modRouter = router({
                                     }
                                 }
                             }),
-                            ...(mod.ModCredit.length > 0 && {
+                            ...(input.mergeCredits && mod.ModCredit.length > 0 && {
                                 ModCredit: {
                                     createMany: {
                                         data: mod.ModCredit.map((cre) => ({
