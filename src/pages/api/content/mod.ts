@@ -7,6 +7,15 @@ import { DeleteMod, InsertOrUpdateMod } from "@utils/content/mod";
 import { type ModCredit, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource } from "@prisma/client";
 import { CheckApiAccess } from "@utils/api";
 
+export const config = {
+    api: {
+        responseLimit: "8mb",
+        bodyParser: {
+            sizeLimit: "8mb"
+        }
+    },
+}
+
 export default async function Mod (req: NextApiRequest, res: NextApiResponse) {    
     // Perform API access check.
     const [ret, err, method] = await CheckApiAccess({

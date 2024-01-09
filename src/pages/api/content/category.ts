@@ -5,6 +5,15 @@ import { prisma } from "@server/db/client";
 import { DeleteCategory, InsertOrUpdateCategory } from "@utils/content/category";
 import { CheckApiAccess } from "@utils/api";
 
+export const config = {
+    api: {
+        responseLimit: "8mb",
+        bodyParser: {
+            sizeLimit: "8mb"
+        }
+    },
+}
+
 export default async function Category (req: NextApiRequest, res: NextApiResponse) {
     // Perform API access check.
     const [ret, err, method] = await CheckApiAccess({
