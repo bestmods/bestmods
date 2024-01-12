@@ -10,6 +10,7 @@ import { prisma } from "@server/db/client";
 import { type Source } from "@prisma/client";
 import SourceForm from "@components/forms/source/main";
 import NotFound from "@components/errors/notfound";
+import AdminPanel from "@components/admin/panel";
 
 export default function Page ({
     source
@@ -21,25 +22,23 @@ export default function Page ({
     return (
         <>
             <MetaInfo
-                title={`Editing Source ${source?.name ?? "N/A"} - Best Mods`}
+                title={`Editing Source ${source?.name ?? "N/A"} - Admin - Best Mods`}
             />
             <Main>
-                <div className="flex flex-col gap-2">
-                    {HasRole(session, "ADMIN") ? (
-                        <>
-                            {source ? (
-                                <>
-                                    <h1>Editing Source {source.name}</h1>
-                                    <SourceForm source={source} />
-                                </>
-                            ) : (
-                                <NotFound item="source" />
-                            )}
-                        </>
-                    ) : (
-                        <NoAccess />
-                    )}
-                </div>
+                {HasRole(session, "ADMIN") ? (
+                    <AdminPanel view="source">
+                        {source ? (
+                            <>
+                                <h1>Editing Source {source.name}</h1>
+                                <SourceForm source={source} />
+                            </>
+                        ) : (
+                            <NotFound item="source" />
+                        )}
+                    </AdminPanel>
+                ) : (
+                    <NoAccess />
+                )}
             </Main>
         </>
     )

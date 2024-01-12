@@ -11,10 +11,12 @@ import ScrollToTop from "@utils/scroll";
 
 export default function CategoryForm ({
     category,
-    categories
+    categories,
+    className
 } : {
     category?: Category
     categories: CategoryWithChildren[]
+    className?: string
 }) {
     const errorCtx = useContext(ErrorCtx);
     const successCtx = useContext(SuccessCtx);
@@ -71,7 +73,7 @@ export default function CategoryForm ({
             }}
         >
             {(form) => (
-                <Form className="bg-bestmods-2/80 p-2 rounded">
+                <Form className={className}>
                     <div className="p-2">
                         <label htmlFor="icon">Icon</label>
                         <input

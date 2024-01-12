@@ -10,6 +10,7 @@ import { type CategoryWithChildren } from "~/types/category";
 import { prisma } from "@server/db/client";
 import { type Source } from "@prisma/client";
 import ModForm from "@components/forms/mod/main";
+import AdminPanel from "@components/admin/panel";
 
 export default function Page ({
     categories,
@@ -26,19 +27,17 @@ export default function Page ({
                 title="New Mod - Best Mods"
             />
             <Main>
-                <div className="flex flex-col gap-2">
-                    {(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) ? (
-                        <>
-                            <h1>Add Mod</h1>
-                            <ModForm
-                                categories={categories}
-                                sources={sources}
-                            />
-                        </>
-                    ) : (
-                        <NoAccess />
-                    )}
-                </div>
+                {(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) ? (
+                    <AdminPanel view="mod">
+                        <h1>Add Mod</h1>
+                        <ModForm
+                            categories={categories}
+                            sources={sources}
+                        />
+                    </AdminPanel>
+                ) : (
+                    <NoAccess />
+                )}
             </Main>
         </>
     )

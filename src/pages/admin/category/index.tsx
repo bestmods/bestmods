@@ -1,32 +1,36 @@
+import AdminPanel from "@components/admin/panel";
+import CategoryBrowser from "@components/category/browser";
 import NoAccess from "@components/errors/noaccess";
 import Main from "@components/main";
 import MetaInfo from "@components/meta";
-import RedirectBrowser from "@components/redirects/browser";
 import { HasRole } from "@utils/roles";
-import Link from "next/link";
-import AdminPanel from "@components/admin/panel";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
-export default function Page() {
+export default function Page () {
     const { data: session } = useSession();
 
     return (
         <>
             <MetaInfo
-                title="Redirects - Admin - Best Mods"
+                title="Categories - Admin - Best Mods"
             />
+
             <Main>
                 {(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) ? (
-                    <AdminPanel view="redirect">
-                        <h1>Redirects</h1>
+                    <AdminPanel view="category">
+                        <h1>Categories</h1>
                         <div className="flex flex-col gap-2">
                             <div className="flex justify-end">
                                 <Link
-                                    href="/admin/redirect/add"
+                                    href="/admin/category/add"
                                     className="btn btn-primary"
-                                >Add Redirect</Link>
+                                >Add Category</Link>
                             </div>
-                            <RedirectBrowser />
+                            <CategoryBrowser
+                                view="table"
+                                showActions={true}
+                            />
                         </div>
                     </AdminPanel>
                 ) : (

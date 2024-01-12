@@ -5,6 +5,7 @@ import { HasRole } from "@utils/roles";
 import { useSession } from "next-auth/react";
 
 import SourceForm from "@components/forms/source/main";
+import AdminPanel from "@components/admin/panel";
 
 export default function Page () {
     const { data: session } = useSession();
@@ -12,19 +13,17 @@ export default function Page () {
     return (
         <>
             <MetaInfo
-                title="New Source - Best Mods"
+                title="Add Source - Admin - Best Mods"
             />
             <Main>
-                <div className="flex flex-col gap-2">
-                    {HasRole(session, "ADMIN") ? (
-                        <>
-                            <h1>Add Source</h1>
-                            <SourceForm  />
-                        </>
-                    ) : (
-                        <NoAccess />
-                    )}
-                </div>
+                {HasRole(session, "ADMIN") ? (
+                    <AdminPanel view="source">
+                        <h1>Add Source</h1>
+                        <SourceForm  />
+                    </AdminPanel>
+                ) : (
+                    <NoAccess />
+                )}
             </Main>
         </>
     )

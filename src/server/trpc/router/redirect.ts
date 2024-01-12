@@ -3,7 +3,7 @@ import { contributorProcedure, router } from "../trpc";
 import { TRPCError } from "@trpc/server";
 
 export const redirectRouter = router({
-    getRedirects: contributorProcedure
+    getAll: contributorProcedure
         .input(z.object({
             cursor: z.string().nullish(),
             limit: z.number().default(10)

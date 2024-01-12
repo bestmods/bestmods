@@ -60,5 +60,31 @@ export const sourceRouter = router({
                     message: `Received error when deleting source. Error => ${err}`
                 });
             }
+        }),
+    getAll: adminProcedure
+        .input(z.object({
+            cursor: z.string().nullish(),
+            limit: z.number().default(10)
+        }))
+        .query(async ({ ctx, input }) => {
+            const sources = await ctx.prisma.source.findMany({
+                take: input.limit + 1,
+                cursor: input.cursor ? { url: input.cursor } : undefined
+            })
+
+            let nextCur: typeof input.cursor | undefined = undefined;
+
+            if (sources.length > input.limit) {
+                const nextItem = sources.pop();
+
+                if (nextItem)
+                    nextCur = nextItem.url;
+            }
+
+            return {
+                sources,
+                nextCur
+            }
         })
+
 });

@@ -1,50 +1,29 @@
 import NoAccess from "@components/errors/noaccess";
 import Main from "@components/main";
 import MetaInfo from "@components/meta";
-import { HasRole } from "@utils/roles";
-import { type GetServerSidePropsContext } from "next";
-import { getServerAuthSession } from "@server/common/get-server-auth-session";
 import RedirectForm from "@components/forms/redirect/main";
+import AdminPanel from "@components/admin/panel";
+import { useSession } from "next-auth/react";
+import { HasRole } from "@utils/roles";
 
-export default function Page({
-    authed
-} : {
-    authed: boolean
-}) {
+export default function Page() {
+    const { data: session } = useSession();
+
     return (
         <>
             <MetaInfo
                 title="Add Redirect - Admin - Best Mods"
             />
             <Main>
-                {authed ? (
-                    <>
+                {(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) ? (
+                    <AdminPanel view="redirect">
                         <h1>Add Redirect</h1>
                         <RedirectForm />
-                    </>
+                    </AdminPanel>
                 ) : (
                     <NoAccess />
                 )}
             </Main>
         </>
     )
-}
-
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    const { res } = ctx;
-    const session = await getServerAuthSession(ctx);
-
-    let authed = false;
-
-    if (HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR"))
-        authed = true
-
-    if (!authed)
-        res.statusCode = 401;
-
-    return {
-        props: {
-            authed: authed
-        }
-    }
 }

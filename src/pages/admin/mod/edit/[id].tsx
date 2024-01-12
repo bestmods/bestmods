@@ -12,6 +12,7 @@ import { type Source } from "@prisma/client";
 import ModForm from "@components/forms/mod/main";
 import { type ModWithRelations } from "~/types/mod";
 import NotFound from "@components/errors/notfound";
+import AdminPanel from "@components/admin/panel";
 
 export default function Page ({
     mod,
@@ -30,26 +31,24 @@ export default function Page ({
                 title={`Editing Mod ${mod?.name ?? "N/A"}  - Best Mods`}
             />
             <Main>
-                <div className="flex flex-col gap-2">
-                    {(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) ? (
-                        <>
-                            {mod ? (
-                                <>
-                                    <h1>Editing Mod {mod.name}</h1>
-                                    <ModForm
-                                        mod={mod}
-                                        categories={categories}
-                                        sources={sources}
-                                    />
-                                </>
-                            ) : (
-                                <NotFound item="mod" />
-                            )}
-                        </>
-                    ) : (
-                        <NoAccess />
-                    )}
-                </div>
+                {(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) ? (
+                    <AdminPanel view="mod">
+                        {mod ? (
+                            <>
+                                <h1>Editing Mod {mod.name}</h1>
+                                <ModForm
+                                    mod={mod}
+                                    categories={categories}
+                                    sources={sources}
+                                />
+                            </>
+                        ) : (
+                            <NotFound item="mod" />
+                        )}
+                    </AdminPanel>
+                ) : (
+                    <NoAccess />
+                )}
             </Main>
         </>
     )

@@ -8,9 +8,11 @@ import FormCheckbox from "../checkbox";
 import ScrollToTop from "@utils/scroll";
 
 export default function SourceForm ({
-    source
+    source,
+    className
 } : {
     source?: Source
+    className?: string
 }) {
     const errorCtx = useContext(ErrorCtx);
     const successCtx = useContext(SuccessCtx);
@@ -64,7 +66,7 @@ export default function SourceForm ({
             }}
         >
             {() => (
-                <Form className="bg-bestmods-2/80 p-2 rounded">
+                <Form className={className}>
                     <div className="p-2">
                         <label htmlFor="icon">Icon</label>
                         <input

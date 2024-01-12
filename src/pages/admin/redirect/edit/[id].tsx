@@ -8,22 +8,24 @@ import { getServerAuthSession } from "@server/common/get-server-auth-session";
 import RedirectForm from "@components/forms/redirect/main";
 import { type Redirect } from "@prisma/client";
 import NotFound from "@components/errors/notfound";
+import AdminPanel from "@components/admin/panel";
+import { useSession } from "next-auth/react";
 
 export default function Page({
-    authed,
     redirect
 } : {
-    authed: boolean
     redirect?: Redirect
 }) {
+    const  { data: session } = useSession();
+
     return (
         <>
             <MetaInfo
-                title="Add Redirect - Admin - Best Mods"
+                title={`Editing Redirect ${redirect?.url ?? "N/A"} - Admin - Best Mods`}
             />
             <Main>
-                {authed ? (
-                    <>
+                {(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) ? (
+                    <AdminPanel view="redirect">
                         {redirect ? (
                             <>
                                 <h1>Editing Redirect {redirect.url}</h1>
@@ -32,7 +34,7 @@ export default function Page({
                         ) : (
                             <NotFound item="redirect" />
                         )}
-                    </>
+                    </AdminPanel>
                 ) : (
                     <NoAccess />
                 )}
@@ -42,18 +44,12 @@ export default function Page({
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    const { res, params } = ctx;
+    const { params } = ctx;
 
     // Get session and auth.
     const session = await getServerAuthSession(ctx);
 
-    let authed = false;
-
-    if (HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR"))
-        authed = true
-
-    if (!authed)
-        res.statusCode = 401;
+    const authed = HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR");
 
     const id = params?.id?.toString();
 
@@ -70,7 +66,6 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     return {
         props: {
-            authed: authed,
             redirect: redirect
         }
     }

@@ -100,5 +100,48 @@ export const categoryRouter = router({
                 categories,
                 nextCat
             }
+        }),
+        getCategoryMappingsAll: publicProcedure
+        .input(z.object({
+            cursor: z.number().nullish(),
+            limit: z.number().default(10)
+        }))
+        .query(async ({ ctx, input }) => {
+            const categories = await ctx.prisma.category.findMany({
+                take: input.limit + 1,
+                cursor: input.cursor ? { id: input.cursor } : undefined,
+                include: {
+                    parent: true,
+                    children: {
+                        include: {
+                            _count: {
+                                select: {
+                                    Mod: true
+                                }
+                            }
+                        }
+                    },
+                    _count: {
+                        select: {
+                            Mod: true
+                        }
+                    }
+                },
+                where: {
+                    parent: null
+                }
+            })
+
+            let nextCat: typeof input.cursor | undefined = undefined;
+
+            if (categories.length > input.limit) {
+                const next = categories.pop();
+                nextCat = next?.id;
+            }
+
+            return {
+                categories,
+                nextCat
+            }
         })
 });

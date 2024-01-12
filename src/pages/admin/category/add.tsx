@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react";
 import { type CategoryWithChildren } from "~/types/category";
 
 import { prisma } from "@server/db/client";
+import AdminPanel from "@components/admin/panel";
 
 export default function Page ({
     categories
@@ -23,16 +24,14 @@ export default function Page ({
                 title="New Category - Best Mods"
             />
             <Main>
-                <div className="flex flex-col gap-2">
-                    {HasRole(session, "ADMIN") ? (
-                        <>
-                            <h1>Add Category</h1>
-                            <CategoryForm categories={categories} />
-                        </>
-                    ) : (
-                        <NoAccess />
-                    )}
-                </div>
+                {HasRole(session, "ADMIN") ? (
+                    <AdminPanel view="category">
+                        <h1>Add Category</h1>
+                        <CategoryForm categories={categories} />
+                    </AdminPanel>
+                ) : (
+                    <NoAccess />
+                )}
             </Main>
         </>
     )

@@ -123,5 +123,47 @@ export const userRouter = router({
                     code: "BAD_REQUEST"
                 });
             }
-        })
+        }),
+        getAll: adminProcedure
+            .input(z.object({
+                search: z.string().optional(),
+                cursor: z.string().nullish(),
+                limit: z.number().default(10)
+            }))
+            .query(async ({ ctx, input }) => {
+                const users = await ctx.prisma.user.findMany({
+                    take: input.limit + 1,
+                    cursor: input.cursor ? { id: input.cursor } : undefined,
+                    where: {
+                        ...(input.search && {
+                            OR: [
+                                {
+                                    name: {
+                                        contains: input.search
+                                    }
+                                },
+                                {
+                                    email: {
+                                        contains: input.search
+                                    }
+                                }
+                            ]
+                        })
+                    }
+                })
+
+                let nextCur: typeof input.cursor | undefined = undefined;
+
+                if (users.length > input.limit) {
+                    const nextUser = users.pop();
+
+                    if (nextUser)
+                        nextCur = nextUser.id;
+                }
+
+                return {
+                    users,
+                    nextCur
+                }
+            })
 });

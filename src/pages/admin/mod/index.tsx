@@ -1,9 +1,11 @@
+import AdminPanel from "@components/admin/panel";
 import NoAccess from "@components/errors/noaccess";
 import Main from "@components/main";
 import MetaInfo from "@components/meta";
 import ModBrowser from "@components/mod/browser";
 import { HasRole } from "@utils/roles";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 export default function Page () {
     const { data: session } = useSession();
@@ -11,17 +13,25 @@ export default function Page () {
     return (
         <>
             <MetaInfo
-                title="Mods - Admin"
+                title="Mods - Admin - Best Mods"
             />
             <Main>
-                <h1>Mods Moderation</h1>
                 {(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) ? (
-                    <div>
-                        <ModBrowser
-                            showActions={true}
-                            showDebug={true}
-                        />
-                    </div>
+                    <AdminPanel view="mod">
+                        <h1>Mods</h1>
+                        <div className="flex flex-col gap-2">
+                            <div className="flex justify-end">
+                                <Link
+                                    href="/admin/mod/add"
+                                    className="btn btn-primary"
+                                >Add Mod</Link>
+                            </div>
+                            <ModBrowser
+                                showActions={true}
+                                showDebug={true}
+                            />
+                        </div>
+                    </AdminPanel>
                 ) : (
                     <NoAccess />
                 )}

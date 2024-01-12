@@ -14,10 +14,12 @@ export default function ModForm ({
     mod,
     sources,
     categories,
+    className
 } : {
     mod?: ModWithRelations
     sources: Source[]
     categories: CategoryWithChildren[]
+    className?: string
 }) {
     const errorCtx = useContext(ErrorCtx);
     const successCtx = useContext(SuccessCtx);
@@ -119,7 +121,7 @@ export default function ModForm ({
             }}
         >
             {(form) => (
-                <Form className="bg-bestmods-2/80 p-2 rounded">
+                <Form className={className}>
                     <h2>General</h2>
                     <div className="p-2">
                         <label htmlFor="icon">Banner</label>

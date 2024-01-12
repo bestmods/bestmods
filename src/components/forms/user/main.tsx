@@ -10,9 +10,11 @@ import { ErrorCtx, SuccessCtx } from "@pages/_app";
 import FormCheckbox from "../checkbox";
 
 export default function UserForm ({
-    user
+    user,
+    className
 } : {
     user: User | null
+    className?: string
 }) {
     const errorCtx = useContext(ErrorCtx);
     const successCtx = useContext(SuccessCtx);
@@ -65,7 +67,7 @@ export default function UserForm ({
             }}
         >
             {() => (
-                <Form className="bg-bestmods-2/80 p-2 rounded">
+                <Form className={className}>
                     <h2>General Information</h2>
                     <div className="p-2">
                         <label htmlFor="avatar" >Avatar</label>

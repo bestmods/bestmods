@@ -5,9 +5,11 @@ import { Field, Form, Formik } from "formik";
 import { useContext } from "react";
 
 export default function RedirectForm({
-    redirect
+    redirect,
+    className
 } : {
     redirect?: Redirect
+    className?: string
 }) {
     const errorCtx = useContext(ErrorCtx);
     const successCtx = useContext(SuccessCtx);
@@ -45,7 +47,7 @@ export default function RedirectForm({
                 })
             }}
         >
-            <Form className="bg-bestmods-2/80 p-2 rounded">
+            <Form className={className}>
                 <div className="p-2">
                     <label htmlFor="url">URL</label>
                     <Field name="url" />

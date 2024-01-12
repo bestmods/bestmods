@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import Main from "@components/main";
 import MetaInfo from "@components/meta";
 
-import EditForm from "@components/forms/user/main";
+import UserForm from "@components/forms/user/main";
 
 import { prisma } from "@server/db/client";
 
@@ -30,7 +30,7 @@ export default function Page ({
                     {HasRole(session, "ADMIN") ? (
                         <>
                             <h1 className="page-title">Editing User</h1>
-                            <EditForm user={user} />
+                            <UserForm user={user} />
                         </>
                     ) : (
                         <NoAccess />
@@ -44,8 +44,10 @@ export default function Page ({
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     let user: User | null = null;
 
+    const { params } = ctx;
+
     // Our user ID.
-    const id = (ctx.params?.id && ctx.params?.id[0]) ? ctx.params.id[0] : "";
+    const id = params?.id?.toString();
 
     // Retrieve session and permission check.
     const session = await getServerAuthSession(ctx);

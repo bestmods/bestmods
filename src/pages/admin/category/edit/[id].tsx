@@ -11,6 +11,7 @@ import { type CategoryWithChildren } from "~/types/category";
 import { prisma } from "@server/db/client";
 import { type Category } from "@prisma/client";
 import NotFound from "@components/errors/notfound";
+import AdminPanel from "@components/admin/panel";
 
 export default function Page ({
     category,
@@ -27,25 +28,23 @@ export default function Page ({
                 title={`Editing Category ${category?.name ?? "N/A"} - Best Mods`}
             />
             <Main>
-                <div className="flex flex-col gap-2">
-                    {HasRole(session, "ADMIN") ? (
-                        <>
-                            {category ? (
-                                <>
-                                    <h1>Editing Category {category.name}</h1>
-                                    <CategoryForm
-                                        category={category}
-                                        categories={categories}
-                                    />
-                                </>
-                            ) : (
-                                <NotFound item="category" />
-                            )}
-                        </>
-                    ) : (
-                        <NoAccess />
-                    )}
-                </div>
+                {HasRole(session, "ADMIN") ? (
+                    <AdminPanel view="category">
+                        {category ? (
+                            <>
+                                <h1>Editing Category {category.name}</h1>
+                                <CategoryForm
+                                    category={category}
+                                    categories={categories}
+                                />
+                            </>
+                        ) : (
+                            <NotFound item="category" />
+                        )}
+                    </AdminPanel>
+                ) : (
+                    <NoAccess />
+                )}
             </Main>
         </>
     )
