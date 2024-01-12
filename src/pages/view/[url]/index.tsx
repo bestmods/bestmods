@@ -36,10 +36,13 @@ export default function Page ({
     if (mod?.banner)
         banner = cdn + mod.banner;
 
+    const modName = mod?.name ?? "Not Found";
+    const catName = mod?.category?.name ? `- ${mod.category.name}` : "";
+
     return (
         <>
             <MetaInfo
-                title={`${mod?.name ?? `Not Found`} - Best Mods`}
+                title={`${modName} ${catName} - Best Mods`}
                 description={desc}
                 image={banner}
             />
