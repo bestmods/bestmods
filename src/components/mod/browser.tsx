@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
 import InfiniteScroll from "react-infinite-scroller";
 
@@ -66,14 +66,22 @@ export default function ModBrowser ({
         });
     }
 
+    // Reset browser on first render.
+    const firstRender = useRef(true);
+    const isFirstRender = firstRender.current;
+
     useEffect(() => {
-        // Reset query on remount.
-        return () => {
-            (async () => {
-                await utils.mod.getAllBrowser.reset();
-            })()
-        }
-    }, [utils.mod.getAllBrowser])
+        if (!isFirstRender)
+            return;
+
+        firstRender.current = false;
+    }, [isFirstRender])
+
+    if (isFirstRender) {
+        (async () => {
+            await utils.mod.getAllBrowser.reset()
+        })();
+    }
 
     const modsOrLoading = !data || mods.length > 0;
 
