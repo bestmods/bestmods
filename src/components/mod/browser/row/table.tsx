@@ -4,7 +4,7 @@ import EyeIcon from "@components/icons/eye";
 import DownloadIcon from "@components/icons/download";
 
 import { type Category } from "@prisma/client";
-import { type ModRowBrowser } from "~/types/mod";
+import { type ModSourceWithSource, type ModRowBrowser, type ModInstallerWithSource } from "~/types/mod";
 import Image from "next/image";
 import IconAndText from "@components/icon_and_text";
 
@@ -14,15 +14,19 @@ export default function ModRowTable ({
     catIcon,
     viewLink
 } : {
-    mod: ModRowBrowser,
-    banner: string,
-    descShort: string,
-    cat?: Category | null,
-    catPar?: Category | null,
-    catParIcon: string,
-    catParLink: string | null,
-    catIcon: string,
-    catLink: string | null,
+    mod: ModRowBrowser
+    banner: string
+    name: string
+    descShort?: string
+    ownerName?: string
+    sources?: ModSourceWithSource[]
+    installers?: ModInstallerWithSource[]
+    cat?: Category | null
+    catPar?: Category | null
+    catParIcon: string
+    catParLink: string | null
+    catIcon: string
+    catLink: string | null
     viewLink: string
 }) {
     return (

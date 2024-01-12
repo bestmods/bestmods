@@ -1,6 +1,8 @@
 import { type ModRowBrowser } from "~/types/mod";
 import ModRowGrid from "./row/grid";
 import ModRowTable from "./row/table";
+import { useEffect, useState } from "react";
+import { LimitText } from "@utils/text";
 
 export default function ModRow ({
     mod,
@@ -39,8 +41,10 @@ export default function ModRow ({
     const catLink = ((cat) ? "/category" + ((cat_par) ? "/" + cat_par.url : "") + "/" + cat.url : null);
 
 
-    // Handle short description.
-    const descShort = String(mod.descriptionShort);
+    // Handle text limitations
+    const name = LimitText(mod.name, 24);
+    const descShort = mod.descriptionShort ? LimitText(mod.descriptionShort, 128) : undefined;
+    const ownerName = mod.ownerName ? LimitText(mod.ownerName, 24) : undefined;
 
     return (
         <>
@@ -49,7 +53,11 @@ export default function ModRow ({
                     mod={mod}
                     showRelations={showRelations}
                     banner={banner}
+                    name={name}
                     descShort={descShort}
+                    ownerName={ownerName}
+                    sources={mod.ModSource}
+                    installers={mod.ModInstaller}
                     cat={cat}
                     catIcon={catIcon}
                     catLink={catLink}
@@ -64,7 +72,11 @@ export default function ModRow ({
                 <ModRowTable
                     mod={mod}
                     banner={banner}
+                    name={name}
                     descShort={descShort}
+                    ownerName={ownerName}
+                    sources={mod.ModSource}
+                    installers={mod.ModInstaller}
                     cat={cat}
                     catIcon={catIcon}
                     catLink={catLink}

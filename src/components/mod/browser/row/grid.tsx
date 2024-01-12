@@ -7,7 +7,7 @@ import Link from "next/link";
 
 import EyeIcon from "@components/icons/eye";
 import DownloadIcon from "@components/icons/download";
-import { type ModRowBrowser } from "~/types/mod";
+import { type ModSourceWithSource, type ModRowBrowser, type ModInstallerWithSource } from "~/types/mod";
 import Image from "next/image";
 import IconAndText from "@components/icon_and_text";
 import React, { useContext, useEffect, useState } from "react";
@@ -21,7 +21,11 @@ export default function ModRowGrid ({
     showRelations = true,
     className,
     banner,
+    name,
     descShort,
+    ownerName,
+    sources,
+    installers,
     cat,
     catPar,
     catParIcon,
@@ -36,14 +40,18 @@ export default function ModRowGrid ({
     showRelations?: boolean
     className?: string
     banner: string
-    descShort: string
+    name: string
+    viewLink: string
+    descShort?: string
+    ownerName?: string
+    sources?: ModSourceWithSource[]
+    installers?: ModInstallerWithSource[]
     cat?: Category | null
     catPar?: Category | null
     catParIcon: string
     catParLink: string | null
     catIcon: string
     catLink: string | null
-    viewLink: string
     showActions?: boolean
     showDebug?: boolean
 }) {
@@ -58,7 +66,7 @@ export default function ModRowGrid ({
         if (!viewPort.isMobile && showRelations) {
             const newItems: Drop_Down_Menu_Type[] = [];
 
-            mod.ModSource?.map((src) => {
+            sources?.map((src) => {
                 const name = src.source.name;
                 const url = `https://${src.sourceUrl}/${src.query}`;
 
@@ -85,13 +93,13 @@ export default function ModRowGrid ({
             setSourceItems(newItems);
         } else if (sourceItems.length > 0)
             setSourceItems([]);
-    }, [viewPort, showRelations, mod.ModSource, cdn, sourceItems.length])
+    }, [viewPort, showRelations, sources, cdn, sourceItems.length])
 
     useEffect(() => {
         if (!viewPort.isMobile && showRelations) {
             const newItems: Drop_Down_Menu_Type[] = [];
 
-            mod.ModInstaller?.map((ins) => {
+            installers?.map((ins) => {
                 const name = ins.source.name;
                 const url = ins.url;
 
@@ -117,13 +125,10 @@ export default function ModRowGrid ({
             setInstallerItems(newItems);
         } else if (installerItems.length > 0)
             setInstallerItems([]);
-    }, [viewPort, showRelations, mod.ModInstaller, cdn, installerItems.length])
+    }, [viewPort, showRelations, installers, cdn, installerItems.length])
 
     return (
-        <div
-            key={mod.id}
-            className={`${className ?`${className} ` : ``}group rounded bg-bestmods-2/80 flex flex-col shadow-lg shadow-black ring-4 ring-bestmods-3/80 hover:ring-bestmods-4/80 duration-300 h-full`}
-        >
+        <div className={`${className ?`${className} ` : ``}group rounded bg-bestmods-2/80 flex flex-col shadow-lg shadow-black ring-4 ring-bestmods-3/80 hover:ring-bestmods-4/80 duration-300 h-full`}>
             <div className="relative w-full h-64 max-h-64">
                 <Link href={viewLink}>
                     <Image
@@ -134,20 +139,22 @@ export default function ModRowGrid ({
                         className="w-full h-full rounded-t brightness-[75%] group-hover:brightness-100 group-hover:duration-500 object-cover object-center"
                     />
                 </Link>
-                {mod.ownerName && mod.ownerName.length > 0 && (
+                {ownerName && ownerName.length > 0 && (
                     <div className="absolute bottom-0 left-0 h-8 pr-4 rounded-tr bg-bestmods-1/40 hover:bg-bestmods-1/80 hover:font-bold flex items-center text-white text-sm duration-200">
-                        <p className="ml-1">By {mod.ownerName}</p>
+                        <p className="ml-1">By {ownerName}</p>
                     </div>
                 )}
             </div>
             <div className="p-2 grow text-ellipsis overflow-clip w-full">
-                <h3 className="text-center">
+                <h4 className="text-center">
                     <Link
                         href={viewLink}
                         className="hover:text-inherit"
-                    >{mod.name}</Link>
-                </h3>
-                <p className="text-sm">{descShort}</p>
+                    >{name}</Link>
+                </h4>
+                {descShort && (
+                    <p className="text-sm">{descShort}</p>
+                )}
             </div>
             {catPar && catParLink && (
                 <Link

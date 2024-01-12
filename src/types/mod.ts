@@ -98,3 +98,15 @@ export type ModWithRating = Prisma.ModGetPayload<{
 }> & {
     rating?: number
 }
+
+export type ModSourceWithSource = Prisma.ModSourceGetPayload<{
+    include: {
+        source: true
+    }
+}>
+
+export type ModInstallerWithSource = Prisma.ModInstallerGetPayload<{
+    include: {
+        source: true
+    }
+}>
