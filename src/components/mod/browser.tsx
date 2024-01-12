@@ -24,6 +24,8 @@ export default function ModBrowser ({
 }) {
     const viewPort = useContext(ViewPortCtx);
 
+    const utils = trpc.useUtils();
+
     const [needMoreMods, setNeedMoreMods] = useState(true);
 
     // Filters
@@ -63,6 +65,15 @@ export default function ModBrowser ({
                 setNeedMoreMods(false)
         });
     }
+
+    useEffect(() => {
+        // Reset query on remount.
+        return () => {
+            (async () => {
+                await utils.mod.getAllBrowser.reset();
+            })()
+        }
+    }, [])
 
     const modsOrLoading = !data || mods.length > 0;
 
