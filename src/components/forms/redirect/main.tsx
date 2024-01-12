@@ -1,5 +1,5 @@
 import { ErrorCtx, SuccessCtx } from "@pages/_app";
-import { Redirect } from "@prisma/client";
+import { type Redirect } from "@prisma/client";
 import { trpc } from "@utils/trpc";
 import { Field, Form, Formik } from "formik";
 import { useContext } from "react";

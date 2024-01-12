@@ -73,7 +73,7 @@ export default function ModBrowser ({
                 await utils.mod.getAllBrowser.reset();
             })()
         }
-    }, [])
+    }, [utils.mod.getAllBrowser])
 
     const modsOrLoading = !data || mods.length > 0;
 

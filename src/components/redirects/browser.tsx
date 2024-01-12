@@ -1,5 +1,5 @@
 import Loading from "@components/loading";
-import { Redirect } from "@prisma/client";
+import { type Redirect } from "@prisma/client";
 import { trpc } from "@utils/trpc";
 import { useState } from "react";
 import InfiniteScroll from "react-infinite-scroller";

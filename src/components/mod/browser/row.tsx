@@ -1,7 +1,6 @@
 import { type ModRowBrowser } from "~/types/mod";
 import ModRowGrid from "./row/grid";
 import ModRowTable from "./row/table";
-import { useEffect, useState } from "react";
 import { LimitText } from "@utils/text";
 
 export default function ModRow ({

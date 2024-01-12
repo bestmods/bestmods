@@ -7,7 +7,7 @@ export default function NotFound ({
         <div className="flex flex-col gap-2">
             <h1>Not Found!</h1>
             <div className="bg-bestmods-2/80 rounded p-4">
-                <p>The {item.charAt(0).toLowerCase() + item.slice(1)} you've requested was not found! Please check the URL and make sure it is correct.</p>
+                <p>The {item.charAt(0).toLowerCase() + item.slice(1)} you{"'"}ve requested was not found! Please check the URL and make sure it is correct.</p>
             </div>
         </div>
     )

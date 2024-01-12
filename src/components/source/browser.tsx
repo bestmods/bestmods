@@ -1,5 +1,5 @@
 import Loading from "@components/loading";
-import { Source } from "@prisma/client";
+import { type Source } from "@prisma/client";
 import { trpc } from "@utils/trpc";
 import { useState } from "react";
 import InfiniteScroll from "react-infinite-scroller";

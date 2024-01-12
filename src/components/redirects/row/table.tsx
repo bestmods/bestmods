@@ -1,5 +1,5 @@
 import EditIcon from "@components/icons/edit";
-import { Redirect } from "@prisma/client";
+import { type Redirect } from "@prisma/client";
 import Link from "next/link";
 
 export default function RedirectTableRow ({
