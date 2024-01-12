@@ -13,6 +13,7 @@ import ModCatalog from "@components/mod/catalog";
 import { getServerAuthSession } from "@server/common/get-server-auth-session";
 import { GetMods } from "@utils/content/mod";
 import { GetBgImage } from "@utils/images";
+import NotFound from "@components/errors/notfound";
 
 export default function Page ({
     category,
@@ -34,26 +35,33 @@ export default function Page ({
     return (
         <>
             <MetaInfo
-                title={`${category?.parent?.name ? `${category.parent.name} ` : ``}${category?.name ? `${category.name} ` : ``} - Best Mods`}
+                title={`${category?.parent?.name ? `${category.parent.name} ` : ``}${category?.name ? `${category.name} ` : `Not Found`} - Best Mods`}
                 description={category?.description ?? category?.parent?.description ?? undefined}
                 image={bgPath}
             />
             <Main image={bgPath}>
-                <h1>
-                    {category?.parent && (
-                        <>{category.parent.name} - </>
-                    )}
-                    {category && (
-                        <>{category.name}</>
-                    )}
-                </h1>
-                <ModCatalog
-                    latestMods={latestMods}
-                    viewedMods={viewedMods}
-                    downloadedMods={downloadedMods}
-                    topMods={topMods}
-                    topModsToday={topModsToday}
-                />
+                {category ? (
+                    <>
+                        <h1>
+                            {category?.parent && (
+                                <>{category.parent.name} - </>
+                            )}
+                            {category && (
+                                <>{category.name}</>
+                            )}
+                        </h1>
+                        <ModCatalog
+                            latestMods={latestMods}
+                            viewedMods={viewedMods}
+                            downloadedMods={downloadedMods}
+                            topMods={topMods}
+                            topModsToday={topModsToday}
+                        />
+                    </>
+                ) : (
+                    <NotFound item="category" />
+                )}
+                
             </Main>
         </>
     )
@@ -63,7 +71,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const session = await getServerAuthSession(ctx);
 
     // We need to retrieve some props.
-    const { params } = ctx;
+    const { params, req, res } = ctx;
 
     const priUrl = params?.category?.[0]?.toString();
     const secUrl = params?.category?.[1]?.toString();
@@ -107,6 +115,32 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
                 categories.push(child.id);
             })
         }
+    } else {
+        let redirected = false;
+
+        // Look for redirect.
+        const pathName = req.url;
+
+        if (pathName) {
+            const redirect = await prisma.redirect.findFirst({
+                where: {
+                    url: pathName
+                }
+            });
+
+            // Check if we found a redirect.
+            if (redirect) {
+                // Set status code to 301.
+                res.statusCode = 301;
+
+                res.setHeader("Location", redirect.redirect);
+
+                redirected = true;
+            }
+        }
+
+        if (!redirected)
+            res.statusCode = 404;
     }
 
     let latestMods: ModRowBrowser[] = [];
