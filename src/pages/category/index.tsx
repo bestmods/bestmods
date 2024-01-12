@@ -33,7 +33,6 @@ export default function Page ({
                                 <CategoryRowGrid
                                     key={`category-${index.toString()}`}
                                     category={category}
-                                    subs={category.children}
                                 />
                             );
                         })}
