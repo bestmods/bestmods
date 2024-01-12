@@ -196,7 +196,6 @@ export default function CategoryForm ({
                     </div>
                 </Form>
             )}
-
         </Formik>
     )
 }

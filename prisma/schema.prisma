@@ -295,3 +295,9 @@ model ApiLog {
   apiKeyId Int
   apiKey   ApiKey @relation(fields: [apiKeyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
+
+model Redirect {
+  id       Int    @id @default(autoincrement())
+  url      String @unique
+  redirect String
+}

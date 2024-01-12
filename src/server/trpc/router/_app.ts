@@ -7,6 +7,7 @@ import { modRouter } from "@server/trpc/router/mod";
 import { modRatingRouter } from "@server/trpc/router/mod_rating";
 import { modDownloadRouter } from "@server/trpc/router/mod_download";
 import { userRouter } from "@server/trpc/router/user";
+import { redirectRouter } from "./redirect";
 
 export const appRouter = router({
     source: sourceRouter,
@@ -15,7 +16,8 @@ export const appRouter = router({
     modRating: modRatingRouter,
     modDownload: modDownloadRouter,
     auth: authRouter,
-    user: userRouter
+    user: userRouter,
+    redirect: redirectRouter
 });
 
 // export type definition of API
