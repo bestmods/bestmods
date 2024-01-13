@@ -19,8 +19,12 @@ import HomeIcon from "./icons/home";
 import SteamIcon from "./icons/steam";
 import InfoIcon from "./icons/info";
 import CubesIcon from "./icons/cubes";
+import { useSession } from "next-auth/react";
+import { HasRole } from "@utils/roles";
+import GearIcon from "./icons/gear";
 
 export default function Header () {
+    const { data: session } = useSession();
     const router = useRouter();
 
     const cur = router.asPath;
@@ -215,6 +219,14 @@ export default function Header () {
                                 text={<>Community</>}
                             />
                         </Link>
+                        {(HasRole(session, "CONTRIBUTOR") || HasRole(session, "ADMIN")) && (
+                            <Link href="/admin">
+                                <IconAndText
+                                    icon={<GearIcon className="w-6 h-6 fill-white" />}
+                                    text={<>Admin</>}
+                                />
+                            </Link>
+                        )}
                     </div>
                     <div>
                         <button
@@ -365,7 +377,18 @@ export default function Header () {
                                 />
                             ,
                             new_tab: true
-                        }
+                        },
+                        ...((HasRole(session, "CONTRIBUTOR") || HasRole(session, "ADMIN")) ? [
+                            {
+                                link: "/admin",
+                                html:
+                                    <IconAndText
+                                        icon={<GearIcon className="w-6 h-6 fill-none stroke-white" />}
+                                        text={<>Admin</>}
+                                    />,
+                                new_tab: false
+                            }
+                        ] : [])
                     ]}
                 />
             </nav>            
