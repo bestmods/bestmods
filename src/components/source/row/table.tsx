@@ -7,16 +7,23 @@ import { trpc } from "@utils/trpc";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useContext } from "react";
+import { type SourceWithModCount } from "~/types/source";
 
 export default function SourceRowTable ({
     source,
     className,
     showActions = false
 } : {
-    source: Source
+    source: Source | SourceWithModCount
     className?: string
     showActions?: boolean
 }) {
+    // Get mod count.
+    let modCnt = 0;
+
+    if ("_count" in source)
+        modCnt = source._count.ModSource;
+
     const { data: session } = useSession();
 
     const errorCtx = useContext(ErrorCtx);
@@ -47,6 +54,7 @@ export default function SourceRowTable ({
         <tr className={className}>
             <td>{source.name}</td>
             <td>{source.url}</td>
+            <td>{modCnt.toString()}</td>
             {(showActions && (HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR"))) && (
                 <td>
                     <div className="flex flex-wrap gap-2">

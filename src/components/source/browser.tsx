@@ -1,9 +1,9 @@
 import Loading from "@components/loading";
-import { type Source } from "@prisma/client";
 import { trpc } from "@utils/trpc";
 import { useState } from "react";
 import InfiniteScroll from "react-infinite-scroller";
 import SourceRow from "./row";
+import { type SourceWithModCount } from "~/types/source";
 
 export default function SourceBrowser ({
     showActions = false,
@@ -24,13 +24,13 @@ export default function SourceBrowser ({
         await fetchNextPage();
     }
 
-    const sources: Source[] = [];
+    const sources: SourceWithModCount[] = [];
 
     if (data) {
         data.pages.forEach((pg) => {
             sources.push(...pg.sources);
 
-            if (pg.nextCur && needMore)
+            if (!pg.nextCur && needMore)
                 setNeedMore(false);
         })
     }
@@ -52,6 +52,7 @@ export default function SourceBrowser ({
                                 <tr className="font-bold text-white">
                                     <td>Name</td>
                                     <td>URL</td>
+                                    <td>Mods</td>
                                     {showActions && (
                                         <td>Actions</td>
                                     )}

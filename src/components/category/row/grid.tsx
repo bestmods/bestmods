@@ -1,4 +1,5 @@
 import { ErrorCtx, SuccessCtx } from "@pages/_app";
+import { GetCategoryUrl } from "@utils/category";
 import { HasRole } from "@utils/roles";
 import { trpc } from "@utils/trpc";
 import { useSession } from "next-auth/react";
@@ -17,7 +18,7 @@ export default function CategoryRowGrid ({
     className?: string
 }) {
     const { data: session } = useSession();
-    
+
     const errorCtx = useContext(ErrorCtx);
     const successCtx = useContext(SuccessCtx);
 
@@ -28,7 +29,7 @@ export default function CategoryRowGrid ({
     if (category.banner)
         banner = cdn + category.banner;
 
-    const viewLink = `/category/${category.url}`;
+    const viewLink = GetCategoryUrl(category);
     const editLink = `/admin/category/edit/${category.id.toString()}`;
 
     // Get total mods for this category.
@@ -110,7 +111,7 @@ export default function CategoryRowGrid ({
             {category.children.length > 0 && (
                 <div className="flex flex-wrap gap-4 p-4">
                     {category.children.map((child, index) => {
-                        const viewLink = `/category/${category.url}/${child.url}`;
+                        const viewLink = GetCategoryUrl(child);
 
                         return (
                             <Link

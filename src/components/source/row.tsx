@@ -1,5 +1,6 @@
 import { type Source } from "@prisma/client";
 import SourceRowTable from "./row/table";
+import { type SourceWithModCount } from "~/types/source";
 
 export default function SourceRow ({
     source,
@@ -7,7 +8,7 @@ export default function SourceRow ({
     showActions = false,
     className
 } : {
-    source: Source
+    source: Source | SourceWithModCount
     view?: string
     showActions?: boolean
     className?: string

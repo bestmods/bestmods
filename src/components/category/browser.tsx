@@ -53,7 +53,7 @@ export default function CategoryBrowser ({
                                     <td>ID</td>
                                     <td>Name</td>
                                     <td>URL</td>
-                                    <td>Mod Count</td>
+                                    <td>Mods</td>
                                     {showActions && (
                                         <td>Actions</td>
                                     )}

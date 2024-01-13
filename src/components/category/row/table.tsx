@@ -1,6 +1,7 @@
 import EditIcon from "@components/icons/edit";
 import TrashIcon from "@components/icons/trash";
 import { ErrorCtx, SuccessCtx } from "@pages/_app";
+import { GetCategoryUrl } from "@utils/category";
 import { HasRole } from "@utils/roles";
 import { trpc } from "@utils/trpc";
 import { useSession } from "next-auth/react";
@@ -11,7 +12,7 @@ import { type CategoryWithChildrenAndCounts } from "~/types/category";
 export default function CategoryRowTable ({
     category,
     showActions = false,
-    className,
+    className = "p-10",
     childClassName
 } : {
     category: CategoryWithChildrenAndCounts
@@ -24,9 +25,7 @@ export default function CategoryRowTable ({
     const errorCtx = useContext(ErrorCtx);
     const successCtx = useContext(SuccessCtx);
 
-    const parent = category.parent;
-
-    const viewLink = `/category/${parent ? `${parent.url}/` : ``}${category.url}`
+    const viewLink = GetCategoryUrl(category);
     const editLink = `/admin/category/edit/${category.id.toString()}`;
 
     // Get total mods for this category.
@@ -96,7 +95,7 @@ export default function CategoryRowTable ({
             {category.children.map((child, index) => {
                 const totalMods = child._count.Mod;
 
-                const viewLink = `/category/${category.url}/${child.url}`
+                const viewLink = GetCategoryUrl(child);
                 const editLink = `/admin/category/edit/${child.id.toString()}`;
 
                 return (

@@ -114,6 +114,7 @@ export const categoryRouter = router({
                     parent: true,
                     children: {
                         include: {
+                            parent: true,
                             _count: {
                                 select: {
                                     Mod: true
