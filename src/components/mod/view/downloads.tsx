@@ -27,7 +27,7 @@ export default function ModViewDownloads ({
                                     key={`download-${index.toString()}`}
                                     onClick={() => {
                                         modDownloadMut.mutate({
-                                            url: mod.url
+                                            id: mod.id
                                         });
                                     }}
                                     className="p-4 bg-bestmods-3/80 hover:bg-bestmods-4/80 rounded text-white visited:text-white active:text-white hover:text-white"

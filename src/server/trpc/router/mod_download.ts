@@ -6,16 +6,13 @@ import { z } from "zod";
 export const modDownloadRouter = router({
     incCnt: publicProcedure
         .input(z.object({
-            url: z.string()
+            id: z.number()
         }))
         .mutation(async ({ ctx, input }) => {
-            if (input.url.length < 1)
-                return;
-
             try {
                 await ctx.prisma.mod.update({
                     where: {
-                        url: input.url
+                        id: input.id
                     },
                     data: {
                         totalDownloads: {
