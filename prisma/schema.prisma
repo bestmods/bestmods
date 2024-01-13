@@ -52,7 +52,7 @@ model Category {
 
 model Mod {
   id      Int     @id @default(autoincrement())
-  url     String  @unique
+  url     String
   visible Boolean @default(true)
 
   // Ownership
@@ -93,6 +93,8 @@ model Mod {
   ModInstaller   ModInstaller[]
   ModTag         ModTag[]
   ModCredit      ModCredit[]
+
+  @@unique([url, categoryId])
 }
 
 // Mod Relations
