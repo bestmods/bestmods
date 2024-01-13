@@ -144,6 +144,11 @@ export default function ModRowGrid ({
                         <p className="ml-1">By {ownerName}</p>
                     </div>
                 )}
+                {mod.nsfw && (
+                    <div className="absolute top-0 right-0 h-8 p-4 rounded-bl bg-orange-800/60 hover:bg-orange-800 hover:font-bold flex items-center text-white text-sm duration-200">
+                        <span>NSFW</span>
+                    </div>
+                )}
             </div>
             <div className="p-2 grow text-ellipsis overflow-clip w-full">
                 <h4 className="text-center">

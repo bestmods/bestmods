@@ -10,13 +10,15 @@ export type TabItem = {
 
 export default function TabMenu ({
     items,
+    contentClassName = "bg-bestmods-2/80 p-6 rounded",
     children
 } : {
     items: TabItem[]
+    contentClassName?: string
     children: ReactNode
 }) {
     return (
-        <div className="w-full flex gap-2">
+        <div className="w-full flex-wrap sm:flex-nowrap justify-center flex gap-2">
             <ul className="flex flex-col gap-2">
                 {items.map((item, index) => {
                     return (
@@ -27,7 +29,7 @@ export default function TabMenu ({
                     )
                 })}
             </ul>
-            <div className="grow bg-bestmods-2/80 p-6 rounded">
+            <div className={`grow ${contentClassName}`}>
                 {children}
             </div>
         </div>  

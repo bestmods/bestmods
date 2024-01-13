@@ -1,5 +1,4 @@
 import { type ModViewItem } from "~/types/mod"
-import ModTabs from "./view/tabs";
 import DropDown, { type Drop_Down_Menu_Type } from "@components/drop_down";
 import ModRating from "./rating";
 import ModViewOverview from "./view/overview";
@@ -12,6 +11,8 @@ import IconAndText from "@components/icon_and_text";
 import ModGallery from "./view/gallery";
 import ModActions from "./modactions";
 import ModDebug from "./mod_debug";
+import TabMenu, { TabItem } from "@components/tabs/tab_menu";
+import { GetModUrl } from "@utils/mod";
 
 export default function ModView ({
     mod,
@@ -54,6 +55,46 @@ export default function ModView ({
     // Check rating.
     const onlyRating = ((mod.ModInstaller && mod.ModInstaller.length > 0) || (mod.ownerName && mod.ownerName.length > 0)) ? false : true;
 
+    // Get mod base URL.
+    const baseUrl = GetModUrl(mod);
+
+    // Generate tabs.
+    const tabItems: TabItem[] = [
+        {
+            name: "Overview",
+            href: baseUrl,
+            active: view == "overview"
+        },
+        ...(mod.install ? [
+            {
+                name: "Installation",
+                href: `${baseUrl}/install`,
+                active: view == "install"
+            }
+        ] : []),
+        ...(mod.ModSource.length > 0 ? [
+            {
+                name: "Sources",
+                href: `${baseUrl}/sources`,
+                active: view == "sources"
+            }
+        ] : []),
+        ...(mod.ModDownload.length > 0 ? [
+            {
+                name: "Downloads",
+                href: `${baseUrl}/downloads`,
+                active: view == "downloads"
+            }
+        ] : []),
+        ...(mod.ModCredit.length > 0 ? [
+            {
+                name: "Credits",
+                href: `${baseUrl}/credits`,
+                active: view == "credits"
+            }
+        ] : [])
+    ];
+
     return (
         <div className="flex flex-col gap-2">
             <div>
@@ -62,11 +103,8 @@ export default function ModView ({
             <div className="flex justify-center">
                 <h1>{mod.name}</h1>
             </div>
-            <ModTabs
-                mod={mod}
-                view={view}
-            >
-                <div className="flex flex-col p-4 gap-2 bg-bestmods-2/80 [overflow-wrap:anywhere]">
+            <TabMenu items={tabItems}>
+                <div className="[overflow-wrap:anywhere]">
                     <div className={`flex flex-wrap gap-2 ${onlyRating ? "justify-end" : "justify-between"}`}>
                         {mod.ownerName && mod.ownerName.length > 0 && (
                             <div className="flex flex-col gap-2">
@@ -115,7 +153,7 @@ export default function ModView ({
                     <ModActions mod={mod} />
                     <ModDebug mod={mod} />
                 </div>
-            </ModTabs>
+            </TabMenu>
         </div>
     )
 }
