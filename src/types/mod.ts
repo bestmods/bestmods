@@ -34,6 +34,8 @@ export const ModRowBrowserSel = {
     totalDownloads: true,
     totalViews: true,
 
+    nsfw: true,
+
     owner: true,
     
     category: {

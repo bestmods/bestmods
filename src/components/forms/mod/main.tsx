@@ -102,6 +102,8 @@ export default function ModForm ({
                 descriptionShort: mod?.descriptionShort ?? "",
                 url: mod?.url ?? "",
                 install: mod?.install ?? "",
+
+                nsfw: mod?.nsfw,
                 
                 downloads: mod?.ModDownload ?? [EMPTY_DOWNLOAD],
                 sources: mod?.ModSource ?? [EMPTY_SOURCE],
@@ -261,6 +263,13 @@ export default function ModForm ({
                             />
                         )}
                         
+                    </div>
+                    <h2>Other Options</h2>
+                    <div className="p-2">
+                        <FormCheckbox
+                            name="nsfw"
+                            text={<>NSFW</>}
+                        />
                     </div>
                     <h2>Sources</h2>
                     <div className="p-2 flex flex-col gap-2">
