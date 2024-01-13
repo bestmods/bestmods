@@ -4,7 +4,7 @@ export function GetYoutubeEmbedLink(url: string): string | undefined {
         return undefined;
 
     // If we have a YouTube embed link already, return it.
-    if (url.includes("https://youtube.com/embed"))
+    if (url.includes("youtube.com/embed"))
         return url;
 
     // Retrieve the video ID using regex.
