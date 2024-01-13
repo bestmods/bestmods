@@ -35,7 +35,8 @@ export const serverSchema = z.object({
 export const clientSchema = z.object({
     NEXT_PUBLIC_CDN_URL: z.string().optional(),
     NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: z.string().optional(),
-    NEXT_PUBLIC_PUBLIC_URL: z.string().optional()
+    NEXT_PUBLIC_PUBLIC_URL: z.string().optional(),
+    NEXT_PUBLIC_MAINTENANCE_MODE: z.string().optional()
 });
 
 /**

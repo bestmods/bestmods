@@ -9,6 +9,9 @@ import Error from "./responses/error";
 import Success from "./responses/success";
 import { useCookies } from "react-cookie";
 import Settings from "./settings";
+import { useSession } from "next-auth/react";
+import { HasRole } from "@utils/roles";
+import MaintenanceMode from "./errors/maintenance_mode";
 
 export const ViewPortCtx = createContext({
     isMobile: false,
@@ -27,6 +30,8 @@ export default function Main ({
     image?: string
     overlay?: boolean
 }) {
+    const { data: session } = useSession();
+
     const [cookies] = useCookies(["bm_display", "bm_showbg"]);
 
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
@@ -97,6 +102,11 @@ export default function Main ({
     // Google Analytics ID.
     const gId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
+
+    // Check for maintenance mode.
+    const maintenanceEnv = process.env.NEXT_PUBLIC_MAINTENANCE_MODE ?? "0";
+    const maintenance = maintenanceEnv === "1" ? true : false;
+
     return (
         <ViewPortCtx.Provider value={{
             isMobile: isMobile,
@@ -136,7 +146,13 @@ export default function Main ({
                             msg={successCtx.msg}
                         />
                     )}
-                    {children}
+                    {(maintenance && !(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR"))) ? (
+                        <MaintenanceMode />
+                    ) : (
+                        <>
+                            {children}
+                        </>
+                    )}
                 </div>
             </main>
         </ViewPortCtx.Provider>
