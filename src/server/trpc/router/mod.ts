@@ -26,6 +26,7 @@ export const modRouter = router({
             install: z.string().optional(),
 
             nsfw: z.boolean().default(false),
+            autoUpdate: z.boolean().default(false),
 
             // Relation data (we try to replicate Prisma types for consistency).
             downloads: z.array(z.object({
@@ -87,6 +88,7 @@ export const modRouter = router({
                 visible: input.visible,
 
                 nsfw: input.nsfw,
+                autoUpdate: input.autoUpdate,
 
                 banner: input.banner,
                 bremove: input.bremove,

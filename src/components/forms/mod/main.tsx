@@ -103,7 +103,8 @@ export default function ModForm ({
                 url: mod?.url ?? "",
                 install: mod?.install ?? "",
 
-                nsfw: mod?.nsfw,
+                nsfw: mod?.nsfw ?? false,
+                autoUpdate: mod?.autoUpdate ?? false,
                 
                 downloads: mod?.ModDownload ?? [EMPTY_DOWNLOAD],
                 sources: mod?.ModSource ?? [EMPTY_SOURCE],
@@ -269,6 +270,12 @@ export default function ModForm ({
                         <FormCheckbox
                             name="nsfw"
                             text={<>NSFW</>}
+                        />
+                    </div>
+                    <div className="p-2">
+                        <FormCheckbox
+                            name="autoUpdate"
+                            text={<>Auto Update</>}
                         />
                     </div>
                     <h2>Sources</h2>
