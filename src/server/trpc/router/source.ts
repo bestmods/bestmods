@@ -64,24 +64,20 @@ export const sourceRouter = router({
     getAll: adminProcedure
         .input(z.object({
             cursor: z.string().nullish(),
-            limit: z.number().default(10),
-            incModCount: z.boolean().default(true)
+            limit: z.number().default(10)
         }))
         .query(async ({ ctx, input }) => {
             const sources = await ctx.prisma.source.findMany({
                 take: input.limit + 1,
                 cursor: input.cursor ? { url: input.cursor } : undefined,
-                ...(input.incModCount && {
-                    include: {
-                        
-                            _count: {
-                                select: {
-                                    ModSource: true
-                                }
+                include: {
+                        _count: {
+                            select: {
+                                ModSource: true
                             }
-                        
-                    }
-                })
+                        }
+                    
+                }
             })
 
             let nextCur: typeof input.cursor | undefined = undefined;

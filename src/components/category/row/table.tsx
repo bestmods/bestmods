@@ -12,7 +12,7 @@ import { type CategoryWithChildrenAndCounts } from "~/types/category";
 export default function CategoryRowTable ({
     category,
     showActions = false,
-    className = "p-10",
+    className,
     childClassName
 } : {
     category: CategoryWithChildrenAndCounts
