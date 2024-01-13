@@ -76,7 +76,8 @@ model Mod {
   totalDownloads BigInt @default(0)
   totalViews     BigInt @default(0)
 
-  nsfw Boolean @default(false)
+  nsfw       Boolean @default(false)
+  autoUpdate Boolean @default(false)
 
   // Relations
   category   Category? @relation(fields: [categoryId], references: [id], onUpdate: Cascade, onDelete: SetNull)

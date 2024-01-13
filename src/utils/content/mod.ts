@@ -485,6 +485,7 @@ export async function InsertOrUpdateMod ({
     visible,
 
     nsfw,
+    autoUpdate,
 
     banner,
     bremove,
@@ -516,6 +517,7 @@ export async function InsertOrUpdateMod ({
     visible?: boolean
 
     nsfw?: boolean
+    autoUpdate?: boolean
 
     banner?: string
     bremove?: boolean
@@ -574,6 +576,7 @@ export async function InsertOrUpdateMod ({
                     descriptionShort: descriptionShort,
                     install: install,
                     nsfw: nsfw,
+                    autoUpdate: autoUpdate,
                     lastScanned: lastScanned,
                     ...(bannerPath !== false && {
                         banner: bannerPath
@@ -659,6 +662,7 @@ export async function InsertOrUpdateMod ({
                     descriptionShort: descriptionShort,
                     install: install,
                     nsfw: nsfw,
+                    autoUpdate,
                     lastScanned: lastScanned,
                     ...(bannerPath !== false && {
                         banner: bannerPath
