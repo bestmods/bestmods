@@ -11,7 +11,7 @@ import IconAndText from "@components/icon_and_text";
 import ModGallery from "./view/gallery";
 import ModActions from "./modactions";
 import ModDebug from "./mod_debug";
-import TabMenu, { TabItem } from "@components/tabs/tab_menu";
+import TabMenu, { type TabItem } from "@components/tabs/tab_menu";
 import { GetModUrl } from "@utils/mod";
 
 export default function ModView ({
