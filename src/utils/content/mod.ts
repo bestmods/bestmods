@@ -550,6 +550,34 @@ export async function InsertOrUpdateMod ({
         bannerPath = fullPath;
     }
 
+    // Remove duplicate screenshots.
+    if (screenshots) {
+        screenshots = screenshots.filter((val, index, array) => {
+            return index === array.findIndex((o) => o.url === val.url)
+        })
+    }
+
+    // Remove duplicate downloads.
+    if (downloads) {
+        downloads = downloads.filter((val, index, array) => {
+            return index === array.findIndex((o) => o.url === val.url)
+        })
+    }
+
+    // Remove duplicate sources.
+    if (sources) {
+        sources = sources.filter((val, index, array) => {
+            return index === array.findIndex((o) => o.sourceUrl === val.sourceUrl && o.query === val.query)
+        })
+    }
+
+    // Remove duplicate installers.
+    if (installers) {
+        installers = installers.filter((val, index, array) => {
+            return index === array.findIndex((o) => o.sourceUrl === val.sourceUrl && o.url === val.url)
+        })
+    }
+
     try {
         if (lookupId) {
             mod = await prisma.mod.update({
