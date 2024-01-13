@@ -13,6 +13,26 @@ export type CategoryWithChildrenAndParent = Prisma.CategoryGetPayload<{
     }
 }>
 
+export type CategoryWithChildrenAndParentAndCount = Prisma.CategoryGetPayload<{
+    include: {
+        _count: {
+            select: {
+                Mod: true
+            }
+        },
+        parent: true,
+        children: {
+            include: {
+                _count: {
+                    select: {
+                        Mod: true
+                    }
+                }
+            }
+        }
+    }
+}>
+
 export type CategoryWithCount = Prisma.CategoryGetPayload<{
     include: {
         parent: true,

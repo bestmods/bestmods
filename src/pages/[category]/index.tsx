@@ -7,7 +7,7 @@ import MetaInfo from "@components/meta";
 
 import { prisma } from "@server/db/client";
 
-import { type CategoryWithChildrenAndParent } from "~/types/category";
+import { type CategoryWithChildrenAndParentAndCount } from "~/types/category";
 import { type ModRowBrowser } from "~/types/mod";
 import ModCatalog from "@components/mod/catalog";
 import { getServerAuthSession } from "@server/common/get-server-auth-session";
@@ -23,7 +23,7 @@ export default function Page ({
     topMods = [],
     topModsToday = []
 } : {
-    category?: CategoryWithChildrenAndParent
+    category?: CategoryWithChildrenAndParentAndCount
     latestMods: ModRowBrowser[]
     viewedMods: ModRowBrowser[]
     downloadedMods: ModRowBrowser[]
@@ -31,12 +31,18 @@ export default function Page ({
     topModsToday: ModRowBrowser[] 
 }) {
     const bgPath = GetBgImage(category);
+    const desc = category?.description ?? category?.parent?.description ?? "";
+
+    let totMods = category?._count?.Mod ?? 0;
+
+    if (category?.children)
+        category.children.map(child => totMods += child._count.Mod);
 
     return (
         <>
             <MetaInfo
                 title={`${category?.parent?.name ? `${category.parent.name} ` : ``}${category?.name ? `${category.name} ` : `Not Found`} - Best Mods`}
-                description={category?.description ?? category?.parent?.description ?? undefined}
+                description={`Tracking ${totMods.toString()} mods!${desc ? ` ${desc}` : ``}`}
                 image={bgPath}
             />
             <Main image={bgPath}>
@@ -75,14 +81,27 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     const catUrl = params?.category?.toString();
 
-    let category: CategoryWithChildrenAndParent | null = null;
+    let category: CategoryWithChildrenAndParentAndCount | null = null;
     const categories: number[] = [];
 
     if (catUrl) {
         category = await prisma.category.findFirst({
             include: {
+                _count: {
+                    select: {
+                        Mod: true
+                    }
+                },
                 parent: true,
-                children: true
+                children: {
+                    include: {
+                        _count: {
+                            select: {
+                                Mod: true
+                            }
+                        }
+                    }
+                }
             },
             where: {
                 parent: null,
