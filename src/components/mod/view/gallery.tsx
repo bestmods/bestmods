@@ -7,6 +7,7 @@ import Carousel from "react-multi-carousel";
 import { type ModViewItem } from "~/types/mod";
 import { ArrowFix } from "@components/carousel";
 import ImageWithFallback from "@components/image";
+import { GetYoutubeEmbedLink } from "@utils/youtube";
 
 export default function ModGallery ({
     mod,
@@ -125,19 +126,16 @@ export default function ModGallery ({
             >
                 {screenshots.map((url, index) => {
                     // Check for YouTube embed.
-                    let video = false;
-
-                    if (url.includes("youtube.com/embed"))
-                        video = true;
+                    const vidUrl = GetYoutubeEmbedLink(url);
 
                     return (
                         <div
                             key={`ss-${index.toString()}`}
                             className="w-full h-full"
                         >
-                            {video ? (
+                            {vidUrl ? (
                                 <iframe
-                                    src={url}
+                                    src={vidUrl}
                                     width="100%"
                                     height="100%"
                                     allowFullScreen={true}
