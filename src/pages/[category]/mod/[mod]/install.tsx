@@ -30,23 +30,23 @@ export default function Page ({
 
     // Retrieve mod banner.
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
-
+    
     let banner: string | undefined = undefined;
 
     if (mod?.banner)
         banner = cdn + mod.banner;
-
+    
     return (
         <>
             <MetaInfo
-                title={`${mod?.name ?? `Not Found`} Credits - Best Mods`}
+                title={`${mod?.name ?? `Not Found`} Installation - Best Mods`}
                 description={desc}
                 image={banner}
             />
             <Main image={bgPath}>
                 {mod ? (
                     <ModView
-                        view="credits"
+                        view="install"
                         mod={mod}
                         rating={rating}
                     />
@@ -63,7 +63,8 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     const { params, res } = ctx;
 
-    const url = params?.url?.toString();
+    const catUrl = params?.category?.toString();
+    const modUrl = params?.mod?.toString();
 
     const mod = await prisma.mod.findFirst({
         include: {
@@ -79,7 +80,21 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             ...((!HasRole(session, "ADMIN") && !HasRole(session, "CONTRIBUTOR")) && {
                 visible: true
             }),
-            url: url
+            url: modUrl,
+            OR: [
+                {
+                    category: {
+                        url: catUrl
+                    }
+                },
+                {
+                    category: {
+                        parent: {
+                            url: catUrl
+                        }
+                    }
+                }
+            ]
         }
     });
 

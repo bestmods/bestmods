@@ -53,6 +53,7 @@ export async function getServerSideProps() {
         include: {
             children: {
                 select: {
+                    parent: true,
                     id: true,
                     name: true,
                     icon: true,

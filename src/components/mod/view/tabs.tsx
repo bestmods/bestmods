@@ -1,4 +1,5 @@
 import { ViewPortCtx } from "@components/main"
+import { GetModUrl } from "@utils/mod"
 import Link from "next/link"
 import { useState, type ReactNode, useContext } from "react"
 import { type ModViewItem } from "~/types/mod"
@@ -13,7 +14,7 @@ export default function ModTabs ({
     view?: string
 }) {
     // Links.
-    const baseUrl = `/view/${mod.url}`;
+    const baseUrl = GetModUrl(mod);
     
     const installLink = `${baseUrl}/install`;
     const sourcesLink = `${baseUrl}/sources`;

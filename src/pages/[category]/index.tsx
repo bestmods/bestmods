@@ -73,38 +73,22 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     // We need to retrieve some props.
     const { params, req, res } = ctx;
 
-    const priUrl = params?.category?.[0]?.toString();
-    const secUrl = params?.category?.[1]?.toString();
+    const catUrl = params?.category?.toString();
 
     let category: CategoryWithChildrenAndParent | null = null;
     const categories: number[] = [];
 
-    if (priUrl) {
-        if (secUrl) {
-            category = await prisma.category.findFirst({
-                include: {
-                    parent: true,
-                    children: true
-                },
-                where: {
-                    parent: {
-                        url: priUrl
-                    },
-                    url: secUrl
-                }
-            })
-        } else {
-            category = await prisma.category.findFirst({
-                include: {
-                    parent: true,
-                    children: true
-                },
-                where: {
-                    parent: null,
-                    url: priUrl
-                }
-            })
-        }
+    if (catUrl) {
+        category = await prisma.category.findFirst({
+            include: {
+                parent: true,
+                children: true
+            },
+            where: {
+                parent: null,
+                url: catUrl
+            }
+        })
     }
 
     if (category) {
@@ -139,8 +123,11 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             }
         }
 
-        if (!redirected)
-            res.statusCode = 404;
+        if (!redirected) {
+            return {
+                notFound: true
+            }
+        }
     }
 
     let latestMods: ModRowBrowser[] = [];

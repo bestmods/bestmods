@@ -2,6 +2,8 @@ import { type ModRowBrowser } from "~/types/mod";
 import ModRowGrid from "./row/grid";
 import ModRowTable from "./row/table";
 import { LimitText } from "@utils/text";
+import { GetModUrl } from "@utils/mod";
+import { GetCategoryUrl } from "@utils/category";
 
 export default function ModRow ({
     mod,
@@ -34,11 +36,10 @@ export default function ModRow ({
     const catParIcon = (cat_par && cat_par.icon) ? cdn + cat_par.icon : defaultCatIcon;
 
     // Generate links.
-    const viewLink = "/view/" + mod.url;
+    const viewLink = GetModUrl(mod);
 
-    const catParLink = (cat_par) ? "/category/" + cat_par.url : null;
-    const catLink = ((cat) ? "/category" + ((cat_par) ? "/" + cat_par.url : "") + "/" + cat.url : null);
-
+    const catParLink = cat_par ? GetCategoryUrl(cat_par) : "global";
+    const catLink = cat ? GetCategoryUrl(cat) : "global";
 
     // Handle text limitations
     const name = LimitText(mod.name, 24);

@@ -110,3 +110,13 @@ export type ModInstallerWithSource = Prisma.ModInstallerGetPayload<{
         source: true
     }
 }>
+
+export type ModWithCategory = Prisma.ModGetPayload<{
+    include: {
+        category: {
+            include :{
+                parent: true
+            }
+        }
+    }
+}>

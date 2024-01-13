@@ -1,4 +1,5 @@
 import { type Category } from "@prisma/client";
+import { GetCategoryUrl } from "@utils/category";
 import Image from "next/image";
 import Link from "next/link";
 import { type CategoryWithChildren } from "~/types/category";
@@ -18,8 +19,8 @@ export default function ModViewCategory ({
     const catIcon = (cat.icon) ? cdn + cat.icon : cdn + defaultIcon;
     const catParIcon = (catPar?.icon) ? cdn + catPar.icon : cdn + defaultIcon;
 
-    const catLink = `/category/${catPar?.url ? `${catPar.url}/` : ``}${cat.url}`;
-    const catParLink = `/category/${catPar?.url}`;
+    const catLink = cat ? GetCategoryUrl(cat) : "global";
+    const catParLink = catPar ? GetCategoryUrl(catPar) : "global";
 
     return (
         <div className="flex flex-wrap gap-2">

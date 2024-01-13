@@ -2,6 +2,8 @@ import { getServerSideSitemap } from "next-sitemap"
 import { type GetServerSideProps } from "next"
 
 import { prisma } from "@server/db/client";
+import { GetModUrl } from "@utils/mod";
+import { GetCategoryUrl } from "@utils/category";
 
 type Changefreq =
     | "always"
@@ -15,29 +17,29 @@ type Changefreq =
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const items: Array<{ loc: string, lastmod: string, priority?: number, changefreq?: Changefreq }> = [];
 
-    const url = process.env.SITEMAP_URL ?? "https://bestmods.io"
+    const baseUrl = process.env.SITEMAP_URL ?? "https://bestmods.io"
 
     // Push URLs we are already aware of.
     items.push({
-        loc: url,
+        loc: baseUrl,
         lastmod: new Date().toISOString(),
         priority: 0.7,
         changefreq: "always"
     })
     items.push({
-        loc: `${url}/browse`,
+        loc: `${baseUrl}/browse`,
         lastmod: new Date().toISOString(),
         priority: 0.5,
         changefreq: "weekly"
     })
     items.push({
-        loc: `${url}/category`,
+        loc: `${baseUrl}/category`,
         lastmod: new Date().toISOString(),
         priority: 0.5,
         changefreq: "weekly"
     });
     items.push({
-        loc: `${url}/about`,
+        loc: `${baseUrl}/about`,
         lastmod: new Date().toISOString(),
         priority: 0.5,
         changefreq: "weekly"
@@ -45,14 +47,23 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
     // Handle mods.
     const mods = await prisma.mod.findMany({
+        include: {
+            category: {
+                include: {
+                    parent: true
+                }
+            },
+        },
         where: {
             visible: true
         }
     });
 
     mods.map((mod) => {
+        const url = GetModUrl(mod);
+
         items.push({
-            loc: `${url}/view/${mod.url}`,
+            loc: `${baseUrl}${url}`,
             lastmod: mod?.editAt?.toISOString() ?? new Date().toISOString(),
             priority: 0.7,
             changefreq: "daily"
@@ -67,13 +78,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     });
 
     cats.map((cat) => {
-        let end = cat.url;
-
-        if (cat.parent)
-            end = cat.parent.url + "/" + cat.url;
+        const url = GetCategoryUrl(cat);
 
         items.push({
-            loc: `${url}/category/${end}`,
+            loc: `${baseUrl}${url}`,
             lastmod: new Date().toISOString(),
             priority: 0.7,
             changefreq: "daily"
