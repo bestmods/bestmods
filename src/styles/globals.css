@@ -40,7 +40,8 @@
     }
 
     p {
-        @apply leading-5;
+        @apply leading-7;
+        @apply pb-2;
 
         & a {
             @apply text-cyan-300;
