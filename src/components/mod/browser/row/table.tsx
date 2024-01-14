@@ -3,32 +3,33 @@ import Rating from "@components/mod/rating";
 import EyeIcon from "@components/icons/eye";
 import DownloadIcon from "@components/icons/download";
 
-import { type Category } from "@prisma/client";
-import { type ModSourceWithSource, type ModRowBrowser, type ModInstallerWithSource } from "~/types/mod";
+import { type ModRowBrowser } from "~/types/mod";
 import Image from "next/image";
 import IconAndText from "@components/icon_and_text";
+import { LimitText } from "@utils/text";
+import { GetModUrl } from "@utils/mod";
 
 export default function ModRowTable ({
-    mod,
-    descShort,
-    catIcon,
-    viewLink
+    mod
 } : {
     mod: ModRowBrowser
-    banner: string
-    name: string
-    descShort?: string
-    ownerName?: string
-    sources?: ModSourceWithSource[]
-    installers?: ModInstallerWithSource[]
-    cat?: Category | null
-    catPar?: Category | null
-    catParIcon: string
-    catParLink: string | null
-    catIcon: string
-    catLink: string | null
-    viewLink: string
 }) {
+    const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
+
+    // General information that we may need to modify.
+    const name = LimitText(mod.name, 24);
+    const descShort = mod.descriptionShort ? LimitText(mod.descriptionShort, 128) : undefined;
+    const ownerName = mod.ownerName ? LimitText(mod.ownerName, 24) : undefined;
+
+    // Generate links.
+    const viewLink = GetModUrl(mod);
+
+    // Get category information.
+    let catIcon = "/images/default_icon.png";
+
+    if (mod.category.icon)
+        catIcon = cdn + mod.category.icon;
+
     return (
         <tr
             className="bg-bestmods-2/80 hover:bg-bestmods-3/80 hover:duration-300 cursor-pointer"
@@ -47,14 +48,14 @@ export default function ModRowTable ({
                 />
             </td>
             <td className="pl-3">
-                {mod.name}
+                {name}
             </td>
             <td className="hidden sm:table-cell">
                 <p className="text-sm">{descShort}</p>
             </td>
             <td>
-                {mod.ownerName && mod.ownerName.length > 0 && (
-                    <p>By {mod.ownerName}</p>
+                {ownerName && ownerName.length > 0 && (
+                    <p>By {ownerName}</p>
                 )}
             </td>
             <td>
