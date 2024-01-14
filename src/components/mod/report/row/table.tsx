@@ -1,7 +1,6 @@
 import ModReportActions from "@components/mod/report_actions";
 import { HasRole } from "@utils/roles";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { type ModReportWithRelations } from "~/types/mod";
 
 export default function ModReportRowTable ({

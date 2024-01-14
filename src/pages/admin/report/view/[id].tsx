@@ -6,13 +6,13 @@ import MetaInfo from "@components/meta";
 import ModReportView from "@components/mod/report/view";
 import { getServerAuthSession } from "@server/common/get-server-auth-session";
 import { HasRole } from "@utils/roles";
-import { GetServerSidePropsContext } from "next";
+import { type GetServerSidePropsContext } from "next";
 import { useSession } from "next-auth/react";
 import { type ModReportWithRelations } from "~/types/mod";
 
 import { prisma } from "@server/db/client";
 
-export default function ({
+export default function Page ({
     report
 } : {
     report?: ModReportWithRelations
