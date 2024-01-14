@@ -133,19 +133,22 @@ export default function Main ({
                 />
 
                 <div className="w-full px-2 sm:px-20 mx-auto py-2">
-                    {errorCtx?.title && errorCtx?.msg && (
-                        <Error
-                            title={errorCtx.title}
-                            msg={errorCtx.msg}
-                        />
-                    )}
+                    <div className="py-2">
+                        {errorCtx?.title && errorCtx?.msg && (
+                            <Error
+                                title={errorCtx.title}
+                                msg={errorCtx.msg}
+                            />
+                        )}
 
-                    {successCtx?.title && successCtx?.msg && (
-                        <Success
-                            title={successCtx.title}
-                            msg={successCtx.msg}
-                        />
-                    )}
+                        {successCtx?.title && successCtx?.msg && (
+                            <Success
+                                title={successCtx.title}
+                                msg={successCtx.msg}
+                            />
+                        )}
+                    </div>
+                    
                     {(maintenance && !(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR"))) ? (
                         <MaintenanceMode />
                     ) : (

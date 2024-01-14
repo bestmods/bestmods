@@ -122,3 +122,10 @@ export type ModWithCategory = Prisma.ModGetPayload<{
         }
     }
 }>
+
+export type ModReportWithRelations = Prisma.ModReportGetPayload<{
+    include: {
+        mod: true,
+        user: true
+    }
+}>

@@ -13,6 +13,7 @@ import ModActions from "./modactions";
 import ModDebug from "./mod_debug";
 import TabMenu, { type TabItem } from "@components/tabs/tab_menu";
 import { GetModUrl } from "@utils/mod";
+import ModReportButton from "./report_button";
 
 export default function ModView ({
     mod,
@@ -100,8 +101,9 @@ export default function ModView ({
             <div>
                 <ModGallery mod={mod} />
             </div>
-            <div className="flex justify-center">
+            <div className="flex flex-wrap justify-center gap-4">
                 <h1>{mod.name}</h1>
+                <ModReportButton modId={mod.id} />
             </div>
             <TabMenu items={tabItems}>
                 <div className="[overflow-wrap:anywhere]">

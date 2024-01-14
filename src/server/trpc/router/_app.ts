@@ -8,6 +8,7 @@ import { modRatingRouter } from "@server/trpc/router/mod_rating";
 import { modDownloadRouter } from "@server/trpc/router/mod_download";
 import { userRouter } from "@server/trpc/router/user";
 import { redirectRouter } from "./redirect";
+import { modReportRouter } from "./mod_report";
 
 export const appRouter = router({
     source: sourceRouter,
@@ -15,6 +16,7 @@ export const appRouter = router({
     mod: modRouter,
     modRating: modRatingRouter,
     modDownload: modDownloadRouter,
+    modReport: modReportRouter,
     auth: authRouter,
     user: userRouter,
     redirect: redirectRouter

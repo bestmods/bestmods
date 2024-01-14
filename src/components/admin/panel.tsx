@@ -39,6 +39,11 @@ export default function AdminPanel ({
             href: "/admin/user",
             active: view == "user"
         },
+        {
+            name: "Reports",
+            href: "/admin/report",
+            active: view == "report"
+        }
     ];
 
     return (
