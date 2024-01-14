@@ -136,7 +136,7 @@ export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
             install?: string
             nsfw?: boolean
             autoUpdate?: boolean
-            categoryId?: number | null
+            categoryId?: number
             downloads?: ModDownload[]
             screenshots?: ModScreenshot[]
             sources?: ModSource[]

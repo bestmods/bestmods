@@ -87,8 +87,8 @@ model Mod {
   autoUpdate Boolean @default(false)
 
   // Relations
-  category   Category? @relation(fields: [categoryId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  categoryId Int?
+  category   Category @relation(fields: [categoryId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  categoryId Int
 
   ModSource      ModSource[]
   ModDownload    ModDownload[]

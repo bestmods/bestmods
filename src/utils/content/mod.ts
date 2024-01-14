@@ -507,7 +507,7 @@ export async function InsertOrUpdateMod ({
     ownerId?: string,
     ownerName?: string
 
-    categoryId?: number | null
+    categoryId?: number
 
     name?: string
     url?: string
@@ -677,6 +677,9 @@ export async function InsertOrUpdateMod ({
 
             if (!description)
                 return [null, false, "Description is empty."]
+
+            if (!categoryId)
+                return [null, false, "No category ID present."]
 
             mod = await prisma.mod.create({
                 data: {

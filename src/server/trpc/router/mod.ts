@@ -18,7 +18,7 @@ export const modRouter = router({
             name: z.string(),
             banner: z.string().optional(),
             url: z.string(),
-            categoryId: z.number().optional().nullable(),
+            categoryId: z.number().optional(),
 
             // The following should be parsed via Markdown Syntax.
             description: z.string(),
