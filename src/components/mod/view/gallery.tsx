@@ -1,5 +1,5 @@
 import { ViewPortCtx } from "@components/main";
-import { useContext, useState } from "react";
+import { type Dispatch, type SetStateAction, useContext, useState } from "react";
 
 import "react-multi-carousel/lib/styles.css";
 import Carousel from "react-multi-carousel";
@@ -125,39 +125,70 @@ export default function ModGallery ({
                 }
             >
                 {screenshots.map((url, index) => {
-                    // Check for YouTube embed.
-                    const vidUrl = GetYoutubeEmbedLink(url);
-
                     return (
-                        <div
-                            key={`ss-${index.toString()}`}
-                            className="w-full h-full"
-                        >
-                            {vidUrl ? (
-                                <iframe
-                                    src={vidUrl}
-                                    width="100%"
-                                    height="100%"
-                                    allowFullScreen={true}
-                                ></iframe>
-                            ) : (
-                                <ImageWithFallback
-                                    src={url}
-                                    width={1000}
-                                    height={333}
-                                    alt={`Screenshot #${index.toString()}`}
-                                    className="rounded brightness-75 hover:brightness-100 duration-300 cursor-pointer w-full h-full max-h-full object-cover"
-                                    onClick={() => {
-                                        setBigPicture(url);
-                                    }}
-                                    fallback="/images/default_mod_banner.png"
-                                    priority={true}
-                                />
-                            )}
-                        </div>
+                        <Screenshot
+                            key={`screenshot-${index.toString()}`}
+                            index={index}
+                            url={url}
+                            setBigPicture={setBigPicture}
+                            nsfw={mod.nsfw}
+                        />
                     )
                 })}
             </Carousel>
         </>
+    )
+}
+
+function Screenshot({
+    index,
+    url,
+    setBigPicture,
+    nsfw = false,
+} : {
+    index: number
+    url: string
+    setBigPicture: Dispatch<SetStateAction<string | undefined>>
+    nsfw?: boolean
+}) {
+    const [isNsfw, setIsNsfw] = useState(nsfw);
+
+    // Check for YouTube embed.
+    const vidUrl = GetYoutubeEmbedLink(url);
+
+    return (
+            <div className={`w-full h-full`}>
+                {isNsfw && (
+                    <div className="absolute z-30 top-1/2 left-1/2">
+                        <button
+                            type="button"
+                            className="btn btn-warning"
+                            onClick={() => setIsNsfw(false)}
+                        >View</button>
+                    </div>
+                )}
+                {vidUrl ? (
+                    <iframe
+                        src={vidUrl}
+                        width="100%"
+                        height="100%"
+                        allowFullScreen={true}
+                    ></iframe>
+                ) : (
+                    <ImageWithFallback
+                        src={url}
+                        width={1000}
+                        height={333}
+                        alt={`Screenshot #${index.toString()}`}
+                        className={`rounded brightness-75 hover:brightness-100 duration-300 cursor-pointer w-full h-full max-h-full object-cover${isNsfw ? " filter blur-lg" : ""}`}
+                        onClick={() => {
+                            if (!isNsfw)
+                                setBigPicture(url);
+                        }}
+                        fallback="/images/default_mod_banner.png"
+                        priority={true}
+                    />
+                )}
+            </div>
     )
 }
