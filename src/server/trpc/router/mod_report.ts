@@ -81,7 +81,9 @@ export const modReportRouter = router({
     getAll: adminProcedure
         .input(z.object({
             limit: z.number().max(10).default(10),
-            cursor: z.number().nullish()
+            cursor: z.number().nullish(),
+            sort: z.enum(["lastUpdated", "id"]).default("id"),
+            status: z.nativeEnum(ReportStatus).optional()
         }))
         .query(async ({ ctx, input }) => {
             const reports = await ctx.prisma.modReport.findMany({
@@ -90,6 +92,19 @@ export const modReportRouter = router({
                 include: {
                     user: true,
                     mod: true
+                },
+                where: {
+                    ...(input.status && {
+                        status: input.status
+                    })
+                },
+                orderBy: {
+                    ...(input.sort == "lastUpdated" && {
+                        updatedAt: "desc"
+                    }),
+                    ...(input.sort == "id" && {
+                        id: "desc"
+                    })
                 }
             })
 
