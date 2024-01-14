@@ -151,7 +151,7 @@ export const modRouter = router({
     getAllBrowser: publicProcedure
         .input(z.object({
             cursor: z.number().nullish(),
-            count: z.number().default(10),
+            count: z.number().max(10).default(10),
 
             categories: z.array(z.number()).optional(),
             search: z.string().optional(),

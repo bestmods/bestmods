@@ -75,7 +75,7 @@ export const categoryRouter = router({
     getCategoryMappings: publicProcedure
         .input(z.object({
             cursor: z.number().nullish(),
-            limit: z.number().default(10)
+            limit: z.number().max(10).default(10)
         }))
         .query(async ({ ctx, input }) => {
             const categories = await ctx.prisma.category.findMany({
@@ -104,7 +104,7 @@ export const categoryRouter = router({
         getCategoryMappingsAll: publicProcedure
         .input(z.object({
             cursor: z.number().nullish(),
-            limit: z.number().default(10)
+            limit: z.number().max(10).default(10)
         }))
         .query(async ({ ctx, input }) => {
             const categories = await ctx.prisma.category.findMany({

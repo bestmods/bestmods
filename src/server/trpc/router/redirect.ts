@@ -6,7 +6,7 @@ export const redirectRouter = router({
     getAll: contributorProcedure
         .input(z.object({
             cursor: z.string().nullish(),
-            limit: z.number().default(10)
+            limit: z.number().max(10).default(10)
         }))
         .query(async ({ ctx, input }) => {
             const redirects = await ctx.prisma.redirect.findMany({

@@ -128,7 +128,7 @@ export const userRouter = router({
             .input(z.object({
                 search: z.string().optional(),
                 cursor: z.string().nullish(),
-                limit: z.number().default(10)
+                limit: z.number().max(10).default(10)
             }))
             .query(async ({ ctx, input }) => {
                 const users = await ctx.prisma.user.findMany({

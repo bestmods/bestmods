@@ -6,14 +6,11 @@ import { z } from "zod";
 export const modRatingRouter = router({
     add: protectedProcedure
         .input(z.object({
-            userId: z.string(),
+            userId: z.string().min(1),
             modId: z.number(),
             positive: z.boolean()
         }))
         .mutation(async ({ ctx, input }) => {
-            if (input.userId.length < 1 || input.modId < 1)
-                return;
-
             try {
                 await ctx.prisma.modRating.upsert({
                     where: {
@@ -31,13 +28,10 @@ export const modRatingRouter = router({
                         positive: input.positive
                     }
                 });
-            } catch (error) {
-                console.error("Error adding rating for user ID '" + input.userId + "' for mod ID #" + input.modId);
-                console.error(error);
-
+            } catch (err: unknown) {
                 throw new TRPCError({
                     code: "CONFLICT",
-                    message: (typeof error == "string") ? error : ""
+                    message: `Error adding mod rating. Error => ${err}.`
                 });
             }
         })

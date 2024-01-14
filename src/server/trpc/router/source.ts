@@ -64,7 +64,7 @@ export const sourceRouter = router({
     getAll: adminProcedure
         .input(z.object({
             cursor: z.string().nullish(),
-            limit: z.number().default(10)
+            limit: z.number().max(10).default(10)
         }))
         .query(async ({ ctx, input }) => {
             const sources = await ctx.prisma.source.findMany({
