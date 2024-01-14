@@ -101,9 +101,16 @@ export default function ModView ({
             <div>
                 <ModGallery mod={mod} />
             </div>
-            <div className="flex flex-wrap justify-center gap-4">
-                <h1>{mod.name}</h1>
-                <ModReportButton modId={mod.id} />
+            <div className="flex flex-wrap gap-4 justify-center md:justify-between">
+                <div>
+                    <h1>{mod.name}</h1>
+                </div>
+                <div className="flex flex-wrap gap-2 justify-center">
+                    <ModReportButton modId={mod.id} />
+                    {mod.nsfw && (
+                        <div className="btn btn-warning">NSFW</div>
+                    )}
+                </div>
             </div>
             <TabMenu items={tabItems}>
                 <div className="[overflow-wrap:anywhere]">
