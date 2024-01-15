@@ -117,7 +117,7 @@ export default function ModForm ({
             onSubmit={(values) => {
                 mut.mutate({
                     ...values,
-                    categoryId: values.categoryId,
+                    categoryId: Number(values.categoryId ?? 0),
                     banner: banner?.toString(),
                     id: mod?.id,
                 })
