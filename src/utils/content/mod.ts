@@ -117,6 +117,7 @@ export async function GetMods ({
             "Mod"."url",
             "Mod"."name",
             "Mod"."banner",
+            "Mod"."visible",
             "Mod"."descriptionShort",
             "Mod"."totalDownloads",
             "Mod"."totalViews",
