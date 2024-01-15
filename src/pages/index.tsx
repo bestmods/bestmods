@@ -8,20 +8,22 @@ import { type ModRowBrowser } from "~/types/mod";
 import ModCatalog from "@components/mod/catalog";
 import { GetMods } from "@utils/content/mod";
 import { getServerAuthSession } from "@server/common/get-server-auth-session";
+import { GetDeviceType } from "@utils/carousel";
 
 export default function Page ({
     latestMods = [],
     viewedMods = [],
     downloadedMods = [],
     topMods = [],
-    topModsToday = []
-
+    topModsToday = [],
+    defaultDevice = "md"
 } : {
     latestMods: ModRowBrowser[]
     viewedMods: ModRowBrowser[]
     downloadedMods: ModRowBrowser[]
     topMods: ModRowBrowser[]
     topModsToday: ModRowBrowser[]
+    defaultDevice?: string
 }) {
     return (
         <>
@@ -33,13 +35,14 @@ export default function Page ({
                     downloadedMods={downloadedMods}
                     topMods={topMods}
                     topModsToday={topModsToday}
+                    defaultDevice={defaultDevice}
                 />
             </Main>
         </>
     )
 }
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {    
     // Retrieve session.
     const session = await getServerAuthSession(ctx);
 
@@ -85,13 +88,17 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         userId: session?.user?.id
     })
 
+    // Get default device type.
+    const defaultDevice = GetDeviceType(ctx);
+
     return { 
         props: { 
             latestMods: JSON.parse(JSON.stringify(latestMods, (_, v) => typeof v === "bigint" ? v.toString() : v)),
             viewedMods: JSON.parse(JSON.stringify(viewedMods, (_, v) => typeof v === "bigint" ? v.toString() : v)),
             downloadedMods: JSON.parse(JSON.stringify(downloadedMods, (_, v) => typeof v === "bigint" ? v.toString() : v)),
             topMods: JSON.parse(JSON.stringify(topMods, (_, v) => typeof v === "bigint" ? v.toString() : v)),
-            topModsToday: JSON.parse(JSON.stringify(topModsToday, (_, v) => typeof v === "bigint" ? v.toString() : v))
+            topModsToday: JSON.parse(JSON.stringify(topModsToday, (_, v) => typeof v === "bigint" ? v.toString() : v)),
+            defaultDevice: defaultDevice
         }
     }
 }

@@ -6,13 +6,15 @@ export default function ModCatalog ({
     viewedMods = [],
     downloadedMods = [],
     topMods = [],
-    topModsToday = []
+    topModsToday = [],
+    defaultDevice = "md"
 } : {
     latestMods?: ModRowBrowser[]
     viewedMods?: ModRowBrowser[],
     downloadedMods?: ModRowBrowser[]
     topMods?: ModRowBrowser[]
     topModsToday?: ModRowBrowser[]
+    defaultDevice?: string
 }) {
     return (
         <div className="flex flex-col gap-4">
@@ -23,6 +25,7 @@ export default function ModCatalog ({
                         mods={topModsToday}
                         autoPlaySpeedMin={3000}
                         autoPlaySpeedMax={10000}
+                        defaultDevice={defaultDevice}
                     />
                 </div>
             )}
@@ -33,6 +36,7 @@ export default function ModCatalog ({
                         mods={latestMods}
                         autoPlaySpeedMin={3000}
                         autoPlaySpeedMax={10000}
+                        defaultDevice={defaultDevice}
                     />
                 </div>
             )}
@@ -43,6 +47,7 @@ export default function ModCatalog ({
                         mods={topMods}
                         autoPlaySpeedMin={3000}
                         autoPlaySpeedMax={10000}
+                        defaultDevice={defaultDevice}
                     />
                 </div>
             )}
@@ -53,6 +58,7 @@ export default function ModCatalog ({
                         mods={viewedMods}
                         autoPlaySpeedMin={3000}
                         autoPlaySpeedMax={10000}
+                        defaultDevice={defaultDevice}
                     />
                 </div>
             )}
@@ -63,6 +69,7 @@ export default function ModCatalog ({
                         mods={downloadedMods}
                         autoPlaySpeedMin={3000}
                         autoPlaySpeedMax={10000}
+                        defaultDevice={defaultDevice}
                     />
                 </div>
             )}

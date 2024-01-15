@@ -13,13 +13,15 @@ export default function ModSlideshow ({
     infinite = true,
     autoPlay = true,
     autoPlaySpeedMin,
-    autoPlaySpeedMax
+    autoPlaySpeedMax,
+    defaultDevice = "md"
 } : {
     mods: ModRowBrowser[]
     infinite?: boolean
     autoPlay?: boolean
     autoPlaySpeedMin?: number
     autoPlaySpeedMax?: number
+    defaultDevice?: string
 }) {
     const viewPort = useContext(ViewPortCtx);
 
@@ -69,6 +71,7 @@ export default function ModSlideshow ({
             autoPlay={!viewPort.isMobile ? autoPlay : false}
             autoPlaySpeed={playSpeed}
             ssr={true}
+            deviceType={defaultDevice}
             customLeftArrow={
                 <ArrowFix>
                     <button aria-label="Go to previous slide" className="react-multiple-carousel__arrow react-multiple-carousel__arrow--left !z-10" type="button"></button>
