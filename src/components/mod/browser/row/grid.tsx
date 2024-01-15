@@ -182,7 +182,7 @@ export default function ModRowGrid ({
                 >
                     <IconAndText
                         icon={catParIcon}
-                        text={<>{mod.category.name}</>}
+                        text={<>{mod.category.parent.name}</>}
                         alt="Parent Category Icon"
                         imgClassName="w-8 h-8 rounded"
                     />
