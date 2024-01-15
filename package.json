@@ -20,6 +20,7 @@
     "@types/marked": "^4.0.8",
     "formik": "^2.2.9",
     "isomorphic-unfetch": "^4.0.2",
+    "mobile-detect": "^1.4.5",
     "next": "^13.5.6",
     "next-auth": "^4.18.3",
     "next-sitemap": "^3.1.48",
