@@ -533,23 +533,6 @@ export async function InsertOrUpdateMod ({
     // Returns.
     let mod: Mod | null = null;
 
-    // Let's now handle file uploads.
-    let bannerPath: string | boolean | null = false;
-
-    if (bremove)
-        bannerPath = null;
-
-    if (!bremove && (banner && banner.length > 0)) {
-        const path = `/images/mod/${url}`
-
-        const [success, err, fullPath] = UploadFile(path, banner);
-
-        if (!success || !fullPath)
-            return [null, false, err];
-        
-        bannerPath = fullPath;
-    }
-
     // Remove duplicate screenshots.
     if (screenshots) {
         screenshots = screenshots.filter((val, index, array) => {
@@ -606,8 +589,8 @@ export async function InsertOrUpdateMod ({
                     nsfw: nsfw,
                     autoUpdate: autoUpdate,
                     lastScanned: lastScanned,
-                    ...(bannerPath !== false && {
-                        banner: bannerPath
+                    ...(bremove && {
+                        banner: null
                     }),
                     ...(typeof downloads !== "undefined" && {
                         ModDownload: {
@@ -695,9 +678,6 @@ export async function InsertOrUpdateMod ({
                     nsfw: nsfw,
                     autoUpdate,
                     lastScanned: lastScanned,
-                    ...(bannerPath !== false && {
-                        banner: bannerPath
-                    }),
                     ...(typeof downloads !== "undefined" && {
                         ModDownload: {
                             create: downloads.map((download) => ({
@@ -741,6 +721,30 @@ export async function InsertOrUpdateMod ({
                     })
                 }
             });
+        }
+
+        // Handle banner.
+        if (mod) {
+            if (!bremove && (banner && banner.length > 0)) {
+                const path = `/images/mod/${mod.id.toString()}`
+
+                const [success, err, fullPath] = UploadFile(path, banner);
+
+                if (!success || !fullPath)
+                    return [null, false, err];
+                
+                const bannerPath = fullPath;
+
+                // Update mod with banner information.
+                await prisma.mod.update({
+                    data: {
+                        banner: bannerPath
+                    },
+                    where: {
+                        id: mod.id
+                    }
+                })
+            }
         }
     } catch (error) {
         return [null, false, error];
