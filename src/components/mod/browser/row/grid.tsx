@@ -69,7 +69,7 @@ export default function ModRowGrid ({
         if (!viewPort.isMobile && showRelations) {
             const newItems: Drop_Down_Menu_Type[] = [];
 
-            mod.ModSource.map((src) => {
+            mod.ModSource?.map((src) => {
                 const name = src.source.name;
                 const url = `https://${src.sourceUrl}/${src.query}`;
 
