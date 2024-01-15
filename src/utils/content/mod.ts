@@ -113,7 +113,14 @@ export async function GetMods ({
 
     const mods = await prisma.$queryRaw<ModRowBrowser[]>` 
         SELECT 
-            "Mod".*,
+            "Mod"."id",
+            "Mod"."url",
+            "Mod"."name",
+            "Mod"."banner",
+            "Mod"."descriptionShort",
+            "Mod"."totalDownloads",
+            "Mod"."totalViews",
+            "Mod"."nsfw",
             (
                 (
                     SELECT

@@ -4,7 +4,6 @@ import { type GetServerSidePropsContext } from "next";
 import Main from "@components/main";
 import MetaInfo from "@components/meta";
 
-
 import { prisma } from "@server/db/client";
 
 import { type CategoryWithChildrenAndParentAndCount } from "~/types/category";
