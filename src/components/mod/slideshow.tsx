@@ -68,6 +68,7 @@ export default function ModSlideshow ({
             infinite={infinite}
             autoPlay={!viewPort.isMobile ? autoPlay : false}
             autoPlaySpeed={playSpeed}
+            ssr={true}
             customLeftArrow={
                 <ArrowFix>
                     <button aria-label="Go to previous slide" className="react-multiple-carousel__arrow react-multiple-carousel__arrow--left !z-10" type="button"></button>
