@@ -46,8 +46,12 @@ export default function RedirectTableRow ({
 
     return (
         <tr className={className}>
-            <td>{redirect.url}</td>
-            <td>{redirect.redirect}</td>
+            <td>
+                <Link href={redirect.url}>{redirect.url}</Link>
+            </td>
+            <td>
+                <Link href={redirect.redirect}>{redirect.redirect}</Link>
+            </td>
             {showActions && (
                 <td>
                     <div className="flex flex-wrap gap-2">
