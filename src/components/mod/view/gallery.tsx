@@ -124,7 +124,7 @@ export default function ModGallery ({
                     </ArrowFix>
                 }
             >
-                {screenshots.map((url, index) => {
+                {screenshots.slice(0, 20).map((url, index) => {
                     return (
                         <Screenshot
                             key={`screenshot-${index.toString()}`}
