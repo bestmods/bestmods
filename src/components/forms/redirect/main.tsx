@@ -14,7 +14,7 @@ export default function RedirectForm({
     const errorCtx = useContext(ErrorCtx);
     const successCtx = useContext(SuccessCtx);
 
-    const mut = trpc.redirect.addOrSave.useMutation({
+    const addMut = trpc.redirect.addOrSave.useMutation({
         onError: (opts) => {
             const { message } = opts;
 
@@ -33,18 +33,44 @@ export default function RedirectForm({
         }
     })
 
+    const importMut = trpc.redirect.import.useMutation({
+        onError: (opts) => {
+            const { message } = opts;
+
+            console.error(message);
+
+            if (errorCtx) {
+                errorCtx.setTitle("Failed To Import Redirects");
+                errorCtx.setMsg("There was an error import redirects. Check the console for more details.")
+            }
+        },
+        onSuccess: () => {
+            if (successCtx) {
+                successCtx.setTitle("Redirects Imported Successfully!");
+                successCtx.setMsg("Successfully imported redirects!");
+            }
+        }
+    })
+
     return (
         <Formik
             initialValues={{
                 url: redirect?.url ?? "",
-                redirect: redirect?.redirect ?? ""
+                redirect: redirect?.redirect ?? "",
+                redirects: ""
             }}
             onSubmit={(values) => {
-                mut.mutate({
-                    id: redirect?.id,
-                    url: values.url,
-                    redirect: values.redirect
-                })
+                if (values.redirects.length > 2) {
+                    importMut.mutate({
+                        contents: values.redirects
+                    })
+                } else {
+                    addMut.mutate({
+                        id: redirect?.id,
+                        url: values.url,
+                        redirect: values.redirect
+                    })
+                }
             }}
         >
             <Form className={className}>
@@ -56,11 +82,24 @@ export default function RedirectForm({
                     <label htmlFor="redirect">Redirect</label>
                     <Field name="redirect" />
                 </div>
+                {!redirect && (
+                    <div className="p-2">
+                        <label htmlFor="redirects">Import Redirects</label>
+                        <Field
+                            as="textarea"
+                            name="redirects"
+                            rows={16}
+                        />
+                        <p>
+                            Format should be <span className="italic">{"{"}url{"}"}</span>:<span className="italic">{"{"}redirect{"}"}</span>
+                        </p>
+                    </div>
+                )}
                 <div className="flex justify-center">
                     <button
                         type="submit"
                         className="btn btn-primary"
-                    >{redirect ? "Save" : "Add"} Redirect</button>
+                    >{redirect ? "Save" : "Add"} Redirect(s)</button>
                 </div>
             </Form>
         </Formik>
