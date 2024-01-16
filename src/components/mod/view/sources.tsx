@@ -12,7 +12,7 @@ export default function ModViewSources ({
     return (
         <div className="flex flex-col gap-2">
             <h2>Sources</h2>
-            {mod.ModSource != null && mod.ModSource.length > 0 && (
+            {mod.ModSource && mod.ModSource.length > 0 && (
                 <div
                     className="grid gap-4"
                     style={{
@@ -26,7 +26,13 @@ export default function ModViewSources ({
                         if (cdn)
                             banner = cdn + banner;
 
-                        const srcLink = "https://" + src.sourceUrl + "/" + src.query;
+                        // Get query link.
+                        let query = src.query.trim();
+
+                        if (!query.startsWith("/"))
+                            query = `/${query}`;
+
+                        const srcLink = `https://${src.sourceUrl}${query}`;
 
                         return (
                             <Link

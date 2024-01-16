@@ -71,7 +71,14 @@ export default function ModRowGrid ({
 
             mod.ModSource?.map((src) => {
                 const name = src.source.name;
-                const url = `https://${src.sourceUrl}/${src.query}`;
+
+                // Get query URL and check if we need to add a forward slash.
+                let query = src.query.trim();
+
+                if (!query.startsWith("/"))
+                    query = `/${query}`;
+
+                const url = `https://${src.sourceUrl}${query}`;
 
                 let icon = "/images/default_icon.png";
 
