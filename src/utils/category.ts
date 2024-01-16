@@ -24,7 +24,7 @@ export function GetCategoryMetaTitle(category?: Category | CategoryWithChildrenA
     if ("parent" in category && category.parent)
         parName = category.parent.name;
 
-    return `${name} - ${parName ? `${parName}- ` : ``}Best Mods`
+    return `${name} - ${parName ? `${parName} - ` : ``}Best Mods`
 }
 
 export function GetCategoryMetaDesc(category?: Category | CategoryWithChildrenAndCounts | CategoryWithCount | CategoryWithParent | CategoryWithParentAndCount, totMods = 0) {
