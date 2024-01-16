@@ -11,9 +11,9 @@ import { type ModRowBrowser } from "~/types/mod";
 import ModCatalog from "@components/mod/catalog";
 import { getServerAuthSession } from "@server/common/get-server-auth-session";
 import { GetMods } from "@utils/content/mod";
-import { GetBgImage } from "@utils/images";
 import NotFound from "@components/errors/notfound";
 import { GetDeviceType } from "@utils/carousel";
+import { GetCategoryBanner, GetCategoryBgImage, GetCategoryMetaDesc, GetCategoryMetaTitle } from "@utils/category";
 
 export default function Page ({
     category,
@@ -32,20 +32,29 @@ export default function Page ({
     topModsToday: ModRowBrowser[]
     defaultDevice?: string
 }) {
-    const bgPath = GetBgImage(category);
-    const desc = category?.description ?? category?.parent?.description ?? "";
+    // Retrieve banner.
+    const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
+
+    const banner = GetCategoryBanner(category, cdn);
+
+    // Retrieve background image.
+    const bgPath = GetCategoryBgImage(category);
 
     let totMods = category?._count?.Mod ?? 0;
 
     if (category?.children)
         category.children.map(child => totMods += child._count.Mod);
 
+    // Meta information.
+    const title = GetCategoryMetaTitle(category);
+    const desc = GetCategoryMetaDesc(category, totMods);
+
     return (
         <>
             <MetaInfo
-                title={`${category?.parent?.name ? `${category.parent.name} ` : ``}${category?.name ? `${category.name} ` : `Not Found`} - Best Mods`}
-                description={`Tracking ${totMods.toString()} mods!${desc ? ` ${desc}` : ``}`}
-                image={bgPath}
+                title={title}
+                description={desc}
+                image={banner ?? bgPath}
             />
             <Main image={bgPath}>
                 {category ? (

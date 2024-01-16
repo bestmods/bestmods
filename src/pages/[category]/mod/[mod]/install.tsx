@@ -11,9 +11,9 @@ import ModView from "@components/mod/view";
 import NotFound from "@components/errors/notfound";
 
 import { GetModRating } from "@utils/content/mod";
-import { GetBgImage } from "@utils/images";
 import { GetModDescription } from "@utils/description";
 import { HasRole } from "@utils/roles";
+import { GetCategoryBgImage } from "@utils/category";
 
 export default function Page ({
     mod,
@@ -23,7 +23,7 @@ export default function Page ({
     rating: number
 }) {
     // Retrieve background image if any.
-    const bgPath = GetBgImage(mod?.category);
+    const bgPath = GetCategoryBgImage(mod?.category);
 
     // Retrieve mod description.
     const desc = GetModDescription({ mod });
