@@ -15,12 +15,14 @@ export default function ModBrowser ({
     preCategories = [],
     visible,
     showActions = false,
-    showDebug = false
+    showDebug = false,
+    incVisibleColumn = false
 } : {
     preCategories?: number[]
     visible?: boolean
     showActions?: boolean
     showDebug?: boolean
+    incVisibleColumn?: boolean
 }) {
     const viewPort = useContext(ViewPortCtx);
 
@@ -47,7 +49,8 @@ export default function ModBrowser ({
         timeframe: timeframe,
         sort: sort,
         search: search || undefined,
-        visible: visible
+        visible: visible,
+        incVisibleColumn: incVisibleColumn
     }, {
         getNextPageParam: (lastPage) => lastPage.nextMod,
     });

@@ -15,7 +15,11 @@ export async function GetMods ({
     categories = [],
     search,
     visible,
-    sort = 0
+    sort = 0,
+    incVisibleColumn = false,
+    incSources = true,
+    incDownloads = true,
+    incInstallers = true
 } : {
     isStatic?: boolean
     limit?: number
@@ -26,6 +30,10 @@ export async function GetMods ({
     search?: string
     visible?: boolean
     sort?: number
+    incVisibleColumn?: boolean
+    incSources?: boolean
+    incDownloads?: boolean
+    incInstallers?: boolean
 }): Promise<[ModRowBrowser[], number | undefined]> {
     // Retrieve cursor item.
     let cursorItem: ModRowBrowser | undefined = undefined;
@@ -117,7 +125,9 @@ export async function GetMods ({
             "Mod"."url",
             "Mod"."name",
             "Mod"."banner",
-            "Mod"."visible",
+            ${incVisibleColumn ? (
+                Prisma.sql`"Mod"."visible",`
+            ) : Prisma.empty}
             "Mod"."descriptionShort",
             "Mod"."totalDownloads",
             "Mod"."totalViews",
@@ -155,6 +165,84 @@ export async function GetMods ({
                         }
                 )
             ) + 1 AS "rating",
+            ${incDownloads ?
+                Prisma.sql`
+                    json_agg(DISTINCT "ModDownload".*) AS "ModDownload",
+                `
+            : Prisma.empty}
+            ${incSources ?
+                Prisma.sql`
+                        (
+                        SELECT json_agg(jsonb_build_object(
+                            'sourceUrl', "subquery"."sourceUrl",
+                            'query', "subquery"."query",
+                            'source', CASE 
+                                WHEN "subquery"."sourceUrl" IS NOT NULL THEN
+                                    jsonb_build_object(
+                                        'name', "subquery"."sourceName",
+                                        'url', "subquery"."sourceUrl",
+                                        'icon', "subquery"."sourceIcon"
+                                    )
+                                ELSE
+                                    NULL
+                            END
+                        )) AS "ModSource"
+                        FROM (
+                            SELECT DISTINCT ON ("ModSource"."sourceUrl")
+                                "ModSource"."sourceUrl",
+                                "ModSource"."query",
+                                "modsourcesource"."name" AS "sourceName",
+                                "modsourcesource"."icon" AS "sourceIcon"
+                            FROM "ModSource"
+                            LEFT JOIN
+                                "Source" 
+                                AS 
+                                    "modsourcesource"
+                                ON
+                                    "ModSource"."sourceUrl" = "modsourcesource"."url"
+                            WHERE
+                                "Mod"."id" = "ModSource"."modId"
+                        ) AS "subquery"
+                    ) AS "ModSource",
+                `
+            : Prisma.empty}
+            ${incInstallers ? 
+                Prisma.sql`
+                    (
+                        SELECT json_agg(jsonb_build_object(
+                            'sourceUrl', "subquery"."sourceUrl",
+                            'url', "subquery"."url",
+                            'source', CASE 
+                                WHEN "subquery"."sourceUrl" IS NOT NULL THEN
+                                    jsonb_build_object(
+                                        'name', "subquery"."sourceName",
+                                        'url', "subquery"."sourceUrl",
+                                        'icon', "subquery"."sourceIcon"
+                                    )
+                                ELSE
+                                    NULL
+                            END
+                        )) AS "ModInstaller"
+                        FROM (
+                            SELECT DISTINCT ON ("ModInstaller"."sourceUrl")
+                                "ModInstaller"."sourceUrl",
+                                "ModInstaller"."url",
+                                "modinstallersource"."name" AS "sourceName",
+                                "modinstallersource"."icon" AS "sourceIcon"
+                            FROM
+                                "ModInstaller"
+                            LEFT JOIN
+                                "Source"
+                                AS
+                                    "modinstallersource"
+                                ON
+                                    "ModInstaller"."sourceUrl" = "modinstallersource"."url"
+                            WHERE
+                                "Mod"."id" = "ModInstaller"."modId"
+                        ) AS "subquery"
+                    ) AS "ModInstaller",
+                `
+            : Prisma.empty}
             json_build_object(
                 'id', "category"."id",
                 'parentId', "category"."parentId",
@@ -174,72 +262,6 @@ export async function GetMods ({
                 'url', "category"."url",
                 'icon', "category"."icon"
             ) AS "category",
-            json_agg(DISTINCT "ModDownload".*) AS "ModDownload",
-            (
-                SELECT json_agg(jsonb_build_object(
-                    'sourceUrl', "subquery"."sourceUrl",
-                    'query', "subquery"."query",
-                    'source', CASE 
-                        WHEN "subquery"."sourceUrl" IS NOT NULL THEN
-                            jsonb_build_object(
-                                'name', "subquery"."sourceName",
-                                'url', "subquery"."sourceUrl",
-                                'icon', "subquery"."sourceIcon"
-                            )
-                        ELSE
-                            NULL
-                    END
-                )) AS "ModSource"
-                FROM (
-                    SELECT DISTINCT ON ("ModSource"."sourceUrl")
-                        "ModSource"."sourceUrl",
-                        "ModSource"."query",
-                        "modsourcesource"."name" AS "sourceName",
-                        "modsourcesource"."icon" AS "sourceIcon"
-                    FROM "ModSource"
-                    LEFT JOIN
-                        "Source" 
-                        AS 
-                            "modsourcesource"
-                        ON
-                            "ModSource"."sourceUrl" = "modsourcesource"."url"
-                    WHERE
-                        "Mod"."id" = "ModSource"."modId"
-                ) AS "subquery"
-            ) AS "ModSource",
-            (
-                SELECT json_agg(jsonb_build_object(
-                    'sourceUrl', "subquery"."sourceUrl",
-                    'url', "subquery"."url",
-                    'source', CASE 
-                        WHEN "subquery"."sourceUrl" IS NOT NULL THEN
-                            jsonb_build_object(
-                                'name', "subquery"."sourceName",
-                                'url', "subquery"."sourceUrl",
-                                'icon', "subquery"."sourceIcon"
-                            )
-                        ELSE
-                            NULL
-                    END
-                )) AS "ModInstaller"
-                FROM (
-                    SELECT DISTINCT ON ("ModInstaller"."sourceUrl")
-                        "ModInstaller"."sourceUrl",
-                        "ModInstaller"."url",
-                        "modinstallersource"."name" AS "sourceName",
-                        "modinstallersource"."icon" AS "sourceIcon"
-                    FROM
-                        "ModInstaller"
-                    LEFT JOIN
-                        "Source"
-                        AS
-                            "modinstallersource"
-                        ON
-                            "ModInstaller"."sourceUrl" = "modinstallersource"."url"
-                    WHERE
-                        "Mod"."id" = "ModInstaller"."modId"
-                ) AS "subquery"
-            ) AS "ModInstaller",
             json_agg(DISTINCT "ModRating".*) AS "ModRating"
         FROM 
             "Mod"
@@ -255,18 +277,31 @@ export async function GetMods ({
                 "categoryparent"
             ON
                 "category"."parentId" = "categoryparent"."id"
-        LEFT JOIN
-            "ModDownload"
-            ON
-                "Mod"."id" = "ModDownload"."modId"
-        LEFT JOIN
-            "ModSource"
-            ON
-                "Mod"."id" = "ModSource"."modId"
-        LEFT JOIN
-            "ModInstaller"
-            ON 
-                "Mod"."id" = "ModInstaller"."modId"
+        ${incDownloads ?
+            Prisma.sql`
+                LEFT JOIN
+                    "ModDownload"
+                ON
+                    "Mod"."id" = "ModDownload"."modId"
+            `
+        : Prisma.empty}
+        ${incSources ?
+            Prisma.sql`
+                LEFT JOIN
+                    "ModSource"
+                ON
+                    "Mod"."id" = "ModSource"."modId"
+            `
+        : Prisma.empty}
+        ${incInstallers ?
+            Prisma.sql`
+                LEFT JOIN
+                    "ModInstaller"
+                ON 
+                    "Mod"."id" = "ModInstaller"."modId"
+            `
+        : Prisma.empty}
+
         LEFT JOIN
             "ModRating"
             ON

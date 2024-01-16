@@ -49,24 +49,36 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const [latestMods] = await GetMods ({
         sort: 4,
         visible: true,
-        userId: session?.user?.id
+        userId: session?.user?.id,
+        incDownloads: false,
+        incSources: false,
+        incInstallers: false
     })
 
     const [viewedMods] = await GetMods ({
         sort: 1,
         visible: true,
-        userId: session?.user?.id
+        userId: session?.user?.id,
+        incDownloads: false,
+        incSources: false,
+        incInstallers: false
     })
 
     const [downloadedMods] = await GetMods ({
         sort: 2,
         visible: true,
-        userId: session?.user?.id
+        userId: session?.user?.id,
+        incDownloads: false,
+        incSources: false,
+        incInstallers: false
     })
 
     const [topMods] = await GetMods ({
         visible: true,
-        userId: session?.user?.id
+        userId: session?.user?.id,
+        incDownloads: false,
+        incSources: false,
+        incInstallers: false
     })
 
     // Retrieve time range for today.
@@ -85,7 +97,10 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const [topModsToday] = await GetMods ({
         ratingTimeRange: todayDate,
         visible: true,
-        userId: session?.user?.id
+        userId: session?.user?.id,
+        incDownloads: false,
+        incSources: false,
+        incInstallers: false
     })
 
     // Get default device type.

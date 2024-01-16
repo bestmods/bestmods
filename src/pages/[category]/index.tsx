@@ -172,27 +172,39 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             categories: categories,
             sort: 4,
             visible: true,
-            userId: session?.user?.id
+            userId: session?.user?.id,
+            incDownloads: false,
+            incSources: false,
+            incInstallers: false
         }))[0]
 
         viewedMods = (await GetMods ({
             categories: categories,
             sort: 1,
             visible: true,
-            userId: session?.user?.id
+            userId: session?.user?.id,
+            incDownloads: false,
+            incSources: false,
+            incInstallers: false
         }))[0]
 
         downloadedMods = (await GetMods ({
             categories: categories,
             sort: 2,
             visible: true,
-            userId: session?.user?.id
+            userId: session?.user?.id,
+            incDownloads: false,
+            incSources: false,
+            incInstallers: false
         }))[0]
 
         topMods = (await GetMods ({
             categories: categories,
             visible: true,
-            userId: session?.user?.id
+            userId: session?.user?.id,
+            incDownloads: false,
+            incSources: false,
+            incInstallers: false
         }))[0]
     
         // Retrieve time range for today.
@@ -212,7 +224,10 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             categories: categories,
             ratingTimeRange: todayDate,
             visible: true,
-            userId: session?.user?.id
+            userId: session?.user?.id,
+            incDownloads: false,
+            incSources: false,
+            incInstallers: false
         }))[0]
     }
 

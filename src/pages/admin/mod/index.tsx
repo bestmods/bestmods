@@ -29,6 +29,7 @@ export default function Page () {
                             <ModBrowser
                                 showActions={true}
                                 showDebug={true}
+                                incVisibleColumn={true}
                             />
                         </div>
                     </AdminPanel>
