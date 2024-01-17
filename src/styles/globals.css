@@ -147,4 +147,5 @@
 @layer utilities {
     @import "utils/buttons.css";
     @import "utils/inputs.css";
+    @import "utils/list.css";
 }
