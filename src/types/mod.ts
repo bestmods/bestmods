@@ -6,7 +6,8 @@ export const ModWithRelationsInc = {
     ModScreenshot: true,
     ModSource: true,
     ModInstaller: true,
-    ModCredit: true
+    ModCredit: true,
+    requiredSrc: true
 }
 
 export type ModWithRelations = Prisma.ModGetPayload<{

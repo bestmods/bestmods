@@ -1,4 +1,4 @@
-import { type ModCredit, type Mod, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource, type PrismaClient } from "@prisma/client";
+import { type ModCredit, type Mod, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource, type PrismaClient, type ModRequired } from "@prisma/client";
 
 import { UploadFile } from "@utils/file_upload";
 import { type ModRowBrowser } from "~/types/mod";
@@ -526,6 +526,7 @@ export async function InsertOrUpdateMod ({
     descriptionShort,
     install,
     visible,
+    version,
 
     nsfw,
     autoUpdate,
@@ -539,7 +540,8 @@ export async function InsertOrUpdateMod ({
     screenshots,
     sources,
     installers,
-    credits
+    credits,
+    required
 } : {
     prisma: PrismaClient
 
@@ -557,6 +559,8 @@ export async function InsertOrUpdateMod ({
     description?: string
     descriptionShort?: string | null
     install?: string | null
+    version?: string | null
+
     visible?: boolean
 
     nsfw?: boolean
@@ -572,6 +576,7 @@ export async function InsertOrUpdateMod ({
     sources?: ModSource[]
     installers?: ModInstaller[]
     credits?: ModCredit[]
+    required?: ModRequired[]
 }): Promise<[Mod | null, boolean, string | null | unknown]> {
     // Returns.
     let mod: Mod | null = null;
@@ -604,6 +609,13 @@ export async function InsertOrUpdateMod ({
         })
     }
 
+    // Remove duplicate required mdos.
+    if (required) {
+        required = required.filter((val, index, array) => {
+            return index === array.findIndex((o) => o.sId === val.sId && o.dId === val.dId)
+        })
+    }
+
     try {
         if (lookupId) {
             mod = await prisma.mod.update({
@@ -629,6 +641,7 @@ export async function InsertOrUpdateMod ({
                     description: description,
                     descriptionShort: descriptionShort,
                     install: install,
+                    version: version,
                     nsfw: nsfw,
                     autoUpdate: autoUpdate,
                     lastScanned: lastScanned,
@@ -640,10 +653,14 @@ export async function InsertOrUpdateMod ({
                             deleteMany: {
                                 modId: lookupId
                             },
-                            create: downloads.map((download) => ({
-                                name: download.name,
-                                url: download.url
-                            }))
+                            createMany: {
+                                data: downloads.map((dl) => ({
+                                    name: dl.name,
+                                    url: dl.url,
+                                    size: dl.size,
+                                    uploadDate: dl.uploadDate
+                                }))
+                            }
                         }
                     }),
                     ...(typeof sources !== "undefined" && {
@@ -651,11 +668,13 @@ export async function InsertOrUpdateMod ({
                             deleteMany: {
                                 modId: lookupId
                             },
-                            create: sources.map((source) => ({
-                                sourceUrl: source.sourceUrl,
-                                query: source.query,
-                                primary: source.primary
-                            }))
+                            createMany: {
+                                data: sources.map((src) => ({
+                                    sourceUrl: src.sourceUrl,
+                                    query: src.query,
+                                    primary: src.primary
+                                }))
+                            }
                         },
                     }),
                     ...(typeof installers !== "undefined" && {
@@ -663,10 +682,12 @@ export async function InsertOrUpdateMod ({
                             deleteMany: {
                                 modId: lookupId
                             },
-                            create: installers.map((installer) => ({
-                                sourceUrl: installer.sourceUrl,
-                                url: installer.url
-                            }))
+                            createMany: {
+                                data: installers.map((ins) => ({
+                                    sourceUrl: ins.sourceUrl,
+                                    url: ins.url
+                                }))
+                            }
                         },
                     }),
                     ...(typeof screenshots !== "undefined" && {
@@ -674,9 +695,11 @@ export async function InsertOrUpdateMod ({
                             deleteMany: {
                                 modId: lookupId
                             },
-                            create: screenshots.map((screenshot) => ({
-                                url: screenshot.url
-                            }))
+                            createMany: {
+                                data: screenshots.map((ss) => ({
+                                    url: ss.url
+                                }))
+                            }
                         },
                     }),
                     ...(typeof credits !== "undefined" && {
@@ -684,11 +707,25 @@ export async function InsertOrUpdateMod ({
                             deleteMany: {
                                 modId: lookupId
                             },
-                            create: credits.map((credit) => ({
-                                name: credit.name,
-                                credit: credit.credit,
-                                userId: credit.userId
-                            }))
+                            createMany: {
+                                data: credits.map((cre) => ({
+                                    name: cre.name,
+                                    credit: cre.credit,
+                                    userId: cre.userId
+                                }))
+                            }
+                        }
+                    }),
+                    ...(typeof required !== "undefined" && {
+                        requiredSrc: {
+                            deleteMany: {
+                                sId: lookupId
+                            },
+                            createMany: {
+                                data: required.map((req) => ({
+                                    dId: req.dId
+                                }))
+                            }
                         }
                     })
                 }
@@ -720,46 +757,68 @@ export async function InsertOrUpdateMod ({
                     install: install,
                     nsfw: nsfw,
                     autoUpdate,
+                    version: version,
                     lastScanned: lastScanned,
                     ...(typeof downloads !== "undefined" && {
                         ModDownload: {
-                            create: downloads.map((download) => ({
-                                name: download.name,
-                                url: download.url
-                            }))
+                            createMany: {
+                                data: downloads.map((dl) => ({
+                                    name: dl.name,
+                                    url: dl.url,
+                                    size: dl.size,
+                                    uploadDate: dl.uploadDate
+                                }))
+                            }
                         }
                     }),
                     ...(typeof sources !== "undefined" && {
                         ModSource: {
-                            create: sources.map((source) => ({
-                                sourceUrl: source.sourceUrl,
-                                query: source.query,
-                                primary: source.primary
-                            }))
+                            createMany: {
+                                data: sources.map((src) => ({
+                                    sourceUrl: src.sourceUrl,
+                                    query: src.query,
+                                    primary: src.primary
+                                }))
+                            }
                         }
                     }),
                     ...(typeof installers !== "undefined" && {
                         ModInstaller: {
-                            create: installers?.map((installer) => ({
-                                sourceUrl: installer.sourceUrl,
-                                url: installer.url
-                            }))
+                            createMany: {
+                                data: installers.map((ins) => ({
+                                    sourceUrl: ins.sourceUrl,
+                                    url: ins.url
+                                }))
+                            }
                         }
                     }),
                     ...(typeof screenshots !== "undefined" && {
                         ModScreenshot: {
-                            create: screenshots.map((screenshot) => ({
-                                url: screenshot.url
-                            }))
+                            createMany: {
+                                data: screenshots.map((ss) => ({
+                                    url: ss.url
+                                }))
+                            }
                         }
                     }),
                     ...(typeof credits !== "undefined" && {
                         ModCredit: {
-                            create: credits.map((credit) => ({
-                                name: credit.name,
-                                credit: credit.credit,
-                                userId: credit.userId
-                            }))
+                            createMany: {
+                                data: credits.map((cre) => ({
+                                    name: cre.name,
+                                    credit: cre.credit,
+                                    userId: cre.userId
+                                }))
+                            }
+                        }
+                    }),
+                    ...(typeof required !== "undefined" && {
+                        requiredSrc: {
+                            createMany: {
+                                data: required.map((req) => ({
+                                    dId: req.dId
+                                }))
+                            }
                         }
                     })
                 }

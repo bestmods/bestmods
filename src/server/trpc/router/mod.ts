@@ -20,10 +20,13 @@ export const modRouter = router({
             url: z.string(),
             categoryId: z.number().optional(),
 
+            bremove: z.boolean().default(false),
+
             // The following should be parsed via Markdown Syntax.
             description: z.string(),
-            descriptionShort: z.string(),
-            install: z.string().optional(),
+            descriptionShort: z.string().nullable().optional(),
+            install: z.string().nullable().optional(),
+            version: z.string().nullable().optional(),
 
             nsfw: z.boolean().default(false),
             autoUpdate: z.boolean().default(false),
@@ -33,15 +36,18 @@ export const modRouter = router({
                 name: z.string().nullable(),
                 url: z.string(),
 
+                size: z.number().default(0),
+                uploadDate: z.date().nullable().default(null),
+
                 // Required for ModDownload type.
                 modId: z.number()
-            })),
+            })).optional(),
             screenshots: z.array(z.object({
                 url: z.string(),
 
                 // Required for ModScreenshot type.
                 modId: z.number()
-            })),
+            })).optional(),
             sources: z.array(z.object({
                 sourceUrl: z.string(),
                 query: z.string(),
@@ -49,14 +55,14 @@ export const modRouter = router({
                 // Required for ModSource type.
                 modId: z.number(),
                 primary: z.boolean()
-            })),
+            })).optional(),
             installers: z.array(z.object({
                 sourceUrl: z.string(),
                 url: z.string(),
 
                 // Required for ModInstaller type.
                 modId: z.number()
-            })),
+            })).optional(),
             credits: z.array(z.object({
                 name: z.string(),
                 credit: z.string(),
@@ -65,8 +71,11 @@ export const modRouter = router({
                 id: z.number(),
                 modId: z.number(),
                 userId: z.string().nullable()
-            })),
-            bremove: z.boolean().default(false)
+            })).optional(),
+            required: z.array(z.object({
+                sId: z.number().default(0),
+                dId: z.number() 
+            })).optional()
         }))
         .mutation(async ({ ctx, input }) => {
             // Insert ot update mod.
@@ -86,6 +95,7 @@ export const modRouter = router({
                 descriptionShort: input.descriptionShort,
                 install: input.install,
                 visible: input.visible,
+                version: input.version,
 
                 nsfw: input.nsfw,
                 autoUpdate: input.autoUpdate,
@@ -97,7 +107,8 @@ export const modRouter = router({
                 screenshots: input.screenshots,
                 sources: input.sources,
                 installers: input.installers,
-                credits: input.credits
+                credits: input.credits,
+                required: input.required
             });
 
             // Check for error.
@@ -234,13 +245,14 @@ export const modRouter = router({
                 delete: z.boolean().default(false),
                 hide: z.boolean().default(true),
                 mergeInstall: z.boolean().default(true),
+                mergeVersion: z.boolean().default(true),
                 mergeOwnerName: z.boolean().default(true),
                 mergeDescriptionShort: z.boolean().default(true),
                 mergeSources: z.boolean().default(true),
                 mergeDownloads: z.boolean().default(true),
                 mergeInstallers: z.boolean().default(true),
                 mergeScreenshots: z.boolean().default(true),
-                mergeCredits: z.boolean().default(true)
+                mergeCredits: z.boolean().default(true),
 
             }))
             .mutation (async ({ ctx, input }) => {
@@ -291,6 +303,9 @@ export const modRouter = router({
                             ...((input.mergeDescriptionShort && !modDst.descriptionShort && mod.descriptionShort) && {
                                 descriptionShort: mod.descriptionShort
                             }),
+                            ...((input.mergeVersion && !modDst.version && mod.version) && {
+                                version: mod.version
+                            }),
                             ...(input.mergeSources && mod.ModSource.length > 0 && {
                                 ModSource: {
                                     createMany: {
@@ -307,7 +322,9 @@ export const modRouter = router({
                                     createMany: {
                                         data: mod.ModDownload.map((dl) => ({
                                             name: dl.name,
-                                            url: dl.url
+                                            url: dl.url,
+                                            size: dl.size,
+                                            uploadDate: dl.uploadDate
                                         }))
                                     }
                                 }

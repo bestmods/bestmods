@@ -10,7 +10,7 @@ import { type CategoryWithChildren } from "~/types/category";
 import { prisma } from "@server/db/client";
 import { type Source } from "@prisma/client";
 import ModForm from "@components/forms/mod/main";
-import { type ModWithRelations } from "~/types/mod";
+import { ModWithRelationsInc, type ModWithRelations } from "~/types/mod";
 import NotFound from "@components/errors/notfound";
 import AdminPanel from "@components/admin/panel";
 
@@ -67,14 +67,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     if ((HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) && id) {
         mod = await prisma.mod.findFirst({
-            include: {
-                category: true,
-                ModDownload: true,
-                ModScreenshot: true,
-                ModSource: true,
-                ModInstaller: true,
-                ModCredit: true
-            },
+            include: ModWithRelationsInc,
             where: {
                 id: Number(id)
             }

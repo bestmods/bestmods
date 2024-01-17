@@ -3,12 +3,14 @@ import { ErrorCtx, SuccessCtx } from "@pages/_app";
 import { type Source } from "@prisma/client";
 import { GetContents } from "@utils/file";
 import { trpc } from "@utils/trpc";
-import { Field, Form, Formik } from "formik";
+import { Field, FieldArray, Form, Formik } from "formik";
 import React, { useContext, useState } from "react";
 import { type CategoryWithChildren } from "~/types/category";
 import { type ModWithRelations } from "~/types/mod";
 import FormCheckbox from "../checkbox";
 import ScrollToTop from "@utils/scroll";
+
+import { DatePickerField } from "@components/date_field";
 
 export default function ModForm ({
     mod,
@@ -27,6 +29,9 @@ export default function ModForm ({
     const EMPTY_DOWNLOAD = {
         name: "",
         url: "",
+
+        size: 0,
+        uploadDate: null,
     
         modId: 0
     }
@@ -59,6 +64,11 @@ export default function ModForm ({
         id: 0,
         modId: 0,
         userId: null
+    }
+
+    const EMPTY_REQUIRED = {
+        sId: 0,
+        dId: 0
     }
 
     // Mutations.
@@ -102,17 +112,23 @@ export default function ModForm ({
                 descriptionShort: mod?.descriptionShort ?? "",
                 url: mod?.url ?? "",
                 install: mod?.install ?? "",
+                version: mod?.version ?? "",
+
+                bremove: false,
 
                 nsfw: mod?.nsfw ?? false,
                 autoUpdate: mod?.autoUpdate ?? false,
                 
-                downloads: mod?.ModDownload ?? [EMPTY_DOWNLOAD],
+                // We need to loop through each download and ensure uploadDate isn't a string to prevent annoying errors. If it is a st ring, convert to a Date object.
+                downloads: mod?.ModDownload?.map((dl) => ({
+                    ...dl,
+                    uploadDate: dl.uploadDate ? new Date(dl.uploadDate) : null
+                })) ?? [EMPTY_DOWNLOAD],
                 sources: mod?.ModSource ?? [EMPTY_SOURCE],
                 screenshots: mod?.ModScreenshot ?? [EMPTY_SCREENSHOT],
                 installers: mod?.ModInstaller ?? [EMPTY_INSTALLER],
                 credits: mod?.ModCredit ?? [EMPTY_CREDIT],
-
-                bremove: false
+                required: mod?.requiredSrc ?? []
             }}
             onSubmit={(values) => {
                 mut.mutate({
@@ -263,7 +279,14 @@ export default function ModForm ({
                                 placeholder="Mod installation..."
                             />
                         )}
-                        
+                    </div>
+                    <div className="p-2">
+                        <label htmlFor="version">Version</label>
+                        {previewMode ? (
+                            <p>{form.values.version}</p>
+                        ) : (
+                            <Field name="version" />
+                        )}
                     </div>
                     <h2>Other Options</h2>
                     <div className="p-2">
@@ -280,355 +303,378 @@ export default function ModForm ({
                     </div>
                     <h2>Sources</h2>
                     <div className="p-2 flex flex-col gap-2">
-                        {form.values.sources.map((_source, index) => {
-                            return (
-                                <div
-                                    key={`source-${index.toString()}`}
-                                    className="flex flex-col gap-1 bg-bestmods-3/80 rounded p-2"
-                                >
-                                    <h3>Source #{(index + 1).toString()}</h3>
-                                    <div className="p-2">
-                                        <label htmlFor={`sources[${index.toString()}].sourceUrl`}>Source</label>
+                        <FieldArray name="sources">
+                            {({ push, remove}) => (
+                                <>
+                                    {form.values.sources.map((src, index) => {
+                                        const fieldStr = `sources[${index.toString()}]`;
 
-                                        {previewMode ? (
-                                            <p>{form.values.sources?.[index]?.sourceUrl ?? "N/A"}</p>
-                                        ) : (
-                                            <select
-                                                name={`sources[${index.toString()}].sourceUrl`}
-                                                value={form.values.sources[index]?.sourceUrl}
-                                                onChange={form.handleChange}
-                                                onBlur={form.handleBlur}
+                                        return (
+                                            <div
+                                                key={`source-${index.toString()}`}
+                                                className="flex flex-col gap-1 bg-bestmods-3/80 rounded p-2"
                                             >
-                                                {sources.map((source, index) => {
-                                                    return (
-                                                        <option
-                                                            key={`source-${index.toString()}`}
-                                                            value={source.url}
-                                                        >{source.name}</option>
-                                                    )
-                                                })}
-                                            </select>
-                                        )}
-                                    </div>
-                                    <div className="p-2">
-                                        <label htmlFor={`sources[${index.toString()}].query`}>Query</label>
+                                                <h3>Source #{(index + 1).toString()}</h3>
+                                                <div className="p-2">
+                                                    <label htmlFor={`${fieldStr}.sourceUrl`}>Source</label>
 
-                                        {previewMode ? (
-                                            <p>{form.values.sources?.[index]?.query ?? "N/A"}</p>
-                                        ) : (
-                                            <Field
-                                                name={`sources[${index.toString()}].query`}
-                                            />
-                                        )}
-                                    </div>
-                                    <div className="p-2">
-                                        <label htmlFor={`sources[${index.toString()}].primary`}>Primary</label>
+                                                    {previewMode ? (
+                                                        <p>{src.sourceUrl ?? "N/A"}</p>
+                                                    ) : (
+                                                        <select
+                                                            name={`${fieldStr}.sourceUrl`}
+                                                            value={src.sourceUrl}
+                                                            onChange={form.handleChange}
+                                                            onBlur={form.handleBlur}
+                                                        >
+                                                            {sources.map((source, index) => {
+                                                                return (
+                                                                    <option
+                                                                        key={`source-${index.toString()}`}
+                                                                        value={source.url}
+                                                                    >{source.name}</option>
+                                                                )
+                                                            })}
+                                                        </select>
+                                                    )}
+                                                </div>
+                                                <div className="p-2">
+                                                    <label htmlFor={`${fieldStr}.query`}>Query</label>
 
-                                        {previewMode ? (
-                                            <p>{form.values.sources?.[index]?.primary ? "Yes" : "No"}</p>
-                                        ) : (
-                                            <>
-                                                <FormCheckbox
-                                                    name={`sources[${index.toString()}].primary`}
-                                                    text={<span>Yes</span>}
-                                                />
-                                            </>
-                                        )}
-                                    </div>
+                                                    {previewMode ? (
+                                                        <p>{src.query ?? "N/A"}</p>
+                                                    ) : (
+                                                        <Field
+                                                            name={`${fieldStr}.query`}
+                                                        />
+                                                    )}
+                                                </div>
+                                                <div className="p-2">
+                                                    <label htmlFor={`${fieldStr}.primary`}>Primary</label>
+
+                                                    {previewMode ? (
+                                                        <p>{src.primary ? "Yes" : "No"}</p>
+                                                    ) : (
+                                                        <>
+                                                            <FormCheckbox
+                                                                name={`${fieldStr}.primary`}
+                                                                text={<span>Yes</span>}
+                                                            />
+                                                        </>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-danger"
+                                                        onClick={() => remove(index)}
+                                                    >Remove</button>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
                                     <div>
                                         <button
-                                            className="btn btn-danger"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-
-                                                const sources = form.values.sources;
-
-                                                sources.splice(index, 1);
-
-                                                form.setValues({
-                                                    ...form.values,
-                                                    sources: sources
-                                                });
-                                            }}
-                                        >Remove</button>
+                                            type="button"
+                                            className="btn btn-primary"
+                                            onClick={() => push(EMPTY_SOURCE)}
+                                        >Add Source</button>
                                     </div>
-                                </div>
-                            )
-                        })}
-                        <div>
-                            <button
-                                className="btn btn-primary"
-                                onClick={(e) => {
-                                    e.preventDefault();
-
-                                    form.setValues({
-                                        ...form.values,
-                                        sources: [...form.values.sources, EMPTY_SOURCE]
-                                    });
-                                }}
-                            >Add Source</button>
-                        </div>
+                                </>
+                            )}
+                        </FieldArray>
                     </div>
                     <h2>Installers</h2>
                     <div className="p-2 flex flex-col gap-2">
-                        {form.values.installers.map((_installer, index) => {
-                            return (
-                                <div
-                                    key={`installer-${index.toString()}`}
-                                    className="flex flex-col gap-1 bg-bestmods-3/80 rounded p-2"
-                                >
-                                    <h3>Installer #{(index + 1).toString()}</h3>
-                                    <div className="p-2">
-                                        <label htmlFor={`installers[${index.toString()}].sourceUrl`}>Source</label>
+                        <FieldArray name="installers">
+                            {({ push, remove }) => (
+                                <>
+                                    {form.values.installers.map((ins, index) => {
+                                        const fieldStr = `installers[${index.toString()}]`;
 
-                                        {previewMode ? (
-                                            <p>{form.values.installers?.[index]?.sourceUrl ?? "N/A"}</p>
-                                        ) : (
-                                            <select
-                                                name={`installers[${index.toString()}].sourceUrl`}
-                                                value={form.values.installers[index]?.sourceUrl}
-                                                onChange={form.handleChange}
-                                                onBlur={form.handleBlur}
+                                        return (
+                                            <div
+                                                key={`installer-${index.toString()}`}
+                                                className="flex flex-col gap-1 bg-bestmods-3/80 rounded p-2"
                                             >
-                                                {sources.map((source, index) => {
-                                                    return (
-                                                        <option
-                                                            key={`source-${index.toString()}`}
-                                                            value={source.url}
-                                                        >{source.name}</option>
-                                                    )
-                                                })}
-                                            </select>
-                                        )}
-                                    </div>
-                                    <div className="p-2">
-                                        <label htmlFor={`installers[${index.toString()}].url`}>URL</label>
+                                                <h3>Installer #{(index + 1).toString()}</h3>
+                                                <div className="p-2">
+                                                    <label htmlFor={`${fieldStr}.sourceUrl`}>Source</label>
 
-                                        {previewMode ? (
-                                            <p>{form.values.installers?.[index]?.url ?? "N/A"}</p>
-                                        ) : (
-                                            <Field
-                                                name={`installers[${index.toString()}].url`}
-                                            />
-                                        )}
-                                    </div>
+                                                    {previewMode ? (
+                                                        <p>{ins.sourceUrl ?? "N/A"}</p>
+                                                    ) : (
+                                                        <select
+                                                            name={`${fieldStr}.sourceUrl`}
+                                                            value={form.values.installers[index]?.sourceUrl}
+                                                            onChange={form.handleChange}
+                                                            onBlur={form.handleBlur}
+                                                        >
+                                                            {sources.map((source, index) => {
+                                                                return (
+                                                                    <option
+                                                                        key={`source-${index.toString()}`}
+                                                                        value={source.url}
+                                                                    >{source.name}</option>
+                                                                )
+                                                            })}
+                                                        </select>
+                                                    )}
+                                                </div>
+                                                <div className="p-2">
+                                                    <label htmlFor={`${fieldStr}.url`}>URL</label>
+
+                                                    {previewMode ? (
+                                                        <p>{ins.url ?? "N/A"}</p>
+                                                    ) : (
+                                                        <Field
+                                                            name={`${fieldStr}.url`}
+                                                        />
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-danger"
+                                                        onClick={() => remove(index)}
+                                                    >Remove</button>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
                                     <div>
                                         <button
-                                            className="btn btn-danger"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-
-                                                const installers = form.values.installers;
-
-                                                installers.splice(index, 1);
-
-                                                form.setValues({
-                                                    ...form.values,
-                                                    installers: installers
-                                                });
-                                            }}
-                                        >Remove</button>
+                                            type="button"
+                                            className="btn btn-primary"
+                                            onClick={() => push(EMPTY_INSTALLER)}
+                                        >Add Installer</button>
                                     </div>
-                                </div>
-                            )
-                        })}
-                        <div>
-                            <button
-                                className="btn btn-primary"
-                                onClick={(e) => {
-                                    e.preventDefault();
-
-                                    form.setValues({
-                                        ...form.values,
-                                        installers: [...form.values.installers, EMPTY_INSTALLER]
-                                    });
-                                }}
-                            >Add Installer</button>
-                        </div>
+                                </>
+                            )}
+                        </FieldArray>
                     </div>
                     <h2>Screenshots</h2>
                     <div className="p-2 flex flex-col gap-2">
-                        {form.values.screenshots.map((_screenshot, index) => {
-                            return (
-                                <div
-                                    key={`screenshot-${index.toString()}`}
-                                    className="flex flex-col gap-1 bg-bestmods-3/80 rounded p-2"
-                                >
-                                    <h3>Screenshot #{(index + 1).toString()}</h3>
-                                    <div className="p-2">
-                                        <label htmlFor={`screenshots[${index.toString()}].url`}>URL</label>
+                        <FieldArray name="screenshots">
+                            {({ push, remove }) => (
+                                <>
+                                    {form.values.screenshots.map((ss, index) => {
+                                        const fieldStr = `screenshots[${index.toString()}]`;
 
-                                        {previewMode ? (
-                                            <p>{form.values.screenshots?.[index]?.url ?? "N/A"}</p>
-                                        ) : (
-                                            <Field
-                                                name={`screenshots[${index.toString()}].url`}
-                                            />
-                                        )}
-                                    </div>
+                                        return (
+                                            <div
+                                                key={`screenshot-${index.toString()}`}
+                                                className="flex flex-col gap-1 bg-bestmods-3/80 rounded p-2"
+                                            >
+                                                <h3>Screenshot #{(index + 1).toString()}</h3>
+                                                <div className="p-2">
+                                                    <label htmlFor={`${fieldStr}.url`}>URL</label>
+
+                                                    {previewMode ? (
+                                                        <p>{ss.url ?? "N/A"}</p>
+                                                    ) : (
+                                                        <Field
+                                                            name={`${fieldStr}.url`}
+                                                        />
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-danger"
+                                                        onClick={() => remove(index)}
+                                                    >Remove</button>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
                                     <div>
                                         <button
-                                            className="btn btn-danger"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-
-                                                const screenshots = form.values.screenshots;
-
-                                                screenshots.splice(index, 1);
-
-                                                form.setValues({
-                                                    ...form.values,
-                                                    screenshots: screenshots
-                                                });
-                                            }}
-                                        >Remove</button>
+                                            type="button"
+                                            className="btn btn-primary"
+                                            onClick={() => push(EMPTY_SCREENSHOT)}
+                                        >Add Screenshot</button>
                                     </div>
-                                </div>
-                            )
-                        })}
-                        <div>
-                            <button
-                                className="btn btn-primary"
-                                onClick={(e) => {
-                                    e.preventDefault();
-
-                                    form.setValues({
-                                        ...form.values,
-                                        screenshots: [...form.values.screenshots, EMPTY_SCREENSHOT]
-                                    });
-                                }}
-                            >Add Screenshot</button>
-                        </div>
+                                </>
+                            )}
+                        </FieldArray>
                     </div>
                     <h2>Downloads</h2>
                     <div className="p-2 flex flex-col gap-2">
-                        {form.values.downloads.map((_download, index) => {
-                            return (
-                                <div
-                                    key={`download-${index.toString()}`}
-                                    className="flex flex-col gap-1 bg-bestmods-3/80 rounded p-2"
-                                >
-                                    <h3>Download #{(index + 1).toString()}</h3>
-                                    <div>
-                                        <div className="p-2">
-                                            <label htmlFor={`downloads[${index.toString()}].name`}>Name</label>
+                        <FieldArray name="downloads">
+                            {({ push, remove }) => (
+                                <>
+                                    {form.values.downloads.map((dl, index) => {
+                                        const fieldStr = `downloads[${index.toString()}]`;
 
-                                            {previewMode ? (
-                                                <p>{form.values.downloads?.[index]?.name ?? "N/A"}</p>
-                                            ) : (
-                                                <Field name={`downloads[${index.toString()}].name`} />
-                                            )}
-                                        </div>
-                                        <div className="p-2">
-                                            <label htmlFor={`downloads[${index.toString()}].url`}>URL</label>
+                                        return (
+                                            <div
+                                                key={`download-${index.toString()}`}
+                                                className="flex flex-col gap-1 bg-bestmods-3/80 rounded p-2"
+                                            >
+                                                <h3>Download #{(index + 1).toString()}</h3>
+                                                <div>
+                                                    <div className="p-2">
+                                                        <label htmlFor={`${fieldStr}.name`}>Name</label>
 
-                                            {previewMode ? (
-                                                <p>{form.values.downloads?.[index]?.url ?? "N/A"}</p>
-                                            ) : (
-                                                <Field
-                                                    name={`downloads[${index.toString()}].url`}
-                                                />
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div>
+                                                        {previewMode ? (
+                                                            <p>{dl.name ?? "N/A"}</p>
+                                                        ) : (
+                                                            <Field name={`${fieldStr}.name`} />
+                                                        )}
+                                                    </div>
+                                                    <div className="p-2">
+                                                        <label htmlFor={`${fieldStr}.url`}>URL</label>
+
+                                                        {previewMode ? (
+                                                            <p>{dl.url ?? "N/A"}</p>
+                                                        ) : (
+                                                            <Field
+                                                                name={`${fieldStr}.url`}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                    <div className="p-2">
+                                                        <label htmlFor={`${fieldStr}.size`}>Size</label>
+
+                                                        {previewMode ? (
+                                                            <p>{dl.size?.toString() ?? "0"} Bytes</p>
+                                                        ) : (
+                                                            <Field
+                                                                type="number"
+                                                                name={`${fieldStr}.size`}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                    <div className="p-2">
+                                                            <label htmlFor={`${fieldStr}.uploadDate`}>Upload Date</label>
+                                                            {previewMode ? (
+                                                                <p>{dl.uploadDate ? new Date(dl.uploadDate).toDateString() : "N/A"}</p>
+                                                            ) : (
+                                                                <DatePickerField name={`${fieldStr}.uploadDate`} />
+                                                            )}
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-danger"
+                                                        onClick={() => remove(index)}
+                                                    >Remove</button>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                     <div>
                                         <button
-                                            className="btn btn-danger"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-
-                                                const downloads = form.values.downloads;
-
-                                                downloads.splice(index, 1);
-
-                                                form.setValues({
-                                                    ...form.values,
-                                                    downloads: downloads
-                                                });
-                                            }}
-                                        >Remove</button>
+                                            type="button"
+                                            className="btn btn-primary"
+                                            onClick={() => push(EMPTY_DOWNLOAD)}
+                                        >Add Download</button>
                                     </div>
-                                </div>
-                            )
-                        })}
-                        <div>
-                            <button
-                                className="btn btn-primary"
-                                onClick={(e) => {
-                                    e.preventDefault();
-
-                                    form.setValues({
-                                        ...form.values,
-                                        downloads: [...form.values.downloads, EMPTY_DOWNLOAD]
-                                    });
-                                }}
-                            >Add Download</button>
-                        </div>
+                                </>
+                            )}
+                        </FieldArray>
                     </div>
                     <h2>Credits</h2>
                     <div className="p-2 flex flex-col gap-2">
-                        {form.values.credits.map((_credit, index) => {
-                            return (
-                                <div
-                                    key={`credit-${index.toString()}`}
-                                    className="flex flex-col gap-1 bg-bestmods-3/80 rounded p-2"
-                                >
-                                    <h3>Credit #{(index + 1).toString()}</h3>
-                                    <div className="p-2">
-                                        <label htmlFor={`credits[${index.toString()}].name`}>Name</label>
+                        <FieldArray name="credits">
+                            {({ push, remove }) => (
+                                <>
+                                    {form.values.credits.map((cre, index) => {
+                                        const fieldStr = `credits[${index.toString()}]`;
 
-                                        {previewMode ? (
-                                            <p>{form.values.credits?.[index]?.name ?? "N/A"}</p>
-                                        ) : (
-                                            <Field
-                                                name={`credits[${index.toString()}].name`}
-                                            />
-                                        )}
-                                    </div>
-                                    <div className="p-2">
-                                        <label htmlFor={`credits[${index.toString()}].credit`}>Credit</label>
+                                        return (
+                                            <div
+                                                key={`credit-${index.toString()}`}
+                                                className="flex flex-col gap-1 bg-bestmods-3/80 rounded p-2"
+                                            >
+                                                <h3>Credit #{(index + 1).toString()}</h3>
+                                                <div className="p-2">
+                                                    <label htmlFor={`${fieldStr}.name`}>Name</label>
 
-                                        {previewMode ? (
-                                            <p>{form.values.credits?.[index]?.credit ?? "N/A"}</p>
-                                        ) : (
-                                            <Field
-                                                name={`credits[${index.toString()}].credit`}
-                                            />
-                                        )}
-                                    </div>
+                                                    {previewMode ? (
+                                                        <p>{cre.name ?? "N/A"}</p>
+                                                    ) : (
+                                                        <Field name={`${fieldStr}.name`} />
+                                                    )}
+                                                </div>
+                                                <div className="p-2">
+                                                    <label htmlFor={`${fieldStr}.credit`}>Credit</label>
+
+                                                    {previewMode ? (
+                                                        <p>{cre.credit ?? "N/A"}</p>
+                                                    ) : (
+                                                        <Field name={`${fieldStr}.credit`} />
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-danger"
+                                                        onClick={() => remove(index)}
+                                                    >Remove</button>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
                                     <div>
                                         <button
-                                            className="btn btn-danger"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-
-                                                const credits = form.values.credits;
-
-                                                credits.splice(index, 1);
-
-                                                form.setValues({
-                                                    ...form.values,
-                                                    credits: credits
-                                                });
-                                            }}
-                                        >Remove</button>
+                                            type="button"
+                                            className="btn btn-primary"
+                                            onClick={() => push(EMPTY_CREDIT)}
+                                        >Add Credit</button>
                                     </div>
-                                </div>
-                            )
-                        })}
-                        <div>
-                            <button
-                                className="btn btn-primary"
-                                onClick={(e) => {
-                                    e.preventDefault();
+                                </>
+                            )}
+                        </FieldArray>
+                    </div>
+                    <h2>Requirements</h2>
+                    <div className="p-2 flex flex-col gap-2">
+                        <FieldArray name="required">
+                            {({ push, remove }) => (
+                                <>
+                                    {form.values.required.map((req, index) => {
+                                        const fieldStr = `required[${index.toString()}]`;
 
-                                    form.setValues({
-                                        ...form.values,
-                                        credits: [...form.values.credits, EMPTY_CREDIT]
-                                    });
-                                }}
-                            >Add Screenshot</button>
-                        </div>
+                                        return (
+                                            <div
+                                                key={`required-${index.toString()}`}
+                                                className="flex flex-col gap-1 bg-bestmods-3/80 rounded p-2"
+                                            >
+                                                <h2>Requirement #{(index + 1).toString()}</h2>
+                                                <div className="p-2">
+                                                    <label htmlFor={`${fieldStr}.dId`}>Destination Mod ID</label>
+
+                                                    {previewMode ? (
+                                                        <p className="italic">{req.dId.toString()}</p>
+                                                    ) : (
+                                                        <Field
+                                                            type="number"
+                                                            name={`${fieldStr}.dId`}
+                                                        />
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-danger"
+                                                        onClick={() => remove(index)}
+                                                    >Remove</button>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                    <div>
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary"
+                                            onClick={() => push(EMPTY_REQUIRED)}
+                                        >Add Requirement</button>
+                                    </div>
+                                </>
+                            )}
+                        </FieldArray>
                     </div>
                     <div className="flex flex-wrap justify-center gap-4">
                         <button type="submit" className="btn btn-primary">{mod ? "Save" : "Add"} Mod!</button>

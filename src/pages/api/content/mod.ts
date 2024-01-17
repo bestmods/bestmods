@@ -112,6 +112,7 @@ export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
             description,
             descriptionShort,
             install,
+            version,
             nsfw,
             autoUpdate,
             categoryId,
@@ -132,8 +133,9 @@ export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
             banner?: string
             bremove?: boolean
             description?: string
-            descriptionShort?: string
-            install?: string
+            descriptionShort?: string | null
+            install?: string | null
+            version?: string | null
             nsfw?: boolean
             autoUpdate?: boolean
             categoryId?: number
@@ -198,6 +200,7 @@ export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
             descriptionShort: descriptionShort,
             install: install,
             visible: visible,
+            version: version,
 
             nsfw: nsfw,
             autoUpdate: autoUpdate,
