@@ -14,6 +14,9 @@ import ModDebug from "./mod_debug";
 import TabMenu, { type TabItem } from "@components/tabs/tab_menu";
 import { GetModUrl } from "@utils/mod";
 import ModReportButton from "./report_button";
+import { trpc } from "@utils/trpc";
+import { useSession } from "next-auth/react";
+import { useEffect, useRef } from "react";
 
 export default function ModView ({
     mod,
@@ -24,6 +27,9 @@ export default function ModView ({
     view?: string
     rating?: number
 }) {
+    // Get session.
+    const { data: session } = useSession();
+
     // Links.
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
 
@@ -95,6 +101,36 @@ export default function ModView ({
             }
         ] : [])
     ];
+
+    // Increment total views.
+    const incTotalViewsMut = trpc.mod.incTotalViews.useMutation();
+    const incView = useRef(true);
+
+    useEffect(() => {
+        if (view !== "overview" || !incView.current)
+            return;
+
+        incTotalViewsMut.mutate({
+            id: mod.id
+        })
+
+        incView.current = false;
+    }, [view, incView])
+
+    // Add unique view if necessary.
+    const addUniqueViewMut = trpc.mod.addUniqueView.useMutation();
+    const uniqueView = useRef(true);
+
+    useEffect(() => {
+        if (!session || !uniqueView.current)
+            return;
+
+        addUniqueViewMut.mutate({
+            id: mod.id
+        })
+
+        uniqueView.current = false;
+    }, [session, uniqueView])
 
     return (
         <div className="flex flex-col gap-2">

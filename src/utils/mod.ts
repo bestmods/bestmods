@@ -8,7 +8,7 @@ export function GetModUrl(mod: ModViewItem | ModRowBrowser | ModWithCategory ) {
     return `/${catUrl}/mod/${mod.url}`;
 }
 
-export async function InsertUniqueView(prisma: PrismaClient, mod: ModViewItem, session?: Session) {
+export async function InsertUniqueView(prisma: PrismaClient, modId: number, session?: Session) {
     if (!session?.user)
         return;
 
@@ -17,13 +17,30 @@ export async function InsertUniqueView(prisma: PrismaClient, mod: ModViewItem, s
         where: {
             modId_userId: {
                 userId: session.user.id,
-                modId: mod.id
+                modId: modId
             }
         },
         create: {
             userId: session.user.id,
-            modId: mod.id
+            modId: modId
         },
         update: {}
+    })
+}
+
+export async function IncTotalViews(prisma: PrismaClient, modId: number, session?: Session) {
+    if (!session?.user)
+        return;
+
+    // Increment total views count.
+    await prisma.mod.update({
+        data: {
+            totalViews: {
+                increment: 1
+            }
+        },
+        where: {
+            id: modId
+        }
     })
 }

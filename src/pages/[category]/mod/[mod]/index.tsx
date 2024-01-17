@@ -64,7 +64,7 @@ export default function Page ({
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const session = await getSession(ctx);
 
-    const { params, res } = ctx;
+    const { params } = ctx;
 
     const modUrl = params?.mod?.toString();
     const catUrl = params?.category?.toString();
@@ -103,27 +103,17 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     let rating = 1;
 
-    // Increment view if mod is found and retrieve mod rating.
+    // Retrieve mod rating if mod found.
     if (mod) {
-        // Increment view count.
-        await prisma.mod.update({
-            where: {
-                id: mod.id
-            },
-            data: {
-                totalViews: {
-                    increment: 1
-                }
-            }
-        });
-
-        // Retrieve mod rating.
         rating = await GetModRating({
             prisma: prisma,
             id: mod.id
         });
-    } else
-        res.statusCode = 404;
+    } else {
+        return {
+            notFound: true
+        }
+    }
 
     return { 
         props: { 

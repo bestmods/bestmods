@@ -1,10 +1,11 @@
-import { router, publicProcedure, contributorProcedure } from "@server/trpc/trpc";
+import { router, publicProcedure, contributorProcedure, protectedProcedure } from "@server/trpc/trpc";
 import { TRPCError } from "@trpc/server"
 
 import { z } from "zod";
 
 import { GetMods, InsertOrUpdateMod } from "@utils/content/mod";
 import { ModWithRelationsInc, type ModWithRelations } from "~/types/mod";
+import { IncTotalViews, InsertUniqueView } from "@utils/mod";
 
 export const modRouter = router({
     add: contributorProcedure
@@ -387,5 +388,35 @@ export const modRouter = router({
                         message: `Failed to merge mods. Error => ${err}.`
                     })
                 }
-            })
+            }),
+    addUniqueView: protectedProcedure
+        .input(z.object({
+            id: z.number()
+        }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                await InsertUniqueView(ctx.prisma, input.id, ctx.session);
+            } catch (err: unknown) {
+                console.error(err);
+
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: `Failed to insert unique mod view. Error => ${err}`
+                })
+            }
+        }),
+    incTotalViews: protectedProcedure
+        .input(z.object({
+            id: z.number()
+        }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                await IncTotalViews(ctx.prisma, input.id, ctx.session)
+            } catch (err: unknown) {
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: `Failed to increment mod's total views. Error => ${err}`
+                })
+            }
+        })
 })
