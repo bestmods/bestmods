@@ -115,8 +115,8 @@ model ModDownload {
   name  String?
   url   String
 
-  size       Int      @default(0)
-  uploadDate DateTime @default(now())
+  size       Int       @default(0)
+  uploadDate DateTime? @default(now())
 
   @@id([modId, url])
 }
