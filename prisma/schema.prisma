@@ -73,6 +73,7 @@ model Mod {
   description      String  @db.Text
   descriptionShort String?
   install          String? @db.Text
+  version          String?
 
   createAt    DateTime  @default(now())
   updateAt    DateTime? @updatedAt
@@ -96,11 +97,13 @@ model Mod {
   ModRating      ModRating[]
   ModUniqueView  ModUniqueView[]
   ModCollections ModCollections[]
-  ModComment     ModComment[]
   ModInstaller   ModInstaller[]
   ModTag         ModTag[]
   ModCredit      ModCredit[]
   ModReport      ModReport[]
+
+  requiredSrc ModRequired[] @relation("ModRequired_src")
+  requiredDst ModRequired[] @relation("ModRequired_dst")
 
   @@unique([url, categoryId])
 }
@@ -111,6 +114,9 @@ model ModDownload {
   modId Int
   name  String?
   url   String
+
+  size       Int      @default(0)
+  uploadDate DateTime @default(now())
 
   @@id([modId, url])
 }
@@ -166,18 +172,6 @@ model ModRating {
   @@id([modId, userId])
 }
 
-model ModComment {
-  id        Int       @id @default(autoincrement())
-  mod       Mod       @relation(fields: [modId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  modId     Int
-  user      User      @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  userId    String
-  createdAt DateTime  @default(now())
-  updateAt  DateTime? @updatedAt
-
-  contents String
-}
-
 model ModTag {
   mod   Mod    @relation(fields: [modId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   modId Int
@@ -196,6 +190,16 @@ model ModCredit {
 
   name   String
   credit String
+}
+
+model ModRequired {
+  src Mod @relation("ModRequired_src", fields: [sId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  sId Int
+
+  dst Mod @relation("ModRequired_dst", fields: [dId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  dId Int
+
+  @@id([sId, dId])
 }
 
 // Collections
@@ -267,7 +271,6 @@ model User {
   ModRating     ModRating[]
   ModUniqueView ModUniqueView[]
   ModCollection ModCollection?
-  ModComment    ModComment[]
   Mod           Mod[]
   ModCredit     ModCredit[]
   ModReport     ModReport[]
