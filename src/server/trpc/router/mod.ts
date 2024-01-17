@@ -405,13 +405,13 @@ export const modRouter = router({
                 })
             }
         }),
-    incTotalViews: protectedProcedure
+    incTotalViews: publicProcedure
         .input(z.object({
             id: z.number()
         }))
         .mutation(async ({ ctx, input }) => {
             try {
-                await IncTotalViews(ctx.prisma, input.id, ctx.session)
+                await IncTotalViews(ctx.prisma, input.id)
             } catch (err: unknown) {
                 throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",

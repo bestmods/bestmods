@@ -28,10 +28,7 @@ export async function InsertUniqueView(prisma: PrismaClient, modId: number, sess
     })
 }
 
-export async function IncTotalViews(prisma: PrismaClient, modId: number, session?: Session) {
-    if (!session?.user)
-        return;
-
+export async function IncTotalViews(prisma: PrismaClient, modId: number) {
     // Increment total views count.
     await prisma.mod.update({
         data: {

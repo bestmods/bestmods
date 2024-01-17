@@ -122,9 +122,9 @@ export default function ModView ({
     const uniqueView = useRef(true);
 
     useEffect(() => {
-        if (!session || !uniqueView.current)
+        if (!session?.user || !uniqueView.current)
             return;
-
+        
         addUniqueViewMut.mutate({
             id: mod.id
         })
