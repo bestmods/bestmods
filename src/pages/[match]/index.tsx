@@ -6,7 +6,7 @@ import MetaInfo from "@components/meta";
 
 import { prisma } from "@server/db/client";
 
-import { type CategoryWithParentAndCount } from "~/types/category";
+import { type CategoryWithChildrenAndParentAndCount } from "~/types/category";
 import { type ModRowBrowser } from "~/types/mod";
 import ModCatalog from "@components/mod/catalog";
 import { getServerAuthSession } from "@server/common/get-server-auth-session";
@@ -24,7 +24,7 @@ export default function Page ({
     topModsToday = [],
     defaultDevice = "md"
 } : {
-    category?: CategoryWithParentAndCount
+    category?: CategoryWithChildrenAndParentAndCount
     latestMods: ModRowBrowser[]
     viewedMods: ModRowBrowser[]
     downloadedMods: ModRowBrowser[]
@@ -40,7 +40,10 @@ export default function Page ({
     // Retrieve background image.
     const bgPath = GetCategoryBgImage(category);
 
-    const totMods = category?._count?.Mod ?? 0;
+    let totMods = category?._count?.Mod ?? 0;
+
+    if (category?.children)
+        category.children.map(child => totMods += child._count.Mod);
 
     // Meta information.
     const title = GetCategoryMetaTitle(category);
@@ -58,7 +61,7 @@ export default function Page ({
                     <>
                         <h1>
                             {category?.parent && (
-                                <>{category.parent.name} -{">"} </>
+                                <>{category.parent.name} - </>
                             )}
                             {category && (
                                 <>{category.name}</>
@@ -88,12 +91,13 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     // We need to retrieve some props.
     const { params, req, res } = ctx;
 
-    const catUrl = params?.category?.toString();
-    const childUrl = params?.child?.toString();
+    // This should represent a category.
+    const catUrl = params?.match?.toString();
 
-    let category: CategoryWithParentAndCount | null = null;
+    let category: CategoryWithChildrenAndParentAndCount | null = null;
+    const categories: number[] = [];
 
-    if (catUrl && childUrl) {
+    if (catUrl) {
         category = await prisma.category.findFirst({
             include: {
                 _count: {
@@ -101,18 +105,33 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
                         Mod: true
                     }
                 },
-                parent: true
+                parent: true,
+                children: {
+                    include: {
+                        _count: {
+                            select: {
+                                Mod: true
+                            }
+                        }
+                    }
+                }
             },
             where: {
-                parent: {
-                    url: catUrl
-                },
-                url: childUrl
+                parent: null,
+                url: catUrl
             }
         })
     }
 
-    if (!category) {
+    if (category) {
+        categories.push(category.id);
+
+        if (category.children.length > 0) {
+            category.children.map((child) => {
+                categories.push(child.id);
+            })
+        }
+    } else {
         let redirected = false;
 
         // Look for redirect.
@@ -149,9 +168,9 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     let topMods: ModRowBrowser[] = [];
     let topModsToday: ModRowBrowser[]  = []
 
-    if (category) {
+    if (categories.length > 0) {
         latestMods = (await GetMods ({
-            categories: [category.id],
+            categories: categories,
             sort: 4,
             visible: true,
             userId: session?.user?.id,
@@ -161,7 +180,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         }))[0]
 
         viewedMods = (await GetMods ({
-            categories: [category.id],
+            categories: categories,
             sort: 1,
             visible: true,
             userId: session?.user?.id,
@@ -171,7 +190,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         }))[0]
 
         downloadedMods = (await GetMods ({
-            categories: [category.id],
+            categories: categories,
             sort: 2,
             visible: true,
             userId: session?.user?.id,
@@ -181,7 +200,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         }))[0]
 
         topMods = (await GetMods ({
-            categories: [category.id],
+            categories: categories,
             visible: true,
             userId: session?.user?.id,
             incDownloads: false,
@@ -203,7 +222,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         )
     
         topModsToday = (await GetMods ({
-            categories: [category.id],
+            categories: categories,
             ratingTimeRange: todayDate,
             visible: true,
             userId: session?.user?.id,
