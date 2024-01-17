@@ -124,6 +124,7 @@ export async function GetMods ({
             "Mod"."id",
             "Mod"."url",
             "Mod"."name",
+            "Mod"."ownerName",
             "Mod"."banner",
             ${incVisibleColumn ? (
                 Prisma.sql`"Mod"."visible",`
