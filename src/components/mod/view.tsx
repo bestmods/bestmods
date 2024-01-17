@@ -115,7 +115,7 @@ export default function ModView ({
         })
 
         incView.current = false;
-    }, [view, incView])
+    }, [view, incView, incTotalViewsMut, mod.id])
 
     // Add unique view if necessary.
     const addUniqueViewMut = trpc.mod.addUniqueView.useMutation();
@@ -130,7 +130,7 @@ export default function ModView ({
         })
 
         uniqueView.current = false;
-    }, [session, uniqueView])
+    }, [session, uniqueView, addUniqueViewMut, mod.id])
 
     return (
         <div className="flex flex-col gap-2">
