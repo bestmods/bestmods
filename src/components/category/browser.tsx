@@ -30,7 +30,7 @@ export default function CategoryBrowser ({
         data.pages.forEach((pg) => {
             categories.push(...pg.categories);
 
-            if (pg.nextCat && needMore)
+            if (!pg.nextCat && needMore)
                 setNeedMore(false);
         })
     }
