@@ -45,13 +45,15 @@ export async function UploadFile ({
     const buffer = Buffer.from(contents, 'base64');
 
     // Check for S3 support.
+    let s3Success = false;
+
     if (s3) {
         // Make sure our full path doesn't start with a /.
         if (fullPath.startsWith("/"))
             fullPath = fullPath.slice(1);
 
         // Attempt to add object to our bucket.
-        try {
+        await new Promise((resolv) => {
             s3.putObject({
                 Bucket: env.S3_BUCKET,
                 ContentType: `image/${fileType}`,
@@ -59,20 +61,22 @@ export async function UploadFile ({
                 Key: fullPath
             }, (err: unknown) => {
                 if (err) {
+                    console.error("WARNING - Failed to upload to S3 storage! Falling back to local...");
                     console.error(err);
-
-                    return [false, `Failed to add object to S3 bucket. Error => ${err}`, null]
+                } else {
+                    s3Success = true;
+    
+                    // Build our full AWS path.
+                    fullPath = `https://${env.S3_BUCKET}.s3.amazonaws.com/${fullPath}`
                 }
+
+                resolv(1)
             })
-        } catch (err: unknown) {
-            console.error(err);
+        })
+    }
 
-            return[false, "`FAILED TO ADD OBJECT!", null]
-        }
-
-        // Build our AWS path.
-        fullPath = `https://${env.S3_BUCKET}.s3.amazonaws.com/${fullPath}`
-    } else {
+    // Check if we have a failed S3 upload or it's disabled.
+    if (!s3Success) {
         // Make sure our full path starts with a forward slash.
         if (!fullPath.startsWith("/"))
             fullPath = `/${fullPath}`;
@@ -89,7 +93,7 @@ export async function UploadFile ({
             console.error(`Full Upload File Path => ${uploadDir}${fullPath}`);
             console.error(error);
 
-            return [false, "Failed to upload file. Check console for errors!", uploadDir + fullPath];
+            return [false, "Failed to upload file to local file system. Check console for errors!", uploadDir + fullPath];
         }
     }
 
