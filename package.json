@@ -28,6 +28,7 @@
     "react-cookie": "^6.1.1",
     "react-datepicker": "^4.25.0",
     "react-dom": "18.2.0",
+    "react-dropzone": "^14.2.3",
     "react-infinite-scroller": "^1.2.6",
     "react-markdown": "^9.0.1",
     "react-multi-carousel": "^2.8.4",
