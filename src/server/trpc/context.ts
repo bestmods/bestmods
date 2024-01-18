@@ -2,6 +2,8 @@ import { type inferAsyncReturnType } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { type Session } from "next-auth";
 
+import { s3 } from "@server/aws/s3";
+
 import { getServerAuthSession } from "@server/common/get-server-auth-session";
 import { prisma } from "@server/db/client";
 
@@ -18,6 +20,7 @@ export const createContextInner = async (opts: CreateContextOptions) => {
     return {
         session: opts.session,
         prisma,
+        s3
     };
 };
 

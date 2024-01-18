@@ -1,9 +1,11 @@
+import { type S3 } from "@aws-sdk/client-s3";
 import { type Category, type PrismaClient } from "@prisma/client";
 
 import { UploadFile } from "@utils/file_upload";
 
 export async function InsertOrUpdateCategory ({
     prisma,
+    s3,
 
     lookupId,
 
@@ -23,6 +25,7 @@ export async function InsertOrUpdateCategory ({
     bremove
 } : {
     prisma: PrismaClient
+    s3?: S3
 
     lookupId?: number
 
@@ -101,9 +104,13 @@ export async function InsertOrUpdateCategory ({
         icon_path = null;
 
     if (!iremove && (icon && icon.length > 0)) {
-        const path = `/images/category/${cat.id.toString()}`;
+        const path = `images/category/icon/${cat.id.toString()}`;
 
-        const [success, err, fullPath] = UploadFile(path, icon);
+        const [success, err, fullPath] = await UploadFile({
+            s3: s3,
+            path: path,
+            contents: icon
+        });
 
         if (!success || !fullPath)
             return [null, false, err];
@@ -114,17 +121,21 @@ export async function InsertOrUpdateCategory ({
     let banner_path: string | boolean | null = false;
 
     if (bremove)
-    banner_path = null;
+        banner_path = null;
 
     if (!bremove && (banner && banner.length > 0)) {
-        const path = `/images/category/${cat.id.toString()}_banner`;
+        const path = `images/category/banner/${cat.id.toString()}`;
 
-        const [success, err, fullPath] = UploadFile(path, banner);
+        const [success, err, fullPath] = await UploadFile({
+            s3: s3,
+            path: path,
+            contents: banner
+        });
 
         if (!success || !fullPath)
             return [null, false, err];
 
-            banner_path = fullPath;
+        banner_path = fullPath;
     }
 
     // If we have a file upload, update database.

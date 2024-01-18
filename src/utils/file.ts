@@ -1,29 +1,19 @@
-export function FileType (str: string): string {
-    let fileType = "unknown";
-
+export function FileType (str: string): string | null {
     switch (str[0]) {
         case '/':
-            fileType = "jpeg";
-
-            break;
+            return "jpeg";
 
         case 'i':
-            fileType = "png";
-
-            break;
+            return "png";
 
         case 'R':
-            fileType = "gif";
-
-            break;
+            return "gif";
 
         case 'U':
-            fileType = "webp";
-
-            break;
+            return "webp";
     }
 
-    return fileType;
+    return null;
 }
 
 export async function GetContents (file: File) {

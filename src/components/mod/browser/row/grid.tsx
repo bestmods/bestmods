@@ -13,9 +13,10 @@ import { ViewPortCtx } from "@components/main";
 
 import ModActions from "@components/mod/modactions";
 import ModDebug from "@components/mod/mod_debug";
-import { GetModUrl } from "@utils/mod";
-import { GetCategoryUrl } from "@utils/category";
+import { GetModBanner, GetModUrl } from "@utils/mod";
+import { GetCategoryIcon, GetCategoryUrl } from "@utils/category";
 import { LimitText } from "@utils/text";
+import { GetSourceIcon } from "@utils/source";
 
 export default function ModRowGrid ({
     mod,
@@ -45,21 +46,12 @@ export default function ModRowGrid ({
         catParLink = GetCategoryUrl(mod.category.parent);
 
     // Get banner.
-    let banner = "/images/default_mod_banner.png";
-
-    if (mod.banner)
-        banner = cdn + mod.banner;
+    const banner = GetModBanner(mod, cdn);
 
     // Get category information.
-    let catIcon = "/images/default_icon.png";
+    const catIcon = GetCategoryIcon(mod.category, cdn);
 
-    if (mod.category.icon)
-        catIcon = cdn + mod.category.icon;
-
-    let catParIcon = "/images/default_icon.png";
-
-    if (mod.category.parent?.icon)
-        catParIcon = cdn + mod.category.parent.icon;
+    const catParIcon = GetCategoryIcon(mod?.category?.parent, cdn);
 
     // Source and installer items.
     const [sourceItems, setSourceItems] = useState<Drop_Down_Menu_Type[]>([]);
@@ -80,10 +72,7 @@ export default function ModRowGrid ({
 
                 const url = `https://${src.sourceUrl}${query}`;
 
-                let icon = "/images/default_icon.png";
-
-                if (src.source.icon)
-                    icon = cdn + src.source.icon;
+                const icon = GetSourceIcon(src.source, cdn);
 
                 newItems.push({
                     link: url,
@@ -112,10 +101,7 @@ export default function ModRowGrid ({
                 const name = ins.source.name;
                 const url = ins.url;
 
-                let icon = "/images/default_icon.png";
-
-                if (ins.source.icon)
-                    icon = cdn + ins.source.icon;
+                const icon = GetSourceIcon(ins.source, cdn);
 
                 newItems.push({
                     link: url,

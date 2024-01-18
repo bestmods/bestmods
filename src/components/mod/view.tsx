@@ -17,6 +17,7 @@ import ModReportButton from "./report_button";
 import { trpc } from "@utils/trpc";
 import { useSession } from "next-auth/react";
 import { useEffect, useRef } from "react";
+import { GetSourceIcon } from "@utils/source";
 
 export default function ModView ({
     mod,
@@ -40,10 +41,7 @@ export default function ModView ({
         const name = ins.source.name;
         const url = ins.url;
 
-        let icon = "/images/default_icon.png";
-
-        if (ins.source.icon)
-            icon = cdn + ins.source.icon;
+        const icon = GetSourceIcon(ins.source, cdn);
 
         installer_items.push({
             link: url,
@@ -124,7 +122,7 @@ export default function ModView ({
     useEffect(() => {
         if (!session?.user || !uniqueView.current)
             return;
-        
+
         addUniqueViewMut.mutate({
             id: mod.id
         })

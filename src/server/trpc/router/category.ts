@@ -29,6 +29,7 @@ export const categoryRouter = router({
             // Use our helper funtion to insert our update category.
             const [cat, success, err] = await InsertOrUpdateCategory ({
                 prisma: ctx.prisma,
+                s3: ctx.s3,
 
                 lookupId: input.id,
 

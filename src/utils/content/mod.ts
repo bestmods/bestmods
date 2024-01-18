@@ -5,6 +5,7 @@ import { type ModRowBrowser } from "~/types/mod";
 
 import { prisma } from "@server/db/client";
 import { Prisma } from "@prisma/client";
+import { type S3 } from "@aws-sdk/client-s3";
 
 export async function GetMods ({
     isStatic = true,
@@ -511,6 +512,7 @@ export async function GetMods ({
 
 export async function InsertOrUpdateMod ({
     prisma,
+    s3,
 
     lookupId,
     srcUrl,
@@ -545,6 +547,7 @@ export async function InsertOrUpdateMod ({
     required
 } : {
     prisma: PrismaClient
+    s3?: S3
 
     lookupId?: number
     srcUrl?: string
@@ -829,9 +832,13 @@ export async function InsertOrUpdateMod ({
         // Handle banner.
         if (mod) {
             if (!bremove && (banner && banner.length > 0)) {
-                const path = `/images/mod/${mod.id.toString()}`
+                const path = `images/mod/banner/${mod.id.toString()}`
 
-                const [success, err, fullPath] = UploadFile(path, banner);
+                const [success, err, fullPath] = await UploadFile({
+                    s3: s3,
+                    path: path,
+                    contents: banner
+                });
 
                 if (!success || !fullPath)
                     return [null, false, err];

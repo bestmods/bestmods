@@ -1,8 +1,10 @@
+import { type S3 } from "@aws-sdk/client-s3";
 import { type PrismaClient, type Source } from "@prisma/client";
 import { UploadFile } from "@utils/file_upload";
 
 export async function InsertOrUpdateSource ({
     prisma,
+    s3,
 
     url,
 
@@ -18,20 +20,21 @@ export async function InsertOrUpdateSource ({
     iremove,
     bremove,
 } : {
-    prisma: PrismaClient,
+    prisma: PrismaClient
+    s3?: S3
 
-    url: string,
+    url: string
     
-    update?: boolean,
+    update?: boolean
 
-    icon?: string,
-    iremove?: boolean,
+    icon?: string
+    iremove?: boolean
 
-    banner?: string,
-    bremove?: boolean,
+    banner?: string
+    bremove?: boolean
     
-    name?: string,
-    description?: string | null,
+    name?: string
+    description?: string | null
     classes?: string | null
 }): Promise<[Source | null, boolean, string | null | unknown]> {
     // Returns.
@@ -51,9 +54,13 @@ export async function InsertOrUpdateSource ({
         banner_path = null;
 
     if (!iremove && icon) {
-        const path = `/images/source/${url}`;
+        const path = `images/source/icon/${url}`;
 
-        const [success, err, fullPath] = UploadFile(path, icon);
+        const [success, err, fullPath] = await UploadFile({
+            s3: s3,
+            path: path,
+            contents: icon
+        });
 
         if (!success || !fullPath)
             return [null, false, err];
@@ -62,9 +69,13 @@ export async function InsertOrUpdateSource ({
     }
 
     if (!bremove && banner) {
-        const path = `/images/source/${url}_banner`;
+        const path = `images/source/banner/${url}`;
 
-        const [success, err, fullPath] = UploadFile(path, banner);
+        const [success, err, fullPath] = await UploadFile({
+            s3: s3,
+            path: path,
+            contents: banner
+        });
 
         if (!success || !fullPath)
             return [null, false, err];

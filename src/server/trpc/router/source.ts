@@ -21,6 +21,7 @@ export const sourceRouter = router({
         .mutation(async ({ ctx, input }) => {
             const [src, success, err] = await InsertOrUpdateSource ({
                 prisma: ctx.prisma,
+                s3: ctx.s3,
 
                 url: input.url,
                 

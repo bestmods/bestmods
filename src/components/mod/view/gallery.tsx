@@ -8,6 +8,7 @@ import { type ModViewItem } from "~/types/mod";
 import { ArrowFix } from "@components/carousel";
 import ImageWithFallback from "@components/image";
 import { GetYoutubeEmbedLink } from "@utils/youtube";
+import { GetModBanner } from "@utils/mod";
 
 export default function ModGallery ({
     mod,
@@ -43,10 +44,7 @@ export default function ModGallery ({
     // Banner.
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
 
-    let banner = "/images/default_mod_banner.png"
-
-    if (mod.banner)
-        banner = cdn + mod.banner;
+    const banner = GetModBanner(mod, cdn);
 
     // Compile screenshots.
     const screenshots: string[] = [];

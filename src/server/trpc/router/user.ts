@@ -21,6 +21,7 @@ export const userRouter = router({
         .mutation(async ({ ctx, input }) => {
             const [user, success, err] = await InsertOrUpdateUser ({
                 prisma: ctx.prisma,
+                s3: ctx.s3,
                 
                 lookupId: input.id,
 

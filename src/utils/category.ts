@@ -41,13 +41,29 @@ export function GetCategoryMetaDesc(category?: Category | CategoryWithChildrenAn
     return `Find the best mods for${parName ? ` ${parName}` : ``} ${name}! Tracking ${totMods.toString()} mods and counting!${desc ? ` ${desc}` : ``}`;
 }
 
-export function GetCategoryBanner(category?: Category | CategoryWithChildrenAndCounts | CategoryWithCount | CategoryWithParent | CategoryWithParentAndCount, cdn = "") {
-    if (!category || !category.banner)
-        return undefined;
+export function GetCategoryBanner(category?: Category | CategoryWithChildrenAndCounts | CategoryWithCount | CategoryWithParent | CategoryWithParentAndCount | null, cdn = "") {
+    const banner = category?.banner;
 
-    return cdn + category.banner;
+    if (!banner)
+        return "/images/default_category.png";
+
+    if (banner.startsWith("https://"))
+        return banner;
+
+    return cdn + banner;
 }
 
+export function GetCategoryIcon(category?: Category | CategoryWithChildrenAndCounts | CategoryWithCount | CategoryWithParent | CategoryWithParentAndCount | null, cdn = "") {
+    const icon = category?.icon;
+
+    if (!icon)
+        return "/images/default_icon.png";
+
+    if (icon.startsWith("https://"))
+        return icon;
+
+    return cdn + icon;
+}
 
 export function GetCategoryBgImage(category?: Category | CategoryWithChildrenAndCounts | CategoryWithCount | CategoryWithParent | CategoryWithParentAndCount): string | undefined {
     let bgPath: string | undefined = undefined;

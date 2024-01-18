@@ -1,3 +1,4 @@
+import { GetSourceBanner } from "@utils/source";
 import Image from "next/image";
 import Link from "next/link";
 import { type ModViewItem } from "~/types/mod";
@@ -21,10 +22,7 @@ export default function ModViewSources ({
                 >
                     {mod.ModSource.map((src, index) => {
                         const name = src.source.name;
-                        let banner = src.source.banner ? src.source.banner : "/images/default_source_banner.png";
-
-                        if (cdn)
-                            banner = cdn + banner;
+                        const banner = GetSourceBanner(src.source, cdn);
 
                         // Get query link.
                         let query = src.query.trim();

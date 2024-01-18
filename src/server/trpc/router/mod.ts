@@ -82,6 +82,7 @@ export const modRouter = router({
             // Insert ot update mod.
             const [mod, success, err] = await InsertOrUpdateMod({
                 prisma: ctx.prisma,
+                s3: ctx.s3,
 
                 lookupId: input.id,
 

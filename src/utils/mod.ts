@@ -8,6 +8,20 @@ export function GetModUrl(mod: ModViewItem | ModRowBrowser | ModWithCategory ) {
     return `/${catUrl}/mod/${mod.url}`;
 }
 
+export function GetModBanner(mod?: ModViewItem | ModRowBrowser | ModWithCategory, cdn = "") {
+    const banner = mod?.banner;
+
+    // Return default banner if we have none.
+    if (!banner)
+        return "/images/default_mod_banner.png";
+
+    // If our link starts with HTTPS, return it.
+    if (banner.startsWith("https"))
+        return banner;
+
+    return cdn + banner;
+}
+
 export async function InsertUniqueView(prisma: PrismaClient, modId: number, session?: Session) {
     if (!session?.user)
         return;

@@ -5,6 +5,8 @@ import { prisma } from "@server/db/client";
 import { DeleteSource, InsertOrUpdateSource } from "@utils/content/source";
 import { CheckApiAccess } from "@utils/api";
 
+import { s3 } from "@server/aws/s3";
+
 export const config = {
     api: {
         responseLimit: "8mb",
@@ -110,6 +112,7 @@ export default async function Source (req: NextApiRequest, res: NextApiResponse)
 
         const [src, success, err] = await InsertOrUpdateSource ({
             prisma: prisma,
+            s3: s3,
             
             url: (update && preUrl) ? preUrl : url,
             

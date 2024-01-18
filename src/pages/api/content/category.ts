@@ -5,6 +5,8 @@ import { prisma } from "@server/db/client";
 import { DeleteCategory, InsertOrUpdateCategory } from "@utils/content/category";
 import { CheckApiAccess } from "@utils/api";
 
+import { s3 } from "@server/aws/s3";
+
 export const config = {
     api: {
         responseLimit: "8mb",
@@ -120,6 +122,7 @@ export default async function Category (req: NextApiRequest, res: NextApiRespons
 
         const [cat, success, err] = await InsertOrUpdateCategory ({
             prisma: prisma,
+            s3: s3,
 
             lookupId: (update && id) ? Number (id) : undefined,
 

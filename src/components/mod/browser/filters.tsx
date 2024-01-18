@@ -6,6 +6,7 @@ import SearchIcon from "@components/icons/search"
 import TableIcon from "@components/icons/table"
 import Loading from "@components/loading"
 import { ViewPortCtx } from "@components/main"
+import { GetCategoryIcon } from "@utils/category"
 import { trpc } from "@utils/trpc"
 import { type Dispatch, type SetStateAction, useState, useEffect, useRef, useContext } from "react"
 import { useCookies } from "react-cookie"
@@ -248,10 +249,7 @@ function Categories ({
                 <>
                     <h3>Categories</h3>
                     {allCats.map((cat, index) => {
-                        let icon = "/images/default_icon.png";
-
-                        if (cat.icon)
-                            icon = cdn + cat.icon;
+                        const icon = GetCategoryIcon(cat, cdn);
 
                         const isSelected = categories.length < 1 || categories.includes(cat.id);
                     
@@ -289,10 +287,7 @@ function Categories ({
                                 {cat.children.length > 0 && (
                                     <ul className="flex flex-col gap-1">
                                         {cat.children.map((child, index) => {
-                                            let icon = "/images/default_icon.png";
-
-                                            if (child.icon)
-                                                icon = cdn + child.icon;
+                                            const icon = GetCategoryIcon(child, cdn);
 
                                             const isSelected = categories.length < 1 || categories.includes(child.id);
 

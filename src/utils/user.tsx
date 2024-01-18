@@ -1,9 +1,11 @@
 import { type User, type PrismaClient } from "@prisma/client";
 
 import { UploadFile } from "./file_upload";
+import { type S3 } from "@aws-sdk/client-s3";
 
 export async function InsertOrUpdateUser ({
     prisma,
+    s3,
 
     lookupId,
 
@@ -13,14 +15,15 @@ export async function InsertOrUpdateUser ({
     avatar,
     aremove
 } : {
-    prisma: PrismaClient,
+    prisma: PrismaClient
+    s3?: S3
 
-    lookupId: string,
+    lookupId: string
 
-    name?: string,
-    email?: string,
+    name?: string
+    email?: string
 
-    avatar?: string,
+    avatar?: string
     aremove?: boolean
 }): Promise<[User | null, boolean, string | null | unknown]> {
     // Returns.
@@ -30,9 +33,13 @@ export async function InsertOrUpdateUser ({
     let avatarPath: string | boolean | null = false;
 
     if (avatar != null && avatar.length > 0) {
-        const path = `/images/users/${lookupId}`;
+        const path = `images/users/avatar/${lookupId}`;
 
-        const [success, err, fullPath] = UploadFile(path, avatar);
+        const [success, err, fullPath] = await UploadFile({
+            s3,
+            path: path,
+            contents: avatar
+        });
         
         if (!success || !fullPath)
             return [user, false, err];

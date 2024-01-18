@@ -1,5 +1,5 @@
 import { ErrorCtx, SuccessCtx } from "@pages/_app";
-import { GetCategoryUrl } from "@utils/category";
+import { GetCategoryBanner, GetCategoryUrl } from "@utils/category";
 import { HasRole } from "@utils/roles";
 import { trpc } from "@utils/trpc";
 import { useSession } from "next-auth/react";
@@ -24,10 +24,7 @@ export default function CategoryRowGrid ({
 
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
 
-    let banner = "/images/default_category.png";
-
-    if (category.banner)
-        banner = cdn + category.banner;
+    const banner = GetCategoryBanner(category, cdn);
 
     const viewLink = GetCategoryUrl(category);
     const editLink = `/admin/category/edit/${category.id.toString()}`;

@@ -7,6 +7,8 @@ import { DeleteMod, InsertOrUpdateMod } from "@utils/content/mod";
 import { type ModCredit, type ModDownload, type ModInstaller, type ModScreenshot, type ModSource } from "@prisma/client";
 import { CheckApiAccess } from "@utils/api";
 
+import { s3 } from "@server/aws/s3";
+
 export const config = {
     api: {
         responseLimit: "8mb",
@@ -186,6 +188,7 @@ export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
         // Update or insert mod.
         const [mod, success, err] = await InsertOrUpdateMod ({
             prisma: prisma,
+            s3: s3,
 
             lookupId: (update) ? Number(id) : undefined,
 

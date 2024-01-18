@@ -14,6 +14,7 @@ import { GetModRating } from "@utils/content/mod";
 import { GetModDescription } from "@utils/description";
 import { HasRole } from "@utils/roles";
 import { GetCategoryBgImage } from "@utils/category";
+import { GetModBanner } from "@utils/mod";
 
 export default function Page ({
     mod,
@@ -31,10 +32,7 @@ export default function Page ({
     // Retrieve mod banner.
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
 
-    let banner: string | undefined = undefined;
-
-    if (mod?.banner)
-        banner = cdn + mod.banner;
+    const banner = GetModBanner(mod, cdn);
 
     return (
         <>

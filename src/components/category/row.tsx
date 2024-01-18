@@ -1,5 +1,5 @@
 import { type Category } from "@prisma/client";
-import { GetCategoryUrl } from "@utils/category";
+import { GetCategoryIcon, GetCategoryUrl } from "@utils/category";
 import Image from "next/image";
 import Link from "next/link";
 import { type CategoryWithCount, type CategoryWithChildrenAndCounts } from "~/types/category";
@@ -18,7 +18,7 @@ export default function CategoryRow ({
     const name = cat.name;
     const viewUrl = GetCategoryUrl(cat);
 
-    const icon = (cat.icon) ? cdn + cat.icon : "/images/default_icon.png";
+    const icon = GetCategoryIcon(cat, cdn);
 
     const mod_count = cat._count?.Mod ?? 0;
 

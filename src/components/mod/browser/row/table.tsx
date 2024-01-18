@@ -8,6 +8,7 @@ import Image from "next/image";
 import IconAndText from "@components/icon_and_text";
 import { LimitText } from "@utils/text";
 import { GetModUrl } from "@utils/mod";
+import { GetCategoryIcon } from "@utils/category";
 
 export default function ModRowTable ({
     mod
@@ -25,10 +26,7 @@ export default function ModRowTable ({
     const viewLink = GetModUrl(mod);
 
     // Get category information.
-    let catIcon = "/images/default_icon.png";
-
-    if (mod.category.icon)
-        catIcon = cdn + mod.category.icon;
+    const catIcon = GetCategoryIcon(mod.category, cdn);
 
     return (
         <tr
