@@ -33,11 +33,14 @@ export default function Page ({
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
     
     const banner = GetModBanner(mod, cdn);
+
+    const modName = mod?.name ?? "Not Found";
+    const catName = mod?.category?.name ? `- ${mod.category.name}` : "";
     
     return (
         <>
             <MetaInfo
-                title={`${mod?.name ?? `Not Found`} Installation - Best Mods`}
+                title={`${modName} Installation ${catName} - Best Mods`}
                 description={desc}
                 image={banner}
             />

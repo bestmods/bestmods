@@ -34,10 +34,13 @@ export default function Page ({
     
     const banner = GetModBanner(mod, cdn);
 
+    const modName = mod?.name ?? "Not Found";
+    const catName = mod?.category?.name ? `- ${mod.category.name}` : "";
+
     return (
         <>
             <MetaInfo
-                title={`${mod?.name ?? `Not Found`} Downloads - Best Mods`}
+                title={`${modName} Downloads ${catName} - Best Mods`}
                 description={desc}
                 image={banner}
             />
