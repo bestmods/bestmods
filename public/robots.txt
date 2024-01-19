@@ -5,6 +5,9 @@ Disallow: /node_modules/
 Disallow: /out/
 Disallow: /api/
 Disallow: /admin/
+Disallow: /report
 
 User-agent: *
 Allow: /
+
+Sitemap: https://bestmods.io/sitemap.xml
