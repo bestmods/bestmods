@@ -17,7 +17,7 @@ export default function Page() {
             <Main>
                 {(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) ? (
                     <AdminPanel view="redirect">
-                        <h1>Add Redirect</h1>
+                        <h2>Add Redirect</h2>
                         <RedirectForm />
                     </AdminPanel>
                 ) : (

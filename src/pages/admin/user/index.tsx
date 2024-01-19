@@ -20,7 +20,7 @@ export default function Page () {
             <Main>
                 {HasRole(session, "ADMIN") ? (
                     <AdminPanel view="user">
-                        <h1>Users</h1>
+                        <h2>Users</h2>
                         <UserBrowser
                             view="table"
                             showActions={true}

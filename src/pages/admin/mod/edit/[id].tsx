@@ -35,7 +35,7 @@ export default function Page ({
                     <AdminPanel view="mod">
                         {mod ? (
                             <>
-                                <h1>Editing Mod {mod.name}</h1>
+                                <h2>Editing Mod {mod.name}</h2>
                                 <ModForm
                                     mod={mod}
                                     categories={categories}

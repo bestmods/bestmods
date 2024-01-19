@@ -31,7 +31,7 @@ export default function Page ({
                     <>
                         {mod ? (
                             <div className="flex flex-col gap-2">
-                                <h1>Reporting {"'"}{mod.name}{"'"}</h1>
+                                <h2>Reporting {"'"}{mod.name}{"'"}</h2>
                                 <ModReportForm
                                     modId={mod.id}
                                     className="bg-bestmods-2/80 rounded p-6"

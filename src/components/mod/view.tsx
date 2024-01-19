@@ -137,7 +137,7 @@ export default function ModView ({
             </div>
             <div className="flex flex-wrap gap-4 justify-center md:justify-between">
                 <div>
-                    <h1>{mod.name}</h1>
+                    <h2>{mod.name}</h2>
                 </div>
                 <div className="flex flex-wrap gap-2 justify-center">
                     <ModReportButton modId={mod.id} />

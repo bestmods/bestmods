@@ -18,7 +18,7 @@ export default function Page () {
             <Main>
                 {(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) ? (
                     <AdminPanel view="mod">
-                        <h1>Mods</h1>
+                        <h2>Mods</h2>
                         <div className="flex flex-col gap-2">
                             <div className="flex justify-end">
                                 <Link

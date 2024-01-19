@@ -13,7 +13,7 @@ export default function ModReportView ({
 
     return (
         <div className="flex flex-col gap-2 h-full max-h-full">
-            <h1>Viewing Report For {report.mod.name} (ID {report.id.toString()})</h1>
+            <h2>Viewing Report For {report.mod.name} (ID {report.id.toString()})</h2>
             <span>Reported by {report.user.name} ({report.user.email})</span>
             <Markdown className="markdown">
                 {report.contents}

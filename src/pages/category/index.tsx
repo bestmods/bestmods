@@ -19,7 +19,7 @@ export default function Page ({
                 description="Choose what games and categories you want to see mods in!"
             />
             <Main>
-                <h1>All Categories</h1>
+                <h2>All Categories</h2>
 
                 {categories.length > 0 ? (
                     <div

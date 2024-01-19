@@ -20,7 +20,7 @@ export default function ModCatalog ({
         <div className="flex flex-col gap-4">
             {topModsToday.length > 0 && (
                 <div className="flex flex-col gap-2">
-                    <h2>Top Mods Today</h2>
+                    <h3>Top Mods Today</h3>
                     <ModSlideshow
                         mods={topModsToday}
                         autoPlaySpeedMin={3000}
@@ -31,7 +31,7 @@ export default function ModCatalog ({
             )}
             {latestMods.length > 0 && (
                 <div className="flex flex-col gap-2">
-                    <h2>Latest Mods</h2>
+                    <h3>Latest Mods</h3>
                     <ModSlideshow
                         mods={latestMods}
                         autoPlaySpeedMin={3000}
@@ -42,7 +42,7 @@ export default function ModCatalog ({
             )}
             {topMods.length > 0 && (
                 <div className="flex flex-col gap-2">
-                    <h2>Top Mods All-Time</h2>
+                    <h3>Top Mods All-Time</h3>
                     <ModSlideshow
                         mods={topMods}
                         autoPlaySpeedMin={3000}
@@ -53,7 +53,7 @@ export default function ModCatalog ({
             )}
             {viewedMods.length > 0 && (
                 <div className="flex flex-col gap-2">
-                    <h2>Most Viewed Mods</h2>
+                    <h3>Most Viewed Mods</h3>
                     <ModSlideshow
                         mods={viewedMods}
                         autoPlaySpeedMin={3000}
@@ -64,7 +64,7 @@ export default function ModCatalog ({
             )}
             {downloadedMods.length > 0 && (
                 <div className="flex flex-col gap-2">
-                    <h2>Most Downloaded Mods</h2>
+                    <h3>Most Downloaded Mods</h3>
                     <ModSlideshow
                         mods={downloadedMods}
                         autoPlaySpeedMin={3000}

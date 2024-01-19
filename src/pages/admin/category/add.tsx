@@ -26,7 +26,7 @@ export default function Page ({
             <Main>
                 {HasRole(session, "ADMIN") ? (
                     <AdminPanel view="category">
-                        <h1>Add Category</h1>
+                        <h2>Add Category</h2>
                         <CategoryForm categories={categories} />
                     </AdminPanel>
                 ) : (

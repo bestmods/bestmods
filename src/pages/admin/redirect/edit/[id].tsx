@@ -28,7 +28,7 @@ export default function Page({
                     <AdminPanel view="redirect">
                         {redirect ? (
                             <>
-                                <h1>Editing Redirect {redirect.url}</h1>
+                                <h2>Editing Redirect {redirect.url}</h2>
                                 <RedirectForm redirect={redirect} />
                             </>
                         ) : (

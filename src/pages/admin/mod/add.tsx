@@ -29,7 +29,7 @@ export default function Page ({
             <Main>
                 {(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) ? (
                     <AdminPanel view="mod">
-                        <h1>Add Mod</h1>
+                        <h2>Add Mod</h2>
                         <ModForm
                             categories={categories}
                             sources={sources}

@@ -59,14 +59,14 @@ export default function Page ({
             <Main image={bgPath}>
                 {category ? (
                     <>
-                        <h1>
+                        <h2>
                             {category?.parent && (
                                 <>{category.parent.name} - </>
                             )}
                             {category && (
                                 <>{category.name}</>
                             )}
-                        </h1>
+                        </h2>
                         <ModCatalog
                             latestMods={latestMods}
                             viewedMods={viewedMods}

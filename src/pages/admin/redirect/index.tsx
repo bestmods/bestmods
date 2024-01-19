@@ -18,7 +18,7 @@ export default function Page() {
             <Main>
                 {(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) ? (
                     <AdminPanel view="redirect">
-                        <h1>Redirects</h1>
+                        <h2>Redirects</h2>
                         <div className="flex flex-col gap-2">
                             <div className="flex justify-end">
                                 <Link

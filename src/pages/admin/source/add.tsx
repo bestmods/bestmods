@@ -18,7 +18,7 @@ export default function Page () {
             <Main>
                 {HasRole(session, "ADMIN") ? (
                     <AdminPanel view="source">
-                        <h1>Add Source</h1>
+                        <h2>Add Source</h2>
                         <SourceForm  />
                     </AdminPanel>
                 ) : (

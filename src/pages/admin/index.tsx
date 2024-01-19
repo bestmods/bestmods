@@ -17,7 +17,7 @@ export default function Page () {
             <Main>
                 {(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR")) ? (
                     <AdminPanel>
-                        <h1>Overview</h1>
+                        <h2>Overview</h2>
                         <p>This is the admin overview page.</p>
                     </AdminPanel>
                 ) : (

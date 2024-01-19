@@ -32,7 +32,7 @@ export default function Page ({
                     <AdminPanel view="category">
                         {category ? (
                             <>
-                                <h1>Editing Category {category.name}</h1>
+                                <h2>Editing Category {category.name}</h2>
                                 <CategoryForm
                                     category={category}
                                     categories={categories}

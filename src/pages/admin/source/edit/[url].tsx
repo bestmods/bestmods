@@ -29,7 +29,7 @@ export default function Page ({
                     <AdminPanel view="source">
                         {source ? (
                             <>
-                                <h1>Editing Source {source.name}</h1>
+                                <h2>Editing Source {source.name}</h2>
                                 <SourceForm source={source} />
                             </>
                         ) : (

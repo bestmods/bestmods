@@ -29,7 +29,7 @@ export default function Page ({
                 <div className="flex flex-col gap-2">
                     {HasRole(session, "ADMIN") ? (
                         <>
-                            <h1 className="page-title">Editing User</h1>
+                            <h2 className="page-title">Editing User</h2>
                             <UserForm user={user} />
                         </>
                     ) : (
