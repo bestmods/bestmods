@@ -1,14 +1,21 @@
 import { type ModViewItem } from "~/types/mod";
+import { LimitText } from "./text";
 
-export function GetModDescription ({
+export function GetModMetaDescription ({
     mod
 } : {
     mod?: ModViewItem
 }): string | undefined {
-    let desc: string | undefined = mod?.descriptionShort ?? undefined;
+    let desc = mod?.descriptionShort;
+    const catDesc = mod?.category?.description;
 
-    if (mod?.category?.description)
-        desc = `${desc ?? ""} ${mod.category.description}`;
+    if (!desc && catDesc)
+        desc = catDesc;
+
+    if (!desc)
+        return undefined;
+
+    desc = LimitText(desc, 120);
 
     return desc;
 }

@@ -11,7 +11,7 @@ import ModView from "@components/mod/view";
 import NotFound from "@components/errors/notfound";
 
 import { GetModRating } from "@utils/content/mod";
-import { GetModDescription } from "@utils/description";
+import { GetModMetaDescription } from "@utils/description";
 import { HasRole } from "@utils/roles";
 import { GetCategoryBgImage } from "@utils/category";
 import { GetModBanner } from "@utils/mod";
@@ -27,7 +27,7 @@ export default function Page ({
     const bgPath = GetCategoryBgImage(mod?.category);
 
     // Retrieve mod description.
-    const desc = GetModDescription({ mod });
+    const metaDesc = GetModMetaDescription({ mod });
 
     // Retrieve mod banner.
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
@@ -41,7 +41,7 @@ export default function Page ({
         <>
             <MetaInfo
                 title={`${modName} Downloads ${catName} - Best Mods`}
-                description={desc}
+                description={metaDesc}
                 image={banner}
             />
             <Main image={bgPath}>
