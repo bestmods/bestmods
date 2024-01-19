@@ -6,6 +6,7 @@ Disallow: /out/
 Disallow: /api/
 Disallow: /admin/
 Disallow: /report
+Disallow: /cdn-cgi
 
 User-agent: *
 Allow: /
