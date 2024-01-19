@@ -70,6 +70,11 @@ export async function getServerSideProps() {
                     Mod: true
                 }
             }
+        },
+        orderBy: {
+            Mod: {
+                _count: "desc"
+            }
         }
     });
 
