@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /_next/
+Disallow: /.next/
+Disallow: /node_modules/
+Disallow: /out/
+Disallow: /api/
+Disallow: /admin/
+
+User-agent: *
+Allow: /
