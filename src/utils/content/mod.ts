@@ -6,6 +6,7 @@ import { type ModRowBrowser } from "~/types/mod";
 import { prisma } from "@server/db/client";
 import { Prisma } from "@prisma/client";
 import { type S3 } from "@aws-sdk/client-s3";
+import { type Session } from "next-auth";
 
 export async function GetMods ({
     isStatic = true,
@@ -122,6 +123,7 @@ export async function GetMods ({
 
     const mods = await prisma.$queryRaw<ModRowBrowser[]>` 
         SELECT 
+
             "Mod"."id",
             "Mod"."url",
             "Mod"."name",
@@ -246,13 +248,10 @@ export async function GetMods ({
                 `
             : Prisma.empty}
             json_build_object(
-                'id', "category"."id",
-                'parentId', "category"."parentId",
                 'parent', 
                 CASE 
                     WHEN "categoryparent"."id" IS NOT NULL THEN 
                         json_build_object(
-                            'id', "categoryparent"."id",
                             'name', "categoryparent"."name",
                             'url', "categoryparent"."url",
                             'icon', "categoryparent"."icon"
@@ -922,3 +921,107 @@ export async function GetModRating ({
     return (rating_pos - rating_neg) + 1;
 }
 
+export async function GetModSlideshows ({
+    session,
+    categories,
+    getLatest = true,
+    getViewed = true,
+    getDownloaded = true,
+    getTop = true,
+    getTopToday = true,
+    limit = 8
+} : {
+    session?: Session | null
+    categories?: number[]
+    getLatest?: boolean
+    getViewed?: boolean
+    getDownloaded?: boolean
+    getTop?: boolean
+    getTopToday?: boolean
+    limit?: number
+}): Promise<[ModRowBrowser[], ModRowBrowser[], ModRowBrowser[], ModRowBrowser[], ModRowBrowser[]]> {
+    let latest: ModRowBrowser[] = [];
+    let viewed: ModRowBrowser[] = [];
+    let downloaded: ModRowBrowser[] = [];
+    let top: ModRowBrowser[] = [];
+    let topToday: ModRowBrowser[] = [];
+
+    if (getLatest) {
+        latest = (await GetMods ({
+            limit: limit,
+            sort: 4,
+            categories: categories,
+            visible: true,
+            userId: session?.user?.id,
+            incDownloads: false,
+            incSources: false,
+            incInstallers: false,
+        }))[0]
+    }
+
+    if (getViewed) {
+        viewed = (await GetMods ({
+            limit: limit,
+            sort: 1,
+            categories: categories,
+            visible: true,
+            userId: session?.user?.id,
+            incDownloads: false,
+            incSources: false,
+            incInstallers: false
+        }))[0]
+    }
+
+    if (getDownloaded) {
+        downloaded = (await GetMods ({
+            limit: limit,
+            sort: 2,
+            categories: categories,
+            visible: true,
+            userId: session?.user?.id,
+            incDownloads: false,
+            incSources: false,
+            incInstallers: false
+        }))[0]
+    }
+
+    if (getTop) {
+        top = (await GetMods ({
+            limit: limit,
+            categories: categories,
+            visible: true,
+            userId: session?.user?.id,
+            incDownloads: false,
+            incSources: false,
+            incInstallers: false
+        }))[0]
+    }
+
+    if (getTopToday) {
+        // Retrieve time range for today.
+        let todayDate = new Date(Date.now() - (86400 * 1000));
+
+        todayDate = new Date(
+            todayDate.getUTCFullYear(),
+            todayDate.getUTCMonth(),
+            todayDate.getUTCDate(),
+            todayDate.getUTCHours(),
+            todayDate.getUTCMinutes(),
+            todayDate.getUTCSeconds(),
+            todayDate.getUTCMilliseconds()
+        )
+
+        topToday = (await GetMods ({
+            limit: limit,
+            categories: categories,
+            visible: true,
+            ratingTimeRange: todayDate,
+            userId: session?.user?.id,
+            incDownloads: false,
+            incSources: false,
+            incInstallers: false
+        }))[0]
+    }
+
+    return [latest, viewed, downloaded, top, topToday];
+}
