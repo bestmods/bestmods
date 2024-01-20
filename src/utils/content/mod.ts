@@ -122,8 +122,7 @@ export async function GetMods ({
     const hasWhere = categories.length > 0 || visible !== undefined || search || cursorItem;
 
     const mods = await prisma.$queryRaw<ModRowBrowser[]>` 
-        SELECT 
-
+        SELECT
             "Mod"."id",
             "Mod"."url",
             "Mod"."name",

@@ -170,6 +170,7 @@ model ModRating {
   positive Boolean @default(true)
 
   @@id([modId, userId])
+  @@index([createdAt])
 }
 
 model ModTag {
