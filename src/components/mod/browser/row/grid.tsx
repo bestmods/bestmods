@@ -22,12 +22,14 @@ export default function ModRowGrid ({
     mod,
     showRelations = true,
     showActions = false,
-    showDebug = false
+    showDebug = false,
+    showBottom = true
 } : {
     mod: ModRowBrowser
     showRelations?: boolean
     showActions?: boolean
     showDebug?: boolean
+    showBottom?: boolean
 }) {
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
     const viewPort = useContext(ViewPortCtx);
@@ -214,30 +216,32 @@ export default function ModRowGrid ({
             {showDebug && (
                 <ModDebug mod={mod} />
             )}
-            <div className={`flex ${(sourceItems.length < 1 && installerItems.length < 1) ? "justify-center" : "justify-between"}  items-center text-center bg-bestmods-3/80 rounded-b`}>
-                <div className="w-1/3">
-                    <Link
-                        href={viewLink}
-                        className="btn btn-mod-grid"
-                    >View</Link>
+            {showBottom && (
+                <div className={`flex ${(sourceItems.length < 1 && installerItems.length < 1) ? "justify-center" : "justify-between"}  items-center text-center bg-bestmods-3/80 rounded-b`}>
+                    <div className="w-1/3">
+                        <Link
+                            href={viewLink}
+                            className="btn btn-mod-grid"
+                        >View</Link>
+                    </div>
+                    {installerItems.length > 0 && (
+                        <DropDown
+                            html={<>Install</>}
+                            drop_down_items={installerItems}
+                            className="w-1/3"
+                            btnClassName="btn btn-mod-grid"
+                        />
+                    )}
+                    {sourceItems.length > 0 && (
+                        <DropDown
+                            html={<>Sources</>}
+                            drop_down_items={sourceItems}
+                            className="w-1/3"
+                            btnClassName="btn btn-mod-grid"
+                        />
+                    )}
                 </div>
-                {installerItems.length > 0 && (
-                    <DropDown
-                        html={<>Install</>}
-                        drop_down_items={installerItems}
-                        className="w-1/3"
-                        btnClassName="btn btn-mod-grid"
-                    />
-                )}
-                {sourceItems.length > 0 && (
-                    <DropDown
-                        html={<>Sources</>}
-                        drop_down_items={sourceItems}
-                        className="w-1/3"
-                        btnClassName="btn btn-mod-grid"
-                    />
-                )}
-            </div>
+            )}
         </div>
     )
 }

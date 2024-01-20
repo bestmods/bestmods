@@ -3,17 +3,39 @@ import ModSlideshow from "./slideshow";
 
 export default function ModCatalog ({
     latestMods = [],
+    latestSSR = true,
+
     viewedMods = [],
+    viewedSSR = true,
+
     downloadedMods = [],
+    downloadedSSR = true,
+
     topMods = [],
+    topSSR = true,
+
     topModsToday = [],
+    topTodaySSR = true,
+
+    showRowBottom = true,
     defaultDevice = "md"
 } : {
     latestMods?: ModRowBrowser[]
-    viewedMods?: ModRowBrowser[],
+    latestSSR?: boolean
+
+    viewedMods?: ModRowBrowser[]
+    viewedSSR?: boolean
+
     downloadedMods?: ModRowBrowser[]
+    downloadedSSR?: boolean
+
     topMods?: ModRowBrowser[]
+    topSSR?: boolean
+
     topModsToday?: ModRowBrowser[]
+    topTodaySSR?: boolean
+
+    showRowBottom?: boolean
     defaultDevice?: string
 }) {
     return (
@@ -23,6 +45,8 @@ export default function ModCatalog ({
                     <h3>Top Mods Today</h3>
                     <ModSlideshow
                         mods={topModsToday}
+                        ssr={topTodaySSR}
+                        showRowBottom={showRowBottom}
                         autoPlaySpeedMin={3000}
                         autoPlaySpeedMax={10000}
                         defaultDevice={defaultDevice}
@@ -34,6 +58,8 @@ export default function ModCatalog ({
                     <h3>Latest Mods</h3>
                     <ModSlideshow
                         mods={latestMods}
+                        ssr={latestSSR}
+                        showRowBottom={showRowBottom}
                         autoPlaySpeedMin={3000}
                         autoPlaySpeedMax={10000}
                         defaultDevice={defaultDevice}
@@ -45,6 +71,8 @@ export default function ModCatalog ({
                     <h3>Top Mods All-Time</h3>
                     <ModSlideshow
                         mods={topMods}
+                        ssr={topSSR}
+                        showRowBottom={showRowBottom}
                         autoPlaySpeedMin={3000}
                         autoPlaySpeedMax={10000}
                         defaultDevice={defaultDevice}
@@ -56,6 +84,8 @@ export default function ModCatalog ({
                     <h3>Most Viewed Mods</h3>
                     <ModSlideshow
                         mods={viewedMods}
+                        ssr={viewedSSR}
+                        showRowBottom={showRowBottom}
                         autoPlaySpeedMin={3000}
                         autoPlaySpeedMax={10000}
                         defaultDevice={defaultDevice}
@@ -67,6 +97,8 @@ export default function ModCatalog ({
                     <h3>Most Downloaded Mods</h3>
                     <ModSlideshow
                         mods={downloadedMods}
+                        ssr={downloadedSSR}
+                        showRowBottom={showRowBottom}
                         autoPlaySpeedMin={3000}
                         autoPlaySpeedMax={10000}
                         defaultDevice={defaultDevice}

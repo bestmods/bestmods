@@ -14,7 +14,9 @@ export default function ModSlideshow ({
     autoPlay = true,
     autoPlaySpeedMin,
     autoPlaySpeedMax,
-    defaultDevice = "md"
+    defaultDevice = "md",
+    ssr = true,
+    showRowBottom = true
 } : {
     mods: ModRowBrowser[]
     infinite?: boolean
@@ -22,6 +24,8 @@ export default function ModSlideshow ({
     autoPlaySpeedMin?: number
     autoPlaySpeedMax?: number
     defaultDevice?: string
+    ssr?: boolean
+    showRowBottom?: boolean
 }) {
     const viewPort = useContext(ViewPortCtx);
 
@@ -70,7 +74,7 @@ export default function ModSlideshow ({
             infinite={infinite}
             autoPlay={!viewPort.isMobile ? autoPlay : false}
             autoPlaySpeed={playSpeed}
-            ssr={true}
+            ssr={ssr}
             deviceType={defaultDevice}
             customLeftArrow={
                 <ArrowFix>
@@ -88,6 +92,7 @@ export default function ModSlideshow ({
                     <ModRow
                         key={`mod-${index.toString()}`}
                         showRelations={false}
+                        showBottom={showRowBottom}
                         mod={mod}
                     />
                 )

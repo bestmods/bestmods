@@ -70,7 +70,7 @@ export default function CategoryRowGrid ({
             </div>
             <div className="p-4">
                 <Link href={viewLink}>
-                    <h2 className="text-center">{category.name}</h2>
+                    <h4 className="text-center">{category.name}</h4>
                 </Link>
             </div>
             <div className="p-4 grow">

@@ -25,7 +25,7 @@ export default function ModRating ({
     const { data: session } = useSession();
 
     // Retrieve rating.
-    const cur_rating = mod.ModRating[0] ?? null;
+    const cur_rating = mod.ModRating?.[0] ?? null;
 
     // Controls whether user rated this mod or not.
     const [didRate, setDidRate] = useState(false);

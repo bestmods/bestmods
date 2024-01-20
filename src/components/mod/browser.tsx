@@ -16,12 +16,14 @@ export default function ModBrowser ({
     visible,
     showActions = false,
     showDebug = false,
+    showBottom = true,
     incVisibleColumn = false
 } : {
     preCategories?: number[]
     visible?: boolean
     showActions?: boolean
     showDebug?: boolean
+    showBottom?: boolean
     incVisibleColumn?: boolean
 }) {
     const viewPort = useContext(ViewPortCtx);
@@ -131,6 +133,7 @@ export default function ModBrowser ({
                                         mod={mod}
                                         showActions={showActions}
                                         showDebug={showDebug}
+                                        showBottom={showBottom}
                                         display={display}
                                     />
                                 );
