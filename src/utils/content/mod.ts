@@ -137,38 +137,19 @@ export async function GetMods ({
             "Mod"."totalViews",
             "Mod"."nsfw",
             (
-                (
-                    SELECT
-                        COUNT(*) 
-                    FROM
-                        "ModRating" 
-                    WHERE 
-                            "ModRating"."modId"="Mod"."id" 
-                        AND 
-                            "ModRating"."positive" = true
-                        ${ratingTimeRange ?
-                                Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
-                            :
-                                Prisma.empty
-                        }
-                )
-                    -
-                (
-                    SELECT
-                        COUNT(*)
-                    FROM
-                        "ModRating"
-                    WHERE 
-                            "ModRating"."modId"="Mod"."id"
-                        AND
-                            "ModRating"."positive" = false
-                        ${ratingTimeRange ?
-                                Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
-                            :
-                                Prisma.empty
-                        }
-                )
-            ) + 1 AS "rating",
+                SELECT
+                    COUNT(*) FILTER (WHERE "positive" = true) -
+                    COUNT(*) FILTER (WHERE "positive" = false) + 1
+                FROM
+                    "ModRating" 
+                WHERE 
+                        "ModRating"."modId"="Mod"."id" 
+                    ${ratingTimeRange ?
+                            Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
+                        :
+                            Prisma.empty
+                    }
+            ) AS "rating",
             ${incDownloads ?
                 Prisma.sql`
                     json_agg(DISTINCT "ModDownload".*) AS "ModDownload",
@@ -340,35 +321,18 @@ export async function GetMods ({
                                         Prisma.sql`
                                             (
                                                 SELECT
-                                                    COUNT(*) 
+                                                    COUNT(*) FILTER (WHERE "positive" = true) -
+                                                    COUNT(*) FILTER (WHERE "positive" = false) + 1
                                                 FROM
                                                     "ModRating" 
                                                 WHERE 
                                                         "ModRating"."modId"="Mod"."id" 
-                                                    AND 
-                                                        "ModRating"."positive" = true
                                                     ${ratingTimeRange ?
                                                             Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
                                                         :
                                                             Prisma.empty
                                                     }
-                                            )
-                                                -
-                                            (
-                                                SELECT
-                                                    COUNT(*)
-                                                FROM
-                                                    "ModRating"
-                                                WHERE 
-                                                        "ModRating"."modId"="Mod"."id"
-                                                    AND
-                                                        "ModRating"."positive" = false
-                                                    ${ratingTimeRange ?
-                                                            Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
-                                                        :
-                                                            Prisma.empty
-                                                    }
-                                            ) + 1 = ${cursorItem.rating}`
+                                            ) = ${cursorItem.rating}`
                                         :
                                             Prisma.empty
                                     }
@@ -401,35 +365,18 @@ export async function GetMods ({
                                             Prisma.sql`
                                                 (
                                                     SELECT
-                                                        COUNT(*) 
+                                                        COUNT(*) FILTER (WHERE "positive" = true) -
+                                                        COUNT(*) FILTER (WHERE "positive" = false) + 1
                                                     FROM
                                                         "ModRating" 
                                                     WHERE 
-                                                            "ModRating"."modId"="Mod"."id" 
-                                                        AND 
-                                                            "ModRating"."positive" = true
-                                                        ${ratingTimeRange ?
-                                                                Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
-                                                            :
-                                                                Prisma.empty
-                                                        }
-                                                )
-                                                    -
-                                                (
-                                                    SELECT
-                                                        COUNT(*)
-                                                    FROM
-                                                        "ModRating"
-                                                    WHERE 
                                                             "ModRating"."modId"="Mod"."id"
-                                                        AND
-                                                            "ModRating"."positive" = false
                                                         ${ratingTimeRange ?
                                                                 Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
                                                             :
                                                                 Prisma.empty
                                                         }
-                                                ) + 1 < ${cursorItem.rating}`
+                                                ) < ${cursorItem.rating}`
                                         :
                                             Prisma.empty
                                     }
