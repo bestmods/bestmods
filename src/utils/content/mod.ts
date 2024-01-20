@@ -51,38 +51,19 @@ export async function GetMods ({
                 "Mod"."editAt",
                 "Mod"."createAt",
                 (
-                    (
-                        SELECT
-                            COUNT(*) 
-                        FROM
-                            "ModRating" 
-                        WHERE 
-                                "ModRating"."modId"="Mod"."id" 
-                            AND 
-                                "ModRating"."positive" = true
-                            ${ratingTimeRange ?
-                                    Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
-                                :
-                                    Prisma.empty
-                            }
-                    )
-                        -
-                    (
-                        SELECT
-                            COUNT(*)
-                        FROM
-                            "ModRating"
-                        WHERE 
-                                "ModRating"."modId"="Mod"."id"
-                            AND
-                                "ModRating"."positive" = false
-                            ${ratingTimeRange ?
-                                    Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
-                                :
-                                    Prisma.empty
-                            }
-                    )
-                ) + 1 AS "rating"
+                    SELECT
+                        COUNT(*) FILTER (WHERE "positive" = true) -
+                        COUNT(*) FILTER (WHERE "positive" = false) + 1
+                    FROM
+                        "ModRating" 
+                    WHERE 
+                            "ModRating"."modId"="Mod"."id" 
+                        ${ratingTimeRange ?
+                                Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
+                            :
+                                Prisma.empty
+                        }
+                ) AS "rating"
             FROM
                 "Mod"
             WHERE
