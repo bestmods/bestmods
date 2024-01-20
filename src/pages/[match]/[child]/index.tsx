@@ -70,6 +70,8 @@ export default function Page ({
                             downloadedMods={downloaded}
                             topMods={top}
                             topModsToday={topToday}
+
+                            showRowBottom={false}
                             defaultDevice={defaultDevice}
                         />
                     </>
