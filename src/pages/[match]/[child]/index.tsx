@@ -7,30 +7,15 @@ import MetaInfo from "@components/meta";
 import { prisma } from "@server/db/client";
 
 import { type CategoryWithParentAndCount } from "~/types/category";
-import { type ModRowBrowser } from "~/types/mod";
 import ModCatalog from "@components/mod/catalog";
-import { getServerAuthSession } from "@server/common/get-server-auth-session";
-import { GetModSlideshows } from "@utils/content/mod";
 import NotFound from "@components/errors/notfound";
-import { GetDeviceType } from "@utils/carousel";
 import { GetCategoryBanner, GetCategoryBgImage, GetCategoryMetaDesc, GetCategoryMetaTitle } from "@utils/category";
+import IndexInfo from "@components/index_info";
 
 export default function Page ({
     category,
-    latest = [],
-    viewed = [],
-    downloaded = [],
-    top = [],
-    topToday = [],
-    defaultDevice = "md"
 } : {
     category?: CategoryWithParentAndCount
-    latest: ModRowBrowser[]
-    viewed: ModRowBrowser[]
-    downloaded: ModRowBrowser[]
-    top: ModRowBrowser[]
-    topToday: ModRowBrowser[]
-    defaultDevice?: string
 }) {
     // Retrieve banner.
     const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
@@ -56,37 +41,31 @@ export default function Page ({
             <Main image={bgPath}>
                 {category ? (
                     <>
-                        <h2>
-                            {category?.parent && (
-                                <>{category.parent.name} -{">"} </>
-                            )}
-                            {category && (
-                                <>{category.name}</>
-                            )}
-                        </h2>
+                        <IndexInfo
+                            category={category}
+                            modCnt={totMods}
+                        />
                         <ModCatalog
-                            latestMods={latest}
-                            viewedMods={viewed}
-                            downloadedMods={downloaded}
-                            topMods={top}
-                            topModsToday={topToday}
+                            topTodaySSR={false}
+                            latestSSR={false}
+                            viewedSSR={false}
+                            downloadedSSR={false}
+                            topSSR={false}
+
+                            categories={[category.id]}
 
                             showRowBottom={false}
-                            defaultDevice={defaultDevice}
                         />
                     </>
                 ) : (
                     <NotFound item="category" />
                 )}
-                
             </Main>
         </>
     )
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    const session = await getServerAuthSession(ctx);
-
     // We need to retrieve some props.
     const { params, req, res } = ctx;
 
@@ -146,31 +125,9 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         }
     }
 
-    let latest: ModRowBrowser[] = [];
-    let viewed: ModRowBrowser[] = [];
-    let downloaded: ModRowBrowser[] = [];
-    let top: ModRowBrowser[] = [];
-    let topToday: ModRowBrowser[]  = []
-
-    if (category) {
-        [latest, viewed, downloaded, top, topToday] = await GetModSlideshows({
-            session: session,
-            categories: [category.id]
-        })
-    }
-
-    // Get default device.
-    const defaultDevice = GetDeviceType(ctx);
-
     return { 
         props: {
-            category: JSON.parse(JSON.stringify(category, (_, v) => typeof v === "bigint" ? v.toString() : v)),
-            latest: JSON.parse(JSON.stringify(latest, (_, v) => typeof v === "bigint" ? v.toString() : v)),
-            viewed: JSON.parse(JSON.stringify(viewed, (_, v) => typeof v === "bigint" ? v.toString() : v)),
-            downloaded: JSON.parse(JSON.stringify(downloaded, (_, v) => typeof v === "bigint" ? v.toString() : v)),
-            top: JSON.parse(JSON.stringify(top, (_, v) => typeof v === "bigint" ? v.toString() : v)),
-            topToday: JSON.parse(JSON.stringify(topToday, (_, v) => typeof v === "bigint" ? v.toString() : v)),
-            defaultDevice: defaultDevice
+            category: JSON.parse(JSON.stringify(category, (_, v) => typeof v === "bigint" ? v.toString() : v))
         }
     }
 }

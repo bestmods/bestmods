@@ -1,68 +1,43 @@
 import React from "react";
-import { type GetServerSidePropsContext } from "next";
 
 import Main from "@components/main";
 import MetaInfo from "@components/meta";
 
-import { type ModRowBrowser } from "~/types/mod";
 import ModCatalog from "@components/mod/catalog";
-import { getServerAuthSession } from "@server/common/get-server-auth-session";
-import { GetDeviceType } from "@utils/carousel";
-import { GetModSlideshows } from "@utils/content/mod";
+
+import { prisma } from "@server/db/client";
+import IndexInfo from "@components/index_info";
 
 export default function Page ({
-    latest = [],
-    viewed = [],
-    downloaded = [],
-    top = [],
-    topToday = [],
-    defaultDevice = "md"
+    modCnt,
 } : {
-    latest: ModRowBrowser[]
-    viewed: ModRowBrowser[]
-    downloaded: ModRowBrowser[]
-    top: ModRowBrowser[]
-    topToday: ModRowBrowser[]
-    defaultDevice?: string
+    modCnt: number
 }) {
     return (
         <>
             <MetaInfo />
             <Main>
+                <IndexInfo modCnt={modCnt} />
                 <ModCatalog
-                    latestMods={latest}
-                    viewedMods={viewed}
-                    downloadedMods={downloaded}
-                    topMods={top}
-                    topModsToday={topToday}
+                    topTodaySSR={false}
+                    latestSSR={false}
+                    viewedSSR={false}
+                    downloadedSSR={false}
+                    topSSR={false}
 
                     showRowBottom={false}
-                    defaultDevice={defaultDevice}
                 />
             </Main>
         </>
     )
 }
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {    
-    // Retrieve session.
-    const session = await getServerAuthSession(ctx);
-
-    const [latest, viewed, downloaded, top, topToday] = await GetModSlideshows({
-        session: session
-    })
-
-    // Get default device type.
-    const defaultDevice = GetDeviceType(ctx);
+export async function getServerSideProps() {    
+    const modCnt = await prisma.mod.count();
 
     return { 
-        props: { 
-            latest: JSON.parse(JSON.stringify(latest, (_, v) => typeof v === "bigint" ? v.toString() : v)),
-            viewed: JSON.parse(JSON.stringify(viewed, (_, v) => typeof v === "bigint" ? v.toString() : v)),
-            downloaded: JSON.parse(JSON.stringify(downloaded, (_, v) => typeof v === "bigint" ? v.toString() : v)),
-            top: JSON.parse(JSON.stringify(top, (_, v) => typeof v === "bigint" ? v.toString() : v)),
-            topToday: JSON.parse(JSON.stringify(topToday, (_, v) => typeof v === "bigint" ? v.toString() : v)),
-            defaultDevice: defaultDevice
+        props: {
+            modCnt: modCnt
         }
     }
 }

@@ -132,22 +132,24 @@ export default function Main ({
                     setShowBg={setShowBg}
                 />
 
-                <div className="w-full px-2 sm:px-20 mx-auto py-2">
-                    <div className="py-2">
-                        {errorCtx?.title && errorCtx?.msg && (
+                <div className="w-full h-full px-2 sm:px-20 mx-auto py-2">
+                    {errorCtx?.title && errorCtx?.msg && (
+                        <div className="py-2">
                             <Error
                                 title={errorCtx.title}
                                 msg={errorCtx.msg}
                             />
-                        )}
+                        </div>
+                    )}
 
-                        {successCtx?.title && successCtx?.msg && (
+                    {successCtx?.title && successCtx?.msg && (
+                        <div className="py-2">
                             <Success
                                 title={successCtx.title}
                                 msg={successCtx.msg}
                             />
-                        )}
-                    </div>
+                        </div>
+                    )}
                     
                     {(maintenance && !(HasRole(session, "ADMIN") || HasRole(session, "CONTRIBUTOR"))) ? (
                         <MaintenanceMode />

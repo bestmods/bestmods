@@ -17,6 +17,8 @@ export default function ModCatalog ({
     topModsToday = [],
     topTodaySSR = true,
 
+    categories,
+
     showRowBottom = true,
     defaultDevice = "md"
 } : {
@@ -35,76 +37,87 @@ export default function ModCatalog ({
     topModsToday?: ModRowBrowser[]
     topTodaySSR?: boolean
 
+    categories?: number[]
+
     showRowBottom?: boolean
     defaultDevice?: string
 }) {
     return (
         <div className="flex flex-col gap-4">
-            {topModsToday.length > 0 && (
-                <div className="flex flex-col gap-2">
-                    <h2>Top Mods Today</h2>
-                    <ModSlideshow
-                        mods={topModsToday}
-                        ssr={topTodaySSR}
-                        showRowBottom={showRowBottom}
-                        autoPlaySpeedMin={3000}
-                        autoPlaySpeedMax={10000}
-                        defaultDevice={defaultDevice}
-                    />
-                </div>
-            )}
-            {latestMods.length > 0 && (
-                <div className="flex flex-col gap-2">
-                    <h2>Latest Mods</h2>
-                    <ModSlideshow
-                        mods={latestMods}
-                        ssr={latestSSR}
-                        showRowBottom={showRowBottom}
-                        autoPlaySpeedMin={3000}
-                        autoPlaySpeedMax={10000}
-                        defaultDevice={defaultDevice}
-                    />
-                </div>
-            )}
-            {topMods.length > 0 && (
-                <div className="flex flex-col gap-2">
-                    <h2>Top Mods All-Time</h2>
-                    <ModSlideshow
-                        mods={topMods}
-                        ssr={topSSR}
-                        showRowBottom={showRowBottom}
-                        autoPlaySpeedMin={3000}
-                        autoPlaySpeedMax={10000}
-                        defaultDevice={defaultDevice}
-                    />
-                </div>
-            )}
-            {viewedMods.length > 0 && (
-                <div className="flex flex-col gap-2">
-                    <h2>Most Viewed Mods</h2>
-                    <ModSlideshow
-                        mods={viewedMods}
-                        ssr={viewedSSR}
-                        showRowBottom={showRowBottom}
-                        autoPlaySpeedMin={3000}
-                        autoPlaySpeedMax={10000}
-                        defaultDevice={defaultDevice}
-                    />
-                </div>
-            )}
-            {downloadedMods.length > 0 && (
-                <div className="flex flex-col gap-2">
-                    <h2>Most Downloaded Mods</h2>
-                    <ModSlideshow
-                        mods={downloadedMods}
-                        ssr={downloadedSSR}
-                        showRowBottom={showRowBottom}
-                        autoPlaySpeedMin={3000}
-                        autoPlaySpeedMax={10000}
-                        defaultDevice={defaultDevice}
-                    />
-                </div>
-            )}
+            <div className="flex flex-col gap-2">
+                <h2>Top Mods Today</h2>
+                <ModSlideshow
+                    mods={topModsToday}
+
+                    showRowBottom={showRowBottom}
+                    autoPlaySpeedMin={3000}
+                    autoPlaySpeedMax={10000}
+                    defaultDevice={defaultDevice}
+
+                    ssr={topTodaySSR}
+                    categories={categories}
+                    timeframe={2}
+                />
+            </div>
+            <div className="flex flex-col gap-2">
+                <h2>Latest Mods</h2>
+                <ModSlideshow
+                    mods={latestMods}
+
+                    showRowBottom={showRowBottom}
+                    autoPlaySpeedMin={3000}
+                    autoPlaySpeedMax={10000}
+                    defaultDevice={defaultDevice}
+
+                    ssr={latestSSR}
+                    sort={4}
+                    categories={categories}
+                />
+            </div>
+            <div className="flex flex-col gap-2">
+                <h2>Top Mods All-Time</h2>
+                <ModSlideshow
+                    mods={topMods}
+                    
+                    showRowBottom={showRowBottom}
+                    autoPlaySpeedMin={3000}
+                    autoPlaySpeedMax={10000}
+                    defaultDevice={defaultDevice}
+
+                    ssr={topSSR}
+                    timeframe={undefined}
+                    categories={categories}
+                />
+            </div>
+            <div className="flex flex-col gap-2">
+                <h2>Most Viewed Mods</h2>
+                <ModSlideshow
+                    mods={viewedMods}
+
+                    showRowBottom={showRowBottom}
+                    autoPlaySpeedMin={3000}
+                    autoPlaySpeedMax={10000}
+                    defaultDevice={defaultDevice}
+
+                    ssr={viewedSSR}
+                    categories={categories}
+                    sort={1}
+                />
+            </div>
+            <div className="flex flex-col gap-2">
+                <h2>Most Downloaded Mods</h2>
+                <ModSlideshow
+                    mods={downloadedMods}
+                    showRowBottom={showRowBottom}
+                    autoPlaySpeedMin={3000}
+                    autoPlaySpeedMax={10000}
+                    defaultDevice={defaultDevice}
+
+                    ssr={downloadedSSR}
+                    categories={categories}
+                    sort={2}
+                />
+            </div>
         </div>
     )
 }
