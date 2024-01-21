@@ -65,7 +65,7 @@
     @apply justify-center;
 
     @apply hover:bg-bestmods-3/80;
-    @apply block;
+    @apply flex;
 
     &:visited, &:active, &:link {
         @apply text-inherit;
