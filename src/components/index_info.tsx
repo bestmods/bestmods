@@ -23,7 +23,9 @@ export default function IndexInfo ({
     category?: CategoryWithChildrenAndParent | CategoryWithChildrenAndCounts | CategoryWithCount | Category
     modCnt: number
 }) {
-    const banner = category?.banner ? GetCategoryBanner(category) : null;
+    const cdn = process.env.NEXT_PUBLIC_CDN_URL ?? "";
+
+    const banner = category?.banner ? GetCategoryBanner(category, cdn) : null;
 
     let name = category?.name;
 
