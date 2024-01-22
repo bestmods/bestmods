@@ -30,7 +30,7 @@ export default async function Category (req: NextApiRequest, res: NextApiRespons
     }
 
     // If this is a GET request, we are retrieving an item.
-    if (method == "GET") {
+    if (method === "GET") {
         // Retrieve ID and check.
         const { id } = req.query;
 
@@ -153,7 +153,7 @@ export default async function Category (req: NextApiRequest, res: NextApiRespons
             message: `${update ? "Updated" : "Inserted"} category successfully!`,
             data: cat
         })
-    } else if (method == "DELETE") {
+    } else if (method === "DELETE") {
         const { id } = req.query;
 
         if (!id) {

@@ -56,7 +56,7 @@ export async function CheckApiAccess ({
             return [401, "Key not found in database.", method];
 
         // IP check.
-        const ipAddr = req.socket.remoteAddress;
+        const ipAddr = req.headers?.["CF-Connecting-IP"]?.toString() ?? req.socket.remoteAddress;
 
         if (apiKey.ipAddr && ipAddr !== apiKey.ipAddr)
             return [401, "IP address not allowed.", method];

@@ -140,7 +140,7 @@ export default async function Source (req: NextApiRequest, res: NextApiResponse)
             message: `${update ? "Updated" : "Inserted"} source successfully!`,
             data: src
         })
-    } else if (req.method == "DELETE") {
+    } else if (req.method === "DELETE") {
         const { url } = req.query;
 
         if (!url) {

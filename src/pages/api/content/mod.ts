@@ -32,7 +32,7 @@ export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
     }
 
     // If this is a GET request, we are retrieving an item.
-    if (method == "GET") {
+    if (method === "GET") {
         // Retrieve where clauses.
         const { id, visible, srcUrl, srcQuery } = req.query;
 
@@ -235,7 +235,7 @@ export default async function Mod (req: NextApiRequest, res: NextApiResponse) {
             message: `${update ? "Inserted" : "Updated"} mod successfully!`,
             data: JSON.parse(JSON.stringify(mod, (_, v) => typeof v === "bigint" ? v.toString() : v))
         });
-    } else if (method == "DELETE") {
+    } else if (method === "DELETE") {
         const { id } = req.query;
 
         if (!id) {
