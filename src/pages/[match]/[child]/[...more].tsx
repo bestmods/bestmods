@@ -41,7 +41,6 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         })
 
         if (redirect) {
-            console.log("FOUND REDIRECT!");
             res.statusCode = 301;
 
             let newUrl = redirect.redirect;
