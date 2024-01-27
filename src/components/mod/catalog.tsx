@@ -56,7 +56,7 @@ export default function ModCatalog ({
 
                     ssr={topTodaySSR}
                     categories={categories}
-                    timeframe={2}
+                    timeframe={1}
                 />
             </div>
             <div className="flex flex-col gap-2">
