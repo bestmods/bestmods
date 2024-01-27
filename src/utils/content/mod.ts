@@ -50,22 +50,24 @@ export async function GetMods ({
                 "Mod"."totalDownloads",
                 "Mod"."editAt",
                 "Mod"."createAt",
-                (
-                    SELECT
-                        COUNT(*) FILTER (WHERE "positive" = true) -
-                        COUNT(*) FILTER (WHERE "positive" = false) + 1
-                    FROM
-                        "ModRating" 
-                    WHERE 
-                            "ModRating"."modId"="Mod"."id" 
-                        ${ratingTimeRange ?
-                                Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
-                            :
-                                Prisma.empty
-                        }
-                ) AS "rating"
+                (COALESCE("ratingsub"."pos_count", 0) - COALESCE("ratingsub"."neg_count", 0)) + 1 AS "rating"
             FROM
                 "Mod"
+            LEFT JOIN (
+                SELECT
+                    "modId",
+                    COUNT(*) FILTER (WHERE "positive" = true) AS "pos_count",
+                    COUNT(*) FILTER (WHERE "positive" = false) AS "neg_count"
+                FROM
+                    "ModRating"
+                ${ratingTimeRange ? (
+                    Prisma.sql`WHERE
+                        "createdAt" > ${ratingTimeRange}
+                    `
+                ) : Prisma.empty}
+                GROUP BY
+                    "modId"
+            ) AS "ratingsub" ON "Mod"."id" = "ratingsub"."modId"
             WHERE
                 "Mod"."id" = ${cursor}
         `;
@@ -116,20 +118,7 @@ export async function GetMods ({
             "Mod"."totalDownloads",
             "Mod"."totalViews",
             "Mod"."nsfw",
-            (
-                SELECT
-                    COUNT(*) FILTER (WHERE "positive" = true) -
-                    COUNT(*) FILTER (WHERE "positive" = false) + 1
-                FROM
-                    "ModRating" 
-                WHERE 
-                        "ModRating"."modId"="Mod"."id" 
-                    ${ratingTimeRange ?
-                            Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
-                        :
-                            Prisma.empty
-                    }
-            ) AS "rating",
+            (COALESCE("ratingsub"."pos_count", 0) - COALESCE("ratingsub"."neg_count", 0)) + 1 AS "rating",
             ${incDownloads ?
                 Prisma.sql`
                     json_agg(DISTINCT "ModDownload".*) AS "ModDownload",
@@ -263,13 +252,27 @@ export async function GetMods ({
                     "Mod"."id" = "ModInstaller"."modId"
             `
         : Prisma.empty}
-
         LEFT JOIN
             "ModRating"
             ON
                     "Mod"."id" = "ModRating"."modId"
                 AND
                     "ModRating"."userId" = ${userId ?? ""}
+        LEFT JOIN (
+            SELECT
+                "modId",
+                COUNT(*) FILTER (WHERE "positive" = true) AS "pos_count",
+                COUNT(*) FILTER (WHERE "positive" = false) AS "neg_count"
+            FROM
+                "ModRating"
+            ${ratingTimeRange ? (
+                Prisma.sql`WHERE
+                    "createdAt" > ${ratingTimeRange}
+                `
+            ) : Prisma.empty}
+            GROUP BY
+                "modId"
+        ) AS "ratingsub" ON "Mod"."id" = "ratingsub"."modId"
         ${hasWhere ? 
             Prisma.sql`WHERE
                 ${categories.length > 0 ?
@@ -299,20 +302,7 @@ export async function GetMods ({
                                 (
                                     ${sort == 0 ?
                                         Prisma.sql`
-                                            (
-                                                SELECT
-                                                    COUNT(*) FILTER (WHERE "positive" = true) -
-                                                    COUNT(*) FILTER (WHERE "positive" = false) + 1
-                                                FROM
-                                                    "ModRating" 
-                                                WHERE 
-                                                        "ModRating"."modId"="Mod"."id" 
-                                                    ${ratingTimeRange ?
-                                                            Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
-                                                        :
-                                                            Prisma.empty
-                                                    }
-                                            ) = ${cursorItem.rating}`
+                                        (COALESCE("ratingsub"."pos_count", 0) - COALESCE("ratingsub"."neg_count", 0)) + 1 = ${cursorItem.rating}`
                                         :
                                             Prisma.empty
                                     }
@@ -343,20 +333,7 @@ export async function GetMods ({
                                 (
                                     ${sort == 0 ?
                                             Prisma.sql`
-                                                (
-                                                    SELECT
-                                                        COUNT(*) FILTER (WHERE "positive" = true) -
-                                                        COUNT(*) FILTER (WHERE "positive" = false) + 1
-                                                    FROM
-                                                        "ModRating" 
-                                                    WHERE 
-                                                            "ModRating"."modId"="Mod"."id"
-                                                        ${ratingTimeRange ?
-                                                                Prisma.sql`AND "ModRating"."createdAt" > ${ratingTimeRange}`
-                                                            :
-                                                                Prisma.empty
-                                                        }
-                                                ) < ${cursorItem.rating}`
+                                            (COALESCE("ratingsub"."pos_count", 0) - COALESCE("ratingsub"."neg_count", 0)) + 1 < ${cursorItem.rating}`
                                         :
                                             Prisma.empty
                                     }
@@ -393,7 +370,9 @@ export async function GetMods ({
         GROUP BY
             "Mod"."id",
             "category"."id",
-            "categoryparent"."id"
+            "categoryparent"."id",
+            "ratingsub"."pos_count",
+            "ratingsub"."neg_count"
         ORDER BY
             ${sort == 0 ?
                     Prisma.sql`"rating" DESC,`
