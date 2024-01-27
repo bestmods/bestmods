@@ -39,6 +39,12 @@ export default function ModBrowser ({
 
     const [categories, setCategories] = useState(preCategories);
 
+    useEffect(() => {
+        (async () => {
+            await utils.mod.getAllBrowser.reset()
+        })();
+    }, [timeframe, sort, search, categories, utils])
+
     // Reset need more mods when filters change.
     useEffect(() => {
         setNeedMoreMods(true);
