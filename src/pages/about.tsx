@@ -32,11 +32,9 @@ export default function Page ({
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="sm:col-span-2 flex flex-col gap-4">
                         <Section title="About">
-                            <p>We are a global index for game mods where users can browse and find mods from multiple sources on the Internet! Our goal is to allow users to discover all mods in one place along with follow a standard and clean template for mod data including its description, installation, and more.</p>
-
-                            <p>With that said, we offer features to users such as the ability to upvote/downvote mods when signed in through <Link href="https://discord.com/" target="_blank">Discord</Link> along with in-depth filtering on our <Link href="/browse">browse page</Link>.</p>
+                            <p>We serve as a global index for game mods, providing users with a centralized platform to explore and discover mods from various sources on the Internet! Our goal is to allow users to discover many mods in one place while adhering to a standardized and clean template for mod data. This template includes essential information such as mod descriptions, installation guides, and more, ensuring a consistent and user-friendly experience.</p>
                             
-                            <p>This website is <Link href="https://github.com/bestmods/bestmods" target="_blank">open source</Link> and developed by <Link href="https://deaconn.net/user/view/cdeacon" target="_blank">Christian Deacon</Link>!</p>
+                            <p>This website is <Link href="https://github.com/bestmods/bestmods" className="font-bold" target="_blank">open source</Link> and developed by <Link href="https://deaconn.net/user/view/cdeacon" target="_blank">Christian Deacon</Link>!</p>
                         </Section>
                         <Section
                             title="F.A.Q."
@@ -193,7 +191,7 @@ function Section ({
             {title && (
                 <h2>{title}</h2>
             )}
-            <div className={`${addStyling ? "bg-bestmods-2/80 ring-4 ring-bestmods-3 rounded shadow-lg shadow-black " : ""} p-2`}>
+            <div className={`${addStyling ? "bg-bestmods-2/80 rounded-lg shadow-lg shadow-black " : ""} p-2`}>
                 {children}
             </div>
         </div>

@@ -4,18 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { type CategoryWithChildrenAndCounts, type CategoryWithChildrenAndParent, type CategoryWithCount } from "~/types/category";
 
-import { Comfortaa, Baloo_2 } from "next/font/google";
-
-const comfortaa = Comfortaa({
-    subsets: ["cyrillic"],
-    weight: "700"
-})
-
-const baloo2 = Baloo_2({
-    subsets: ["devanagari"],
-    weight: "400"
-})
-
 export default function IndexInfo ({
     category,
     modCnt = 0
@@ -33,7 +21,7 @@ export default function IndexInfo ({
         name = `${category.parent.name} ${name}`;
 
     return (
-        <div className="w-full py-8 px-4 text-center bg-bestmods-2/60 rounded-lg">
+        <div className="w-full py-8 mb-4 px-4 text-center bg-bestmods-2/60 rounded-lg shadow-lg shadow-black">
             <div className="relative z-20 flex flex-col gap-2">
                 <div className="flex flex-col items-center gap-1">
                     {banner && (
@@ -46,7 +34,7 @@ export default function IndexInfo ({
                             alt="Category banner"
                         />
                     )}
-                    <h3 className={`text-white text-3xl pb-2 ${comfortaa.className}`}>
+                    <h3 className="text-white text-3xl pb-2">
                         {name ? (
                             <>{name} Mods</>
                         ) : (
@@ -55,8 +43,8 @@ export default function IndexInfo ({
                     </h3>
                 </div>
                 
-                <p className={`text-lg text-gray-50 ${baloo2.className}`}>Find your favorite {name ? `${name} ` :  ""}mods all in one place from multiple sources on the Internet!</p>
-                <p className={`text-lg text-gray-50 ${baloo2.className}`}>Currently tracking <span className="text-blue-300 font-bold text-xl">{modCnt.toString()}</span> mods.</p>
+                <p className="text-lg text-gray-50">Find your favorite {name ? `${name} ` :  ""}mods all in one place from multiple sources on the Internet!</p>
+                <p className="text-lg text-gray-50">Currently tracking <span className="text-blue-300 font-bold text-xl">{modCnt.toString()}</span> mods.</p>
                 {!category && (
                     <div className="flex justify-center pt-4">
                             <Link

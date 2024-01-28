@@ -16,6 +16,10 @@ module.exports = {
           "menu-left-to-right": "menu-left-to-right 0.5s",
           "menu-right-to-left": "menu-right-to-left 0.5s",
           "fade-out-in": "fade-out-in 1.0s"
+        },
+        fontFamily: {
+            title: ["var(--font-title)"],
+            base: ["var(--font-base)"]
         }
     },
   },

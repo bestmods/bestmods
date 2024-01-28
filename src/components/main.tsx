@@ -12,6 +12,22 @@ import Settings from "./settings";
 import { useSession } from "next-auth/react";
 import { HasRole } from "@utils/roles";
 import MaintenanceMode from "./errors/maintenance_mode";
+import { Baloo_2, Comfortaa } from "next/font/google";
+
+// Fonts
+const titleFont = Comfortaa({
+    subsets: ["cyrillic"],
+    weight: "700",
+    variable: "--font-title",
+    display: "swap"
+})
+
+const textBase = Baloo_2({
+    subsets: ["latin"],
+    weight: "400",
+    variable: "--font-base",
+    display: "swap"
+})
 
 export const ViewPortCtx = createContext({
     isMobile: false,
@@ -21,12 +37,10 @@ export const ViewPortCtx = createContext({
 
 export default function Main ({
     children,
-    className,
     image = "/images/backgrounds/default.jpg",
     overlay = true
 } : {
     children: ReactNode
-    className?: string
     image?: string
     overlay?: boolean
 }) {
@@ -113,7 +127,7 @@ export default function Main ({
             width: width,
             height: height
         }}>
-            <main key="main" className={className}>
+            <main key="main" className={`${titleFont.variable} ${textBase.variable}`}>
                 {gId && (
                     <GoogleAnalytics 
                         id={gId}
