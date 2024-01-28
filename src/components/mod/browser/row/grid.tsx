@@ -140,8 +140,8 @@ export default function ModRowGrid ({
                     />
                 </Link>
                 {ownerName && ownerName.length > 0 && (
-                    <div className="absolute bottom-0 left-0 h-8 pr-4 rounded-tr bg-bestmods-1/40 hover:bg-bestmods-1/80 hover:font-bold flex items-center text-white text-sm duration-200">
-                        <p className="ml-1">By {ownerName}</p>
+                    <div className="absolute bottom-0 left-0 h-8 pr-4 rounded-tr bg-bestmods-1/40 hover:bg-bestmods-1/80 hover:font-bold flex flex-col items-center justify-center text-white text-sm duration-200">
+                        <span className="ml-1">By {ownerName}</span>
                     </div>
                 )}
                 {mod.nsfw && (
