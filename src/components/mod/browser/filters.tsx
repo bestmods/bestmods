@@ -216,7 +216,9 @@ function Categories ({
 
     const allCats: CategoryWithChildren[] = [];
 
-    const { data, fetchNextPage } = trpc.category.getCategoryMappings.useInfiniteQuery({}, {
+    const { data, fetchNextPage } = trpc.category.getCategoryMappings.useInfiniteQuery({
+        limit: 20
+    }, {
         getNextPageParam: (lastPage) => lastPage.nextCat
     })
 
