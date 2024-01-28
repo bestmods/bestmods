@@ -102,7 +102,108 @@ export async function GetMods ({
     if (!isStatic)
         count++;
 
-    const hasWhere = categories.length > 0 || visible !== undefined || search || cursorItem;
+    // Compile where clauses.
+    const where = [
+        ...(categories.length > 0 ? [
+            Prisma.sql`"Mod"."categoryId" IN (${Prisma.join(categories)})`
+        ] : []),
+        ...(visible !== undefined ? [
+            Prisma.sql`"Mod"."visible" = ${visible}`
+        ] : []),
+        ...(search ? [
+            Prisma.sql`
+                "Mod"."name" ILIKE ${"%" + search + "%"} OR
+                "Mod"."descriptionShort" ILIKE ${"%" + search + "%"} OR
+                "Mod"."ownerName" ILIKE ${"%" + search + "%"} OR
+                "category"."name" ILIKE ${"%" + search + "%"} OR
+                "category"."nameShort" ILIKE ${"%" + search + "%"}
+            `
+        ] : []),
+        ...(cursorItem ? [
+            Prisma.sql`
+                (
+                    (
+                        ${sort == 0 ? Prisma.sql`
+                            (COALESCE("ratingsub"."pos_count", 0) - COALESCE("ratingsub"."neg_count", 0)) + 1 = ${cursorItem.rating}
+                        ` : Prisma.empty}
+                        ${sort == 1 ? Prisma.sql`
+                            "Mod"."totalViews" = ${cursorItem.totalViews}
+                        ` : Prisma.empty}
+                        ${sort == 2 ? Prisma.sql`
+                            "Mod"."totalDownloads" = ${cursorItem.totalDownloads}
+                        ` : Prisma.empty}
+                        ${(sort == 3 && cursorItemEditAt) ? Prisma.sql`
+                            "Mod"."editAt" = ${cursorItemEditAt}
+                        ` : Prisma.empty}
+                        ${(sort == 4 && cursorItemCreatedAt) ? Prisma.sql`
+                            "Mod"."createAt" = ${cursorItemCreatedAt}
+                        ` : Prisma.empty}
+                        AND
+                            "Mod"."id" <= ${cursorItem.id}
+                    )
+                    OR
+                    (
+                        ${sort == 0 ? Prisma.sql`
+                            (COALESCE("ratingsub"."pos_count", 0) - COALESCE("ratingsub"."neg_count", 0)) + 1 < ${cursorItem.rating}
+                        ` : Prisma.empty}
+                        ${sort == 1 ? Prisma.sql`
+                            "Mod"."totalViews" < ${cursorItem.totalViews}
+                        ` : Prisma.empty}
+                        ${sort == 2 ? Prisma.sql`
+                            "Mod"."totalDownloads" < ${cursorItem.totalDownloads}
+                        ` : Prisma.empty}
+                        ${(sort == 3 && cursorItemEditAt ) ? Prisma.sql`
+                        "Mod"."editAt" < ${cursorItemEditAt}
+                        ` : Prisma.empty}
+                        ${(sort == 4 && cursorItemCreatedAt) ? Prisma.sql`
+                            "Mod"."createAt" < ${cursorItemCreatedAt}
+                        ` : Prisma.empty}
+                    )
+                )
+            `
+        ] : [])
+        /*
+        ...(cursorItem ? [
+            ...(sort == 0 ? [
+                Prisma.sql`(COALESCE("ratingsub"."pos_count", 0) - COALESCE("ratingsub"."neg_count", 0)) + 1 <= ${cursorItem.rating}`
+            ] : []),
+            ...(sort == 1 ? [
+                Prisma.sql`"Mod"."totalViews" <= ${cursorItem.totalViews}`
+            ] : []),
+            ...(sort == 2 ? [
+                Prisma.sql`"Mod"."totalDownloads" <= ${cursorItem.totalDownloads}`
+            ] : []),
+            ...(sort == 3 ? [
+                Prisma.sql`"Mod"."editAt" <= ${cursorItemEditAt}`
+            ] : []),
+            ...(sort == 4 ? [
+                Prisma.sql`"Mod"."createAt" <= ${cursorItemCreatedAt}`
+            ] : []),
+            Prisma.sql`"Mod"."id" <= ${cursorItem.id}`
+        ]
+        : [])
+        */
+    ];
+
+    // Compile order by.
+    const order = [
+        ...(sort == 0 ? [
+            Prisma.sql`"rating" DESC`
+        ] : []),
+        ...(sort == 1 ? [
+            Prisma.sql`"Mod"."totalViews" DESC`
+        ] : []),
+        ...(sort == 2 ? [
+            Prisma.sql`"Mod"."totalDownloads" DESC`
+        ] : []),
+        ...(sort == 3 ? [
+            Prisma.sql`"Mod"."editAt" DESC`
+        ] : []),
+        ...(sort == 4 ? [
+            Prisma.sql`"Mod"."createAt" DESC`
+        ] : []),
+        Prisma.sql`"Mod"."id" DESC`
+    ];
 
     const mods = await prisma.$queryRaw<ModRowBrowser[]>` 
         SELECT
@@ -273,97 +374,8 @@ export async function GetMods ({
             GROUP BY
                 "modId"
         ) AS "ratingsub" ON "Mod"."id" = "ratingsub"."modId"
-        ${hasWhere ? 
-            Prisma.sql`WHERE
-                ${categories.length > 0 ?
-                        Prisma.sql`"Mod"."categoryId" IN (${Prisma.join(categories)}) ${(visible != undefined || search || cursor) ? Prisma.sql`AND` : Prisma.empty}`
-                    :
-                        Prisma.empty
-                }
-                ${visible !== undefined ?
-                        Prisma.sql`"Mod"."visible" = ${visible} ${(search || cursor) ? Prisma.sql`AND` : Prisma.empty}`
-                    :
-                        Prisma.empty
-                }
-                ${search ?
-                        Prisma.sql`(
-                            "Mod"."name" ILIKE ${"%" + search + "%"} OR
-                            "Mod"."descriptionShort" ILIKE ${"%" + search + "%"} OR
-                            "Mod"."ownerName" ILIKE ${"%" + search + "%"} OR
-                            "category"."name" ILIKE ${"%" + search + "%"} OR
-                            "category"."nameShort" ILIKE ${"%" + search + "%"}
-                        ) ${cursor ? Prisma.sql`AND` : Prisma.empty}`
-                    :
-                        Prisma.empty
-                }
-                ${cursorItem ?
-                        Prisma.sql`
-                            (
-                                (
-                                    ${sort == 0 ?
-                                        Prisma.sql`
-                                        (COALESCE("ratingsub"."pos_count", 0) - COALESCE("ratingsub"."neg_count", 0)) + 1 = ${cursorItem.rating}`
-                                        :
-                                            Prisma.empty
-                                    }
-                                    ${sort == 1 ?
-                                            Prisma.sql`"Mod"."totalViews" = ${cursorItem.totalViews}`
-                                        :
-                                            Prisma.empty
-                                    }
-                                    ${sort == 2 ?
-                                            Prisma.sql`"Mod"."totalDownloads" = ${cursorItem.totalDownloads}`
-                                        :
-                                            Prisma.empty
-                                    }
-                                    ${sort == 3 && cursorItemEditAt ?
-                                            Prisma.sql`"Mod"."editAt" = ${cursorItemEditAt}`
-                                        :
-                                            Prisma.empty
-                                    }
-                                    ${sort == 4 && cursorItemCreatedAt ?
-                                            Prisma.sql`"Mod"."createAt" = ${cursorItemCreatedAt}`
-                                        :
-                                            Prisma.empty
-                                    }
-                                    AND
-                                        "Mod"."id" <= ${cursorItem.id}
-                                )
-                                OR
-                                (
-                                    ${sort == 0 ?
-                                            Prisma.sql`
-                                            (COALESCE("ratingsub"."pos_count", 0) - COALESCE("ratingsub"."neg_count", 0)) + 1 < ${cursorItem.rating}`
-                                        :
-                                            Prisma.empty
-                                    }
-                                    ${sort == 1 ?
-                                            Prisma.sql`"Mod"."totalViews" < ${cursorItem.totalViews}`
-                                        :
-                                            Prisma.empty
-                                    }
-                                    ${sort == 2 ?
-                                            Prisma.sql`"Mod"."totalDownloads" < ${cursorItem.totalDownloads}`
-                                        :
-                                            Prisma.empty
-                                    }
-                                    ${sort == 3 && cursorItemEditAt ?
-                                            Prisma.sql`"Mod"."editAt" < ${cursorItemEditAt}`
-                                        :
-                                            Prisma.empty
-                                    }
-                                    ${sort == 4 && cursorItemCreatedAt ?
-                                            Prisma.sql`"Mod"."createAt" < ${cursorItemCreatedAt}`
-                                        :
-                                            Prisma.empty
-                                    }
-                                )
-                            )
-                        `
-                    :
-                        Prisma.empty
-                }
-            `
+        ${where.length > 0 ?
+            Prisma.sql`WHERE ${Prisma.join(where, " AND ")}`
         :
             Prisma.empty
         }
@@ -374,32 +386,7 @@ export async function GetMods ({
             "ratingsub"."pos_count",
             "ratingsub"."neg_count"
         ORDER BY
-            ${sort == 0 ?
-                    Prisma.sql`"rating" DESC,`
-                :
-                    Prisma.empty
-            }
-            ${sort == 1 ? 
-                    Prisma.sql`"Mod"."totalViews" DESC,`
-                :
-                    Prisma.empty
-            }
-            ${sort == 2 ?
-                    Prisma.sql`"Mod"."totalDownloads" DESC,`
-                :
-                    Prisma.empty
-            }
-            ${sort == 3 ?
-                    Prisma.sql`"Mod"."editAt" DESC,`
-                :
-                    Prisma.empty
-            }
-            ${sort == 4 ?
-                    Prisma.sql`"Mod"."createAt" DESC,`
-                :
-                    Prisma.empty
-            }
-            "Mod"."id" DESC
+            ${Prisma.join(order, ",")}
         LIMIT ${count}
     `;
 
