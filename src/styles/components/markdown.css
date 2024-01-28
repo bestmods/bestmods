@@ -28,10 +28,22 @@
         @apply px-1;
         @apply rounded-sm;
         @apply text-cyan-200;
+        @apply font-mono;
     }
 
     & p {
         @apply py-1;
         @apply leading-5;
+    }
+
+    & h1, h2, h3, h4, h5 {
+        @apply pt-4;
+    }
+
+    & ul {
+        @apply list-disc;
+        @apply list-inside;
+        @apply pl-8;
+
     }
 }
