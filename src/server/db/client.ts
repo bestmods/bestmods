@@ -17,3 +17,9 @@ export const prisma =
 if (env.NODE_ENV !== "production") {
     global.prisma = prisma;
 }
+
+/*
+prisma.$on("query", (e) => {
+    console.log(`${e.query} ${e.params}`)
+})
+*/
