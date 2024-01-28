@@ -52,7 +52,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     // Retrieve session and permission check.
     const session = await getServerAuthSession(ctx);
 
-    const perm_check = session && HasRole(session, "ADMIN");
+    const perm_check = HasRole(session, "ADMIN");
 
     if (perm_check) {
         user = await prisma.user.findFirst({
