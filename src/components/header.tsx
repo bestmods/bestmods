@@ -242,9 +242,9 @@ export default function Header () {
             <nav className="hidden sm:flex container mx-auto items-center sm:gap-1 md:gap-4">
                 <Link href="/">
                     <h1 className="sm:text-2xl md:text-4xl">
-                        <span className="text-blue-300">B</span>est
+                        <span className="text-blue-400">B</span>est
                         {" "}
-                        <span className="text-blue-300">M</span>ods
+                        <span className="text-blue-400">M</span>ods
                     </h1>
                 </Link>
                 <NavItem
