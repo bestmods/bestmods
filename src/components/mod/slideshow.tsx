@@ -85,8 +85,16 @@ export default function ModSlideshow ({
 
     // We need to manually specify our resposiveness due to the way `react-multi-carousel` works.
     const responsive = {
+        xl5: {
+            breakpoint: { max: 4000, min: 3167 },
+            items: 9
+        },
+        xl4: {
+            breakpoint: { max: 3167, min: 2832 },
+            items: 8
+        },
         xl3: {
-            breakpoint: { max: 4000, min: 2496 },
+            breakpoint: { max: 2832, min: 2496 },
             items: 7
         },
         xl2: {
