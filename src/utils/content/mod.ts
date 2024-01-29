@@ -846,7 +846,6 @@ export async function GetModSlideshows ({
             categories: categories,
             visible: true,
             userId: session?.user?.id,
-            incDownloads: false,
             incSources: false,
             incInstallers: false,
         }))[0]
@@ -859,7 +858,6 @@ export async function GetModSlideshows ({
             categories: categories,
             visible: true,
             userId: session?.user?.id,
-            incDownloads: false,
             incSources: false,
             incInstallers: false
         }))[0]
@@ -872,7 +870,6 @@ export async function GetModSlideshows ({
             categories: categories,
             visible: true,
             userId: session?.user?.id,
-            incDownloads: false,
             incSources: false,
             incInstallers: false
         }))[0]
@@ -884,7 +881,6 @@ export async function GetModSlideshows ({
             categories: categories,
             visible: true,
             userId: session?.user?.id,
-            incDownloads: false,
             incSources: false,
             incInstallers: false
         }))[0]
@@ -910,7 +906,6 @@ export async function GetModSlideshows ({
             visible: true,
             ratingTimeRange: todayDate,
             userId: session?.user?.id,
-            incDownloads: false,
             incSources: false,
             incInstallers: false
         }))[0]

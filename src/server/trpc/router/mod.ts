@@ -176,8 +176,7 @@ export const modRouter = router({
             incVisibleColumn: z.boolean().default(false),
 
             incSources: z.boolean().default(true),
-            incInstallers: z.boolean().default(true),
-            incDownloads: z.boolean().default(true)
+            incInstallers: z.boolean().default(true)
         }))
         .query(async ({ ctx, input }) => {            
             // Check if we want to retrieve mod rating within specific range.
@@ -239,7 +238,6 @@ export const modRouter = router({
                 sort: input.sort,
                 incVisibleColumn: input.incVisibleColumn,
                 incSources: input.incSources,
-                incDownloads: input.incDownloads,
                 incInstallers: input.incInstallers
             })
 

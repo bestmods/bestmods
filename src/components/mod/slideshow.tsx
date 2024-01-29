@@ -47,7 +47,6 @@ export default function ModSlideshow ({
         timeframe: timeframe,
         incSources: false,
         incInstallers: false,
-        incDownloads: false,
         incVisibleColumn: false,
         visible: true
     }, {
