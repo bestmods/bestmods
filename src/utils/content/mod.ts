@@ -20,7 +20,7 @@ export async function GetMods ({
     sort = 0,
     incVisibleColumn = false,
     incSources = true,
-    incDownloads = true,
+    incDownloads = false,
     incInstallers = true
 } : {
     isStatic?: boolean
