@@ -112,9 +112,7 @@ export async function GetMods ({
             Prisma.sql`
                 "Mod"."name" ILIKE ${"%" + search + "%"} OR
                 "Mod"."descriptionShort" ILIKE ${"%" + search + "%"} OR
-                "Mod"."ownerName" ILIKE ${"%" + search + "%"} OR
-                "category"."name" ILIKE ${"%" + search + "%"} OR
-                "category"."nameShort" ILIKE ${"%" + search + "%"}
+                "Mod"."ownerName" ILIKE ${"%" + search + "%"}
             `
         ] : []),
         ...(cursorItem ? [
