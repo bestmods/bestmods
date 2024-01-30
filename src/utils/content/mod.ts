@@ -20,7 +20,6 @@ export async function GetMods ({
     sort = 0,
     incVisibleColumn = false,
     incSources = true,
-    incDownloads = false,
     incInstallers = true
 } : {
     isStatic?: boolean
@@ -34,7 +33,6 @@ export async function GetMods ({
     sort?: number
     incVisibleColumn?: boolean
     incSources?: boolean
-    incDownloads?: boolean
     incInstallers?: boolean
 }): Promise<[ModRowBrowser[], number | undefined]> {
     // Retrieve cursor item.
@@ -205,6 +203,11 @@ export async function GetMods ({
         Prisma.sql`"Mod"."id" DESC`
     ];
 
+    // Just a note regarding the following raw PSQL query:
+    // Utilizing subqueries performs nearly 200% faster than left joins which is very interesting and strange-
+    // Since joins are supposed to be faster 99% of the time.
+    // More info here -> https://github.com/bestmods/db-testing/tree/main/queries/browse-with-cursor 
+
     const mods = await prisma.$queryRaw<ModRowBrowser[]>` 
         SELECT
             "Mod"."id",
@@ -220,11 +223,6 @@ export async function GetMods ({
             "Mod"."totalViews",
             "Mod"."nsfw",
             (COALESCE("ratingsub"."pos_count", 0) - COALESCE("ratingsub"."neg_count", 0)) + 1 AS "rating",
-            ${incDownloads ?
-                Prisma.sql`
-                    json_agg(DISTINCT "ModDownload".*) AS "ModDownload",
-                `
-            : Prisma.empty}
             ${incSources ?
                 Prisma.sql`
                         (
@@ -298,67 +296,61 @@ export async function GetMods ({
                     ) AS "ModInstaller",
                 `
             : Prisma.empty}
-            json_build_object(
-                'parent', 
-                CASE 
-                    WHEN "categoryparent"."id" IS NOT NULL THEN 
-                        json_build_object(
-                            'name', "categoryparent"."name",
-                            'url', "categoryparent"."url",
-                            'icon', "categoryparent"."icon"
-                        )
-                    ELSE
-                        NULL
-                END,
-                'name', "category"."name",
-                'url', "category"."url",
-                'icon', "category"."icon"
+            (
+                SELECT jsonb_build_object(
+                    'name', "subquery"."name",
+                    'url', "subquery"."url",
+                    'icon', "subquery"."icon",
+                    'parent', CASE 
+                        WHEN "subquery"."parentId" IS NOT NULL THEN
+                            jsonb_build_object(
+                                'name', "subquery"."parentName",
+                                'url', "subquery"."parentUrl",
+                                'icon', "subquery"."parentIcon"
+                            )
+                        ELSE
+                            NULL
+                    END
+                ) AS "Category"
+                FROM (
+                    SELECT DISTINCT ON ("Category"."id")
+                        "Category"."name",
+                        "Category"."url",
+                        "Category"."icon",
+                        "Category"."parentId",
+                        "categoryparent"."name" AS "parentName",
+                        "categoryparent"."url" AS "parentUrl",
+                        "categoryparent"."icon" AS "parentIcon"
+                    FROM
+                        "Category"
+                    LEFT JOIN
+                        "Category"
+                        AS
+                            "categoryparent"
+                        ON
+                            "Category"."parentId" = "categoryparent"."id"
+                    WHERE
+                        "Category"."id" = "Mod"."categoryId"
+                    LIMIT 1
+                ) AS "subquery"
             ) AS "category",
-            json_agg(DISTINCT "ModRating".*) AS "ModRating"
+            (
+                SELECT json_agg(jsonb_build_object(
+                    'positive', "subquery"."positive"
+                )) AS "ModRating"
+                FROM (
+                    SELECT
+                        "ModRating"."positive"
+                    FROM
+                        "ModRating"
+                    WHERE
+                            "ModRating"."modId" = "Mod"."id"
+                        AND
+                            "ModRating"."userId" = ${userId ?? ""}
+                ) AS "subquery"
+            ) AS "ModRating"
         FROM 
             "Mod"
-        LEFT JOIN 
-            "Category"
-            AS
-                "category"
-            ON
-                "Mod"."categoryId" = "category"."id"
-        LEFT JOIN
-            "Category"
-            AS
-                "categoryparent"
-            ON
-                "category"."parentId" = "categoryparent"."id"
-        ${incDownloads ?
-            Prisma.sql`
-                LEFT JOIN
-                    "ModDownload"
-                ON
-                    "Mod"."id" = "ModDownload"."modId"
-            `
-        : Prisma.empty}
-        ${incSources ?
-            Prisma.sql`
-                LEFT JOIN
-                    "ModSource"
-                ON
-                    "Mod"."id" = "ModSource"."modId"
-            `
-        : Prisma.empty}
-        ${incInstallers ?
-            Prisma.sql`
-                LEFT JOIN
-                    "ModInstaller"
-                ON 
-                    "Mod"."id" = "ModInstaller"."modId"
-            `
-        : Prisma.empty}
-        LEFT JOIN
-            "ModRating"
-            ON
-                    "Mod"."id" = "ModRating"."modId"
-                AND
-                    "ModRating"."userId" = ${userId ?? ""}
         LEFT JOIN (
             SELECT
                 "modId",
@@ -381,8 +373,6 @@ export async function GetMods ({
         }
         GROUP BY
             "Mod"."id",
-            "category"."id",
-            "categoryparent"."id",
             "ratingsub"."pos_count",
             "ratingsub"."neg_count"
         ORDER BY
