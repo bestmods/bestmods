@@ -66,6 +66,7 @@ export default function CategoryForm ({
             onSubmit={(values) => {
                 mut.mutate({
                     ...values,
+                    parentId: values.parentId ? Number(values.parentId) : null,
                     id: category?.id,
                     banner: banner?.toString(),
                     icon: icon?.toString(),
