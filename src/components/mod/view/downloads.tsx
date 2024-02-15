@@ -1,7 +1,9 @@
 import IconAndText from "@components/icon_and_text";
 import Download2 from "@components/icons/download2";
+import { ViewPortCtx } from "@components/main";
 import { trpc } from "@utils/trpc";
 import Link from "next/link";
+import { useContext } from "react";
 import { type ModViewItem } from "~/types/mod";
 
 export default function ModViewDownloads ({
@@ -15,12 +17,14 @@ export default function ModViewDownloads ({
 
     const dlCnt = mod.totalDownloads ?? 0;
 
+    const viewPort = useContext(ViewPortCtx);
+
     return (
         <div className="flex flex-col gap-2">
             <h2>Downloads</h2>
             {downloads.length > 0 ? (
                 <div className="flex flex-col gap-4">
-                    <table className="table table-auto w-full text-left border-separate border-spacing-y-2">
+                    <table className="table table-auto w-full text-left border-separate border-spacing-y-2 border-spacing-x-1">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -35,9 +39,9 @@ export default function ModViewDownloads ({
 
                                 if (dl.uploadDate) {
                                     const dateOptions: Intl.DateTimeFormatOptions = {
-                                        month: 'long',
-                                        day: 'numeric',
-                                        year: 'numeric'
+                                        month: viewPort.isMobile ? "short" : "long",
+                                        day: "numeric",
+                                        year: "numeric"
                                       };
                             
                                       const formatter = new Intl.DateTimeFormat('en-US', dateOptions);
@@ -48,25 +52,29 @@ export default function ModViewDownloads ({
                                 return (
                                     <tr key={`download-${index.toString()}`}>
                                         <td>
-                                            <IconAndText
-                                                icon={
-                                                    <Download2 className="w-4 h-4 stroke-white" />
-                                                }
-                                                text={
-                                                    <Link
-                                                        key={`download-${index.toString()}`}
-                                                        onClick={() => {
-                                                            modDownloadMut.mutate({
-                                                                id: mod.id
-                                                            });
-                                                        }}
-                                                        href={dl.url}
-                                                        target="_blank"
-                                                    >
-                                                        <span>{dl.name}</span>
-                                                    </Link>
-                                                }
-                                            />
+                                            <Link
+                                                key={`download-${index.toString()}`}
+                                                onClick={() => {
+                                                    modDownloadMut.mutate({
+                                                        id: mod.id
+                                                    });
+                                                }}
+                                                href={dl.url}
+                                                target="_blank"
+                                            >
+                                                {viewPort.isMobile ? (
+                                                    <span>{dl.name}</span>
+                                                ) : (
+                                                    <IconAndText
+                                                        icon={
+                                                            <Download2 className="w-4 h-4 stroke-white" />
+                                                        }
+                                                        text={
+                                                            <span>{dl.name}</span>    
+                                                        }
+                                                    />
+                                                )}
+                                            </Link>
                                         </td>
                                         <td>
                                             {dl.size ? (
