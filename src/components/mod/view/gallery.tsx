@@ -108,6 +108,7 @@ export default function ModGallery ({
                 itemClass="p-2 h-96"
                 centerMode={false}
                 infinite={infinite}
+                showDots={true}
                 autoPlay={!viewPort.isMobile ? autoPlay : false}
                 autoPlaySpeed={autoPlaySpeed}
                 containerClass={`react-multi-carousel-list ${screenshotsCtn < 1 ? "justify-center" : ""}`}

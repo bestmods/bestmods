@@ -71,3 +71,7 @@
         @apply text-inherit;
     }
 }
+
+.react-multi-carousel-dot--active button {
+    @apply !bg-white;
+}

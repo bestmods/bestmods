@@ -1,3 +1,4 @@
+import IconAndText from "@components/icon_and_text";
 import { type Category } from "@prisma/client";
 import { GetCategoryIcon, GetCategoryUrl } from "@utils/category";
 import Image from "next/image";
@@ -23,33 +24,41 @@ export default function ModViewCategory ({
     return (
         <div className="flex flex-wrap gap-2">
             {catPar && (
-                <>
+                <div className="flex items-center gap-2">
                     <Link
                         href={catParLink}
                         className="flex flex-wrap gap-1"
                     >
-                        <Image
-                            src={catParIcon}
-                            width={32}
-                            height={32}
-                            alt="Category Parent Icon"
+                        <IconAndText
+                            icon={
+                                <Image
+                                    src={catParIcon}
+                                    width={32}
+                                    height={32}
+                                    alt="Category Parent Icon"
+                                />
+                            }
+                            text={<span>{catPar.name}</span>}
                         />
-                        <span>{catPar.name}</span>
                     </Link>
                     <span>→</span>
-                </>
+                </div>
             )}
             <Link
                 href={catLink}
                 className="flex flex-wrap gap-1"
             >
-                <Image
-                    src={catIcon}
-                    width={32}
-                    height={32}
-                    alt="Category Icon"
+                <IconAndText
+                    icon={
+                        <Image
+                            src={catIcon}
+                            width={32}
+                            height={32}
+                            alt="Category Icon"
+                        />
+                    }
+                    text={<>{cat.name}</>}
                 />
-                <span>{cat.name}</span>
             </Link>
         </div>
     )

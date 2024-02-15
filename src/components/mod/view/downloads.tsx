@@ -20,28 +20,73 @@ export default function ModViewDownloads ({
             <h2>Downloads</h2>
             {downloads.length > 0 ? (
                 <div className="flex flex-col gap-4">
-                    <div className="flex flex-wrap gap-4">
-                        {downloads.map((dl, index) => {
-                            return (
-                                <Link
-                                    key={`download-${index.toString()}`}
-                                    onClick={() => {
-                                        modDownloadMut.mutate({
-                                            id: mod.id
-                                        });
-                                    }}
-                                    className="p-4 bg-bestmods-3/80 hover:bg-bestmods-4/80 rounded text-white visited:text-white active:text-white hover:text-white"
-                                    href={dl.url}
-                                    target="_blank"
-                                >
-                                    <IconAndText
-                                        icon={<Download2 className="w-6 h-6 stroke-white" />}
-                                        text={<span>{dl.name}</span>}
-                                    />
-                                </Link>
-                            );
-                        })}
-                    </div>
+                    <table className="table table-auto w-full text-left border-separate border-spacing-y-2">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Size</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {downloads.map((dl, index) => {
+                                // Get upload date if any.
+                                let uploadDate: string | null = null;
+
+                                if (dl.uploadDate) {
+                                    const dateOptions: Intl.DateTimeFormatOptions = {
+                                        month: 'long',
+                                        day: 'numeric',
+                                        year: 'numeric'
+                                      };
+                            
+                                      const formatter = new Intl.DateTimeFormat('en-US', dateOptions);
+
+                                      uploadDate = formatter.format(new Date(dl.uploadDate))
+                                }
+
+                                return (
+                                    <tr key={`download-${index.toString()}`}>
+                                        <td>
+                                            <IconAndText
+                                                icon={
+                                                    <Download2 className="w-4 h-4 stroke-white" />
+                                                }
+                                                text={
+                                                    <Link
+                                                        key={`download-${index.toString()}`}
+                                                        onClick={() => {
+                                                            modDownloadMut.mutate({
+                                                                id: mod.id
+                                                            });
+                                                        }}
+                                                        href={dl.url}
+                                                        target="_blank"
+                                                    >
+                                                        <span>{dl.name}</span>
+                                                    </Link>
+                                                }
+                                            />
+                                        </td>
+                                        <td>
+                                            {dl.size ? (
+                                                <span>{dl.size} MBs</span>
+                                            ) : (
+                                                <span>N/A</span>
+                                            )}
+                                        </td>
+                                        <td>
+                                            {uploadDate ? (
+                                                <span>{uploadDate}</span>
+                                            ) : (
+                                                <span>N/A</span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
                     <p className="mod-downloads-total">{dlCnt.toString()} Total Downloads</p>
                 </div>
             ) : (
