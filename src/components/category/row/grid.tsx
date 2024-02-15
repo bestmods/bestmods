@@ -1,11 +1,12 @@
+import IconAndText from "@components/icon_and_text";
 import { ErrorCtx, SuccessCtx } from "@pages/_app";
-import { GetCategoryBanner, GetCategoryUrl } from "@utils/category";
+import { GetCategoryBanner, GetCategoryIcon, GetCategoryUrl } from "@utils/category";
 import { HasRole } from "@utils/roles";
 import { trpc } from "@utils/trpc";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { type CategoryWithChildrenAndCounts } from "~/types/category";
 
 export default function CategoryRowGrid ({
@@ -54,6 +55,8 @@ export default function CategoryRowGrid ({
             }
         }
     })
+
+    const [subMenu, setSubMenu] = useState(false);
 
     return (
         <div className={`bg-bestmods-2/80 shadow-lg shadow-black ring-4 ring-bestmods-3/80 hover:ring-bestmods-4/80 rounded group translate-y-0 hover:-translate-y-3 duration-300 hover:text-inherit${className ? ` ${className}` : ``}`}>
@@ -105,23 +108,50 @@ export default function CategoryRowGrid ({
                     >Delete</button>
                 </div>
             )}
-            {category.children.length > 0 && (
-                <div className="flex flex-wrap gap-4 p-4">
-                    {category.children.map((child, index) => {
-                        const viewLink = GetCategoryUrl(child);
 
-                        return (
-                            <Link
-                                key={`child-${index.toString()}`}
-                                href={viewLink}
-                                className="p-2"
-                            >
-                                <span>{child.name} ({child._count.Mod.toString()})</span>
-                            </Link>
-                        )
-                    })}
-                </div>
+            {category.children.length > 0 && (
+                <>
+                    {subMenu && (
+                        <div className="flex flex-col gap-4 p-4">
+                            {category.children.map((child, index) => {
+                                const viewLink = GetCategoryUrl(child);
+                                const icon = GetCategoryIcon(child, cdn);
+
+                                return (
+                                    <Link
+                                        key={`child-${index.toString()}`}
+                                        href={viewLink}
+                                        className="p-2"
+                                    >
+                                        <IconAndText
+                                            icon={
+                                                <Image
+                                                    src={icon}
+                                                    width={32}
+                                                    height={32}
+                                                    alt="Category icon"
+                                                />
+                                            }
+                                            text={<>{child.name} ({child._count.Mod.toString()})</>}
+                                        />
+                                    </Link>
+                                )
+                            })}
+                        </div>
+                    )}
+                    <div
+                        className="flex justify-center p-2 cursor-pointer"
+                        onClick={() => setSubMenu(!subMenu)}
+                    >
+                        {subMenu ? (
+                            <span>Hide Sub Categories</span>
+                        ) : (
+                            <span>Show Sub Categories</span>
+                        )}
+                    </div>
+                </>
             )}
+            
         </div>
     )
 }
