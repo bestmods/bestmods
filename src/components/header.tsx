@@ -22,6 +22,7 @@ import CubesIcon from "./icons/cubes";
 import { useSession } from "next-auth/react";
 import { HasRole } from "@utils/roles";
 import GearIcon from "./icons/gear";
+import BullhornIcon from "./icons/bullhorn";
 
 export default function Header () {
     const { data: session } = useSession();
@@ -175,7 +176,16 @@ export default function Header () {
                         </Link>
                         <h3>More</h3>
                         <Link
-                            href="https://github.com/orgs/bestmods/discussions/categories/feedback-idea"
+                            href="https://moddingcommunity.com/forum/257-announcements/"
+                            target="_blank"
+                        >
+                            <IconAndText
+                                icon={<BullhornIcon className="w-6 h-6 fill-white" />}
+                                text={<>Announcements</>}
+                            />
+                        </Link>
+                        <Link
+                            href="https://moddingcommunity.com/forum/258-suggestions-feedback/"
                             target="_blank"
                         >
                             <IconAndText
@@ -202,7 +212,7 @@ export default function Header () {
                             />
                         </Link>
                         <Link
-                            href="https://github.com/orgs/bestmods/discussions/35"
+                            href="https://moddingcommunity.com/topic/178-read-me/"
                             target="_blank"
                         >
                             <IconAndText
@@ -326,7 +336,17 @@ export default function Header () {
                     html={<>More</>}
                     drop_down_items={[
                         {
-                            link: "https://github.com/orgs/bestmods/discussions/categories/feedback-idea",
+                            link: "https://moddingcommunity.com/forum/257-announcements/",
+                            html:
+                                <IconAndText
+                                    icon={<BullhornIcon className="w-6 h-6 fill-white" />}
+                                    text={<>Announcements</>}
+                                />
+                            ,
+                            new_tab: true
+                        },
+                        {
+                            link: "https://moddingcommunity.com/forum/258-suggestions-feedback/",
                             html:
                                 <IconAndText
                                     icon={<ChatBubbleIcon className="w-6 h-6 fill-white" />}
@@ -356,7 +376,7 @@ export default function Header () {
                             new_tab: true
                         },
                         {
-                            link: "https://github.com/orgs/bestmods/discussions/35",
+                            link: "https://moddingcommunity.com/topic/178-read-me/",
                             html:
                                 <IconAndText
                                     icon={<TrashIcon className="w-6 h-6 fill-white" />}
