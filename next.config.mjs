@@ -22,6 +22,28 @@ const config = {
             pathname: '**',
         }
     ]
-  }
+  },
+  rewrites: async() => [
+    {
+      source: "/sitemap.xml",
+      destination: "/sitemap/"
+    },
+    {
+      source: "/sitemap-static.xml",
+      destination: "/sitemap/static"
+    },
+    {
+      source: "/sitemap-content.xml",
+      destination: "/sitemap/content"
+    },
+    {
+      source: "/sitemap-content/mod/:page.xml",
+      destination: "/sitemap/content/mod/:page"
+    },
+    {
+      source: "/sitemap-content/category/:page.xml",
+      destination: "/sitemap/content/category/:page"
+    }
+  ]
 };
 export default config;

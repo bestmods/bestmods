@@ -25,7 +25,7 @@
     "mobile-detect": "^1.4.5",
     "next": "^13.5.6",
     "next-auth": "^4.18.3",
-    "next-sitemap": "^3.1.48",
+    "next-sitemap": "^4.2.3",
     "react": "18.2.0",
     "react-cookie": "^6.1.1",
     "react-datepicker": "^4.25.0",

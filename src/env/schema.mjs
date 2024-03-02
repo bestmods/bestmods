@@ -25,6 +25,7 @@ export const serverSchema = z.object({
     MODS_PER_PAGE: z.string().default("15"),
     API_AUTH_KEY: z.string().optional(),
     SITEMAP_URL: z.string().optional(),
+    SITEMAP_MAX_ITEMS: z.string().optional(),
     S3_ACCESS_KEY: z.string().optional(),
     S3_ACCESS_SECRET: z.string().optional(),
     S3_BUCKET: z.string().optional(),
