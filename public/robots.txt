@@ -12,5 +12,3 @@ User-agent: *
 Allow: /
 
 Sitemap: https://bestmods.io/sitemap.xml
-Sitemap: https://bestmods.io/sitemap-static.xml
-Sitemap: https://bestmods.io/sitemap-content.xml
