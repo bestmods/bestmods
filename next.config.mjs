@@ -33,10 +33,6 @@ const config = {
       destination: "/sitemap/static"
     },
     {
-      source: "/sitemap-content.xml",
-      destination: "/sitemap/content"
-    },
-    {
       source: "/sitemap-content/mod/:page.xml",
       destination: "/sitemap/content/mod/:page"
     },
