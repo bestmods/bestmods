@@ -33,7 +33,11 @@ export default function Page ({
 }
 
 export async function getServerSideProps() {    
-    const modCnt = await prisma.mod.count();
+    const modCnt = await prisma.mod.count({
+        where: {
+            visible: true
+        }
+    });
 
     return { 
         props: {
