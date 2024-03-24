@@ -12,6 +12,28 @@ export default function Page ({
 } : {
     categories: CategoryWithChildrenAndCounts[]
 }) {
+    const sortedCats = categories.sort((a, b) => {
+        let aTot = a._count.Mod;
+
+        a.children.forEach((v) => {
+            aTot += v._count.Mod;
+        })
+
+        let bTot = b._count.Mod;
+
+        b.children.forEach((v) => {
+            bTot += v._count.Mod;
+        })
+
+        if (aTot > bTot)
+            return -1;
+
+        if (aTot < bTot)
+            return 1;
+
+        return 0;
+    })
+
     return (
         <>
             <MetaInfo
@@ -21,14 +43,14 @@ export default function Page ({
             <Main>
                 <h2>All Categories</h2>
 
-                {categories.length > 0 ? (
+                {sortedCats.length > 0 ? (
                     <div
                         className="grid gap-x-4 gap-y-6 py-6"
                         style={{
                             gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr)"
                         }}
                     >
-                        {categories.map((category, index) => {
+                        {sortedCats.map((category, index) => {
                             return (
                                 <CategoryRowGrid
                                     key={`category-${index.toString()}`}
