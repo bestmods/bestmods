@@ -34,7 +34,7 @@ export default function Page ({
                         <Section title="About">
                             <p>We serve as a global index for game mods, providing users with a centralized platform to explore and discover mods from various sources on the Internet! Our goal is to allow users to discover many mods in one place while adhering to a standardized and clean template for mod data. This template includes essential information such as mod descriptions, installation guides, and more, ensuring a consistent and user-friendly experience.</p>
                             
-                            <p>This website is <Link href="https://github.com/bestmods/bestmods" className="font-bold" target="_blank">open source</Link> and developed by <Link href="https://deaconn.net/user/view/cdeacon" target="_blank">Christian Deacon</Link>!</p>
+                            <p>This website is <Link href="https://github.com/bestmods/bestmods" className="font-bold" target="_blank">open source</Link> and developed by <Link href="https://moddingcommunity.com/profile/2-christian/" target="_blank">Christian Deacon</Link>!</p>
                         </Section>
                         <Section
                             title="F.A.Q."
