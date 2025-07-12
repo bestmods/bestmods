@@ -3,6 +3,13 @@ Browse the best mods in gaming from many sources on the Internet!
 
 <a href="https://bestmods.io/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview01.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview01.png" /></a>
 
+## 2025 Update
+While the website is still online, this project **is no longer maintained**! There is a chance I may overhaul the project at a later date, but I have no ETA since I have a lot of other work and projects to work on.
+
+The website is still online as a part of my resume. There is also a lot of valuable code in this repository that I put many hours into making. With that said, I did a horrible job at the front-end design of the website in my opinion and that's something I'd really like to improve on if I do work on the project again. However, back-end wise I think there's a lot of neat functionality in project.
+
+If you're interested, I've also released the source code of the web scraper [here](https://github.com/bestmods/scan-r-us)!
+
 ## About This Project
 An open source [website](https://bestmods.io) made by [Christian Deacon](https://github.com/gamemann) that helps users find their favorite mods all in one place! The website also includes Discord login authentication and the ability to upvote and downvote mods. Read more about us [here](https://bestmods.io/about)!
 
