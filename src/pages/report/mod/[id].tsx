@@ -1,12 +1,17 @@
+/*
 import { type GetServerSidePropsContext } from "next"
 
 import { prisma } from "@server/db/client";
+
 import MetaInfo from "@components/meta";
 import Main from "@components/main";
 import { useSession } from "next-auth/react";
 import ModReportForm from "@components/forms/mod/report";
 import NoAccess from "@components/errors/noaccess";
 import NotFound from "@components/errors/notfound";
+*/
+
+import { notFound } from "next/navigation";
 
 type Mod = {
     id: number
@@ -14,10 +19,13 @@ type Mod = {
 }
 
 export default function Page ({
-    mod
+    //mod
 } : {
     mod: Mod
 }) {
+    notFound()
+
+    /*
     const { data: session } = useSession();
 
     return (
@@ -47,8 +55,10 @@ export default function Page ({
             </Main>
         </>
     )
+    */
 }
 
+/*
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const { params, res } = ctx;
 
@@ -77,3 +87,4 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         }
     }
 }
+*/

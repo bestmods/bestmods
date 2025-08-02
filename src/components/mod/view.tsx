@@ -13,7 +13,7 @@ import ModActions from "./modactions";
 import ModDebug from "./mod_debug";
 import TabMenu, { type TabItem } from "@components/tabs/tab_menu";
 import { GetModUrl } from "@utils/mod";
-import ModReportButton from "./report_button";
+//import ModReportButton from "./report_button";
 import { trpc } from "@utils/trpc";
 import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
@@ -196,9 +196,11 @@ export default function ModView ({
                                     />
                                 </div>
                             )}
+                            {/*
                             <div className="flex flex-col justify-center">
                                 <ModReportButton modId={mod.id} />
                             </div>
+                            */}
                             {mod.nsfw && (
                                 <div className="btn btn-warning">NSFW</div>
                             )}
