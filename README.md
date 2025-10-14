@@ -1,7 +1,7 @@
-# [Best Mods](https://bestmods.io)
+# [Best Mods](https://bestmods.org)
 Browse the best mods in gaming from many sources on the Internet!
 
-<a href="https://bestmods.io/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview01.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview01.png" /></a>
+<a href="https://bestmods.org/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview01.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview01.png" /></a>
 
 ## 2025 Update
 While the website is still online, this project **is no longer maintained**! There is a chance I may overhaul the project at a later date, but I have no ETA since I have a lot of other work and projects to work on.
@@ -11,22 +11,22 @@ The website is still online as a part of my resume. There is also a lot of valua
 If you're interested, I've also released the source code of the web scraper [here](https://github.com/bestmods/scan-r-us)!
 
 ## About This Project
-An open source [website](https://bestmods.io) made by [Christian Deacon](https://github.com/gamemann) that helps users find their favorite mods all in one place! The website also includes Discord login authentication and the ability to upvote and downvote mods. Read more about us [here](https://bestmods.io/about)!
+An open source [website](https://bestmods.org) made by [Christian Deacon](https://github.com/gamemann) that helps users find their favorite mods all in one place! The website also includes Discord login authentication and the ability to upvote and downvote mods. Read more about us [here](https://bestmods.org/about)!
 
 ## Showcase
 ### Desktop
-<a href="https://bestmods.io/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview01.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview01.png" /></a>
-<a href="https://bestmods.io/category" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview02.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview02.png" /></a>
-<a href="https://bestmods.io/category/sims4" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview03.jpg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview03.jpg" /></a>
-<a href="https://bestmods.io/browse" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview04.jpg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview04.jpg" /></a>
-<a href="https://bestmods.io/browse" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview05.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview05.png" /></a>
-<a href="https://bestmods.io/view/cs-zr" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview06.jpg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview06.jpg" /></a>
-<a href="https://bestmods.io/view/cs-zr/install" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview07.jpg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview07.jpg" /></a>
-<a href="https://bestmods.io/view/cs-zr/sources" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview08.jpg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview08.jpg" /></a>
+<a href="https://bestmods.org/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview01.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview01.png" /></a>
+<a href="https://bestmods.org/category" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview02.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview02.png" /></a>
+<a href="https://bestmods.org/category/sims4" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview03.jpg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview03.jpg" /></a>
+<a href="https://bestmods.org/browse" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview04.jpg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview04.jpg" /></a>
+<a href="https://bestmods.org/browse" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview05.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview05.png" /></a>
+<a href="https://bestmods.org/view/cs-zr" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview06.jpg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview06.jpg" /></a>
+<a href="https://bestmods.org/view/cs-zr/install" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview07.jpg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview07.jpg" /></a>
+<a href="https://bestmods.org/view/cs-zr/sources" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview08.jpg" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview08.jpg" /></a>
 
 ### Mobile
-<a href="https://bestmods.io/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview09.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview09.png" /></a>
-<a href="https://bestmods.io/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview10.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview10.png" /></a>
+<a href="https://bestmods.org/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview09.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview09.png" /></a>
+<a href="https://bestmods.org/" target="_blank"><img src="https://github.com/bestmods/bestmods/blob/main/gitimages/preview10.png" data-canonical-src="https://github.com/BestMods/bestmods/blob/main/gitimages/preview10.png" /></a>
 
 ## Road Map
 A road map for the website may be found [here](https://github.com/bestmods/bestmods/milestones)!
@@ -44,7 +44,7 @@ Any help from the open source community is highly appreciated on this project! W
 Please take a look at our [road map](https://github.com/bestmods/roadmap/issues) and join our [Discord server](https://discord.moddingcommunity.com/) for communication!
 
 ## Our Community
-[Best Mods](https://bestmods.io) is ran by [Christian Deacon](https://github.com/gamemann) and the [The Modding Community](https://moddingcommunity.com/). We have a Discord [here](https://discord.moddingcommunity.com/) if you want to socialize and interact with others including talented modders and content creators.
+[Best Mods](https://bestmods.org) is ran by [Christian Deacon](https://github.com/gamemann) and the [The Modding Community](https://moddingcommunity.com/). We have a Discord [here](https://discord.moddingcommunity.com/) if you want to socialize and interact with others including talented modders and content creators.
 
 Additionally, you may also use our discussions forum [here](https://github.com/orgs/BestMods/discussions)!
 
@@ -96,7 +96,7 @@ To run in production, you can use the `npx next build` command to build the web 
 With that said, you may then run `node server.js`.
 
 ## Permissions
-While this project is open source, if you use this full project publicly, please add a link back to Best Mods' [website](https://bestmods.io/) that is visible to the public user. You don't need to do this if you're using *<30%* of the project's code. This is to attempt to mitigate people blatantly copying the project for their own use publicly.
+While this project is open source, if you use this full project publicly, please add a link back to Best Mods' [website](https://bestmods.org/) that is visible to the public user. You don't need to do this if you're using *<30%* of the project's code. This is to attempt to mitigate people blatantly copying the project for their own use publicly.
 
 ## Credits
 * [Christian Deacon](https://github.com/gamemann) - Creator

@@ -11,4 +11,4 @@ Disallow: /cdn-cgi
 User-agent: *
 Allow: /
 
-Sitemap: https://bestmods.io/sitemap.xml
+Sitemap: https://bestmods.org/sitemap.xml
